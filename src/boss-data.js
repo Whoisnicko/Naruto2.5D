@@ -9,11 +9,12 @@ export function newBossProgress(){return {defeated:[],mistStage:0,kyubiUnlocked:
 export function validateBossProgress(raw){if(!raw||!Array.isArray(raw.defeated)||raw.defeated.length>BOSSES.length||raw.defeated.some((id,i)=>id!==BOSSES[i].id))throw Error('Invalid boss progress.');const legacy=raw.mistStage===undefined;const mistStage=legacy?(raw.defeated.length===2?4:raw.defeated.length===1?1:0):raw.mistStage;if(!Number.isInteger(mistStage)||mistStage<0||mistStage>4||(!legacy&&typeof raw.kyubiUnlocked!=='boolean')||mistStage===4&&raw.defeated.length!==2||raw.defeated.length===2&&mistStage!==4||mistStage>=2&&!legacy&&!raw.kyubiUnlocked)throw Error('Invalid Mist encounter progress.');const wd=raw.worldDefeated===undefined?[]:raw.worldDefeated;if(!Array.isArray(wd)||new Set(wd).size!==wd.length||wd.some(id=>!Object.hasOwn(WORLD_BOSSES,id)))throw Error('Invalid world boss progress.');return {defeated:[...raw.defeated],mistStage,kyubiUnlocked:legacy?true:raw.kyubiUnlocked,worldDefeated:[...wd]};}
 export function nextBoss(progress){return BOSSES[progress.defeated.length]||null;}
 export function makeBoss(spec){return {id:spec.id,kind:spec.id,spec,x:ARENA.x,z:ARENA.z,hp:spec.hp,maxHP:spec.hp,dirX:-1,dirZ:0,phase:1,index:0,attack:1.4,hit:0,flash:0,mark:0,intent:null,motion:false,walk:0};}
-export function bossContains(intent,target){const dx=target.x-intent.x,dz=target.z-intent.z;if(intent.shape!=='line')return Math.hypot(dx,dz)<=intent.radius;const along=dx*intent.dx+dz*intent.dz,side=Math.abs(dx*intent.dz-dz*intent.dx);return along>=0&&along<=intent.length&&side<=intent.radius;}
+export function bossContains(intent,target){const dx=target.x-intent.x,dz=target.z-intent.z;if(intent.shape==='annulus'){const d=Math.hypot(dx,dz);return d>=intent.inner&&d<=intent.radius;}if(intent.shape!=='line')return Math.hypot(dx,dz)<=intent.radius;const along=dx*intent.dx+dz*intent.dz,side=Math.abs(dx*intent.dz-dz*intent.dx);return along>=0&&along<=intent.length&&side<=intent.radius;}
 export function tickBoss(b,p,clones,dt,move,hit,signal){
  if(b.id==='zabuza'&&b.worldBoss)return tickZabuza(b,p,clones,dt,move,hit,signal);
  if(b.id==='haku'&&b.worldBoss)return tickHaku(b,p,dt,move,signal);
  if(b.id==='kabuto'&&b.independent)return tickKabuto(b,p,clones,dt,move,hit,signal);
+ if(b.id==='gaara'&&b.independent)return tickGaara(b,p,clones,dt,move,hit,signal);
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
  if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;b.intent=null;b.anim=null;b.attack=.55;signal('phase',b);return;}
@@ -123,7 +124,14 @@ export const WORLD_BOSSES={kabuto:{id:'kabuto',name:'Kabuto Yakushi',hp:1500,spe
 {id:'extract',name:'Chakra Extraction',shape:'target',radius:3.3,reach:12,windup:1.15,damage:15,cooldown:14},
  {id:'cross',name:'Surgical Cross',shape:'line',radius:1.2,length:10,reach:10,windup:.85,damage:27,cooldown:9,phase:2},
  {id:'autopsy',name:'Autopsy Protocol',shape:'target',radius:2.5,reach:24,windup:.9,damage:14,cooldown:15,phase:2,pulses:3}
-]}};
+]},gaara:{id:'gaara',name:'Gaara',hp:1900,speed:3.6,arena:{x:36,z:34,r:13,name:'Southern Sand Basin'},marker:'#edbd70',xp:850,coins:550,reward:[['sandArmor',1],['pill',3]],patterns:[
+ {id:'sandWave',name:'Sand Wave',shape:'line',radius:2,length:14,reach:15,windup:.9,damage:24,cooldown:8},
+ {id:'sandCoffin',name:'Sand Coffin',shape:'target',radius:3.3,reach:20,windup:1.2,damage:32,cooldown:14,zone:true},
+ {id:'sandBurst',name:'Sand Burst',shape:'circle',radius:4,reach:4,windup:.65,damage:20,cooldown:5},
+ {id:'shukakuClaw',name:'Shukaku Claw',shape:'line',radius:2.4,length:11,reach:11,windup:.8,damage:34,cooldown:7,phase:2},
+ {id:'sandTsunami',name:'Sand Tsunami',shape:'annulus',inner:3,radius:14,reach:25,windup:1.8,damage:40,cooldown:17,phase:2}
+ ]}};
+export const GAARA_RULES={shieldHP:240,shieldDuration:4,shieldCooldown:18,shieldFirst:5,breakRecovery:1.5,zoneDuration:6,zoneSlow:.55,phaseSpeed:1.22};
 export const KABUTO_RULES={healFraction:.30,healCap:.90,healThreshold:.70,interruptRecovery:2,disruptDuration:8,regenMultiplier:.35,extractChakra:28,phaseSpeed:1.25};
 Object.assign(MIST_SCENES,{
  kabutoIntro:{title:'THE MEDICAL PRODIGY',lines:[['Kabuto','Interesting. Your chakra leaves a very readable signature.'],['Naruto','Quit staring and fight!'],['Kabuto','Very well. Let us see how long you last without your precious chakra.']]},
@@ -131,7 +139,7 @@ Object.assign(MIST_SCENES,{
  kabutoEnd:{title:'THE FAILED EXPERIMENT',lines:[['Kabuto','So much for my calculations. We will meet again.'],['Naruto','Next time, try fighting without the cheap tricks.']]}
 });
 Object.assign(MIST_CAMERA,{kabutoIntro:[{zoom:1.8,yaw:.18},{zoom:1.55,yaw:-.16},{zoom:2.2,yaw:.24}],kabutoPhase:[{zoom:2.4,yaw:-.22},{zoom:1.8,yaw:.14}],kabutoEnd:[{zoom:1.9,yaw:.2},{zoom:1.55,yaw:-.12}]});
-export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0,orbitDir:1,orbitLeft:2};}
+export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,...(id==='gaara'?{cooldowns:{sandWave:0,sandCoffin:3,sandBurst:0,shukakuClaw:3,sandTsunami:7},sandShield:0,sandShieldLeft:0,shieldAt:GAARA_RULES.shieldFirst,zones:[]}:{cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0}),orbitDir:1,orbitLeft:2};}
 export function tickKabuto(b,p,clones,dt,move,hit,signal,random=Math.random){
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;b.attack=Math.max(0,b.attack-dt);
  for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
@@ -147,4 +155,35 @@ export function tickKabuto(b,p,clones,dt,move,hit,signal,random=Math.random){
  const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
  if(!b.attack){const ready=b.spec.patterns.filter(a=>(a.phase||1)<=b.phase&&b.cooldowns[a.id]<=1e-8&&d<=a.reach&&(a.id!=='heal'||b.hp<=b.maxHP*KABUTO_RULES.healThreshold&&b.healed<b.maxHP*KABUTO_RULES.healCap));const heal=ready.find(a=>a.id==='heal');const varied=ready.filter(a=>a.id!==b.lastPattern);const opts=varied.length?varied:ready;const a=heal||opts[Math.floor(random()*opts.length)];if(a){const windup=a.windup;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:windup,total:windup};b.anim={k:a.id==='heal'?'l':'j',left:windup+.25,total:windup+.25,windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
  b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.3+random()*1.4;}const desired=b.cooldowns.scalpel<.5?2.5:5,radial=Math.max(-.75,Math.min(1,(d-desired)*.6)),tan=d>8?.15:.8,dir=directionToward(v.x*radial-v.z*tan*b.orbitDir,v.z*radial+v.x*tan*b.orbitDir),x=b.x,z=b.z;move(b,dir.x*dt*b.spec.speed*(b.phase===2?KABUTO_RULES.phaseSpeed:1),dir.z*dt*b.spec.speed*(b.phase===2?KABUTO_RULES.phaseSpeed:1));b.motion=Math.hypot(b.x-x,b.z-z)>.0001;if(b.motion)b.walk+=dt*10;else b.orbitDir*=-1;
+}
+
+Object.assign(MIST_SCENES,{
+ gaaraIntro:{title:'THE SAND GUARDIAN',lines:[['Gaara','The sand protects me. Can you say the same?'],['Naruto','I have people I want to protect. That is why I fight.'],['Gaara','Then show me your strength.']]},
+ gaaraPhase:{title:'THE ONE-TAIL STIRS',lines:[['Gaara','Mother... more blood!'],['Naruto','That chakra... I know that feeling.'],['Gaara','I will crush everything!']]},
+ gaaraEnd:{title:'THE LONELY JINCHURIKI',lines:[['Gaara','Why do you keep getting back up?'],['Naruto','Because being alone is not the only way to live.'],['Gaara','... I will remember that.']]}
+});
+Object.assign(MIST_CAMERA,{gaaraIntro:[{zoom:1.9,yaw:.18},{zoom:1.6,yaw:-.16},{zoom:2.1,yaw:.2}],gaaraPhase:[{zoom:2.2,yaw:-.2},{zoom:1.7,yaw:.1},{zoom:1.5,yaw:.2,lookY:1.7}],gaaraEnd:[{zoom:1.8,yaw:.2},{zoom:1.6,yaw:-.12},{zoom:2,yaw:.12}]});
+export function absorbGaaraDamage(b,damage,signal){
+ if(!b.independent||b.id!=='gaara'||!(b.sandShield>0)||damage<=0)return damage;
+ const absorbed=Math.min(b.sandShield,damage);b.sandShield-=absorbed;signal('sandAbsorb',b,{amount:absorbed});
+ if(b.sandShield<=0){b.sandShield=0;b.sandShieldLeft=0;if(b.intent)b.cooldowns[b.intent.id]=b.intent.cooldown;b.intent=null;b.anim=null;b.attack=Math.max(b.attack,GAARA_RULES.breakRecovery);signal('sandBreak',b);}
+ return damage-absorbed;
+}
+export function sandSlow(b,p){return b?.id==='gaara'&&b.independent&&b.zones.some(z=>z.left>0&&distance(z,p)<=z.radius)?GAARA_RULES.zoneSlow:1;}
+export function tickGaara(b,p,clones,dt,move,hit,signal,random=Math.random){
+ const cfg=GAARA_RULES;
+ b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;b.attack=Math.max(0,b.attack-dt);
+ for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
+ b.zones=b.zones.filter(z=>(z.left-=dt)>1e-8);
+ b.shieldAt=Math.max(0,b.shieldAt-dt);
+ if(b.sandShieldLeft>0){b.sandShieldLeft=Math.max(0,b.sandShieldLeft-dt);if(b.sandShieldLeft<=1e-8){b.sandShieldLeft=0;b.sandShield=0;signal('sandExpire',b);}}
+ if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
+ if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;if(b.intent)b.cooldowns[b.intent.id]=b.intent.cooldown;b.intent=null;b.anim=null;b.attack=1.2;signal('gaaraPhase',b);return;}
+ if(b.shieldAt<=1e-8&&b.attack<=0&&!b.intent){b.sandShield=cfg.shieldHP;b.sandShieldLeft=cfg.shieldDuration;b.shieldAt=cfg.shieldCooldown;signal('sandShield',b);}
+ if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.cooldowns[a.id]=a.cooldown;b.attack=.65;for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&bossContains(a,q))hit(q,a.damage,b);
+  if(a.zone)b.zones.push({x:a.x,z:a.z,radius:a.radius,left:cfg.zoneDuration});signal('strike',b,a);}return;}
+ const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
+ if(!b.attack){const ready=b.spec.patterns.filter(a=>(a.phase||1)<=b.phase&&b.cooldowns[a.id]<=1e-8&&d<=a.reach),varied=ready.filter(a=>a.id!==b.lastPattern),options=varied.length?varied:ready;const a=options.find(a=>a.id==='sandTsunami')||options[Math.floor(random()*options.length)];
+  if(a){b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:a.windup,total:a.windup};b.anim={k:a.id==='shukakuClaw'?'j':'l',left:a.windup+.3,total:a.windup+.3,windup:a.windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
+ b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.6+random()*1.2;}const desired=b.phase===2?5.5:7,radial=Math.max(-1,Math.min(1,(d-desired)*.6)),tan=d>desired+3?.22:.68,dir=directionToward(v.x*radial-v.z*tan*b.orbitDir,v.z*radial+v.x*tan*b.orbitDir),x=b.x,z=b.z,speed=b.spec.speed*(b.phase===2?cfg.phaseSpeed:1);move(b,dir.x*speed*dt,dir.z*speed*dt);b.motion=Math.hypot(b.x-x,b.z-z)>.0001;if(b.motion)b.walk+=dt*speed*2.5;else b.orbitDir*=-1;
 }

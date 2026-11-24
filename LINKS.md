@@ -173,3 +173,7 @@ Animated twin Sharingan eyes + synthesized sound; enveloping violet aura with bl
 
 ## Production promotion — 2026-11-24
 v1.12i was merged to `main` via PR #27 (https://github.com/Whoisnicko/Naruto2.5D/pull/27). Tested beta tree preserved exactly at merge commit `7bb87384bded97e66cde643e5489c404fb84c9b4`. Production URL: https://naruto2-5d.pages.dev/. Cloudflare deployment could not be independently confirmed (no GitHub deployment status and public URL inaccessible from this environment); verify the in-game version label `v1.12i beta`. Previous production commit for rollback: `a5f7845018a1a442398c6f5ec89dab28f1e4fe7d`. Jiraiya remains pending. Historical beta entries above describe their original release state.
+
+
+## v1.12j — Production hotfix: frozen boss dialogue
+Reproduced the actual animation callback crash `ReferenceError: vd is not defined` during periodic boss HUD refresh; `vd` was scoped to render(), not loop(). Resolve the final duel state with valleyFinal() in HUD, register the next animation frame at loop entry, and cap paused dialogue rendering to about 30 FPS while preserving elapsed animation time. Added regression invoking scheduled frames, clicking dialogue Next, Enter, returning to gameplay and final Mega Chidori HUD. No changes to balance, save format, or finale mechanics. Production URL https://naruto2-5d.pages.dev/. Cloudflare deployment and real browser rendering not verified.

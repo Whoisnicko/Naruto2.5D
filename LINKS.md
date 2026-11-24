@@ -78,3 +78,15 @@ Misma rama y preview prevista: https://feature-v110-living-world.naruto2-5d.page
 
 ## Producción — v1.10b (24/11/2026)
 PR #23 fusionado en main: b48bde7a91ca7b0c58b96df67e806d0c270b052f. Versión verificada en index.html de main. Publicación Cloudflare: sin confirmación independiente. URL https://naruto2-5d.pages.dev/. Revisión visual en curso; versión anterior recuperable desde el historial de GitHub.
+
+## v1.10c — Regeneración del Kyūbi
+Tres colas: regeneración continua de 10 puntos de HP por segundo de simulación (10% de vida máxima), solo mientras la transformación está activa, con límite de 100 HP. Se prorratea el último frame de transformación; no revive ni cura tras expirar. Duración 14 s y demás estadísticas intactas. Disponible en campaña y sandbox; indicador +10% HP/s. Pruebas de lógica: velocidad, límite, expiración exacta y aislamiento sandbox superadas, render/audio/UI simulados. Preview prevista: https://feature-v110c-kyubi-regen.naruto2-5d.pages.dev/ (Cloudflare sin confirmar). Producción v1.10b intacta.
+Rama: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v110c-kyubi-regen
+
+## v1.10d — Corrección del color del Rasengan
+Separación de pools de sprites normal y Kyūbi para evitar contaminación de Source compartido de Three.js al reasignar map.image. Máximo ocho sprites Rasengan visibles, reutilización independiente. Tras expirar la transformación, el Rasengan en carga y los nuevos lanzamientos vuelven a celeste, tamaño normal; daño de ataque ya iniciado se conserva. Regeneración v1.10c intacta. Pruebas de lógica y de selección/reutilización de atlas superadas (render GPU real pendiente). Preview misma rama; Cloudflare sin confirmar. Producción v1.10b intacta.
+
+## v1.10e — Classic title, English and control settings
+Approved classic Team 7 title artwork tracked at assets/title-classic.png, functional HTML menu and fallback. English main UI, campaign, dialogue, item and combat strings; final visual/localization QA pending. Persistent keyboard remapping, duplicate keys swapped, defaults, arrows and touch remain supported. Normal and Kyūbi Rasengan resist ordinary damage interruption; lethal damage cancels. Retains +10% max HP/s Kyūbi regeneration and palette fix. Smoke logic tests passed with renderer/audio/UI mocked. Promotion to main requested; Cloudflare deploy requires verification.
+Production: https://naruto2-5d.pages.dev/
+GitHub: https://github.com/Whoisnicko/Naruto2.5D

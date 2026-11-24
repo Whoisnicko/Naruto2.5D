@@ -24,12 +24,12 @@ export const ITEMS={
  eliteVest:{name:'Elite vest',desc:'Advanced training gear.',icon:'vest',type:'armor',slot:'torso',rarity:'epic',maxStack:1,value:130,stats:{defense:6,chakra:1},visual:{color:'#566f91',accent:'#b5d8e4'}}
 };
 export const SKILLS={
- fists:{name:'Steel fists',branch:'Taijutsu',cost:1,level:2,desc:'+3 ataque',stats:{attack:3}},
+ fists:{name:'Steel fists',branch:'Taijutsu',cost:1,level:2,desc:'+3 attack',stats:{attack:3}},
  reflex:{name:'Ninja reflexes',branch:'Taijutsu',cost:1,level:3,requires:'fists',desc:'+8% speed and +5 percentage points critical chance',stats:{speed:.08,crit:.05}},
  focus:{name:'Chakra control',branch:'Ninjutsu',cost:1,level:2,desc:'+2 chakra per second and +10% ninjutsu damage',stats:{chakra:2,ninjutsu:.10}},
  giant:{name:'Giant Rasengan',branch:'Ninjutsu',cost:1,level:3,requires:'focus',scroll:'scroll',desc:'Unlocks Giant Rasengan: 84 damage, 32 chakra, 6 s cooldown.'},
  bond:{name:'Shadow bond',branch:'Clones',cost:1,level:2,desc:'+4 damage per clone hit',stats:{clone:4}},
- endurance:{name:'Resilient shadows',branch:'Clones',cost:1,level:3,requires:'bond',desc:'+10 vida de cada clon',cloneHP:10}
+ endurance:{name:'Resilient shadows',branch:'Clones',cost:1,level:3,requires:'bond',desc:'+10 HP per clone',cloneHP:10}
 };
 // Independent point budgets at the shared account level. Naruto's original IDs remain stable.
 export const CHARACTER_TREES={
@@ -43,11 +43,11 @@ export const CHARACTER_TREES={
   nagashi:{name:'Chidori Nagashi',branch:'Raiton',cost:1,level:3,requires:'current',scroll:'scroll',advanced:true,desc:'Unlocks area discharge, 94 damage'}
  },
  sakura:{
-  strength:{name:'Precise strength',branch:'Medical taijutsu',cost:1,level:2,desc:'+4 ataque',stats:{attack:4}},
+  strength:{name:'Precise strength',branch:'Medical taijutsu',cost:1,level:2,desc:'+4 attack',stats:{attack:4}},
   shock:{name:'Shockwave',branch:'Medical taijutsu',cost:1,level:3,requires:'strength',desc:'Seismic wave +12 base damage',mods:{f:{damage:52}}},
   medicine:{name:'Vital pulse',branch:'Medicine',cost:1,level:2,desc:'Heals 50 HP (+15)',mods:{l:{heal:50}}},
   renewal:{name:'Quick recovery',branch:'Medicine',cost:1,level:3,requires:'medicine',desc:'Healing: 6 s cooldown',mods:{l:{cd:6}}},
-  control:{name:'Precise control',branch:'Chakra',cost:1,level:2,desc:'+2 chakra/s, +1 defensa',stats:{chakra:2,defense:1}},
+  control:{name:'Precise control',branch:'Chakra',cost:1,level:2,desc:'+2 chakra/s, +1 defense',stats:{chakra:2,defense:1}},
   devastation:{name:'Devastating impact',branch:'Chakra',cost:1,level:3,requires:'control',scroll:'scroll',advanced:true,desc:'Unlocks area strike, 90 damage'}
  },
  kakashi:{

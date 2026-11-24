@@ -11,3 +11,8 @@
 
 - Rama v0.8: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v08-advanced-combat
 - Preview Cloudflare: pendiente de verificar en Deployments.
+
+- Release v0.8: https://github.com/Whoisnicko/Naruto2.5D/pull/6
+- Producción: https://naruto2-5d.pages.dev/
+- Rama v0.9: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v09-rpg-progression
+- Preview: consultar check Cloudflare del último commit de la rama.

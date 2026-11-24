@@ -5,6 +5,8 @@ import { COMBAT,stepMotion,directionToward } from './combat-data.js';
 import {prepareEnemy,roleFor,targetFor,damageModifier,tickEnemy,safeSubstitution} from './enemy-ai.js';
 import { createAudio,createFeedback } from './feedback.js';
 import { validateSave, readSave, writeSave, exportSave, importSave } from './save.js';
+import {newRPG,statsFor,equipmentVisuals,levelFor,rankFor,LOOT,QUEST_LOOT,TRAINING_LOOT,rewardItems,itemFor,moveSlot,sortInventory,discardSlot,equipSlot,unequipSlot,assignHotbar,useItem,unlockSkill,collectOverflow} from './rpg-data.js';
+import {createRPGUI} from './rpg-ui.js';
 const $=id=>document.getElementById(id), canvas=$('c'), view=createRenderer(canvas);
 const audio=createAudio(),feedback=createFeedback(view,$('damageLayer'));
 let pixels=null;try{pixels=createPixelSystem(view.scene);}catch(e){console.warn('Pixel assets fallback',e);} 
@@ -32,25 +34,30 @@ for(let i=0;i<9;i++){let z=-17+i*3.6;if(Math.abs(z+2)>4){sphere(5.1,.28,z,.55,rg
 // Ichiraku awning, fabric panels, stools and counter.
 box(-21,2.45,9.25,5.7,.15,1.5,rgb('963b32'));for(let i=0;i<5;i++){box(-23.35+i*1.17,1.98,9.95,1.08,.47,.07,rgb('d9b277'));box(-23.35+i*1.17,2.05,10.0,.14,.25,.035,rgb('963b32'))}box(-21,.92,9.7,5.1,.16,.65,C.wood);for(let i=0;i<3;i++){cone(-23+i*2,0,10.45,.14,.62,C.wood,8,.13);cone(-23+i*2,.61,10.45,.34,.13,C.roof,10,.34)}
 const bins=new Map();for(let i=0;i<mesh.length;i+=18){let x=(mesh[i]+mesh[i+6]+mesh[i+12])/3,z=(mesh[i+2]+mesh[i+8]+mesh[i+14])/3,k=Math.floor(x/20)+','+Math.floor(z/20);if(!bins.has(k))bins.set(k,[]);let a=bins.get(k);for(let j=0;j<18;j++)a.push(mesh[i+j])}const staticGeo=Array.from(bins,([key,arr])=>{let [x,z]=key.split(',').map(Number);return {...upload(arr),x:x*20+10,z:z*20+10}});
-const DATA={npc:{x:-12,z:-2,name:'Kakashi'},enemies:[{x:19,z:-2},{x:25,z:3},{x:30,z:-5},{x:36,z:8},{x:21,z:11}],skills:COMBAT.skills};let p, enemies, quest, effects, clones, projectiles, cd, running=false,quality=1,noticeUntil=0,keys=new Set(),t=0,last=performance.now(),fps=60,uiAt=0;let stepAt=0;function reset(){feedback.reset();stepAt=t;p={x:-16,z:-2,hp:100,chakra:100,xp:0,coins:0,dirX:1,dirZ:0,walk:0,hit:0};enemies=DATA.enemies.map((a,i)=>prepareEnemy({...a,id:i,hp:70,hit:0,attack:0}));quest=0;effects=[];clones=[];projectiles=[];cd={};}reset();function msg(s,sec=3){$('notice').textContent=s;noticeUntil=t+sec}function snapshot(){return validateSave({p,enemies,quest},DATA.enemies.length)}
-function applySave(s){reset();p=s.p;enemies=s.enemies.map(e=>{prepareEnemy(e);e.homeX=DATA.enemies[e.id].x;e.homeZ=DATA.enemies[e.id].z;return e;});quest=s.quest;camX=p.x;camZ=p.z;}
+const DATA={npc:{x:-12,z:-2,name:'Kakashi'},enemies:[{x:19,z:-2},{x:25,z:3},{x:30,z:-5},{x:36,z:8},{x:21,z:11}],skills:COMBAT.skills};let p, enemies, quest, effects, clones, projectiles, cd,rpg,bonus, running=false,quality=1,noticeUntil=0,keys=new Set(),t=0,last=performance.now(),fps=60,uiAt=0;let stepAt=0;function syncRPG(){bonus=statsFor(rpg);p.equipment=equipmentVisuals(rpg);}
+function reset(){feedback.reset();$('lootNotice').textContent='';stepAt=t;p={x:-16,z:-2,hp:100,chakra:100,xp:0,coins:0,dirX:1,dirZ:0,walk:0,hit:0};enemies=DATA.enemies.map((a,i)=>prepareEnemy({...a,id:i,hp:70,hit:0,attack:0}));quest=0;effects=[];clones=[];projectiles=[];cd={};rpg=newRPG();syncRPG();}reset();function msg(s,sec=3){$('notice').textContent=s;noticeUntil=t+sec}function snapshot(){return validateSave({p,enemies,quest,rpg},DATA.enemies.length)}
+function applySave(s){reset();p=s.p;enemies=s.enemies.map(e=>{prepareEnemy(e);e.homeX=DATA.enemies[e.id].x;e.homeZ=DATA.enemies[e.id].z;return e;});quest=s.quest;rpg=s.rpg;syncRPG();camX=p.x;camZ=p.z;}
 function save(silent=false){try{writeSave(snapshot());$('continue').disabled=false;if(!silent)msg('Partida guardada.');return true;}catch(e){if(!silent)msg('No se pudo guardar. Usá Exportar.');return false;}}
 function start(restore){audio.unlock();if(restore){try{const s=readSave(DATA.enemies.length);if(!s){$('error').textContent='No hay una partida guardada.';return;}applySave(s);}catch(e){$('error').textContent='Partida inválida. Podés importar un respaldo.';return;}}else reset();running=true;audio.wind(true);keys.clear();$('menu').style.display='none';$('pause').textContent='II';msg(restore?'Partida recuperada.':'Buscá a Kakashi en la plaza.');}
 $('start').onclick=()=>start(false);$('continue').onclick=()=>start(true);$('save').onclick=()=>save(false);
 $('export').onclick=()=>{try{exportSave(snapshot());msg('Respaldo de partida exportado.');}catch(e){msg('No se pudo exportar.')}};
 $('import').onclick=$('importMenu').onclick=()=>$('saveFile').click();
 $('saveFile').onchange=async e=>{try{audio.unlock();const s=await importSave(e.target.files[0],DATA.enemies.length);applySave(s);running=true;audio.wind(true);keys.clear();$('menu').style.display='none';$('pause').textContent='II';const persisted=save(true);msg(persisted?'Partida importada y guardada.':'Partida importada; almacenamiento bloqueado. Exportá para conservarla.');}catch(err){$('error').textContent='No se pudo importar: '+err.message;msg('No se pudo importar: '+err.message);}finally{e.target.value='';}};
-$('pause').onclick=()=>{running=!running;audio.wind(running);keys.clear();$('pause').textContent=running?'II':'▶';msg(running?'Continuar':'Pausa',running?2:999)};
+$('pause').onclick=()=>{if(rpgUI.opened)return;running=!running;audio.wind(running);keys.clear();$('pause').textContent=running?'II':'▶';msg(running?'Continuar':'Pausa',running?2:999)};
 $('sound').textContent=audio.enabled?'Sonido: Sí':'Sonido: No';$('sound').onclick=()=>{audio.setEnabled(!audio.enabled);audio.wind(running);$('sound').textContent=audio.enabled?'Sonido: Sí':'Sonido: No';};$('volume').value=String(Math.round(audio.volume*100));$('volume').oninput=e=>audio.setVolume(Number(e.target.value)/100);$('shake').textContent=feedback.shakeEnabled?'Impacto: Sí':'Impacto: No';$('shake').onclick=()=>{feedback.setShake(!feedback.shakeEnabled);$('shake').textContent=feedback.shakeEnabled?'Impacto: Sí':'Impacto: No';};
 $('quality').onclick=()=>{quality=quality===1?.75:quality===.75?.55:1;$('quality').textContent='Calidad: '+(quality===1?'Alta':quality===.75?'Media':'Baja');resize()};
 function resize(){view.resize(quality)}addEventListener('resize',resize);resize();
 let autosaveAt=20;addEventListener('pagehide',()=>{if($('menu').style.display==='none')save(true)});
+let wasRunning=false;function train(){if(quest!==3||dist(p,DATA.npc)>=3||enemies.some(e=>e.hp>0))return false;rpg.round++;enemies=DATA.enemies.map((a,i)=>prepareEnemy({...a,id:i,hp:70,hit:0,attack:0}));effects=[];clones=[];projectiles=[];p.hp=100;p.chakra=100;p.pending=null;p.anim=null;p.queued=false;p.combo=0;cd={};msg('Entrenamiento '+rpg.round+' · cruzá el puente');return true;}
+function changed(){syncRPG();return save(true);}
+function quick(i){if(!running||!rpg.hotbar[i])return;const err=useItem(rpg,p,rpg.hotbar[i]);if(err)msg(err);else{audio.play('reward');msg('Usaste '+itemFor(rpg.hotbar[i]).name);changed();rpgUI.hotbar();}}
+const rpgUI=createRPGUI({state:()=>({p,rpg,quest,enemies}),canOpen:()=>$('menu').style.display==='none',pause:on=>{if(on){wasRunning=running;running=false;}else running=wasRunning;keys.clear();audio.wind(running);$('pause').textContent=running?'II':'▶';},notice:s=>{$('rpgNotice').textContent=s;msg(s);},changed:()=>{$('rpgNotice').textContent=changed()?'Cambios guardados.':'Cambios aplicados. Exportá la partida para conservarlos.';},nearTrainer:()=>dist(p,DATA.npc)<3,preview:el=>{if(!pixels?.previewEquipment)return false;pixels.previewEquipment(p.equipment,el);return true;},move:(a,b)=>moveSlot(rpg,a,b),sort:()=>sortInventory(rpg),equip:i=>equipSlot(rpg,i),unequip:s=>unequipSlot(rpg,s),discard:i=>discardSlot(rpg,i),assign:(i,id)=>assignHotbar(rpg,i,id),use:(id,i)=>useItem(rpg,p,id,i),unlock:id=>unlockSkill(rpg,p.xp,id),collect:()=>collectOverflow(rpg),quick,train});
 function dist(a,b){return Math.hypot(a.x-b.x,a.z-b.z)}function move(a,dx,dz){stepMotion(a,dx,dz,blocked);}
 function hurt(e,d,source=p,skill=COMBAT.skills.j,allowCrit=false){
  if(e.hp<=0)return false;
- const critical=allowCrit&&Math.random()<COMBAT.criticalChance;
- const coordinated=source===p&&e.mark>0&&skill===COMBAT.skills[' '];
- const modifier=damageModifier(e,source,skill);const damage=Math.round(d*(critical?COMBAT.criticalMultiplier:1)*modifier*(coordinated?COMBAT.clone.synergy:1));
+ const critical=allowCrit&&Math.random()<COMBAT.criticalChance+bonus.crit;
+ const coordinated=source===p&&e.mark>0&&(skill===COMBAT.skills[' ']||skill===COMBAT.skills.g);
+ const modifier=damageModifier(e,source,skill);const base=allowCrit?d+bonus.attack:d;const ninjutsu=allowCrit&&(skill===COMBAT.skills[' ']||skill===COMBAT.skills.g||skill===COMBAT.skills.f)?1+bonus.ninjutsu:1;const damage=Math.round(base*ninjutsu*(critical?COMBAT.criticalMultiplier:1)*modifier*(coordinated?COMBAT.clone.synergy:1));
  if(coordinated){e.mark=0;msg('¡Ataque coordinado! Rasengan +25%');}
  if(e.role==='guard'&&e.guard&&skill.breakGuard){e.stagger=.9;e.guard=false;msg('¡Guardia rota!');}
  if(modifier<1)msg('Bloqueado · rodealo o rompé su guardia');
@@ -59,13 +66,13 @@ function hurt(e,d,source=p,skill=COMBAT.skills.j,allowCrit=false){
  e.kx=v.x*skill.knock*modifier;e.kz=v.z*skill.knock*modifier;e.knockTime=.14;
  effects.push({x:e.x,z:e.z,life:.3,max:.3,r:1,col:C.orange,type:'hit'});
  feedback.number(e.x,e.z,damage,critical?'critical':'normal');feedback.impact(skill.shake,skill.freeze);audio.play(skill.knock>=5?'heavy':'hit');
- if(e.hp===0){p.xp+=25;p.coins+=12;msg('+25 EXP · +12 ryō');if(quest===1&&enemies.every(e=>!e.hp)){quest=2;msg('¡Misión cumplida! Volvé con Kakashi.');audio.play('reward');}}
+ if(e.hp===0){p.xp+=25;p.coins+=12;const loot=rpg.round?TRAINING_LOOT:LOOT[e.id];$('lootNotice').textContent='Botín: '+rewardItems(rpg,loot);msg('+25 EXP · +12 ryō');if(enemies.every(e=>!e.hp)){if(quest===1){quest=2;msg('¡Misión cumplida! Volvé con Kakashi.');audio.play('reward');}else if(quest===3&&rpg.round){if(rpg.round===1)rewardItems(rpg,[['eliteVest',1]]);msg('¡Entrenamiento completado! Volvé con Kakashi.');audio.play('reward');}}}
  return true;
 }
 function playerHurt(d,source){
  if(p.invuln>0)return;
  if(p.substitution>0){const origin={x:p.x,z:p.z},dest=safeSubstitution(p,source,blocked);p.x=dest.x;p.z=dest.z;p.substitution=0;p.invuln=COMBAT.substitution.invulnerable;p.pending=null;p.anim=null;p.queued=false;p.combo=0;effects.push({...origin,life:.6,max:.6,r:1,col:C.orange,type:'substitute'});effects.push({x:p.x,z:p.z,life:.35,max:.35,r:1,col:C.orange,type:'clone'});audio.play('clone');msg('¡Kawarimi! Ataque evitado');return;}
- p.hp=Math.max(0,p.hp-d);p.hit=.2;p.flash=.12;p.invuln=.22;p.combo=0;p.queued=false;p.pending=null;p.anim=null;
+ d=Math.max(1,d-bonus.defense);p.hp=Math.max(0,p.hp-d);p.hit=.2;p.flash=.12;p.invuln=.22;p.combo=0;p.queued=false;p.pending=null;p.anim=null;
  const v=directionToward(p.x-source.x,p.z-source.z);move(p,v.x*.23,v.z*.23);
  feedback.number(p.x,p.z,d,'player');feedback.impact(.055,.035);audio.play('hurt');
  if(p.hp<=0){p.hp=100;p.chakra=100;p.x=-16;p.z=-2;p.dashTime=0;p.invuln=1;msg('Sakura te recuperó en Konoha.');}
@@ -73,9 +80,9 @@ function playerHurt(d,source){
 function substitution(){if(!running||cd.r>0||p.chakra<COMBAT.substitution.cost||p.substitution>0)return false;p.chakra-=COMBAT.substitution.cost;cd.r=COMBAT.substitution.cd;p.substitution=COMBAT.substitution.duration;msg('Kawarimi preparado · 1,8 s');audio.play('charge');return true;}
 function hitTarget(target,damage,source){if(target===p)playerHurt(damage,source);else if(target.life>0&&target.hp>0){target.hp=Math.max(0,target.hp-damage);target.flash=.14;feedback.number(target.x,target.z,damage,'player');if(target.hp===0){target.life=0;effects.push({x:target.x,z:target.z,life:.45,max:.45,r:1,col:C.orange,type:'clone'});}}}
 function enemyFire(e,intent,role){const v=directionToward(intent.x-e.x,intent.z-e.z,intent.dx,intent.dz);projectiles.push({x:e.x,z:e.z,dx:v.x,dz:v.z,life:1.1,speed:10,hostile:true,damage:role.damage,kind:'kunai'});audio.play('shuriken');}
-function interact(){if(!running)return;if(dist(p,DATA.npc)<3){if(quest===0){quest=enemies.every(e=>!e.hp)?2:1;msg('Kakashi: derrotá a los cinco renegados del bosque.',5)}else if(quest===2){quest=3;p.coins+=100;p.xp+=50;p.hp=100;audio.play('reward');msg('Kakashi: ¡bien hecho! +100 ryō, +50 EXP',5)}else msg(quest===1?'Kakashi: cruzá el puente hacia el bosque.':'Kakashi: seguí entrenando.')}else msg('Acercate a Kakashi para hablar.')}
+function interact(){if(!running)return;if(dist(p,DATA.npc)<3){if(quest===0){quest=enemies.every(e=>!e.hp)?2:1;msg('Kakashi: derrotá a los cinco renegados del bosque.',5)}else if(quest===2){quest=3;p.coins+=100;p.xp+=50;p.hp=100;$('lootNotice').textContent='Recompensa: '+rewardItems(rpg,QUEST_LOOT);audio.play('reward');msg('Kakashi: ¡bien hecho! +100 ryō, +50 EXP',5)}else msg(quest===1?'Kakashi: cruzá el puente hacia el bosque.':'Kakashi: abrí I para iniciar un nuevo entrenamiento.')}else msg('Acercate a Kakashi para hablar.')}
 function attack(k){
- if(!running||!DATA.skills[k]||p.dashTime>0)return false;
+ if(!running||!DATA.skills[k]||p.dashTime>0)return false;if(k==='g'&&!rpg.skills.includes('giant')){msg('Aprendé Rasengan gigante en P · Habilidades');return false;}
  if(p.anim||p.pending){if(k==='j'&&p.anim?.k==='j'&&p.anim.left<=.24)p.queued=true;return false;}
  if(cd[k]>0)return false;
  const base=DATA.skills[k];if(p.chakra<base.cost){msg('Chakra insuficiente');return false;}
@@ -88,7 +95,7 @@ function attack(k){
  p.chakra-=base.cost;cd[k]=Math.max(base.cd,s.duration);
  p.pending={k,s,remaining:s.windup,combo};p.anim={k,left:s.duration,total:s.duration,combo,windup:s.windup};
  p.motion=false;p.sprinting=false;
- audio.play(k===' '||k==='f'?'charge':k==='l'?'clone':'swing');
+ audio.play(k===' '||k==='f'||k==='g'?'charge':k==='l'?'clone':'swing');
  return true;
 }
 function resolveAttack(a){
@@ -98,17 +105,17 @@ function resolveAttack(a){
   const target=near[0],dir=directionToward(target?target.x-p.x:p.dirX,target?target.z-p.z:p.dirZ);
   projectiles.push({x:p.x,z:p.z,dx:dir.x,dz:dir.z,life:k==='f'?1:.65,speed:k==='f'?14:18,kind:k==='f'?'wind':'shuriken',damage:s.damage,pierce:k==='f',hits:new Set()});audio.play(k==='f'?'rasengan':'shuriken');
  }else if(k==='l'){
-  for(let i=0;i<2;i++){const x=p.x+(i?1:-1),z=p.z+1;clones.push({x:blocked(x,z)?p.x:x,z:blocked(x,z)?p.z:z,life:5,hp:COMBAT.clone.hp,hit:0,walk:0});}
+  for(let i=0;i<2;i++){const x=p.x+(i?1:-1),z=p.z+1;clones.push({x:blocked(x,z)?p.x:x,z:blocked(x,z)?p.z:z,life:5,hp:COMBAT.clone.hp+bonus.cloneHP,maxHP:COMBAT.clone.hp+bonus.cloneHP,hit:0,walk:0});}
   msg('¡Kage Bunshin no Jutsu!');audio.play('clone');
  }else{
-  if(k===' '){
+  if(k===' '||k==='g'){
    const target=near[0];const v=directionToward(target?target.x-p.x:p.dirX,target?target.z-p.z:p.dirZ);p.dirX=v.x;p.dirZ=v.z;
    const lunge=target?Math.min(1.05,Math.max(0,dist(p,target)-.8)):.6;
    move(p,v.x*lunge,v.z*lunge);audio.play('rasengan');
    near=enemies.filter(e=>e.hp>0&&dist(p,e)<s.range).sort((a,b)=>dist(p,a)-dist(p,b));
   }
-  effects.push({x:p.x+p.dirX*.8,z:p.z+p.dirZ*.8,life:k===' '?.65:.22,max:k===' '?.65:.22,r:k===' '?3:1.5,col:k===' '?C.blue:C.orange,type:k===' '?'rasengan':combo===3?'heavy':'hit'});
-  for(const e of near.slice(0,k===' '?5:1))hurt(e,s.damage,p,s,true);
+  effects.push({x:p.x+p.dirX*.8,z:p.z+p.dirZ*.8,life:k==='g'?.9:k===' '?.65:.22,max:k==='g'?.9:k===' '?.65:.22,r:k==='g'?4.6:k===' '?3:1.5,col:k===' '||k==='g'?C.blue:C.orange,type:k==='g'?'giant':k===' '?'rasengan':combo===3?'heavy':'hit'});
+  for(const e of near.slice(0,k===' '||k==='g'?5:1))hurt(e,s.damage,p,s,true);
  }
 }
 function dash(){
@@ -121,7 +128,7 @@ function dash(){
  return true;
 }
 const mapKey=k=>({arrowup:'w',arrowdown:'s',arrowleft:'a',arrowright:'d'}[k]||k);
-addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName))return;const k=mapKey(e.key.toLowerCase());if(['w','a','s','d',' ','shift','q','j','k','l','e','r','f'].includes(k))e.preventDefault();keys.add(k);if(!e.repeat){if(k==='e')interact();else if(k==='q')dash();else if(k==='r')substitution();else attack(k);}});
+addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName))return;const k=mapKey(e.key.toLowerCase());if(k==='escape'&&rpgUI.opened){e.preventDefault();rpgUI.close();return;}if(!e.repeat&&(k==='i'||k==='p')){e.preventDefault();rpgUI.toggle(k==='i'?'inventory':'skills');return;}if(rpgUI.opened)return;if(!e.repeat&&['1','2','3'].includes(k)){e.preventDefault();quick(Number(k)-1);return;}if(['w','a','s','d',' ','shift','q','j','k','l','e','r','f','g'].includes(k))e.preventDefault();keys.add(k);if(!e.repeat){if(k==='e')interact();else if(k==='q')dash();else if(k==='r')substitution();else attack(k);}});
 addEventListener('keyup',e=>keys.delete(mapKey(e.key.toLowerCase())));
 addEventListener('blur',()=>keys.clear());
 document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{audio.unlock();b.dataset.s==='q'?dash():b.dataset.s==='r'?substitution():attack(b.dataset.s);});
@@ -136,10 +143,10 @@ function update(dt){
   const delta=Math.min(dt,p.dashTime);move(p,p.dirX*COMBAT.dash.speed*delta,p.dirZ*COMBAT.dash.speed*delta);p.dashTime=Math.max(0,p.dashTime-dt);p.motion=true;p.sprinting=true;p.walk+=dt*24;
  }else{
   p.motion=Boolean(dx||dz)&&!p.pending;p.sprinting=p.motion&&keys.has('shift');
-  if(p.motion){const v=directionToward(dx,dz),speed=p.sprinting?8:5;p.dirX=v.x;p.dirZ=v.z;move(p,v.x*speed*dt,v.z*speed*dt);p.walk+=dt*speed*2;if(t>=stepAt){audio.play('step');stepAt=t+(p.sprinting?.17:.28);}}
+  if(p.motion){const v=directionToward(dx,dz),speed=(p.sprinting?8:5)*(1+bonus.speed);p.dirX=v.x;p.dirZ=v.z;move(p,v.x*speed*dt,v.z*speed*dt);p.walk+=dt*speed*2;if(t>=stepAt){audio.play('step');stepAt=t+(p.sprinting?.17:.28);}}
   else p.walk=0;
  }
- p.chakra=Math.min(100,p.chakra+dt*8);
+ p.chakra=Math.min(100,p.chakra+dt*(8+bonus.chakra));
  if(p.pending){p.pending.remaining-=dt;if(p.pending.remaining<=0){const a=p.pending;p.pending=null;resolveAttack(a);}}
  if(p.anim){p.anim.left-=dt;if(p.anim.left<=0)p.anim=null;}
  if(p.queued&&!p.anim&&!p.pending&&!(cd.j>0)){p.queued=false;attack('j');}
@@ -153,7 +160,7 @@ function update(dt){
  for(const c of clones){
   if(c.life<=0||c.hp<=0)continue;c.life-=dt;c.hit-=dt;c.flash=Math.max(0,(c.flash||0)-dt);if(c.anim){c.anim.left-=dt;if(c.anim.left<=0)c.anim=null;}c.motion=false;
   const e=enemies.filter(e=>e.hp>0&&dist(c,e)<14).sort((a,b)=>dist(c,a)-dist(c,b))[0];
-  if(e){const d=dist(c,e);if(d>1.1){c.motion=true;const v=directionToward(e.x-c.x,e.z-c.z);c.dirX=v.x;c.dirZ=v.z;move(c,v.x*5*dt,v.z*5*dt);c.walk+=dt*10;}else if(c.hit<=0){e.mark=COMBAT.clone.markDuration;hurt(e,COMBAT.clone.damage,c,{...COMBAT.skills.j,knock:COMBAT.clone.knock,freeze:.018,shake:.018});c.hit=.65;c.anim={k:'j',left:.3,total:.3};}}
+  if(e){const d=dist(c,e);if(d>1.1){c.motion=true;const v=directionToward(e.x-c.x,e.z-c.z);c.dirX=v.x;c.dirZ=v.z;move(c,v.x*5*dt,v.z*5*dt);c.walk+=dt*10;}else if(c.hit<=0){e.mark=COMBAT.clone.markDuration;hurt(e,COMBAT.clone.damage+bonus.clone,c,{...COMBAT.skills.j,knock:COMBAT.clone.knock,freeze:.018,shake:.018});c.hit=.65;c.anim={k:'j',left:.3,total:.3};}}
  }
  clones=clones.filter(c=>c.life>0&&c.hp>0);
  for(const a of projectiles){
@@ -187,8 +194,8 @@ function render(dt,animDt=dt){
   for(const ch of staticGeo)ch.obj.visible=Math.abs(ch.x-camX)<spanX+20&&Math.abs(ch.z-camZ)<42;
   mesh=[];pixels?.begin();
   function actor(a,kind){const visual=kind==='enemy'?(a.role==='guard'?'guard':a.role==='thrower'?'thrower':'enemy'):kind;if(!pixels?.show(a,visual,running?animDt:0))ninja(a,kind);else{
-    if(kind==='enemy'){box(a.x,2.08,a.z,.7,.07,.07,rgb('543f3c'));box(a.x-(70-a.hp)/70*.35,2.09,a.z,.7*a.hp/70,.08,.08,rgb('e46b51'))}
-    if(kind==='clone'){box(a.x,2.03,a.z,.55,.045,.06,rgb('405566'));box(a.x-(COMBAT.clone.hp-a.hp)/COMBAT.clone.hp*.275,2.04,a.z,.55*a.hp/COMBAT.clone.hp,.05,.06,C.blue);}if(kind==='npc'&&quest!==3){let y=2.5+Math.sin(t*3)*.12;cone(a.x,y,a.z,.19,.26,rgb('ffd162'),4);cone(a.x,y-.26,a.z,.01,.26,rgb('ffd162'),4,.19)}
+    if(kind==='enemy'){box(a.x,2.08,a.z,.7,.07,.07,rgb('543f3c'));box(a.x-(70-a.hp)/70*.35,2.09,a.z,.7*a.hp/70,.08,.08,rgb('e46b51'));if(a.guard)ring(a.x,.06,a.z,.76,.10,rgb('e4c16c'),16);if(a.mark>0)ring(a.x,.065,a.z,.9,.09,rgb('6ee8ff'),16);if(a.intent){const role=roleFor(a);if(a.role==='thrower')limb([a.x,.045,a.z],[a.intent.x,.045,a.intent.z],.055,role.color,4);else ring(a.x,.045,a.z,role.radius,.085,role.color,24);}}
+    if(kind==='clone'){box(a.x,2.03,a.z,.55,.045,.06,rgb('405566'));box(a.x-((a.maxHP||COMBAT.clone.hp)-a.hp)/(a.maxHP||COMBAT.clone.hp)*.275,2.04,a.z,.55*a.hp/(a.maxHP||COMBAT.clone.hp),.05,.06,C.blue);}if(kind==='npc'&&quest!==3){let y=2.5+Math.sin(t*3)*.12;cone(a.x,y,a.z,.19,.26,rgb('ffd162'),4);cone(a.x,y-.26,a.z,.01,.26,rgb('ffd162'),4,.19)}
   }}
   actor(p,'player');if(dist(p,DATA.npc)<35)actor(DATA.npc,'npc');for(const e of enemies)if(e.hp>0&&dist(p,e)<35)actor(e,'enemy');for(const c of clones)actor(c,'clone');
   pixels?.end();view.drawActors(mesh);mesh=[];
@@ -199,4 +206,4 @@ function render(dt,animDt=dt){
   view.drawEffects(mesh);const offset=feedback.offset();view.frame(camX+offset.x,camZ+offset.z);feedback.updateNumbers(running?dt:0);
 }
 $('error').textContent='';$('start').disabled=false;$('importMenu').disabled=false;try{$('continue').disabled=!readSave(DATA.enemies.length);}catch(e){$('continue').disabled=true;$('error').textContent='Guardado anterior inválido o almacenamiento bloqueado. Podés importar un respaldo.';}
-function loop(now){let real=Math.max(.001,(now-last)/1000),dt=Math.min(.05,real);last=now;fps=fps*.95+(.05/real);let animDt=0;if(running){const frozen=feedback.frozen;feedback.tick(real);if(!frozen){update(dt);animDt=dt;}if(t>=autosaveAt){autosaveAt=t+20;save(true);}}render(dt,animDt);if(now>uiAt){uiAt=now+200;if(running&&t>noticeUntil){let hint=dist(p,DATA.npc)<3?'E · Hablar con Kakashi':'Q · Esquivar   |   R · Kawarimi   |   F · Fūma';if($('notice').textContent!==hint)$('notice').textContent=hint;}$('fps').textContent=Math.round(fps)+' FPS · Pixel Anime · v0.8'+(view.renderer?.info?.render?' · '+view.renderer.info.render.calls+' draw calls':'');for(const el of document.querySelectorAll('[data-s]')){let sk=el.dataset.s==='q'?COMBAT.dash:el.dataset.s==='r'?COMBAT.substitution:DATA.skills[el.dataset.s],wait=cd[el.dataset.s]||0;el.style.opacity=wait>0?.55:p.chakra<sk.cost?.65:1;const label=el.querySelector('em');if(label)label.textContent=wait>0?wait.toFixed(1)+' s':el.dataset.name||label.textContent;}$('tactics').textContent=p.substitution>0?'KAWARIMI · '+p.substitution.toFixed(1)+' s':clones.length?'Clones activos: '+clones.length:'';$('combo').textContent=p.combo?'COMBO '+p.combo+' / 3 · '+COMBAT.combos[p.combo-1].name:'';$('hp').style.width=p.hp+'%';$('chakra').style.width=p.chakra+'%';$('stats').textContent='Nivel '+(1+Math.floor(p.xp/100))+' · '+p.coins+' ryō';$('qdesc').textContent=['Buscá a Kakashi en la plaza.','Derrotá renegados: '+enemies.filter(e=>!e.hp).length+'/5. Cruzá el puente al este.','Volvé con Kakashi.','¡Misión completada!'][quest];}requestAnimationFrame(loop)}requestAnimationFrame(loop);
+function loop(now){let real=Math.max(.001,(now-last)/1000),dt=Math.min(.05,real);last=now;fps=fps*.95+(.05/real);let animDt=0;if(running){const frozen=feedback.frozen;feedback.tick(real);if(!frozen){update(dt);animDt=dt;}if(t>=autosaveAt){autosaveAt=t+20;save(true);}}render(dt,animDt);if(now>uiAt){uiAt=now+200;if(running&&t>noticeUntil){let hint=dist(p,DATA.npc)<3?'E · Hablar con Kakashi':'Q · Esquivar   |   R · Kawarimi   |   F · Fūma';if($('notice').textContent!==hint)$('notice').textContent=hint;}$('fps').textContent=Math.round(fps)+' FPS · Pixel Anime · v0.9'+(view.renderer?.info?.render?' · '+view.renderer.info.render.calls+' draw calls':'');for(const el of document.querySelectorAll('[data-s]')){let sk=el.dataset.s==='q'?COMBAT.dash:el.dataset.s==='r'?COMBAT.substitution:DATA.skills[el.dataset.s],wait=cd[el.dataset.s]||0;el.style.opacity=wait>0?.55:p.chakra<sk.cost?.65:1;const label=el.querySelector('em');if(label)label.textContent=wait>0?wait.toFixed(1)+' s':el.dataset.name||label.textContent;}$('tactics').textContent=p.substitution>0?'KAWARIMI · '+p.substitution.toFixed(1)+' s':clones.length?'Clones activos: '+clones.length:'';$('combo').textContent=p.combo?'COMBO '+p.combo+' / 3 · '+COMBAT.combos[p.combo-1].name:'';$('hp').style.width=p.hp+'%';$('chakra').style.width=p.chakra+'%';$('stats').textContent=rankFor(p.xp)+' · Nivel '+levelFor(p.xp)+' · '+p.coins+' ryō';$('xpFill').style.width=(p.xp%100)+'%';$('giantSkill').hidden=!rpg.skills.includes('giant');rpgUI.hotbar();$('qdesc').textContent=['Buscá a Kakashi en la plaza.','Derrotá renegados: '+enemies.filter(e=>!e.hp).length+'/5. Cruzá el puente al este.','Volvé con Kakashi.',(rpg.round&&enemies.some(e=>e.hp>0)?'Entrenamiento '+rpg.round+' · '+enemies.filter(e=>!e.hp).length+'/5':'¡Misión completada! · Entrená con Kakashi')][quest];}requestAnimationFrame(loop)}requestAnimationFrame(loop);

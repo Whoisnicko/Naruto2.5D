@@ -7,6 +7,7 @@ export const COMBAT={
   j:{cost:0,cd:.35,range:2,damage:25,windup:.095,duration:.32,knock:2.4,freeze:.035,shake:.045},
   k:{cost:8,cd:.45,range:10,damage:24,windup:.11,duration:.32,knock:1.8,freeze:.025,shake:.025},
   l:{cost:25,cd:5,range:8,damage:32,windup:.23,duration:.55,knock:1.2,freeze:.025,shake:.025},
+  g:{cost:32,cd:6,range:4.6,damage:84,windup:.42,duration:.88,knock:9,freeze:.09,shake:.23,breakGuard:true},
   f:{cost:22,cd:3.2,range:12,damage:34,windup:.25,duration:.55,knock:3.4,freeze:.05,shake:.08,breakGuard:true},
   ' ':{cost:20,cd:1.6,range:3.5,damage:60,windup:.26,duration:.65,knock:7,freeze:.075,shake:.18,breakGuard:true}
  },

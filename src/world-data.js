@@ -62,8 +62,10 @@ export const DIALOGUES={
  {label:'Informar ruta explorada',action:'finish',quest:'scouting',when:'scoutingActive'},
  {label:'Hasta luego',action:'close'}]}
 };
-export const DAY_SECONDS=240;
-export function newWorld(){return {opened:[],quests:{supplies:0,scouting:0,village:0},visited:[],clock:60,defeated:[]};}
+// Keep the v11 save clock range 0..240, but advance at 2/3 unit per real simulation second.
+export const DAY_SECONDS=240,DAY_RATE=2/3,PHASE_UNITS=80;
+export function dayPhase(clock){const q=((clock%DAY_SECONDS)+DAY_SECONDS)%DAY_SECONDS,i=Math.floor(q/PHASE_UNITS);return {id:['day','sunset','night'][i],name:['Día','Atardecer','Noche'][i],remaining:Math.ceil((PHASE_UNITS-q%PHASE_UNITS)/DAY_RATE)};}
+export function newWorld(){return {opened:[],quests:{supplies:0,scouting:0,village:0},visited:[],clock:0,defeated:[]};}
 export function validateWorld(raw,legacy=false,legacyRegion=legacy){
  if(!raw||!Array.isArray(raw.opened)||!Array.isArray(raw.visited)||!raw.quests||!Number.isFinite(raw.clock)||raw.clock<0||raw.clock>=DAY_SECONDS)throw Error('Estado del mundo inválido.');
  const unique=(a,valid)=>{if(new Set(a).size!==a.length||a.some(k=>!valid.includes(k)))throw Error('Registro del mundo inválido.');return [...a];};
@@ -83,7 +85,7 @@ export function sellPrice(id){return Math.max(1,Math.floor(buyPrice(id)*.5));}
 export function buyItem(rpg,p,shop,id){if(!SHOPS[shop]?.includes(id))return 'No está a la venta.';const price=buyPrice(id);if(p.coins<price)return 'Ryō insuficientes.';if(addItem(rpg,id,1,false))return 'Mochila llena.';p.coins-=price;return null;}
 export function sellItem(rpg,p,id){const item=itemFor(id);if(!item||item.type==='key'||item.type==='scroll')return 'Objeto de misión: no se vende.';if(!removeItem(rpg,id))return 'No tenés ese objeto.';p.coins+=sellPrice(id);return null;}
 export function healPlayer(p){if(p.hp===100&&p.chakra===100)return 'Ya estás recuperado.';if(p.coins<15)return 'Necesitás 15 ryō.';p.coins-=15;p.hp=p.chakra=100;return null;}
-export function worldTime(clock){const h=Math.floor(clock/DAY_SECONDS*24);return String(h).padStart(2,'0')+':'+String(Math.floor(clock/DAY_SECONDS*1440)%60).padStart(2,'0');}
+export function worldTime(clock){const q=((clock%DAY_SECONDS)+DAY_SECONDS)%DAY_SECONDS,i=Math.floor(q/PHASE_UNITS),f=q%PHASE_UNITS/PHASE_UNITS,minutes=Math.floor(([6,16,20][i]+[10,4,10][i]*f)*60+1e-8)%1440;return String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');}
 
 // Living World data. Existing save schema is unchanged; routes/weather derive from clock.
 export const NPC_ROUTES={
@@ -94,7 +96,7 @@ export const NPC_ROUTES={
  iruka:[[0,0],[-1.3,0],[-1.3,.8],[0,.8]]
 };
 export function npcDestination(n,clock){
- const route=NPC_ROUTES[n.id]||[[0,0]],index=Math.floor(clock/60)%route.length,[dx,dz]=route[index];return {x:n.homeX+dx,z:n.homeZ+dz,activity:['Descanso','Trabajo','Recorrido','Regreso'][index]||'Descanso'};
+ const route=NPC_ROUTES[n.id]||[[0,0]],index=(1+Math.floor(clock/40))%route.length,[dx,dz]=route[index];return {x:n.homeX+dx,z:n.homeZ+dz,activity:['Descanso','Trabajo','Recorrido','Regreso'][index]||'Descanso'};
 }
 export const INTERIORS=[
  {id:'academy',name:'Academia ninja',door:{x:-11.6,z:-14.5},x:-180,z:0,npc:'iruka',floor:'b49b74',wall:'e2cf9c',furniture:[[-3,-2,2.3,1.1,'desk'],[1.5,-2,2.3,1.1,'desk'],[-3,1,2.3,1.1,'desk'],[1.5,1,2.3,1.1,'desk']]},
@@ -106,6 +108,6 @@ export const WEATHER={
 };
 export function weatherAt(clock){return clock>=105&&clock<145?'rain':clock>=145&&clock<185?'fog':clock>=185&&clock<215?'storm':'clear';}
 export const WORLD_EVENTS={
- ambush:{name:'Emboscada renegada',duration:45,reward:45,xp:50,roles:['striker','caster','assassin']},
- cache:{name:'Suministros perdidos',duration:55,reward:30,xp:25,loot:[['ramen',1],['pill',1]]}
+ ambush:{name:'Emboscada shinobi',banner:'EMBOSCADA SHINOBI',objective:'Derrotá a los tres ninjas renegados',duration:45,reward:45,xp:50,roles:['striker','caster','assassin']},
+ cache:{name:'Suministros perdidos',banner:'SUMINISTROS PERDIDOS',objective:'Encontrá la carga y presioná E',duration:55,reward:30,xp:25,loot:[['ramen',1],['pill',1]]}
 };

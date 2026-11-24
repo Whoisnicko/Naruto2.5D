@@ -26,6 +26,8 @@ export const CHESTS=[
  {id:'trap',name:'Cofre sospechoso',x:18,z:5,type:'trap',damage:18,loot:[['pill',2],['bandage',2]],coins:25}
 ];
 export const LANDMARKS=[
+ {id:'examforest',name:'Bosque de la muerte',x:-9,z:32,r:8},
+ {id:'examring',name:'Arena Chūnin',x:-29,z:32,r:9},
  {id:'eastroad',name:'Sendero de la frontera',x:62,z:-2,r:5},
  {id:'shrine',name:'Santuario abandonado',x:80,z:0,r:5},
  {id:'ruins',name:'Ruinas del viento',x:102,z:0,r:6},

@@ -363,3 +363,25 @@ console.log('PASS v1.15b: performance defaults, bounded adaptation, recovery, di
  const full=renderApi.arrays(6),fast=renderApi.dynamicArrays(6);renderApi.fill(full,raw);renderApi.fillDynamic(fast,raw);assert.equal(JSON.stringify([...full.pos]),JSON.stringify([...fast.pos]));assert.equal(JSON.stringify([...full.col]),JSON.stringify([...fast.col]));assert(!fast.norm&&!fast.uv);
 }
 console.log('PASS v1.15b: 60 FPS cap at simulated 144 Hz, independent simulation, dynamic vertex buffer equivalence.');
+
+// v1.15c: actual dispatch, dash strike, bounded directional assistance and safe links.
+{
+ const press=key=>handlers.keydown({key,repeat:false,preventDefault(){}});
+ const release=key=>handlers.keyup({key});
+ const tap=k=>{press(k);release(k);};
+ const assist=value=>node('perfAssist').onchange({target:{checked:value}});
+ function setup(x=18,z=-2,ex=20.3,ez=-2){game.start(false);const p=game.state.p,e=game.state.enemies[0];p.x=x;p.z=z;p.dirX=1;p.dirZ=0;e.x=ex;e.z=ez;e.attack=100;e.stagger=100;for(const o of game.state.enemies.slice(1))o.hp=0;for(const o of game.state.patrols)o.hp=0;return {p,e};}
+ const a={x:0,z:0},front={x:2,z:.3,hp:10},rear={x:-.4,z:0,hp:10},side={x:.2,z:1,hp:10};
+ assert.equal(combat.chooseAttackTarget(a,[rear,side,front],{x:1,z:0},3),front);assert.equal(combat.chooseAttackTarget(a,[front],{x:1,z:0},3,.7,()=>false),null);
+ assist(true);
+ {const {p,e}=setup(17,-2,20.3,-2);tap('q');assert(p.dashTime>0);tap('j');assert(p.pending.s.dashStrike);assert.equal(p.pending.s.damage,21);assert(p.dashStrikeUsed);assert.equal(game.cd.j,.35);sim(.12);assert.equal(e.hp,49);tap('j');sim(.10);assert.equal(e.hp,49);assert.equal(p.dashTime,0);assert(Math.abs(p.x-20.23)<.001,'dash distance unchanged');assert(Math.abs(p.z+2)<.001);}
+ {const {p,e}=setup(18,-2,20,-1.1);tap('j');assert(p.dirZ>0);assert(p.x>18);sim(.12);assert.equal(e.hp,45);}
+ assist(false);
+ {const {p,e}=setup(18,-2,20,-1.1);tap('j');assert.equal(p.dirZ,0);assert.equal(p.x,18);sim(.12);assert.equal(e.hp,70);}
+ {const {e}=setup(18,-2,17,-2);tap('j');sim(.12);assert.equal(e.hp,70,'no hit behind player');}
+ {const {p}=setup();tap('j');sim(.25);tap('k');assert.equal(p.pending.k,'k');assert(game.cd.j>0);assert(game.cd.k>0);}
+ {const {p,e}=setup(17,-2,20.3,-2);tap('q');tap('j');handlers.blur();assert(!p.pending);sim(.3);assert.equal(e.hp,70);}
+ {const {p}=setup();game.cd.j=.3;tap('q');tap('j');assert(!p.pending);assert(!p.dashStrikeUsed);}
+ assist(true);
+}
+console.log('PASS v1.15c: dash strike damage/cooldowns/distance/once per dash, assist toggle, no rear strike, recovery links and focus cancellation.');

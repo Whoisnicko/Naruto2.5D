@@ -75,3 +75,6 @@ Preview prevista: https://feature-v110-living-world.naruto2-5d.pages.dev/ (despl
 
 ## v1.10b
 Misma rama y preview prevista: https://feature-v110-living-world.naruto2-5d.pages.dev/ (despliegue sin confirmar). Producción v1.9 intacta.
+
+## Producción — v1.10b (24/11/2026)
+PR #23 fusionado en main: b48bde7a91ca7b0c58b96df67e806d0c270b052f. Versión verificada en index.html de main. Publicación Cloudflare: sin confirmación independiente. URL https://naruto2-5d.pages.dev/. Revisión visual en curso; versión anterior recuperable desde el historial de GitHub.

@@ -35,7 +35,7 @@ export function tickEnemy(e,p,clones,dt,move,fire,hit,blocked=()=>false){
   if(Math.hypot(x-e.x,z-e.z)>.3){move(e,dir.x*dt*.85,dir.z*dt*.85);e.dirX=dir.x;e.dirZ=dir.z;e.motion=true;e.walk=(e.walk||0)+dt*4;}return;
  }
  e.dirX=v.x;e.dirZ=v.z;e.guard=e.role==='guard'&&e.attack>0;e.ai=e.guard?'guard':'chase';
- if(e.role==='thrower'&&d<3.5){e.ai='retreat';e.motion=true;move(e,-v.x*r.speed*dt,-v.z*r.speed*dt);e.walk=(e.walk||0)+dt*8;return;}
+ if(e.role==='thrower'&&d<3.5&&e.attack>0){e.ai='retreat';e.motion=true;move(e,-v.x*r.speed*dt,-v.z*r.speed*dt);e.walk=(e.walk||0)+dt*8;return;}
  if(d<=r.reach&&e.attack<=0){
   e.guard=false;e.ai='windup';e.intent={left:r.windup,total:r.windup,x:target.x,z:target.z,dx:v.x,dz:v.z};e.pendingAttack=r.windup;
   e.anim={k:e.role==='thrower'?'k':'j',left:r.windup+.18,total:r.windup+.18,windup:r.windup};return;

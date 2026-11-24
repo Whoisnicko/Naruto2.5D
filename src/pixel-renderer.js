@@ -83,14 +83,15 @@ export function createPixelSystem(scene){
   setFrame(item,anim.col,row);
   item.obj.center.set(.5,a.fallen?.5:0);item.material.rotation=a.fallen?-Math.PI/2:0;item.obj.position.set(a.x,a.fallen?.28:.035+(a.air||0),a.z);item.shadow.position.set(a.x,.024,a.z);item.shadow.scale.set(kind==='whiteSerpent'?2:kind==='shukaku'?1.85:1,kind==='whiteSerpent'?2:kind==='shukaku'?1.85:1,1);
   item.material.opacity=a.waterClone?.66:kind==='clone'?.84:1;item.material.color.setHex(a.shieldLeft>0?0xa5e5ff:a.waterClone?0x79d5ee:a.kyubiLeft>0||a.kyubi?0xffb8a0:a.flash>0?0xffe8cb:a.guard?0xffd98b:a.substitution>0?0xc9f1e4:a.hit>0&&!a.anim?0xffc1a3:a.patrol||a.temporary?(roleFor(a).tint||0xffffff):0xffffff);item.material.opacity=a.invuln>0&&kind==='player'?.75:a.role==='assassin'&&a.ai==='flank'?.55:item.material.opacity;
+  if(['sasukeSharingan','sasukeMarked','sasukeCursed'].includes(kind)&&a.sprinting&&dt>0&&item.clock-item.trailAt>.075){item.trailAt=item.clock;spawnTrail(a,row,true);}
   if(kind==='player'){hero={actor:a,row,item};if(characterFor(a.character).art==='player'&&a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>(a.dashTime>0?.035:.085)){item.trailAt=item.clock;spawnTrail(a,row);}if(characterFor(a.character).art==='player'&&a.anim&&a.anim!==item.lastAnim&&a.anim.k==='j')spawnTrail(a,row);item.lastAnim=a.anim||null;}
   return true;
  }
  function end(){for(const [a,item] of active)if(item.seen!==generation){item.obj.visible=item.shadow.visible=false;active.delete(a);free[item.kind].push(item);}}
- function spawnTrail(a,row){
+ function spawnTrail(a,row,valley=false){
   let t=trails.find(o=>o.life<=0);
   if(!t){if(trails.length>=8)return;t=sprite(maps.smear,3,4,2.4,2.4,true,.5);t.material.depthWrite=false;scene.add(t.obj);trails.push(t);}
-  t.life=.18;t.material.color.setHex(a.kyubiLeft>0?0xe94c38:0xffffff);t.rowDir=row;t.obj.visible=true;t.obj.position.set(a.x-(a.dirX||0)*.45,.035,a.z-(a.dirZ||0)*.45);
+  t.life=.18;t.material.color.setHex(valley?0xc1a5f2:a.kyubiLeft>0?0xe94c38:0xffffff);t.rowDir=row;t.obj.visible=true;t.obj.position.set(a.x-(a.dirX||0)*.45,.035,a.z-(a.dirZ||0)*.45);
  }
  function drawTrails(dt){
   for(const tr of trails){if(tr.life<=0){tr.obj.visible=false;continue;}tr.life=Math.max(0,tr.life-dt);tr.obj.visible=tr.life>0;
@@ -148,7 +149,7 @@ export function createPixelSystem(scene){
   }
   for(const c of clones){if(c.life>4.58)add('clone',c.x,.95,c.z,2.8,Math.floor(clamp((5-c.life)/.42,0,.999)*8),.9,0,!!c.kyubi);}
   for(const a of projectiles){
-   if(a.kind==='sandShuriken'||a.kind==='boneBullet'||a.kind==='valleyBlade')continue;
+   if(a.kind==='sandShuriken'||a.kind==='boneBullet'||a.kind==='valleyBlade'||a.kind==='valleyInferno'||a.kind==='valleyEmber')continue;
    const type=a.kind==='water'?'dragon':a.kind==='iceNeedle'?'ice':['fire','lightning','wind'].includes(a.kind)?a.kind:a.hostile?'kunai':'shuriken',elemental=['dragon','fire','lightning','wind'].includes(type),f=Math.floor(t*25)%8,angle=Math.atan2(-a.dz*.64,a.dx);
    add(type,a.x,.83,a.z,elemental?(type==='dragon'?(a.homing?4.2:3.2):2.2):a.kind==='iceNeedle'?.75:.75,f,1,elemental||a.kind==='iceNeedle'?angle:Math.atan2(-a.dx,-a.dz*.64),!!a.kyubi);
    if(elemental)accents.push(()=>{const tail=type==='fire'?'firetrail':type==='dragon'?'water':type;add(tail,a.x-a.dx*.85,.8,a.z-a.dz*.85,1.8,f,.6,angle,!!a.kyubi);if(quality===1)add('sparks',a.x-a.dx*1.4,.8,a.z-a.dz*1.4,1.3,f,.45,0,!!a.kyubi);});

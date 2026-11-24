@@ -59,3 +59,6 @@ Rama `feature/v15-final-polish`. Exportar partida antes de probar. Probar dos gu
 
 ## v1.6a beta
 Rama `feature/v16a-rasengan`. Probar Naruto con Espacio en cuatro direcciones, al aire y contra enemigos, equipo visible y FPS alta/media/baja. Sprite Lab: Naruto + Rasengan, exportar atlas real. `node tests/smoke.mjs`. No fusionar hasta aprobar estética. Producción v1.5, rollback de código `backup/production-v13-before-v15`.
+
+## v1.7 beta
+Rama `feature/v17-kyubi-awakening`. Entrar en Sandbox con Naruto, pulsar Kyūbi · 15 s, probar J a distancia, Espacio y G cargables, renovar modo y salir. En campaña T al llenar medidor; G requiere árbol. Guardado v11. `node tests/smoke.mjs`. Validar visual/FPS antes de fusionar.

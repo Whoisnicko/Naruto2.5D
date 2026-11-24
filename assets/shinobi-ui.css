@@ -1,0 +1,73 @@
+/* Shinobi Premium HUD. Separate presentation layer; no gameplay dependencies. */
+:root{--shinobi-bg:#172521f2;--shinobi-deep:#101d1c;--shinobi-gold:#b69b6c;--shinobi-ink:#f0e1c5;--shinobi-muted:#b6bfb2;--shinobi-accent:#e6a45f;--shinobi-line:#6e6650;--hud-gap:12px;--hero-width:236px;--quest-width:224px}
+#hud{color:var(--shinobi-ink);font-size:12px}
+#top,#quest,#bossHUD,#notice,#tools,#combatDock,#sandboxPanel{background:linear-gradient(135deg,var(--shinobi-bg),#101b1bf5);border:1px solid var(--shinobi-gold);box-shadow:0 3px 12px #0005;border-radius:5px}
+#top{left:var(--hud-gap);top:var(--hud-gap);width:var(--hero-width);padding:10px;max-height:calc(100dvh - 210px);overflow:auto;pointer-events:auto}
+.hero-head{display:flex;align-items:center;gap:9px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #6e665088}
+.portrait-frame,.boss-portrait-frame{flex:none;display:grid;place-items:center;width:54px;height:48px;background:linear-gradient(140deg,#485449,#1c2b2a);border:1px solid var(--shinobi-gold);overflow:hidden;border-radius:3px}
+#heroPortrait{width:54px;height:43px;object-fit:contain;image-rendering:pixelated}
+.hero-heading,.boss-heading{min-width:0;flex:1}
+.eyebrow{display:block;font:600 9px/1.2 system-ui;letter-spacing:.14em;color:#c9b28b}
+#top h3{font:700 17px/1.2 Georgia,serif;margin:3px 0;color:#f2d5a5;overflow-wrap:anywhere}
+#stats{display:block;font-size:10px;color:#c6cfc2;line-height:1.35}
+.resource{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:6px;font-size:11px;line-height:1.2;margin:6px 0;color:var(--shinobi-ink)}
+.resource small{font:10px/1.1 monospace;color:#ddd5c2;white-space:nowrap}
+.resource .bar{grid-column:1/-1;margin:3px 0 0;height:7px;border:1px solid #ffffff14;border-radius:2px;background:#0e1817}
+.resource .bar i{transition:none;border-radius:0;box-shadow:inset 0 1px #ffffff30}
+#hp{background:linear-gradient(90deg,#9e383d,#e16b59)}#chakra{background:linear-gradient(90deg,#2a639f,#6cc8f3)}#stamina{background:linear-gradient(90deg,#a98132,#e6c96c)}#xpFill{background:#c6a579}#kyubiFill{background:linear-gradient(90deg,#9d2435,#f28152)}
+#kyubiActivate{width:100%;padding:4px 6px;font-size:10px;min-height:25px}#kyubiHUD{margin:0}.xp-resource .bar{height:4px}
+.combat-state:empty{display:none}.combat-state{display:grid;gap:3px;margin-top:4px}
+#combo,#tactics,#lootNotice,#defenseStatus{position:static;max-width:none;overflow-wrap:anywhere;text-shadow:none;font:600 10px/1.35 system-ui}
+#combo{color:#e5b66b}#tactics{color:#9bd9cb}#lootNotice{color:#e9c695}#defenseStatus{color:#f0d78d}
+#combo:empty,#tactics:empty,#lootNotice:empty,#defenseStatus:empty{display:none}
+#quest{right:var(--hud-gap);top:var(--hud-gap);width:var(--quest-width);max-width:var(--quest-width);padding:10px;max-height:calc(100dvh - 220px);font-size:11px;overflow:auto}
+#quest>small{letter-spacing:.15em;font-weight:700;font-size:9px}#quest h3{font:700 16px/1.2 Georgia,serif;color:#f4d4a2;margin:6px 0}#qdesc,#bossQuest,#sideQuestLog{font-size:11px;line-height:1.4}#bossQuest{margin:6px 0;color:#d9bf94}#mapToggle{width:100%;margin-top:5px}
+#miniMap{width:min(148px,100%);height:auto;aspect-ratio:1;object-fit:contain;border:1px solid #777c69;background:#24382d}#mapPanel small{display:block;font-size:9px;color:#bdc7b8}#mapPanel small:last-child{display:none}#mapPanel:hover small:last-child,#mapPanel:focus-within small:last-child{display:block}
+#bossHUD{top:var(--hud-gap);width:min(430px,calc(100vw - var(--hero-width) - var(--quest-width) - 68px));min-width:0;padding:8px;text-align:left;color:#f0d6b5;border-color:#c28b78}
+.boss-head{display:flex;align-items:center;gap:8px;min-width:0}.boss-portrait-frame{width:37px;height:32px;border-color:#ac8877}#bossPortrait{width:37px;height:30px}.boss-heading strong{display:block;font:700 14px/1.2 Georgia,serif;overflow-wrap:anywhere}#bossHPValue{font:10px monospace;white-space:nowrap;color:#f2c6ae}#bossPhasePips{display:flex;gap:4px;margin-top:4px}.phase-pip{width:14px;height:3px;background:#564943}.phase-pip.current{background:#f0c78f}.phase-pip.past{background:#b26e55}#bossHUD .bar{height:8px;margin:7px 0 4px;background:#351f24;border-radius:2px}#bossHP{background:linear-gradient(90deg,#9c3542,#e16c55)}#bossAttack{display:block;text-align:center;font:600 10px/1.35 system-ui;color:#f2cfa2;overflow-wrap:anywhere}#bossCast{width:100%;height:5px}
+#combatDock{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);padding:6px;max-width:calc(100vw - 24px);display:grid;gap:5px;pointer-events:auto}
+#bottom{position:static;transform:none;display:flex;flex-wrap:nowrap;gap:4px;max-width:none;justify-content:center;align-items:stretch}
+#bottom .skill{position:relative;display:grid;justify-items:center;align-content:start;gap:2px;width:66px;min-width:0;padding:5px 2px 4px;background:#23352f;border:1px solid #87795c;border-radius:3px;box-shadow:none;color:#ecdcbb;touch-action:none;overflow:hidden}
+#bottom .skill:hover,#bottom .skill:focus-visible{transform:none;border-color:#ffdf9b;background:#33473c}
+.skill-orb{width:33px;height:33px;display:grid;place-items:center;position:relative;border:1px solid #9e9475;border-radius:50%;background:#12211f;color:#e6bb7c}
+.skill-icon{width:21px;height:21px;z-index:1}.skill[data-s=" "],.skill[data-s="g"],.skill[data-s="f"]{--icon:#85cef3}.skill[data-s="q"],.skill[data-s="r"],.skill[data-s="k"]{--icon:#d9dcd0}.skill-orb{color:var(--icon,#e6bb7c)}
+.cooldown-ring{position:absolute;inset:-2px;border-radius:50%;background:conic-gradient(#131a1cdd var(--cooldown,0%),transparent 0);pointer-events:none;z-index:2}
+.skill-timer{position:absolute;inset:0;display:grid;place-items:center;z-index:3;color:white;font:bold 10px monospace;text-shadow:1px 1px #000;pointer-events:none}.skill-timer:empty{display:none}
+#bottom .skill b{font:700 10px/1.1 monospace;color:#f3c789;padding:1px 4px;border:1px solid #887657;background:#14211f;border-radius:2px}
+#bottom .skill em{font:600 10px/1.1 system-ui;min-height:21px;max-width:100%;overflow-wrap:anywhere;color:#e9e2d2}
+.skill-cost{font:9px monospace;color:#8ec8e8}.skill[data-state="cooldown"] .skill-orb{border-color:#5d6764}.skill[data-state="low"]{border-color:#926255!important}.skill[data-state="low"] .skill-cost{color:#ff9a83}
+#defenseActions{position:static;display:flex;justify-content:center;gap:5px}#defenseActions button{flex:1;padding:4px 5px;min-height:28px;font-size:11px;background:#24372f;border:1px solid #928260;color:#f1ddba}#holdBlock[data-active=true]{background:#67562d;border-color:#eed187}#holdCharge[data-active=true]{background:#244d65;border-color:#91dbff}
+#notice{bottom:158px;width:max-content;max-width:min(55vw,560px);padding:7px 11px;font-size:11px;line-height:1.3;text-wrap:balance}
+#rpgButtons{left:12px;bottom:12px;max-width:220px;gap:4px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+#rpgButtons button{min-width:0;padding:5px;font-size:10px;white-space:normal}
+#consumableBar{left:12px;bottom:118px;gap:3px;max-width:220px;flex-wrap:wrap}.quick-item{min-width:35px}
+#utilityDock{position:absolute;bottom:12px;right:12px;display:flex;gap:4px;pointer-events:auto;z-index:6}#utilityDock>button{min-height:32px;padding:5px 7px;font-size:11px}
+#tools{position:absolute;bottom:40px;right:0;display:grid;grid-template-columns:1fr 1fr;width:min(230px,80vw);max-width:none;padding:8px;gap:5px}
+#tools button{font-size:11px;padding:5px}#tools #volume{width:100%;grid-column:1/-1}#tools #fps,#tools #saveState{grid-column:1/-1;font-size:10px;overflow-wrap:anywhere}
+#hud[data-immersive=true] #quest,#hud[data-immersive=true] #rpgButtons,#hud[data-immersive=true] #lootNotice{display:none!important}
+#hud[data-immersive=true] #top{opacity:.92}#hud[data-immersive=true] #combatDock{background:#13221dd9}
+#hud button:not(.skill),#rpgWindow button,#worldWindow button,#releaseModal button,.settings-window button{border:1px solid #ad9468;border-radius:3px;background:linear-gradient(#324139,#22332e);color:#f0e1c5}
+#hud button:hover:not(:disabled),#rpgWindow button:hover:not(:disabled),#worldWindow button:hover:not(:disabled),#releaseModal button:hover:not(:disabled){border-color:#f0cc89;background:#46513b}
+#rpgWindow,#worldWindow,#releaseModal section:not(#partOneWindow),.settings-window{background:linear-gradient(145deg,#22332d,#15241f);border:1px solid var(--shinobi-gold);box-shadow:0 8px 24px #0007;color:var(--shinobi-ink);border-radius:5px}
+#rpgWindow h2,#worldWindow h2,#releaseModal h2,.settings-window h2{font-family:Georgia,serif;color:#f0d1a2}#rpgWindow h3,#releaseModal h3{color:#d9c49f}
+#inventoryGrid .inventory-slot,#equipmentGrid .equip-slot,#itemDetail,.skill-branch{background:#182821;border-color:#6f735b}#inventoryGrid .inventory-slot.selected{outline-color:#e7c685}
+#sandboxPanel{max-height:56dvh;overflow:auto}#sandboxPanel .practice-picker{background:#242c28;border-color:#9b8767}
+@media(max-width:1050px){:root{--hero-width:190px;--quest-width:174px;--hud-gap:8px}#top,#quest{padding:7px}#bottom .skill{width:54px}#rpgButtons{max-width:160px;gap:3px;left:8px}#consumableBar{left:8px;max-width:160px}#utilityDock{right:8px;flex-direction:column;align-items:stretch}#tools{bottom:0;right:100%;margin-right:5px}#notice{bottom:153px}}
+@media(max-width:760px),(pointer:coarse){
+ :root{--hero-width:clamp(126px,30vw,180px);--quest-width:clamp(110px,29vw,165px);--hud-gap:6px}
+ #top{max-height:39dvh;font-size:10px;padding:5px}.hero-head{gap:4px;margin-bottom:5px;padding-bottom:4px}.portrait-frame{width:32px;height:30px}#heroPortrait{width:32px;height:26px}#top h3{font-size:13px}#stats,.eyebrow{font-size:8px}.resource{font-size:10px;margin:3px 0}.resource small{font-size:9px}.resource .bar{height:5px}#kyubiActivate{font-size:9px;min-height:23px}
+ #quest{max-height:30dvh;padding:6px}#quest h3{font-size:13px}#quest #sideQuestLog,#quest #bossQuest{font-size:10px}
+ #bossHUD{width:calc(100vw - var(--hero-width) - var(--quest-width) - 24px);padding:4px}.boss-portrait-frame{display:none}.boss-heading strong{font-size:11px}#bossHPValue{display:none}#bossAttack{font-size:9px}#bossHUD .bar{height:6px}
+ #combatDock{bottom:8px;left:auto;right:8px;transform:none;width:min(62vw,400px);max-width:none;padding:4px;gap:3px}
+ #bottom{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}#bottom .skill{width:100%;padding:3px 1px;gap:1px}.skill-orb{width:24px;height:24px}.skill-icon{width:16px;height:16px}#bottom .skill em{font-size:9px;min-height:19px}#bottom .skill b{font-size:9px}.skill-cost{font-size:8px}
+ #defenseActions button{min-height:34px;font-size:10px}#notice{bottom:200px;right:8px;left:auto;transform:none;max-width:60vw;font-size:10px}
+ #touch{left:8px;bottom:8px;grid-template-columns:repeat(3,36px);gap:3px}#touch button{min-height:34px;padding:5px}
+ #rpgButtons{left:8px;bottom:135px;max-width:calc(38vw - 16px);grid-template-columns:1fr 1fr;gap:3px}#rpgButtons button{padding:3px;font-size:9px}#consumableBar{left:8px;bottom:208px;max-width:calc(38vw - 16px)}
+ #utilityDock{right:8px;bottom:auto;top:calc(32dvh + 8px);flex-direction:column;gap:3px}#utilityDock>button{font-size:9px;padding:3px 6px;min-height:25px}#tools{bottom:auto;top:0;right:100%;width:min(200px,70vw)}
+ #hud[data-arena=true] #utilityDock,#hud[data-immersive=true] #utilityDock{top:8px}
+ #hud[data-arena=true] #bossHUD{width:calc(100vw - var(--hero-width) - 82px);left:calc(var(--hero-width) + 13px);transform:none}#hud[data-sandbox=true] #bossHUD{top:40px}
+ #sandboxPanel{max-width:90vw;width:min(500px,90vw)}#examHUD{top:110px}#mistStatus{top:155px}
+}
+@media(max-width:760px) and (pointer:fine){#touch{display:grid}}
+@media(max-height:540px) and (min-width:761px){#top,#quest{max-height:45dvh}#combatDock{padding:3px}#notice{bottom:140px}#rpgButtons{max-width:160px}#consumableBar{bottom:112px}}
+@media(prefers-reduced-motion:reduce){#hud *,#rpgWindow *,#releaseModal *{transition:none!important;animation:none!important}}

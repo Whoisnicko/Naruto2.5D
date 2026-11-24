@@ -23,3 +23,6 @@ Rama `feature/v06-pixel-anime` basada en v0.4. Preview desde Cloudflare Deployme
 
 ## v0.7 beta
 Rama `feature/v07-game-feel`; abrir preview desde Cloudflare Deployments. Probar Q, J encadenado, K/L/Espacio, números, cámara y sonido. Ejecutar `node tests/smoke.mjs`. Abrir `assets/sprite-lab.html` y revisar/exportar animaciones reales. Exportar JSON del guardado antes de cambiar de origen. No fusionar hasta validar.
+
+## v0.8 beta
+Rama `feature/v08-advanced-combat`. Preview desde Cloudflare Deployments, URL pendiente de verificar. Probar Q/J/K/L/Espacio existentes, R Kawarimi y F Fūma, guardia, kunai y marcas de clones. Ejecutar `node tests/smoke.mjs`. Guardado compatible; importar JSON si cambia origen. No fusionar antes de validar.

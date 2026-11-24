@@ -34,3 +34,6 @@ Ver [decisiones y pruebas](docs/V06-PIXEL-ANIME.md) y [Sprite Lab](assets/sprite
 
 ## v0.7 beta — Game Feel
 Base v0.6 validada a 144 FPS. Combos, dash, anticipación, impacto, audio y Sprite Lab 2.0. [Detalles y pruebas](docs/V07-GAME-FEEL.md). [Sprite Lab](assets/sprite-lab.html). Pruebas simuladas aprobadas; render y audio reales pendientes.
+
+## v0.8 beta — Advanced Combat
+Base v0.7 aprobada. Tres roles de enemigos, avisos, guardia, Kawarimi (R), Fūma (F), clones con vida y sinergia de Rasengan. [Documentación y pruebas](docs/V08-ADVANCED-COMBAT.md). Pruebas simuladas aprobadas; GPU/FPS y balance pendientes.

@@ -8,3 +8,6 @@
 
 - Rama v0.7: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v07-game-feel
 - Preview Cloudflare: pendiente de verificar en Deployments.
+
+- Rama v0.8: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v08-advanced-combat
+- Preview Cloudflare: pendiente de verificar en Deployments.

@@ -6,7 +6,7 @@ export function direction(x=0,z=1){return Math.abs(x)>Math.abs(z)?(x<0?1:2):(z<0
 export function frameFor(actor,clock){
  const a=actor.anim;
  if(a&&a.left>0){
-  const state=(a.k==='l'||a.k===' ')?'cast':a.combo===2?'kick':a.combo===3?'finish':'attack',v=ANIMS[state],progress=clamp(1-a.left/a.total,0,.999);
+  const state=(a.k==='l'||a.k===' '||a.k==='f')?'cast':a.combo===2?'kick':a.combo===3?'finish':'attack',v=ANIMS[state],progress=clamp(1-a.left/a.total,0,.999);
   const col=a.windup?(a.left>a.total-a.windup?v.start:v.start+Math.min(v.count-1,1+Math.floor((1-a.left/(a.total-a.windup))*(v.count-1)))):v.start+Math.min(v.count-1,Math.floor(progress*v.count));return {col,state};
  }
  if(actor.hit>0&&!actor.anim)return {col:13,state:'hit'};
@@ -33,7 +33,7 @@ function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material)
 export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
- const active=new Map(),free={player:[],npc:[],enemy:[],clone:[]},trails=[],fxPool=[];
+ const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[]},trails=[],fxPool=[];
  let generation=0,hero=null;
  function makeActor(kind){
   const s=sprite(maps[kind],ACTOR_COLS,4,1.80,2.40,true);s.kind=kind;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
@@ -47,7 +47,7 @@ export function createPixelSystem(scene){
   const row=direction(a.dirX||0,a.dirZ??1),anim=frameFor(a,item.clock);
   setFrame(item,anim.col,row);
   item.obj.position.set(a.x,.035,a.z);item.shadow.position.set(a.x,.024,a.z);
-  item.material.opacity=kind==='clone'?.84:1;item.material.color.setHex(a.flash>0?0xffe8cb:a.hit>0&&!a.anim?0xffc1a3:0xffffff);item.material.opacity=a.invuln>0&&kind==='player'?.75:item.material.opacity;
+  item.material.opacity=kind==='clone'?.84:1;item.material.color.setHex(a.flash>0?0xffe8cb:a.guard?0xffd98b:a.substitution>0?0xc9f1e4:a.hit>0&&!a.anim?0xffc1a3:0xffffff);item.material.opacity=a.invuln>0&&kind==='player'?.75:item.material.opacity;
   if(kind==='player'){hero={actor:a,row,item};if(a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>(a.dashTime>0?.035:.085)){item.trailAt=item.clock;spawnTrail(a,row);}if(a.anim&&a.anim!==item.lastAnim&&(a.anim.k==='j'||a.anim.k===' '))spawnTrail(a,row);item.lastAnim=a.anim||null;}
   return true;
  }
@@ -64,14 +64,14 @@ export function createPixelSystem(scene){
  function getFX(i){if(!fxPool[i]){const f=sprite(maps.fx,FX_COLS,FX_ROWS.length,2,2,false);f.material.depthWrite=false;scene.add(f.obj);fxPool[i]=f;}return fxPool[i];}
  function effects(list,clones,projectiles,t,dt,quality,player){
   drawTrails(dt);let n=0,limit=quality===1?48:quality===.75?32:20;
-  function add(type,x,y,z,size,col,alpha=1){
+  function add(type,x,y,z,size,col,alpha=1,rotation=0){
    if(n>=limit)return;const f=getFX(n++),row=FX_ROWS.indexOf(type);if(row<0)return;
-   setFrame(f,clamp(col,0,7),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=clamp(alpha,0,1);
+   setFrame(f,clamp(col,0,7),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=clamp(alpha,0,1);f.material.rotation=rotation;
   }
-  for(const e of list){const progress=clamp(1-e.life/e.max,0,.999),blue=e.col?.[2]>.75&&e.col?.[0]<.65;add(e.type==='dash'?'dash':blue?'rasengan':'hit',e.x,blue?1.12:.85,e.z,blue?3.1:e.type==='heavy'?2.6:1.9,Math.floor(progress*8),1-progress*.72);}
+  for(const e of list){const progress=clamp(1-e.life/e.max,0,.999),blue=e.col?.[2]>.75&&e.col?.[0]<.65;add(['dash','substitute','clone'].includes(e.type)?e.type:blue?'rasengan':'hit',e.x,blue?1.12:.85,e.z,blue?3.1:e.type==='heavy'?2.6:1.9,Math.floor(progress*8),1-progress*.72);}
   if(player?.pending?.k===' '){const progress=1-player.pending.remaining/player.pending.s.windup;add('rasengan',player.x+player.dirX*.5,1.2,player.z+player.dirZ*.5,.75+progress*.8,Math.min(5,Math.floor(progress*6)),.9);}
   for(const c of clones){if(c.life>4.58)add('clone',c.x,.95,c.z,2.8,Math.floor(clamp((5-c.life)/.42,0,.999)*8),.9);}
-  for(const a of projectiles)add('shuriken',a.x,.83,a.z,.75,Math.floor(t*25)%8,1);
+  for(const a of projectiles)add(a.kind==='wind'?'wind':a.hostile?'kunai':'shuriken',a.x,.83,a.z,a.kind==='wind'?1.9:.75,Math.floor(t*25)%8,1,a.hostile?Math.atan2(-a.dx,-a.dz*.64):0);
   if(hero?.actor.sprinting&&hero.actor.motion&&quality>=.75){const a=hero.actor;add('dash',a.x-(a.dirX||0)*.7,.58,a.z-(a.dirZ||0)*.7,1.75,Math.floor(t*18)%8,.48);}
   for(let i=n;i<fxPool.length;i++)fxPool[i].obj.visible=false;
  }

@@ -2,7 +2,7 @@
 // no generated image or third-party character assets are needed.
 export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=22,DIRS=['down','left','right','up'];
 export const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12}};
-export const FX_ROWS=['rasengan','clone','hit','dash','shuriken'];
+export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute'];
 export const FX_SIZE=32,FX_COLS=8;
 export const TREE_W=40,TREE_H=48;
 const ink='#273044',skin='#f7c08a',skinShade='#bc795d',skinLight='#ffe0a8';
@@ -10,6 +10,8 @@ const PALETTES={
  player:{hair:'#f4c848',hairLight:'#fff0a1',hairShade:'#bf8739',shirt:'#f58b36',shade:'#b94b30',light:'#ffb650',trim:'#26344c',metal:'#bacfd3'},
  npc:{hair:'#c4d3df',hairLight:'#f0f4f8',hairShade:'#8495ae',shirt:'#78935a',shade:'#475e46',light:'#a5ba76',trim:'#26344c',metal:'#c6d6dd'},
  enemy:{hair:'#34364d',hairLight:'#69627e',hairShade:'#262839',shirt:'#665272',shade:'#3d354f',light:'#93748a',trim:'#29283c',metal:'#b8b6c6'},
+ thrower:{hair:'#4d625d',hairLight:'#91b5a1',hairShade:'#304840',shirt:'#427a71',shade:'#284b4d',light:'#7fbaa6',trim:'#263644',metal:'#ced6ce'},
+ guard:{hair:'#70494f',hairLight:'#b68176',hairShade:'#422d3c',shirt:'#97564b',shade:'#58373f',light:'#c98468',trim:'#352c39',metal:'#e0c293'},
  clone:{hair:'#edc448',hairLight:'#fff0a1',hairShade:'#bf8739',shirt:'#f58b36',shade:'#b94b30',light:'#ffb650',trim:'#26344c',metal:'#bacfd3'}
 };
 function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
@@ -22,7 +24,7 @@ function cell(w,h){
  return {c,ctx,rect,poly,ellipse,line};
 }
 function actorCell(kind,dir,frame){
- const p=PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;
+ const role=kind;const p=PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
  const side=dir===1||dir===2,back=dir===3,run=frame>=6&&frame<=9,walk=frame>=2&&frame<=5,attack=frame>=10&&frame<=12||frame>=16,cast=frame===14||frame===15,kick=frame>=16&&frame<=18,finish=frame>=19;
  const f=walk?(frame-2):run?(frame-6):0,step=[-3,0,3,0][f],bob=(walk||run)&&f%2===1?1:frame===1?1:0;
  const phase=kick?frame-16:finish?frame-19:attack?frame-10:cast?frame-14:0;const lean=side&&run?2:side&&attack?(phase===1?2:0):0;const hx=12+lean,hy=8+bob,bodyY=16+bob;
@@ -69,6 +71,7 @@ function actorCell(kind,dir,frame){
    if(kind==='npc'||kind==='enemy'){rect(hx-4,hy+6,9,3,p.trim);if(kind==='npc')rect(hx-4,hy+3,4,3,p.trim);}
    else{rect(hx-4,hy+6,2,1,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx,hy+7,2,1,'#9d574e');}
  }
+ if(role==='guard'){rect(6,17,12,3,p.metal);rect(5,19,3,5,p.shade);rect(16,19,3,5,p.shade);}if(role==='thrower'){rect(6,22,3,4,p.metal);rect(15,22,3,4,p.metal);}
  if(frame===13){rect(2,10,2,2,'#ffe4bc');rect(20,13,2,2,'#ffe4bc');}
  if(dir===1){const out=cell(24,32);out.ctx.translate(24,0);out.ctx.scale(-1,1);out.ctx.drawImage(s.c,0,0);return out.c;}
  return s.c;
@@ -110,7 +113,10 @@ export function makeFXSheet(){
    }else if(row===3){
      for(let j=0;j<6;j++){const y=6+j*4,x=2+(j%3)*3+f;line(x,y,Math.min(31,x+20-f),y-2,j%2?'#f5ab4f':'#ffe5a3',j%3===0?2:1);}
      if(f<4)poly([[3,16],[20,11],[31,16],[20,21]],'#ffc464');
-   }else{
+   }else if(row===5){for(let k=0;k<3;k++)for(let j=0;j<15;j++){const a=angle+k*2.094+j*.11,r=5+j*.61;rect(16+Math.cos(a)*r,16+Math.sin(a)*r,2,2,j%3?'#a9e8cb':'#f1fff2');}ellipse(16,16,4,4,'#5cbba5');}
+   else if(row===6){poly([[16,1],[20,18],[16,25],[12,18]],'#c3c9cc');line(16,3,16,22,'#f6d7a7',2);rect(14,21,4,7,'#7b4447');ellipse(16,28,3,2,'#292c3d');}
+   else if(row===7){rect(10,6,12,21,'#69483d');rect(12,7,8,19,'#9f7852');line(14,9,14,24,'#c69c68',2);for(let k=0;k<6;k++){const a=k*1.047+angle;ellipse(16+Math.cos(a)*(4+f*1.4),16+Math.sin(a)*(4+f),Math.max(2,5-f*.4),3,'#dce6e2');}}
+   else{
      for(let k=0;k<4;k++){const a=angle+k*Math.PI/2;poly([[16,16],[16+Math.cos(a)*13,16+Math.sin(a)*13],[16+Math.cos(a+.45)*5,16+Math.sin(a+.45)*5]],'#252e45');line(16+Math.cos(a)*4,16+Math.sin(a)*4,16+Math.cos(a)*11,16+Math.sin(a)*11,'#d4e4e9');}ellipse(16,16,3,3,'#8597a6');ellipse(16,16,1.5,1.5,'#273044');
    }
    ctx.drawImage(s.c,f*32,row*32);
@@ -141,4 +147,4 @@ export function makeWorldPattern(){
  }
  return c;
 }
-export function makeSheets(){return {player:makeActorSheet('player'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),clone:makeActorSheet('clone'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+export function makeSheets(){return {player:makeActorSheet('player'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}

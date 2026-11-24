@@ -145,3 +145,7 @@ Experimental branch only. Medical Regeneration up to 450 HP, special-only interr
 
 ## v1.12c — Gaara: The Sand Guardian
 Experimental branch: 1900 HP, destructible 240 HP sand armor (4s / 18s cooldown), sand wave, sand coffin with temporary quicksand, phase 2 partial Shukaku with procedural claw/tail and annular Sand Tsunami safe center. Southern Sand Basin (36,34), sandbox and first-clear epic Sand Armor. Focused simulation and syntax passed; full regression and browser/Cloudflare unverified. Production remains v1.11i. Preview https://feature-v112-world-bosses.naruto2-5d.pages.dev/ ; source https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v112-world-bosses. See docs/V112-WORLD-BOSSES.md.
+
+
+## v1.12d — Shukaku Unleashed
+Gaara phase 3 at 665 HP (35%), dedicated directional pixel avatar 1.85x, one animated tail, orbiting sand chakra, new exclusive detonation, shuriken volleys, irregular tail strikes and eruption. Focused 75s simulation and syntax checks passed; full regression and actual browser/Cloudflare unverified. Production v1.11i unchanged. Preview https://feature-v112-world-bosses.naruto2-5d.pages.dev/ ; source https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v112-world-bosses. See docs/V112-WORLD-BOSSES.md.

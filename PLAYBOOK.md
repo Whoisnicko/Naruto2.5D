@@ -50,3 +50,6 @@ Rama `feature/v13-playable-characters`. Exportar v8 antes de probar. C cerca de 
 
 ## v1.35 beta
 Producción v1.3 (8276d8c), aprobada. Rama `feature/v135-combat-art`. Exportar v9 antes de probar. C selecciona, P árbol propio, G técnica avanzada. Sandbox permite niveles y pergaminos. Probar cuatro personajes, preparación/impacto, Sprite Lab, guardar, equipo y FPS. `node tests/smoke.mjs`. No fusionar hasta aprobación.
+
+## v1.4 beta
+Rama `feature/v14-chunin-exams`, v1.35 aprobada funcionalmente. Exportar respaldo v10. N con Iruka o sandbox; aprobar 4/5, vencer rivales y recoger ambos pergaminos con E antes de 100 s, ganar tres duelos, comprobar recompensa y recarga. `node tests/smoke.mjs`. Pendiente WebGL/FPS. v1.5 validación y v1.6 arte de combate profundo.

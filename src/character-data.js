@@ -9,4 +9,4 @@ export function characterFor(id){return CHARACTERS[id]||CHARACTERS.naruto;}
 export function validateCharacter(id,legacy){if(id===undefined&&legacy)return 'naruto';if(!Object.hasOwn(CHARACTERS,id))throw Error('Invalid character.');return id;}
 export function characterSkill(id,key,base){const extra=characterFor(id).skills[key];return extra?{...base,...extra,characterTechnique:true}:base;}
 export function canSelectCharacter(id,quest,sandbox){return Object.hasOwn(CHARACTERS,id)&&(id==='naruto'||quest===3||sandbox);}
-export function skillLabel(id,key){return characterFor(id).names[key]||({j:'Taijutsu',k:'Shuriken',q:'Dash',r:'Kawarimi'}[key]||key);}
+export function skillLabel(id,key){return characterFor(id).names[key]||({j:'Taijutsu',k:'Kunai',q:'Dash',r:'Kawarimi'}[key]||key);}

@@ -32,6 +32,6 @@
   if(window.MutationObserver){const observer=new MutationObserver(sync);for(const id of ['hp','chakra','stamina','xpFill'])if($(id))observer.observe($(id),{attributes:true,attributeFilter:['style']});if(meter)observer.observe(meter,{attributes:true,attributeFilter:['aria-valuenow','aria-valuetext']});if(seal)observer.observe(seal,{attributes:true,attributeFilter:['data-state']});}
   hud.dataset.finishedHud='true';sync();
   // Atomic graphical groups with existing CSS/canvas fallback; no new game state.
-  const groups={dock:['dock-frame','skill-icons','defense-button'],menu:['menu-buttons','quick-frame'],map:['minimap-frame']},loaded=new Set();
+  const groups={dock:['dock-frame','skill-icons','defense-button'],menu:['menu-buttons','quick-frame'],map:['minimap-frame'],compact:['compact-frame','compact-icons']},loaded=new Set();
   if(typeof Image==='function')for(const [group,names] of Object.entries(groups))Promise.all(names.map(name=>new Promise(resolve=>{const im=new Image();im.onload=()=>resolve(true);im.onerror=()=>resolve(false);im.src='./assets/hud-art/finished/'+name+'.webp';}))).then(results=>{if(results.every(Boolean)){loaded.add(group);hud.dataset.finishArt=[...loaded].join(' ');}});
 })();

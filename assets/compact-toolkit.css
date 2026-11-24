@@ -1,0 +1,21 @@
+/* Compact toolkit. Existing layout and glyphs remain fallbacks. */
+#hud #bottom .skill[data-resource=stamina] .skill-cost{color:#ffb65c!important}
+#hud #bottom .skill[data-state=locked]{filter:grayscale(1);opacity:.64;cursor:not-allowed}
+#hud #bottom .skill[data-state=locked] .skill-cost{color:#ddd!important}
+#hud #bottom .skill[data-state=locked] .skill-orb:after{content:'🔒';position:absolute;bottom:0;right:0;font-size:11px;line-height:1}
+#hud #bottom .skill[data-s="f"] .skill-orb{filter:drop-shadow(0 0 2px #ff9a2e)}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]) #bottom .skill .skill-orb{background:transparent url('./hud-art/finished/compact-icons.webp') var(--compact-x,0%) center/800% 100% no-repeat!important;aspect-ratio:1}
+#hud #bottom .skill[data-s="q"]{--compact-x:0%}#hud #bottom .skill[data-s="j"]{--compact-x:14.285714%}#hud #bottom .skill[data-s="r"]{--compact-x:28.571428%}#hud #bottom .skill[data-s="k"]{--compact-x:42.857143%}#hud #bottom .skill[data-s="f"]{--compact-x:57.142857%}#hud #bottom .skill[data-s="l"]{--compact-x:71.428571%}#hud #bottom .skill[data-s=" "]{--compact-x:85.714286%}#hud #bottom .skill[data-s="g"]{--compact-x:100%}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]):not([data-character=naruto]) #bottom .skill:is([data-s="f"],[data-s="l"],[data-s=" "],[data-s="g"]) .skill-orb{background:linear-gradient(#28354a,#121928)!important}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]):not([data-character=naruto]) #bottom .skill:is([data-s="f"],[data-s="l"],[data-s=" "],[data-s="g"]) .skill-icon{visibility:visible!important}
+@media(min-width:1121px) and (pointer:fine){
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]) #combatDock{--finished-dock-w:min(1120px,calc(100vw - 2 * (var(--edge) + var(--finished-side) + 6px)));width:var(--finished-dock-w);height:calc(var(--finished-dock-w)*.174);background:transparent url('./hud-art/finished/compact-frame.webp') center/100% 100% no-repeat!important}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]) #bottom{left:6.3%;right:6.2%;top:38%;bottom:24%;gap:2px}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]) #bottom .skill{display:grid;grid-template-columns:minmax(17px,.8fr) minmax(0,1fr);grid-template-rows:12px minmax(12px,1fr) 12px;gap:0 2px;padding:2px;align-items:center;border-color:#96632d}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]) #bottom .skill .skill-orb{grid-column:1;grid-row:1/4;width:100%;height:auto;max-height:100%;align-self:center}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]) #bottom .skill b{grid-column:2;grid-row:1;font-size:clamp(7px,.63vw,11px);line-height:1;padding:0 1px;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]) #bottom .skill em{grid-column:2;grid-row:2;font-size:clamp(8px,.66vw,12px);line-height:1.05;overflow-wrap:anywhere;white-space:normal}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]) #bottom .skill .skill-cost{grid-column:2;grid-row:3;font-size:clamp(8px,.65vw,11px);line-height:1;white-space:nowrap}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]) #defenseActions{left:22%;right:22%;top:81%;bottom:8%;gap:18%}
+#hud[data-finish-art~="compact"]:not([data-living-fallback=true]) #defenseActions button{background:transparent!important;font-size:clamp(9px,.8vw,13px);padding:0}
+}

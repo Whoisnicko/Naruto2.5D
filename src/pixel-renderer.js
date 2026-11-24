@@ -40,7 +40,7 @@ export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
  const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[]},trails=[],fxPool=[];
- let generation=0,hero=null,gearKey=null,gearCanvas=null;const rasPool=[];let rasMap=null;try{rasMap=texture(makeRasenganSheet());}catch(e){console.warn('Rasengan art fallback',e);}
+ let generation=0,hero=null,gearKey=null,gearCanvas=null,redGearKey=null,redGearCanvas=null;const rasPool=[];let rasMap=null;try{rasMap=texture(makeRasenganSheet());}catch(e){console.warn('Rasengan art fallback',e);}
  // Load exact approved art into canvas textures; keep visible procedural fallback if decoding fails.
  function pixelLayer(name,w,h,paint){
   const c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getContext('2d');cx.imageSmoothingEnabled=false;paint?.(cx);
@@ -49,7 +49,7 @@ export function createPixelSystem(scene){
  const kyPool=[];let purpleMap=null;try{purpleMap=texture(makeRasenganSheet(true));const img=new Image();img.onload=()=>{const cx=purpleMap.image.getContext('2d');cx.clearRect(0,0,576,48);cx.drawImage(img,0,0);purpleMap.needsUpdate=true;for(const f of rasPool)if(f.purple)f.map.needsUpdate=true;};img.src=KYUBI_ASSETS.orb;}catch{}
  const auraMap=pixelLayer('aura',512,256,cx=>{for(let d=0;d<4;d++)for(let f=0;f<8;f++){cx.fillStyle='#aa2536';cx.fillRect(f*64+17,d*64+21,4,32);cx.fillRect(f*64+43,d*64+19,4,32);cx.fillRect(f*64+21,d*64+47,22,4);cx.fillStyle='#ff6b42';cx.fillRect(f*64+18,d*64+24,2,24);cx.fillRect(f*64+44,d*64+20,2,26);}});
  const armMap=pixelLayer('arm',512,24,cx=>{for(let f=0;f<8;f++){cx.fillStyle='#a52b39';cx.fillRect(f*64,7,62,10);cx.fillStyle='#ff7548';cx.fillRect(f*64,10,64,4);}});
- function gearSheet(gear,kind='player'){const key=kind+JSON.stringify(gear||{});if(key!==gearKey){gearKey=key;gearCanvas=makeActorSheet(kind,gear);}return gearCanvas;}
+ function gearSheet(gear,kind='player',red=false){const key=kind+JSON.stringify(gear||{});if(red){if(key!==redGearKey){redGearKey=key;redGearCanvas=makeActorSheet(kind,gear,true);}return redGearCanvas;}if(key!==gearKey){gearKey=key;gearCanvas=makeActorSheet(kind,gear);}return gearCanvas;}
  function previewEquipment(gear,canvas,kind='player'){const c=gearSheet(gear,kind),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
  function portrait(kind,canvas){const c=sheets[kind]||sheets.npc,ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(c,0,0,24,19,0,0,canvas.width,canvas.height);}
  function makeActor(kind){
@@ -62,7 +62,7 @@ export function createPixelSystem(scene){
   if(!item){item=free[kind].pop()||makeActor(kind);item.clock=0;item.trailAt=-99;item.lastAnim=null;active.set(a,item);}
   item.seen=generation;item.clock+=dt;item.obj.visible=item.shadow.visible=true;
   const row=direction(a.dirX||0,a.dirZ??1),anim=frameFor(a,item.clock);
-  if(kind==='player'){try{gearSheet(a.equipment,characterFor(a.character).art);if(item.gearKey!==gearKey){item.map.image=gearCanvas;item.map.needsUpdate=true;item.gearKey=gearKey;}}catch(e){console.warn('Equipment art fallback',e);}}
+  if(kind==='player'){try{const red=a.character==='naruto'&&(a.kyubiLeft>0||a.anim?.kyubi),sheet=gearSheet(a.equipment,characterFor(a.character).art,red);if(item.map.image!==sheet){item.map.image=sheet;item.map.needsUpdate=true;}}catch(e){console.warn('Equipment art fallback',e);}}
   setFrame(item,anim.col,row);
   item.obj.position.set(a.x,.035,a.z);item.shadow.position.set(a.x,.024,a.z);
   item.material.opacity=kind==='clone'?.84:1;item.material.color.setHex(a.kyubiLeft>0||a.kyubi?0xffb8a0:a.flash>0?0xffe8cb:a.guard?0xffd98b:a.substitution>0?0xc9f1e4:a.hit>0&&!a.anim?0xffc1a3:0xffffff);item.material.opacity=a.invuln>0&&kind==='player'?.75:item.material.opacity;

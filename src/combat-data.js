@@ -2,7 +2,7 @@
 export const COMBAT={
  dash:{cost:12,cooldown:.85,duration:.17,speed:19,invulnerable:.19},
  comboWindow:.72,
- kyubi:{duration:15,melee:1.4,technique:1.25,speed:1.15,damageTaken:.8,reach:[4.5,4.8,5.2],dealt:.55,received:1.8,threshold:100,lossInterval:2.8,lossRadius:5.8,forms:[{name:'Una cola',duration:15,melee:1.4,technique:1.25,speed:1.15,damageTaken:.8,reach:[4.5,4.8,5.2],targets:[1,1,1],width:.8},{name:'Dos colas',duration:17,melee:1.65,technique:1.45,speed:1.23,damageTaken:.72,reach:[5.2,5.6,6],targets:[1,1,2],width:1.15},{name:'Tres colas',duration:14,melee:1.95,technique:1.65,speed:1.3,damageTaken:.65,reach:[5.7,6.1,6.6],targets:[1,2,3],width:1.55}]},
+ kyubi:{name:'Tres colas',duration:14,melee:1.95,technique:1.65,speed:1.3,damageTaken:.65,reach:[5.7,6.1,6.6],targets:[1,2,3],width:1.55,dealt:.55,received:1.8,threshold:100,lossInterval:2.8,lossRadius:5.8},
  rasengan:{' ':{maxCharge:.9,minDistance:5.5,maxDistance:9,speed:22,extraCost:10,bonusDamage:.30,size:2.1,maxScale:1.75,contact:1.15,splash:2.0,recovery:.39,impact:.85},g:{maxCharge:1.25,minDistance:8,maxDistance:13,speed:24,extraCost:14,bonusDamage:.35,size:3.35,maxScale:1.65,contact:1.65,splash:3.0,recovery:.46,impact:1.1}},
  substitution:{cost:18,cd:7,duration:1.8,invulnerable:.38},
  skills:{

@@ -90,3 +90,7 @@ Curse II only: normal guided Black Chidori and all five Black Hunt passes deposi
 
 ## v1.12n beta — Black Hunt
 Curse Mark II: black/violet electric floor trails after normal Chidori lunge, guided rush and all five chain passes. Last 5.5 seconds after movement, width 1.44 units, 3 HP/0.5s, walking slow 20%, overlapping trails do not stack; dash and immortal respected. Four fixed straight crossings at 54 u/s, .22s warning between each, then 2s dark capsule charge and a 52 u/s guided fifth Chidori, 22 damage and Lightning Prison on contact. Cooldown 21 seconds after finisher. All paths cleared before Mega Clash, which is unchanged. Full mocked smoke suite passed; real browser FPS/visual/audio and Cloudflare deployment unverified. Production stays v1.12j. Preview expected https://feature-v112k-sasuke-combat.naruto2-5d.pages.dev/ ; source https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v112k-sasuke-combat.
+
+
+## v1.12o beta — Direct boss phase practice
+Sasuke's third phase restores HP once to 50% maximum (1300 of 2600; normally +130 from 45%). No repeat healing. Sandbox boss and phase selector: Zabuza/Haku/Kabuto 2 each, Gaara/Orochimaru/Kimimaro 3 each, Sasuke 4 plus direct Mega Clash, and four Mist Saga story checkpoints. Direct entry at natural starting HP, no introductory dialogue, full Naruto HP/chakra, isolated progress, normal later transitions. Original full Mist Saga button retained. Exam rivals are separate encounters and not part of this selector. Production unchanged; actual browser preview not verified.

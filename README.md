@@ -162,3 +162,7 @@ Independent 2400 HP boss, Forbidden Underground Laboratory (40,12), 3 targetable
 
 ## v1.12f — Orochimaru: True White Serpent
 Final transformation at 600 HP (25%) after body shedding resolves, 2x directional serpent sprite, animated tail and venom aura; exclusive fang lunge, lingering venom clouds, triple targeted eruptions and coil crush. No additional healing; previous phases and rewards preserved. Focused 70s logic and syntax passed; full regression, browser visuals and deployment pending. Production unchanged. Preview https://feature-v112-world-bosses.naruto2-5d.pages.dev/ ; source https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v112-world-bosses. See docs/V112-WORLD-BOSSES.md.
+
+
+## v1.12g — Kimimaro / The Last Kaguya
+Independent 2800 HP boss, Valley of Bones (-30,32), Curse Mark I at 65%, II at 30%, three directional sprites, bone projectile volleys, four retargeted Seedling Fern eruptions with 5s slowing fields, unique Kaguya Bone Mantle. Focused 90s logic and syntax passed; full regression, browser visuals and deployment pending. Production unchanged. Next phase: Jiraiya sparring, authored loss, persistent Part I completion and Shippuden teaser (not implemented). Preview https://feature-v112-world-bosses.naruto2-5d.pages.dev/ ; source https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v112-world-bosses. See docs/V112-WORLD-BOSSES.md.

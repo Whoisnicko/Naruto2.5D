@@ -42,13 +42,13 @@ export function createPixelSystem(scene){
  function begin(){generation++;hero=null;}
  function show(a,kind,dt=0){
   let item=active.get(a);
-  if(!item){item=free[kind].pop()||makeActor(kind);item.clock=0;item.trailAt=-99;active.set(a,item);}
+  if(!item){item=free[kind].pop()||makeActor(kind);item.clock=0;item.trailAt=-99;item.lastAnim=null;active.set(a,item);}
   item.seen=generation;item.clock+=dt;item.obj.visible=item.shadow.visible=true;
   const row=direction(a.dirX||0,a.dirZ??1),anim=frameFor(a,item.clock);
   setFrame(item,anim.col,row);
   item.obj.position.set(a.x,.035,a.z);item.shadow.position.set(a.x,.024,a.z);
   item.material.opacity=kind==='clone'?.84:1;item.material.color.setHex(a.hit>0&&!a.anim?0xffc1a3:0xffffff);
-  if(kind==='player'){hero={actor:a,row,item};if(a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>.085){item.trailAt=item.clock;spawnTrail(a,row);}}
+  if(kind==='player'){hero={actor:a,row,item};if(a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>.085){item.trailAt=item.clock;spawnTrail(a,row);}if(a.anim&&a.anim!==item.lastAnim&&(a.anim.k==='j'||a.anim.k===' '))spawnTrail(a,row);item.lastAnim=a.anim||null;}
   return true;
  }
  function end(){for(const [a,item] of active)if(item.seen!==generation){item.obj.visible=item.shadow.visible=false;active.delete(a);free[item.kind].push(item);}}

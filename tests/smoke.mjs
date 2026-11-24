@@ -427,3 +427,12 @@ console.log('PASS v1.15d: sandbox stamina isolation, guard-break locks and legac
  assert.equal(player.draws.filter(a=>a[0]===player).length,0);assert.equal(boss.draws.filter(a=>a[0]===boss).length,80);
 }
 console.log('PASS v1.16a: animation atlas dimensions, all new pose ranges, dash contact synchronization, gait continuity, braking, Rasengan alignment and fallback generation.');
+
+// v1.16b: bounded real-time cosmetic contact response, no change to hit-stop.
+{
+ feedback.reset();feedback.setShake(true);feedback.setIntensity(.35);assert(feedback.contact('heavy',1,2,1,0));assert(!feedback.frozen);const o=feedback.offset();assert(o.x>0&&o.x<=.056);assert(o.zoom>0&&o.zoom<.01);assert.equal(feedback.offset(false).zoom,0);assert.equal(feedback.offset(false).x,0);feedback.tick(.1);assert(feedback.offset().x<o.x);feedback.setShake(false);assert.equal(feedback.offset().x,0);assert.equal(feedback.offset().zoom,0);assert(feedback.bursts.some(b=>b.life>0));feedback.setShake(true);
+ for(let i=0;i<40;i++)feedback.contact('critical',i,0,1,0);assert.equal(feedback.bursts.length,8);assert(feedback.bursts.every(b=>b.life>0));assert(feedback.contact('dodge',0,0));assert(!feedback.contact('dodge',0,0));feedback.tick(.4);assert(feedback.contact('dodge',0,0));feedback.reset();assert(feedback.bursts.every(b=>b.life===0));assert.equal(feedback.offset().zoom,0);assert(!feedback.contact('bad',1,2));assert(!feedback.contact('heavy',NaN,2));
+ game.start(false);let p=game.state.p,e=game.state.enemies[0];p.x=e.x-1;p.z=e.z;e.attack=100;const hp=e.hp;assert(game.attack('j'));sim(.11);assert.equal(e.hp,hp-25);assert(feedback.bursts.some(b=>b.kind==='light'&&b.life>0));game.render(.016);assert(view.lastShot.zoom>0);
+ game.start(false);p=game.state.p;p.dirX=1;p.dirZ=0;game.keys.add('b');sim(.1);const health=p.hp;game.playerHurt(20,{x:p.x+1,z:p.z},'physical');assert.equal(p.hp,health);assert(feedback.bursts.some(b=>b.kind==='block'&&b.life>0));game.keys.clear();
+}
+console.log('PASS v1.16b: bounded contact effects, shake/zoom controls, decay, dodge throttling, unchanged physical damage and blocked hits.');

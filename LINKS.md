@@ -31,3 +31,6 @@
 - Producción: https://naruto2-5d.pages.dev/
 - Rama v1.0 RC: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v1-release-candidate
 - Preview: https://feature-v1-release-candidate.naruto2-5d.pages.dev (consultar check del último commit).
+
+- Rama RC HD: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v1-hd-sprites
+- Preview: consultar estado de Cloudflare del último commit.

@@ -7,10 +7,13 @@ import {makeActorSheet,makeSheets,ANIMS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SI
 const TILT=-Math.atan2(25,30),UP_Y=Math.cos(TILT),UP_Z=Math.sin(TILT);
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 export function direction(x=0,z=1){return Math.abs(x)>Math.abs(z)?(x<0?1:2):(z<0?3:0);}
-export function frameFor(actor,clock){
+export function frameFor(actor,clock,pose=null){
  const a=actor.anim;
- if(!a&&actor.guarding)return {col:ANIMS.attack.start,state:'guard'};
- if(!a&&actor.charging)return {col:ANIMS.cast.start+Math.floor(clock*6)%Math.min(2,ANIMS.cast.count),state:'charge'};
+ if(!a&&actor.guardBreak>0)return {col:ANIMS.guardBreak.start+Math.floor(clock*ANIMS.guardBreak.fps)%2,state:'guardBreak'};
+ if(!a&&actor.guarding)return {col:ANIMS.guard.start+(pose&&pose.age<.10?0:1+Math.floor(clock*ANIMS.guard.fps)%3),state:'guard'};
+ if(!a&&actor.charging)return {col:ANIMS.charge.start+((actor.chargeHeld||0)<.25?Math.min(1,Math.floor((actor.chargeHeld||0)*8)):2+Math.floor(clock*ANIMS.charge.fps)%2),state:'charge'};
+ if(a?.dashStrike&&a.left>0){const age=a.dashImpactAge;return {col:ANIMS.dashStrike.start+(!Number.isFinite(age)?0:age<.065?1:age<.135?2:3),state:'dashStrike'};}
+ if(!a&&actor.dashTime>0)return {col:ANIMS.dash.start+Math.min(3,Math.floor(Math.max(0,1-actor.dashTime/COMBAT.dash.duration)*4)),state:'dash'};
  if(a&&a.left>0){
   if(actor.character==='naruto'&&Number.isInteger(a.rasPose))return {col:38+a.rasPose,state:'rasengan'};
   if(actor.character==='naruto'&&a.k===' ')return {col:38+rasenganPose(a),state:'rasengan'};
@@ -20,7 +23,23 @@ export function frameFor(actor,clock){
  }
  if(actor.hit>0&&!actor.anim)return {col:13,state:'hit'};
  const moving=actor.motion??Boolean(actor.walk),state=moving?(actor.sprinting?'run':'walk'):'idle',v=ANIMS[state];
- return {col:v.start+Math.floor(clock*v.fps)%v.count,state};
+ if(!moving&&pose?.brake>0)return {col:ANIMS.brake.start+(pose.brake>.045?0:1),state:'brake'};
+ return {col:v.start+Math.floor((moving&&pose?pose.gait:clock*v.fps))%v.count,state};
+}
+// Presentation-only pose clock, no additional sprite, hitbox or simulation latency.
+export function advancePose(pose,actor,dt){
+ const a=actor.anim,locked=!!(a||actor.guarding||actor.charging||actor.guardBreak>0||actor.hit>0||actor.dashTime>0||actor.fallen||actor.air);
+ const moving=!locked&&!!(actor.motion??actor.walk),state=actor.fallen?'fallen':actor.guardBreak>0?'guardBreak':actor.guarding?'guard':actor.charging?'charge':a?'action':actor.dashTime>0?'dash':actor.hit>0?'hit':moving?(actor.sprinting?'run':'walk'):'idle';
+ if(pose.state!==state){pose.age=0;pose.brake=state==='idle'&&(pose.state==='walk'||pose.state==='run'||pose.state==='dash')?.09:0;pose.state=state;}else pose.age+=dt;
+ if(state!=='idle')pose.brake=0;else pose.brake=Math.max(0,pose.brake-dt);
+ if(moving)pose.gait=(pose.gait+dt*(actor.sprinting?ANIMS.run.fps:ANIMS.walk.fps)*(actor.moveBlend==null?1:Math.max(.45,actor.moveBlend)))%4;
+ // Preserve the exact Rasengan/cinematic alignment, feet anchored to ground.
+ let sx=1,sy=1;
+ if(!actor.fallen&&!actor.air&&!Number.isInteger(a?.rasPose)&&!(a&&a.k===' '&&actor.character==='naruto')&&!a?.rasRecovery){
+  if(state==='dash'){sx=1.055;sy=.96;}else if(state==='guard'||state==='guardBreak'){sx=1.035;sy=.97;}else if(state==='charge'){sx=1.012;sy=1+.012*Math.sin(pose.age*12);}else if(state==='hit'){sx=1.035;sy=.965;}else if(pose.brake>0){sx=1.025;sy=.975;}
+  const blend=1-Math.exp(-Math.max(0,dt)*24);pose.sx+=(sx-pose.sx)*blend;pose.sy+=(sy-pose.sy)*blend;
+ }else{pose.sx=pose.sy=1;}
+ return pose;
 }
 function texture(canvas){const t=new THREE.CanvasTexture(canvas);t.colorSpace=THREE.SRGBColorSpace;t.magFilter=t.minFilter=THREE.NearestFilter;t.generateMipmaps=false;return t;}
 function atlasMap(base,cols,rows){
@@ -71,16 +90,17 @@ export function createPixelSystem(scene){
  function previewEquipment(gear,canvas,kind='player'){const c=gearSheet(gear,kind),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
  function portrait(kind,canvas){const c=sheets[kind]||sheets.npc,ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(c,0,0,24,19,0,0,canvas.width,canvas.height);}
  function makeActor(kind){
-  const scale=kind==='jiraiyaSage'?1.26:kind==='jiraiya'?1.14:kind==='sasukeCursed'?1.22:kind==='kimiCursed'?1.4:kind==='whiteSerpent'?2:kind==='shukaku'?1.85:kind==='zabuza'?1.3:1;const s=sprite(maps[kind],ACTOR_COLS,4,1.80*scale,2.40*scale,true);s.kind=kind;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
+  const scale=kind==='jiraiyaSage'?1.26:kind==='jiraiya'?1.14:kind==='sasukeCursed'?1.22:kind==='kimiCursed'?1.4:kind==='whiteSerpent'?2:kind==='shukaku'?1.85:kind==='zabuza'?1.3:1;const s=sprite(maps[kind],ACTOR_COLS,4,1.80*scale,2.40*scale,true);s.kind=kind;s.baseScale=scale;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
   scene.add(s.obj,s.shadow);return s;
  }
  function begin(){generation++;hero=null;}
  function show(a,kind,dt=0){
   let item=active.get(a);
   if(item&&item.kind!==kind){item.obj.visible=item.shadow.visible=false;free[item.kind].push(item);active.delete(a);item=null;}
-  if(!item){item=free[kind].pop()||makeActor(kind);item.clock=0;item.trailAt=-99;item.lastAnim=null;active.set(a,item);}
+  if(!item){item=free[kind].pop()||makeActor(kind);item.clock=0;item.trailAt=-99;item.lastAnim=null;item.pose={state:null,age:0,gait:0,brake:0,sx:1,sy:1};active.set(a,item);}
   item.seen=generation;item.clock+=dt;item.obj.visible=item.shadow.visible=true;
-  const row=direction(a.dirX||0,a.dirZ??1),anim=frameFor(a,item.clock);
+  const row=direction(a.dirX||0,a.dirZ??1),pose=advancePose(item.pose,a,Math.max(0,Math.min(.1,dt))),anim=frameFor(a,item.clock,kind==='player'?pose:null);
+  const safeScale=kind==='player'&&!a.fallen;item.obj.scale.set(1.80*item.baseScale*(safeScale?pose.sx:1),2.40*item.baseScale*(safeScale?pose.sy:1),1);
   if(kind==='player'){try{const red=a.character==='naruto'&&(a.kyubiLeft>0||a.anim?.kyubi),sheet=gearSheet(a.equipment,characterFor(a.character).art,red);if(item.map.image!==sheet){item.map.image=sheet;item.map.needsUpdate=true;}}catch(e){console.warn('Equipment art fallback',e);}}
   setFrame(item,anim.col,row);
   item.obj.center.set(.5,a.fallen?.5:0);item.material.rotation=a.fallen?-Math.PI/2:0;item.obj.position.set(a.x,a.fallen?.28:.035+(a.air||0),a.z);item.shadow.position.set(a.x,.024,a.z);item.shadow.scale.set(kind==='whiteSerpent'?2:kind==='shukaku'?1.85:1,kind==='whiteSerpent'?2:kind==='shukaku'?1.85:1,1);

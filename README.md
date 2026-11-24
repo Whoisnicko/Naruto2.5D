@@ -28,3 +28,6 @@ https://naruto2-5d.pages.dev/ (URL de producción informada por el propietario; 
 
 ## v0.4 beta — Three.js
 Ver [migración, arquitectura y pruebas](docs/V04-MIGRATION.md). Rama de evaluación: Three.js, esqueletos procedurales, luces/sombras, GLB opcional y guardado portable. No incluye modelos externos profesionales aún. Validación WebGL real y FPS pendientes. La versión anterior está en `legacy-v03.html`.
+
+## v0.6 beta — HD-2D Pixel Anime
+Ver [decisiones y pruebas](docs/V06-PIXEL-ANIME.md) y [Sprite Lab](assets/sprite-lab.html). Base v0.4; sprites originales, FX 32×32, árboles pixelados, materiales simples, blob shadows. Sin GLB ni mapas de sombras. Pruebas simuladas aprobadas; validar WebGL y FPS reales.

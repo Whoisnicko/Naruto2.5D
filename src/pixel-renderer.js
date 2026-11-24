@@ -31,6 +31,18 @@ function sprite(base,cols,rows,scaleX,scaleY,bottom=false,opacity=1){
  return {obj,map,material,col:-1,row:-1,cols,rows};
 }
 function setFrame(o,col,row){if(col!==o.col||row!==o.row){frame(o.map,col,row,o.cols,o.rows);o.col=col;o.row=row;}}
+// Separate texture pools: Texture.clone() shares Source in Three.js.
+ // Never assign map.image between blue/purple atlases; it mutates the shared source.
+export function createRasenganPool(create,limit=8){
+ const pools={normal:[],purple:[]},used={normal:0,purple:0};let count=0;
+ return {
+  begin(){used.normal=used.purple=count=0;},
+  take(base,purple){if(!base||count>=limit)return null;const key=purple?'purple':'normal',i=used[key]++;count++;const pool=pools[key];if(!pool[i])pool[i]=create(base);return pool[i];},
+  end(){for(const key of ['normal','purple'])for(let i=used[key];i<pools[key].length;i++)pools[key][i].obj.visible=false;},
+  refreshPurple(){for(const f of pools.purple)f.map.needsUpdate=true;}
+ };
+}
+export function rasenganVisualKyubi(player,skill){return !!(player?.character==='naruto'&&player.kyubiLeft>0&&skill?.kyubi);}
 function makeShadowTexture(){
  const c=document.createElement('canvas');c.width=c.height=16;const cx=c.getContext('2d');
  for(let y=0;y<16;y++)for(let x=0;x<16;x++){let d=((x-7.5)/7)**2+((y-7.5)/6)**2;if(d<1){cx.fillStyle=d<.6?'rgba(28,32,47,.33)':'rgba(28,32,47,.14)';cx.fillRect(x,y,1,1);}}
@@ -41,13 +53,13 @@ export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
  const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[]},trails=[],fxPool=[];
- let generation=0,hero=null,gearKey=null,gearCanvas=null,redGearKey=null,redGearCanvas=null;const rasPool=[];let rasMap=null;try{rasMap=texture(makeRasenganSheet());}catch(e){console.warn('Rasengan art fallback',e);}
+ let generation=0,hero=null,gearKey=null,gearCanvas=null,redGearKey=null,redGearCanvas=null;const rasPool=createRasenganPool(base=>{const f=sprite(base,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);return f;});let rasMap=null;try{rasMap=texture(makeRasenganSheet());}catch(e){console.warn('Rasengan art fallback',e);}
  // Load exact approved art into canvas textures; keep visible procedural fallback if decoding fails.
  function pixelLayer(name,w,h,paint){
   const c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getContext('2d');cx.imageSmoothingEnabled=false;paint?.(cx);
   const map=texture(c);try{const img=new Image();img.onload=()=>{cx.clearRect(0,0,w,h);cx.drawImage(img,0,0);map.needsUpdate=true;for(const f of kyPool)if(f?.base===map)f.map.needsUpdate=true;};img.src=KYUBI_ASSETS[name];}catch{}return map;
  }
- const kyPool=[];let purpleMap=null;try{purpleMap=texture(makeRasenganSheet(true));const img=new Image();img.onload=()=>{const cx=purpleMap.image.getContext('2d');cx.clearRect(0,0,576,48);cx.drawImage(img,0,0);purpleMap.needsUpdate=true;for(const f of rasPool)if(f.purple)f.map.needsUpdate=true;};img.src=KYUBI_ASSETS.orb;}catch{}
+ const kyPool=[];let purpleMap=null;try{purpleMap=texture(makeRasenganSheet(true));const img=new Image();img.onload=()=>{const cx=purpleMap.image.getContext('2d');cx.clearRect(0,0,576,48);cx.drawImage(img,0,0);purpleMap.needsUpdate=true;rasPool.refreshPurple();};img.src=KYUBI_ASSETS.orb;}catch{}
  const auraMap=pixelLayer('aura',512,256,cx=>{for(let d=0;d<4;d++)for(let f=0;f<8;f++){cx.fillStyle='#aa2536';cx.fillRect(f*64+17,d*64+21,4,32);cx.fillRect(f*64+43,d*64+19,4,32);cx.fillRect(f*64+21,d*64+47,22,4);cx.fillStyle='#ff6b42';cx.fillRect(f*64+18,d*64+24,2,24);cx.fillRect(f*64+44,d*64+20,2,26);}});
  const armMap=pixelLayer('arm',512,24,cx=>{for(let f=0;f<8;f++){cx.fillStyle='#a52b39';cx.fillRect(f*64,7,62,10);cx.fillStyle='#ff7548';cx.fillRect(f*64,10,64,4);}});
  const tailCanvas=document.createElement('canvas');tailCanvas.width=512;tailCanvas.height=512;const tc=tailCanvas.getContext('2d');tc.imageSmoothingEnabled=false;
@@ -84,13 +96,13 @@ export function createPixelSystem(scene){
  }
  function getFX(i){if(!fxPool[i]){const f=sprite(maps.fx,FX_COLS,FX_ROWS.length,2,2,false);f.material.depthWrite=false;scene.add(f.obj);fxPool[i]=f;}return fxPool[i];}
  function effects(list,clones,projectiles,t,dt,quality,player){
-  drawTrails(dt);let kn=0,rn=0,n=0,limit=quality===1?48:quality===.75?32:20;
+  drawTrails(dt);rasPool.begin();let kn=0,n=0,limit=quality===1?48:quality===.75?32:20;
   function add(type,x,y,z,size,col,alpha=1,rotation=0,red=false){
    if(n>=limit)return;const f=getFX(n++),row=FX_ROWS.indexOf(type);if(row<0)return;
    setFrame(f,clamp(col,0,7),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=clamp(alpha,0,1);f.material.rotation=rotation;f.material.color.setHex(red?0xff473c:0xffffff);
   }
   function ras(row,col,x,y,z,size,alpha=1,rotation=0,purple=false){
-   const base=purple&&purpleMap?purpleMap:rasMap;if(!base||rn>=8)return false;let f=rasPool[rn];if(!f){f=sprite(base,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);rasPool[rn]=f;}rn++;if(f.map.image!==base.image){f.map.image=base.image;f.map.needsUpdate=true;}f.purple=purple&&!!purpleMap;setFrame(f,clamp(col,0,11),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=alpha;f.material.rotation=rotation;return true;
+   const variant=purple&&!!purpleMap,base=variant?purpleMap:rasMap,f=rasPool.take(base,variant);if(!f)return false;setFrame(f,clamp(col,0,11),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=alpha;f.material.rotation=rotation;return true;
   }
   function ky(base,cols,rows,col,row,x,y,z,w,h,angle=0,order=4,centerY=.5,opacity=1){
    if(kn>=8)return;let f=kyPool[kn];if(!f){f=sprite(base,cols,rows,w,h,false);f.material.depthWrite=false;scene.add(f.obj);kyPool[kn]=f;}kn++;
@@ -110,9 +122,9 @@ export function createPixelSystem(scene){
   // Charge is a continuously rotating sphere; carry keeps it ahead of the hand.
   const pending=player?.pending;
   if(player?.character==='naruto'&&pending?.ras&&player.anim){
-   const carrying=pending.phase==='carry',spec=COMBAT.rasengan[pending.k],q=pending.q||0,dir=direction(player.dirX,player.dirZ),hand=rasenganHand(dir,player.anim.rasPose||0),size=spec.size*(pending.s.kyubi?1.2:.74)*(pending.scale||1)*(carrying?1:Math.min(1,.38+.62*pending.held/pending.s.windup)),f=Math.floor(t*(carrying?30:24))%12,ang=Math.atan2(-player.dirZ*.64,player.dirX);
+   const carrying=pending.phase==='carry',spec=COMBAT.rasengan[pending.k],q=pending.q||0,dir=direction(player.dirX,player.dirZ),hand=rasenganHand(dir,player.anim.rasPose||0),size=spec.size*(rasenganVisualKyubi(player,pending.s)?1.2:.74)*(pending.scale||1)*(carrying?1:Math.min(1,.38+.62*pending.held/pending.s.windup)),f=Math.floor(t*(carrying?30:24))%12,ang=Math.atan2(-player.dirZ*.64,player.dirX);
    const x=player.x+(carrying?player.dirX*.85:hand.x),z=player.z+(carrying?player.dirZ*.85:hand.z),y=hand.y;
-   if(rasMap){const purple=!!pending.s.kyubi;ras(0,f,x,y,z,size,1,0,purple);ras(3,f,x,y,z,size*1.34,.94,0,purple);if(quality>=.75){ras(4,(f+4)%12,x,y,z,size*1.1,.8,0,purple);}if(carrying)ras(5,f,x-player.dirX*1.2,y,z-player.dirZ*1.2,size*1.5,.8,ang,purple);else if(quality===1)ras(2,f,player.x,.15,player.z,size*1.15,.6,0,purple);}
+   if(rasMap){const purple=rasenganVisualKyubi(player,pending.s);ras(0,f,x,y,z,size,1,0,purple);ras(3,f,x,y,z,size*1.34,.94,0,purple);if(quality>=.75){ras(4,(f+4)%12,x,y,z,size*1.1,.8,0,purple);}if(carrying)ras(5,f,x-player.dirX*1.2,y,z-player.dirZ*1.2,size*1.5,.8,ang,purple);else if(quality===1)ras(2,f,player.x,.15,player.z,size*1.15,.6,0,purple);}
    else add(pending.k==='g'?'giant':'rasengan',x,y,z,size,Math.floor(t*24)%8,1);
   }
   // Priority: main effects and projectiles first, accents second. Shared pool remains capped.
@@ -141,7 +153,7 @@ export function createPixelSystem(scene){
   if(quality>=.75)for(const draw of accents)draw();
   if(player?.focus>0||player?.guardBuff>0)add(player.focus>0?'focus':'wall',player.x,player.focus>0?2.4:.8,player.z,player.focus>0?.68:2.2,Math.floor(t*10)%8,.55);
   if(hero?.actor.sprinting&&hero.actor.motion&&quality>=.75){const a=hero.actor;add('dash',a.x-(a.dirX||0)*.7,.58,a.z-(a.dirZ||0)*.7,1.75,Math.floor(t*18)%8,.48,0,a.kyubiLeft>0);}
-  for(let i=n;i<fxPool.length;i++)fxPool[i].obj.visible=false;for(let i=rn;i<rasPool.length;i++)rasPool[i].obj.visible=false;for(let i=kn;i<kyPool.length;i++)kyPool[i].obj.visible=false;
+  for(let i=n;i<fxPool.length;i++)fxPool[i].obj.visible=false;rasPool.end();for(let i=kn;i<kyPool.length;i++)kyPool[i].obj.visible=false;
  }
  function addTrees(placements){
   const groups=new Map(),created=[];

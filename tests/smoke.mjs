@@ -46,6 +46,11 @@ const [brawler,thrower,guard]=game.state.enemies;assert.equal(brawler.role,'braw
 const c={x:guard.x+1,z:guard.z,hp:22,life:4};assert.equal(ai.targetFor(guard,{x:guard.x+3,z:guard.z},[c]),c);guard.dirX=1;guard.dirZ=0;guard.guard=true;assert.equal(ai.damageModifier(guard,c,COMBAT.skills.j),.35);assert.equal(ai.damageModifier(guard,c,COMBAT.skills[' ']),1);assert.equal(ai.damageModifier(guard,{x:guard.x-1,z:guard.z},COMBAT.skills.j),1);game.hurt(guard,25,c,COMBAT.skills.j);assert.equal(guard.hp,61);guard.guard=true;game.hurt(guard,34,c,COMBAT.skills.f);assert.equal(guard.hp,27);assert(guard.stagger>0);
 const dummy=ai.prepareEnemy({id:1,x:0,z:0,hp:70,attack:0}),target={x:6,z:0,hp:100};let fired=0;ai.tickEnemy(dummy,target,[],.01,()=>{},()=>{fired++},()=>{});assert(dummy.intent);ai.tickEnemy(dummy,target,[],.2,()=>{},()=>{fired++},()=>{});assert.equal(fired,0);ai.tickEnemy(dummy,target,[],.4,()=>{},()=>{fired++},()=>{});assert.equal(fired,1);
 const marked=game.state.enemies[0];marked.mark=2;game.hurt(marked,60,p,COMBAT.skills[' ']);assert.equal(marked.hp,0);assert.equal(marked.mark,0);
+// Actual integration: a piercing shot hits two enemies once each, and cannot cross the river.
+game.start(false);p=game.state.p;p.x=13;p.z=-2;p.dirX=1;p.dirZ=0;const [first,second,...others]=game.state.enemies;first.x=15;first.z=-2;second.x=18;second.z=-2;for(const e of [first,second]){e.stagger=10;e.attack=100;}for(const e of others){e.hp=0;}assert(game.attack('f'));sim(.7);assert.equal(first.hp,36);assert.equal(second.hp,36);
+game.start(false);p=game.state.p;p.x=4.8;p.z=10;p.dirX=1;p.dirZ=0;for(const e of game.state.enemies){e.x=15;e.z=10;e.stagger=10;}assert(game.attack('k'));sim(.35);assert.equal(game.state.projectiles.length,0);assert(game.state.enemies.every(e=>e.hp===70));
+game.start(false);p=game.state.p;assert(game.substitution());sim(1.9);assert.equal(p.substitution,0);game.playerHurt(9,{x:p.x-1,z:p.z});assert.equal(p.hp,91);
+const decoy={x:0,z:0,hp:22,life:4};game.hitTarget(decoy,10,{x:1,z:0});assert.equal(decoy.hp,12);game.hitTarget(decoy,12,{x:1,z:0});assert.equal(decoy.life,0);
 // Independently test animation metadata and hit-stop decay.
 const art=new Function(strip(src['pixel-art'])+'\nreturn {ANIMS,ACTOR_COLS};')();
 const anim=new Function('ANIMS',strip(src['pixel-renderer'])+'\nreturn {frameFor};')(art.ANIMS);

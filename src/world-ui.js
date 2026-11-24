@@ -14,7 +14,7 @@ export function createWorldUI(api){
  function speak(s){stopText();full=s;body.textContent='';reveal=0;timer=setInterval(()=>{reveal+=3;body.textContent=full.slice(0,reveal);if(reveal>=full.length)stopText();},24);}
  function close(){if(!opened)return;stopText();opened=false;npc=null;panel.hidden=true;api.pause(false);}
  function open(n){if(opened)return;npc=n;mode='dialog';opened=true;api.pause(true);panel.hidden=false;$('worldName').textContent=n.name+' · '+n.role;try{if(!api.portrait(n.kind,$('worldPortrait'))){const c=$('worldPortrait').getContext('2d');if(c){c.clearRect(0,0,96,76);c.fillStyle='#f0c996';c.fillRect(30,12,36,32);c.fillStyle='#57768a';c.fillRect(20,44,56,32);}}}catch{}$('worldMessage').textContent='';render(true);}
- function action(fn){const err=fn();$('worldMessage').textContent=err||'Listo. Progreso guardado si el almacenamiento está disponible.';if(!err)api.changed();render(false);}
+ function action(fn){const err=fn();const saved=err?false:api.changed();$('worldMessage').textContent=err||(saved?'Listo. Progreso guardado.':'Listo. Cambios temporales o almacenamiento no disponible.');render(false);}
  function render(animate=false){
   if(!opened)return;const {world,rpg,p}=api.state();opts.replaceChildren();$('worldMoney').textContent=p.coins+' ryō';
   if(mode==='dialog'){

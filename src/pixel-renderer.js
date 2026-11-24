@@ -1,3 +1,4 @@
+import {COMBAT} from './combat-data.js';
 import {characterFor} from './character-data.js';
 import * as THREE from 'three';
 import {makeActorSheet,makeSheets,ANIMS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SIZE,FX_COLS,TREE_W,TREE_H,artFor,makeRasenganSheet,RAS_COLS,RAS_ROWS,rasenganPose,rasenganHand} from './pixel-art.js';
@@ -7,6 +8,7 @@ export function direction(x=0,z=1){return Math.abs(x)>Math.abs(z)?(x<0?1:2):(z<0
 export function frameFor(actor,clock){
  const a=actor.anim;
  if(a&&a.left>0){
+  if(actor.character==='naruto'&&Number.isInteger(a.rasPose))return {col:38+a.rasPose,state:'rasengan'};
   if(actor.character==='naruto'&&a.k===' ')return {col:38+rasenganPose(a),state:'rasengan'};
   const special=actor.character&&artFor(actor.character,a.k);if(special){const v=ANIMS[special.pose],elapsed=Math.max(0,a.total-a.left),windup=a.windup||.001,recovery=Math.max(.001,a.total-windup);const phase=elapsed<windup?(elapsed<windup*.55?0:1):elapsed<windup+recovery*.65?2:3;return {col:v.start+phase,state:special.pose};}
   const state=(a.k==='l'||a.k===' '||a.k==='f'||a.k==='g')?'cast':a.combo===2?'kick':a.combo===3?'finish':'attack',v=ANIMS[state],progress=clamp(1-a.left/a.total,0,.999);
@@ -76,17 +78,20 @@ export function createPixelSystem(scene){
    setFrame(f,clamp(col,0,7),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=clamp(alpha,0,1);f.material.rotation=rotation;
   }
   function ras(row,col,x,y,z,size,alpha=1,rotation=0){
-   if(!rasMap||rn>=4)return false;let f=rasPool[rn];if(!f){f=sprite(rasMap,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);rasPool[rn]=f;}rn++;setFrame(f,clamp(col,0,11),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=alpha;f.material.rotation=rotation;return true;
+   if(!rasMap||rn>=8)return false;let f=rasPool[rn];if(!f){f=sprite(rasMap,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);rasPool[rn]=f;}rn++;setFrame(f,clamp(col,0,11),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=alpha;f.material.rotation=rotation;return true;
   }
-  // The same simulation event drives the reference FX. No new hitboxes.
-  if(rasMap&&player?.character==='naruto'&&player.pending?.k===' '&&player.anim){
-   const q=clamp(1-player.pending.remaining/Math.max(.001,player.pending.s.windup),0,.999),hand=rasenganHand(direction(player.dirX,player.dirZ),rasenganPose(player.anim));
-   ras(0,Math.floor(q*12),player.x+hand.x,hand.y,player.z+hand.z,1.45+q*.25,1);
+  // Charge is a continuously rotating sphere; carry keeps it ahead of the hand.
+  const pending=player?.pending;
+  if(player?.character==='naruto'&&pending?.ras&&player.anim){
+   const carrying=pending.phase==='carry',spec=COMBAT.rasengan[pending.k],q=pending.q||0,dir=direction(player.dirX,player.dirZ),hand=rasenganHand(dir,player.anim.rasPose||0),size=spec.size*(pending.scale||1),f=Math.floor(t*(carrying?30:24))%12,ang=Math.atan2(-player.dirZ*.64,player.dirX);
+   const x=player.x+(carrying?player.dirX*.85:hand.x),z=player.z+(carrying?player.dirZ*.85:hand.z),y=hand.y;
+   if(rasMap){ras(0,f,x,y,z,size,1);if(quality>=.75){ras(3,f,x,y,z,size*1.34,.9);ras(4,(f+4)%12,x,y,z,size*1.1,.8);}if(carrying)ras(5,f,x-player.dirX*1.2,y,z-player.dirZ*1.2,size*1.5,.8,ang);else if(quality===1)ras(2,f,player.x,.15,player.z,size*1.15,.6);}
+   else add(pending.k==='g'?'giant':'rasengan',x,y,z,size,Math.floor(t*24)%8,1);
   }
   // Priority: main effects and projectiles first, accents second. Shared pool remains capped.
   const accents=[];
   for(const e of list){
-   if(e.type==='rasengan'&&e.reference&&rasMap){const q=clamp(1-e.life/e.max,0,.999),f=Math.floor(q*12),angle=Math.atan2(-e.dz*.64,e.dx);if(ras(1,f,e.x,1.15,e.z,3.7,1-q*.55,angle)){if(quality>=.75)ras(2,f,e.x,.20,e.z,3.3,.85*(1-q));continue;}}
+   if(e.reference&&rasMap&&(e.type==='rasengan'||e.type==='giant')){const q=clamp(1-e.life/e.max,0,.999),angle=Math.atan2(-e.dz*.64,e.dx),size=(e.giant?5.0:3.5)*(e.scale||1),contact=e.contact&&q<.18,f=Math.floor(clamp((q-.18)/.82,0,.999)*12);if(ras(contact?0:1,contact?Math.floor(t*32)%12:f,e.x,1.15,e.z,contact?size*.68:size,1-q*.55,contact?0:angle)){if(quality>=.75){ras(contact?3:2,contact?Math.floor(t*32)%12:f,e.x,contact?1.15:.20,e.z,size*.95,.9*(1-q));if(!contact)ras(4,f,e.x,1.15,e.z,size*1.15,.85*(1-q));}continue;}}
    const q=clamp(1-e.life/e.max,0,.999),f=Math.floor(q*8),type=FX_ROWS.includes(e.type)?e.type:e.type==='heavy'?'slash':'hit';
    const large=['giant','storm','earth','cracks','wall'].includes(type),size=large?Math.min(5.8,Math.max(2.6,e.r*1.12)):type==='rasengan'?2.9:type==='clone'?2.8:type==='hit'?1.6:2.7;
    add(type,e.x,type==='cracks'||type==='earth'?.55:1.05,e.z,size,f,1-q*.72);
@@ -95,7 +100,7 @@ export function createPixelSystem(scene){
   }
   if(player?.pending){
    const s=player.pending.s,k=player.pending.k,q=clamp(1-player.pending.remaining/Math.max(.001,s.windup),0,.999),art=artFor(player.character,k);
-   if(art&&!(rasMap&&player.character==='naruto'&&k===' ')){const centered=['seal','slam'].includes(art.pose),x=player.x+(centered?0:player.dirX*.65),z=player.z+(centered?0:player.dirZ*.65);
+   if(art&&!player.pending.ras&&!(rasMap&&player.character==='naruto'&&k===' ')){const centered=['seal','slam'].includes(art.pose),x=player.x+(centered?0:player.dirX*.65),z=player.z+(centered?0:player.dirZ*.65);
     add(art.fx,x,centered?.85:1.35,z,.65+q*1.1,Math.floor(q*5),.85);
     if(quality>=.75)add('aura',player.x,1,player.z,1.35+q*.5,Math.floor(q*7),.55);
    }

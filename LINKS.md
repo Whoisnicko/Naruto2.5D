@@ -41,3 +41,7 @@
 
 - v1.3: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v13-playable-characters
 - Preview: consultar check de Cloudflare del último commit. Main intacta.
+
+- Producción v1.3: https://naruto2-5d.pages.dev/ (PR 15).
+- v1.35: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v135-combat-art
+- Preview: consultar check de Cloudflare del último commit.

@@ -15,6 +15,7 @@ export function tickBoss(b,p,clones,dt,move,hit,signal){
  if(b.id==='haku'&&b.worldBoss)return tickHaku(b,p,dt,move,signal);
  if(b.id==='kabuto'&&b.independent)return tickKabuto(b,p,clones,dt,move,hit,signal);
  if(b.id==='gaara'&&b.independent)return tickGaara(b,p,clones,dt,move,hit,signal);
+ if(b.id==='orochimaru'&&b.independent)return tickOrochimaru(b,p,clones,dt,move,hit,signal);
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
  if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;b.intent=null;b.anim=null;b.attack=.55;signal('phase',b);return;}
@@ -134,7 +135,14 @@ export const WORLD_BOSSES={kabuto:{id:'kabuto',name:'Kabuto Yakushi',hp:1500,spe
  {id:'sandShuriken',name:'Sand Shuriken Barrage',shape:'line',radius:1.8,length:17,reach:30,windup:.65,damage:11,cooldown:6,phase:3,projectile:true,pulses:2},
  {id:'tailRend',name:'One-Tail Rampage',shape:'line',radius:2.8,length:13,reach:15,windup:.65,damage:28,cooldown:9,phase:3,pulses:2},
  {id:'sandEruption',name:'Shukaku Eruption',shape:'circle',radius:5.8,reach:6.2,windup:1.05,damage:35,cooldown:12,phase:3}
+ ]},orochimaru:{id:'orochimaru',name:'Orochimaru',hp:2400,speed:4.6,arena:{x:40,z:12,r:13,name:'Forbidden Underground Laboratory'},marker:'#c69af7',xp:1200,coins:800,reward:[['kusanagi',1],['pill',4]],patterns:[
+ {id:'kusanagiSweep',name:'Kusanagi Sweep',shape:'line',radius:1.5,length:7,reach:7,windup:.55,damage:27,cooldown:3.5},
+ {id:'snakeStrike',name:'Hidden Shadow Snake Hands',shape:'line',radius:1.35,length:13,reach:14,windup:.8,damage:30,cooldown:9},
+ {id:'snakeSummon',name:'Summoning: Serpent Pack',shape:'circle',radius:2,reach:30,windup:1.2,damage:0,cooldown:18,summon:true},
+ {id:'venomBurst',name:'Venom Seal',shape:'target',radius:3.4,reach:18,windup:1.15,damage:15,cooldown:12,phase:2,venom:true},
+ {id:'serpentRush',name:'White Serpent Rampage',shape:'line',radius:2.2,length:12,reach:13,windup:.75,damage:29,cooldown:10,phase:2,pulses:2}
  ]}};
+export const ORO_RULES={snakeHP:85,snakeCap:3,snakeLife:24,snakeSpeed:5.2,biteDamage:13,biteCooldown:3.2,biteWindup:.55,biteRange:1.7,phaseSpeed:1.2,shedThreshold:.30,huskHP:160,huskLife:3.5,shedHeal:360,venomLife:5,venomInterval:1,venomDamage:4};
 export const GAARA_RULES={shieldHP:240,shieldDuration:4,shieldCooldown:18,shieldFirst:5,breakRecovery:1.5,zoneDuration:6,zoneSlow:.55,phaseSpeed:1.22,finalThreshold:.35,finalSpeed:1.38,finalScale:1.85,shurikenSpeed:15,shurikenCount:7,shurikenCap:28};
 export const KABUTO_RULES={healFraction:.30,healCap:.90,healThreshold:.70,interruptRecovery:2,disruptDuration:8,regenMultiplier:.35,extractChakra:28,phaseSpeed:1.25};
 Object.assign(MIST_SCENES,{
@@ -143,7 +151,7 @@ Object.assign(MIST_SCENES,{
  kabutoEnd:{title:'THE FAILED EXPERIMENT',lines:[['Kabuto','So much for my calculations. We will meet again.'],['Naruto','Next time, try fighting without the cheap tricks.']]}
 });
 Object.assign(MIST_CAMERA,{kabutoIntro:[{zoom:1.8,yaw:.18},{zoom:1.55,yaw:-.16},{zoom:2.2,yaw:.24}],kabutoPhase:[{zoom:2.4,yaw:-.22},{zoom:1.8,yaw:.14}],kabutoEnd:[{zoom:1.9,yaw:.2},{zoom:1.55,yaw:-.12}]});
-export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,...(id==='gaara'?{cooldowns:{sandWave:0,sandCoffin:3,sandBurst:0,shukakuClaw:3,sandTsunami:7,sandDetonation:0,sandShuriken:0,tailRend:0,sandEruption:0},sandShield:0,sandShieldLeft:0,shieldAt:GAARA_RULES.shieldFirst,zones:[]}:{cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0}),orbitDir:1,orbitLeft:2};}
+export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,...(id==='orochimaru'?{cooldowns:{kusanagiSweep:0,snakeStrike:4,snakeSummon:7,venomBurst:3,serpentRush:6},snakes:[],husk:null,shedUsed:false,serial:0}:id==='gaara'?{cooldowns:{sandWave:0,sandCoffin:3,sandBurst:0,shukakuClaw:3,sandTsunami:7,sandDetonation:0,sandShuriken:0,tailRend:0,sandEruption:0},sandShield:0,sandShieldLeft:0,shieldAt:GAARA_RULES.shieldFirst,zones:[]}:{cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0}),orbitDir:1,orbitLeft:2};}
 export function tickKabuto(b,p,clones,dt,move,hit,signal,random=Math.random){
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;b.attack=Math.max(0,b.attack-dt);
  for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
@@ -192,4 +200,41 @@ export function tickGaara(b,p,clones,dt,move,hit,signal,random=Math.random){
  if(!b.attack){const ready=b.spec.patterns.filter(a=>(b.phase===3?a.phase===3:(a.phase||1)<=b.phase)&&b.cooldowns[a.id]<=1e-8&&d<=a.reach),varied=ready.filter(a=>a.id!==b.lastPattern),options=varied.length?varied:ready;const a=options.find(a=>a.id==='sandTsunami')||options[Math.floor(random()*options.length)];
   if(a){b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:a.windup,total:a.windup};b.anim={k:a.id==='shukakuClaw'||a.id==='tailRend'?'j':'l',left:a.windup+.3,total:a.windup+.3,windup:a.windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
  b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.6+random()*1.2;}const desired=b.phase===3?4.5:b.phase===2?5.5:7,radial=Math.max(-1,Math.min(1,(d-desired)*.6)),tan=d>desired+3?.22:.68,dir=directionToward(v.x*radial-v.z*tan*b.orbitDir,v.z*radial+v.x*tan*b.orbitDir),x=b.x,z=b.z,speed=b.spec.speed*(b.phase===3?cfg.finalSpeed:b.phase===2?cfg.phaseSpeed:1);move(b,dir.x*speed*dt,dir.z*speed*dt);b.motion=Math.hypot(b.x-x,b.z-z)>.0001;if(b.motion)b.walk+=dt*speed*2.5;else b.orbitDir*=-1;
+}
+
+Object.assign(MIST_SCENES,{
+ orochimaruIntro:{title:'THE IMMORTAL SERPENT',lines:[['Orochimaru','How fascinating. Let me see the power hiding inside you.'],['Naruto','I am not one of your experiments!'],['Orochimaru','Then entertain me.']]},
+ orochimaruPhase:{title:'THE WHITE SERPENT',lines:[['Orochimaru','This body is merely a vessel.'],['Naruto','What are you?!'],['Orochimaru','Something that refuses to die.']]},
+ orochimaruEnd:{title:'THE FORBIDDEN LABORATORY',lines:[['Orochimaru','Interesting... I will remember this.'],['Naruto','You are not taking anyone else!']]}
+});
+Object.assign(MIST_CAMERA,{orochimaruIntro:[{zoom:1.9,yaw:.22},{zoom:1.6,yaw:-.16},{zoom:2.1,yaw:.1}],orochimaruPhase:[{zoom:2,yaw:-.22},{zoom:1.6,yaw:.14},{zoom:1.8,yaw:.24}],orochimaruEnd:[{zoom:1.8,yaw:.2},{zoom:1.6,yaw:-.1}]});
+export function orochimaruTargets(b){return b?.id==='orochimaru'&&b.independent?[...b.snakes.filter(s=>s.hp>0&&s.life>0),...(b.husk?.hp>0&&b.husk.life>0?[b.husk]:[])]:[];}
+export function hurtOroMinion(b,e,damage,signal){
+ if(!orochimaruTargets(b).includes(e)||damage<=0)return false;
+ e.hp=Math.max(0,e.hp-damage);e.flash=.18;signal('oroMinionHit',b,{target:e,damage});
+ if(!e.hp){e.life=0;signal(e.oroHusk?'oroHuskBroken':'oroSnakeDown',b,{target:e});if(e.oroHusk){b.husk=null;b.attack=Math.max(b.attack,1.5);}}
+ return true;
+}
+export function tickOrochimaru(b,p,clones,dt,move,hit,signal,random=Math.random){
+ const c=ORO_RULES,alive=q=>q.hp>0&&(q.life??1)>0;
+ b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.attack=Math.max(0,b.attack-dt);b.motion=false;
+ for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
+ if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
+ if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;b.intent=null;b.anim=null;b.attack=1.2;signal('orochimaruPhase',b);return;}
+ if(b.husk){b.husk.flash=Math.max(0,b.husk.flash-dt);b.husk.life-=dt;if(b.husk.life<=1e-8){const amount=Math.min(c.shedHeal,b.maxHP-b.hp);b.hp+=amount;b.husk=null;signal('oroShedHeal',b,{amount});}}
+ if(!b.shedUsed&&b.hp<=b.maxHP*c.shedThreshold+1e-8){b.shedUsed=true;b.husk={id:'oro-husk',oroHusk:true,x:b.x,z:b.z,hp:c.huskHP,maxHP:c.huskHP,life:c.huskLife,flash:0};b.intent=null;b.anim=null;b.attack=.9;const v=directionToward(b.x-p.x,b.z-p.z);move(b,v.x*4,v.z*4);signal('oroShed',b,{target:b.husk});return;}
+ for(const s of b.snakes){s.life-=dt;s.flash=Math.max(0,s.flash-dt);s.attack=Math.max(0,s.attack-dt);if(!alive(s))continue;
+  if(s.intent){s.intent.left-=dt;if(s.intent.left<=1e-8){const a=s.intent;s.intent=null;s.attack=c.biteCooldown;for(const q of [p,...clones])if(alive(q)&&distance(q,a)<=c.biteRange)hit(q,c.biteDamage,s);signal('oroBite',b,{target:s,x:a.x,z:a.z,radius:c.biteRange});}continue;}
+  const target=[p,...clones].filter(alive).sort((a,d)=>distance(s,a)-distance(s,d))[0];if(!target)continue;const v=directionToward(target.x-s.x,target.z-s.z);s.dirX=v.x;s.dirZ=v.z;
+  if(distance(s,target)<=c.biteRange){if(s.attack<=0)s.intent={x:target.x,z:target.z,left:c.biteWindup,total:c.biteWindup};}else move(s,v.x*c.snakeSpeed*dt,v.z*c.snakeSpeed*dt);
+ }
+ b.snakes=b.snakes.filter(alive);
+ if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.cooldowns[a.id]=a.cooldown;b.attack=.7;
+  if(a.summon){for(let i=b.snakes.length;i<c.snakeCap;i++){const th=i*2*Math.PI/3;const q={id:'oro-snake-'+(++b.serial),oroSnake:true,x:b.x,z:b.z,hp:c.snakeHP,maxHP:c.snakeHP,life:c.snakeLife,attack:1+i*.55,flash:0,dirX:1,dirZ:0};move(q,Math.cos(th)*2.3,Math.sin(th)*2.3);b.snakes.push(q);}signal('oroSummon',b,a);}
+  else{for(const q of [p,...clones])if(alive(q)&&bossContains(a,q)){const landed=q===p&&!(p.invuln>0)&&!(p.substitution>0);hit(q,a.damage,b);if(a.venom&&landed)signal('oroVenom',b,a);}signal('strike',b,a);}
+  if(a.pulses&&(a.pulse||1)<a.pulses){const v=directionToward(p.x-b.x,p.z-b.z);b.intent={...a,x:b.x,z:b.z,dx:v.x,dz:v.z,left:.85,total:.85,pulse:(a.pulse||1)+1};b.cooldowns[a.id]=0;b.attack=0;signal('windup',b,b.intent);}
+ }return;}
+ const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
+ if(!b.attack){const ready=b.spec.patterns.filter(a=>(a.phase||1)<=b.phase&&b.cooldowns[a.id]<=1e-8&&d<=a.reach&&(!a.summon||b.snakes.length<c.snakeCap)),varied=ready.filter(a=>a.id!==b.lastPattern),options=varied.length?varied:ready,a=options.find(a=>a.summon)||options[Math.floor(random()*options.length)];if(a){b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:a.windup,total:a.windup};b.anim={k:a.summon||a.venom?'l':'j',left:a.windup+.25,total:a.windup+.25,windup:a.windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
+ b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.5+random();}const radial=Math.max(-1,Math.min(1,(d-4.5)*.6)),dir=directionToward(v.x*radial-v.z*.65*b.orbitDir,v.z*radial+v.x*.65*b.orbitDir),speed=b.spec.speed*(b.phase===2?c.phaseSpeed:1),x=b.x,z=b.z;move(b,dir.x*speed*dt,dir.z*speed*dt);b.motion=distance(b,{x,z})>.0001;if(b.motion)b.walk+=dt*speed*2.5;
 }

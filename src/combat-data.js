@@ -2,6 +2,7 @@
 export const COMBAT={
  dash:{cost:12,cooldown:.85,duration:.17,speed:19,invulnerable:.19},
  comboWindow:.72,
+ kyubi:{duration:15,melee:1.4,technique:1.25,speed:1.15,damageTaken:.8,reach:[4.5,4.8,5.2],dealt:.55,received:1.8},
  rasengan:{' ':{maxCharge:.9,minDistance:5.5,maxDistance:9,speed:22,extraCost:10,bonusDamage:.30,size:2.1,maxScale:1.75,contact:1.15,splash:2.0,recovery:.39,impact:.85},g:{maxCharge:1.25,minDistance:8,maxDistance:13,speed:24,extraCost:14,bonusDamage:.35,size:3.35,maxScale:1.65,contact:1.65,splash:3.0,recovery:.46,impact:1.1}},
  substitution:{cost:18,cd:7,duration:1.8,invulnerable:.38},
  skills:{

@@ -89,3 +89,6 @@ QA: bajar HP a 25, activar Kyūbi, observar +10 HP/s hasta 100, verificar fin de
 
 ## v1.10d — Corrección del color del Rasengan
 Separación de pools de sprites normal y Kyūbi para evitar contaminación de Source compartido de Three.js al reasignar map.image. Máximo ocho sprites Rasengan visibles, reutilización independiente. Tras expirar la transformación, el Rasengan en carga y los nuevos lanzamientos vuelven a celeste, tamaño normal; daño de ataque ya iniciado se conserva. Regeneración v1.10c intacta. Pruebas de lógica y de selección/reutilización de atlas superadas (render GPU real pendiente). Preview misma rama; Cloudflare sin confirmar. Producción v1.10b intacta.
+
+## v1.10e — Classic title, English and control settings
+Approved classic Team 7 title artwork tracked at assets/title-classic.png, functional HTML menu and fallback. English main UI, campaign, dialogue, item and combat strings; final visual/localization QA pending. Persistent keyboard remapping, duplicate keys swapped, defaults, arrows and touch remain supported. Normal and Kyūbi Rasengan resist ordinary damage interruption; lethal damage cancels. Retains +10% max HP/s Kyūbi regeneration and palette fix. Smoke logic tests passed with renderer/audio/UI mocked. Promotion to main requested; Cloudflare deploy requires verification.

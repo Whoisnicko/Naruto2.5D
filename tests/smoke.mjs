@@ -125,7 +125,7 @@ game.start(false);p=game.state.p;assert(!game.attack('constructor'));p.hp=1;p.in
 feedback.reset();feedback.impact(undefined,NaN);assert(!feedback.frozen);assert.equal(feedback.offset().x,0);
 // Independently test animation metadata and hit-stop decay.
 const art=new Function(strip(src['pixel-art'])+'\nreturn {ANIMS,ACTOR_COLS,artFor,rasenganPose,rasenganHand};')();
-const anim=new Function('ANIMS','artFor','rasenganPose',strip(src['pixel-renderer'])+'\nreturn {frameFor,advancePose,createRasenganPool,rasenganVisualKyubi};')(art.ANIMS,art.artFor,art.rasenganPose);
+const anim=new Function('ANIMS','artFor','rasenganPose','COMBAT',strip(src['pixel-renderer'])+'\nreturn {frameFor,advancePose,createRasenganPool,rasenganVisualKyubi};')(art.ANIMS,art.artFor,art.rasenganPose,COMBAT);
 assert.equal(art.ACTOR_COLS,64);assert.equal(anim.frameFor({anim:{k:'j',combo:2,left:.3,total:.34,windup:.1}},0).state,'kick');assert.equal(anim.frameFor({anim:{k:'j',combo:3,left:.2,total:.43,windup:.14}},0).state,'finish');
 for(const char of ['naruto','sasuke','sakura','kakashi'])for(const k of [' ','f','l','g']){const a={character:char,anim:{k,left:.6,total:.6,windup:.25}};const first=anim.frameFor(a,0);assert(first.col>=22);a.anim.left=.25;assert(anim.frameFor(a,0).col>first.col);a.anim.left=.01;assert.equal(anim.frameFor(a,0).col,first.col+(char==='naruto'&&k===' '?5:3));}
 for(let i=0;i<6;i++){const elapsed=i<3?(i+.5)*.26/3:.26+(i-3+.5)*.39/3;assert.equal(art.rasenganPose({total:.65,left:.65-elapsed,windup:.26}),i);}game.start(false);p=game.state.p;assert(game.attack(' '));sim(.65);const ref=game.state.effects.find(e=>e.reference);assert(ref&&ref.type==='rasengan'&&Number.isFinite(ref.dx)&&Number.isFinite(ref.dz));assert.equal(COMBAT.skills[' '].damage,60);assert.equal(COMBAT.skills[' '].cost,20);
@@ -404,3 +404,26 @@ console.log('PASS v1.15d: front guard, stamina drain/recovery/break, rear and sp
 
 {game.start(false);const p=game.state.p;p.stamina=42;assert(game.enterSandbox());game.state.p.stamina=10;assert(game.exitSandbox());assert.equal(game.state.p.stamina,42);game.state.p.guardBreak=.5;assert(!game.dash());assert(!game.substitution());const old=game.normalizeBindings(null);delete old.b;delete old.v;old.j='b';const migrated=game.normalizeBindings(old);assert.equal(migrated.j,'b');assert(migrated.b!=='b');assert.equal(new Set(Object.values(migrated)).size,Object.keys(migrated).length);}
 console.log('PASS v1.15d: sandbox stamina isolation, guard-break locks and legacy keybinding migration.');
+
+// v1.16a: presentation-only clocks and all new atlas regions, including fallback copies.
+{
+ const {ANIMS,ACTOR_COLS}=art;assert.equal(ACTOR_COLS,64);
+ const get=(a,t=0,p=null)=>anim.frameFor(a,t,p);
+ assert.equal(get({guarding:true},0,{age:0}).col,44);
+ assert.equal(get({guarding:true},0,{age:.2}).col,45);
+ assert.equal(get({charging:true,chargeHeld:.1}).col,48);
+ assert.equal(get({charging:true,chargeHeld:.3}).col,50);
+ assert.equal(get({guardBreak:.4}).col,58);
+ assert.equal(get({dashTime:COMBAT.dash.duration}).col,52);
+ assert.equal(get({dashTime:.01}).col,55);
+ const a={anim:{dashStrike:true,left:.2,total:.295,windup:.055}};assert.equal(get(a).col,60);
+ for(const [age,col] of [[0,61],[.08,62],[.18,63]]){a.anim.dashImpactAge=age;assert.equal(get(a).col,col);}
+ const actor={motion:true,sprinting:false,moveBlend:1},pose={state:null,age:0,gait:0,brake:0,sx:1,sy:1};
+ anim.advancePose(pose,actor,.1);const before=pose.gait;actor.sprinting=true;anim.advancePose(pose,actor,.05);assert(pose.gait>before);actor.motion=false;anim.advancePose(pose,actor,.01);assert.equal(get(actor,0,pose).state,'brake');anim.advancePose(pose,actor,.1);assert.equal(get(actor,0,pose).state,'idle');
+ actor.dashTime=.1;anim.advancePose(pose,actor,.04);assert(pose.sx>1&&pose.sy<1);actor.dashTime=0;actor.character='naruto';actor.anim={k:'g',rasPose:0,left:.3,total:.3};anim.advancePose(pose,actor,.01);assert.equal(pose.sx,1);assert.equal(pose.sy,1);assert.equal(get(actor,0,pose).col,38);
+ const sheets=[];const fakeDocument={createElement(){const obj={width:0,height:0,draws:[],paint:0};const ctx={fillRect(){obj.paint++;},drawImage(...args){obj.draws.push(args);},translate(){},scale(){}};obj.getContext=()=>ctx;sheets.push(obj);return obj;}};
+ const make=new Function('document',strip(src['pixel-art'])+'\nreturn makeActorSheet;')(fakeDocument);
+ const player=make('player',null,false),red=make('player',null,true),boss=make('whiteSerpent');for(const sheet of [player,red,boss]){assert.equal(sheet.width,1536);assert.equal(sheet.height,128);assert.equal(sheet.draws.length,256);}
+ assert.equal(player.draws.filter(a=>a[0]===player).length,0);assert.equal(boss.draws.filter(a=>a[0]===boss).length,80);
+}
+console.log('PASS v1.16a: animation atlas dimensions, all new pose ranges, dash contact synchronization, gait continuity, braking, Rasengan alignment and fallback generation.');

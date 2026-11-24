@@ -12,8 +12,8 @@ export function frameFor(actor,clock,pose=null){
  if(!a&&actor.guardBreak>0)return {col:ANIMS.guardBreak.start+Math.floor(clock*ANIMS.guardBreak.fps)%2,state:'guardBreak'};
  if(!a&&actor.guarding)return {col:ANIMS.guard.start+(pose&&pose.age<.10?0:1+Math.floor(clock*ANIMS.guard.fps)%3),state:'guard'};
  if(!a&&actor.charging)return {col:ANIMS.charge.start+((actor.chargeHeld||0)<.25?Math.min(1,Math.floor((actor.chargeHeld||0)*8)):2+Math.floor(clock*ANIMS.charge.fps)%2),state:'charge'};
- if(a?.dashStrike&&a.left>0){const elapsed=Math.max(0,a.total-a.left),w=a.windup||.055;return {col:ANIMS.dashStrike.start+(elapsed<w||actor.pending?.s?.dashStrike?0:1+Math.min(2,Math.floor((elapsed-w)/Math.max(.001,a.total-w)*3))),state:'dashStrike'};}
- if(!a&&actor.dashTime>0)return {col:ANIMS.dash.start+Math.min(3,Math.floor(Math.max(0,1-actor.dashTime/.17)*4)),state:'dash'};
+ if(a?.dashStrike&&a.left>0){const age=a.dashImpactAge;return {col:ANIMS.dashStrike.start+(!Number.isFinite(age)?0:age<.065?1:age<.135?2:3),state:'dashStrike'};}
+ if(!a&&actor.dashTime>0)return {col:ANIMS.dash.start+Math.min(3,Math.floor(Math.max(0,1-actor.dashTime/COMBAT.dash.duration)*4)),state:'dash'};
  if(a&&a.left>0){
   if(actor.character==='naruto'&&Number.isInteger(a.rasPose))return {col:38+a.rasPose,state:'rasengan'};
   if(actor.character==='naruto'&&a.k===' ')return {col:38+rasenganPose(a),state:'rasengan'};
@@ -35,7 +35,7 @@ export function advancePose(pose,actor,dt){
  if(moving)pose.gait=(pose.gait+dt*(actor.sprinting?ANIMS.run.fps:ANIMS.walk.fps)*(actor.moveBlend==null?1:Math.max(.45,actor.moveBlend)))%4;
  // Preserve the exact Rasengan/cinematic alignment, feet anchored to ground.
  let sx=1,sy=1;
- if(!actor.fallen&&!actor.air&&!a?.rasPose&&!(a&&a.k===' '&&actor.character==='naruto')&&!a?.rasRecovery){
+ if(!actor.fallen&&!actor.air&&!Number.isInteger(a?.rasPose)&&!(a&&a.k===' '&&actor.character==='naruto')&&!a?.rasRecovery){
   if(state==='dash'){sx=1.055;sy=.96;}else if(state==='guard'||state==='guardBreak'){sx=1.035;sy=.97;}else if(state==='charge'){sx=1.012;sy=1+.012*Math.sin(pose.age*12);}else if(state==='hit'){sx=1.035;sy=.965;}else if(pose.brake>0){sx=1.025;sy=.975;}
   const blend=1-Math.exp(-Math.max(0,dt)*24);pose.sx+=(sx-pose.sx)*blend;pose.sy+=(sy-pose.sy)*blend;
  }else{pose.sx=pose.sy=1;}

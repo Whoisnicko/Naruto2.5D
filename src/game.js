@@ -500,6 +500,7 @@ function tickRasengan(dt,dx,dz){
 }
 function resolveAttack(a){
  const {k,s,combo}=a;
+ if(s.dashStrike&&p.anim?.dashStrike)p.anim.dashImpactAge=0;
  let near=combatTargets().filter(e=>e.hp>0&&dist(p,e)<s.range).sort((a,b)=>dist(p,a)-dist(p,b));
  if(a.dir){p.dirX=a.dir.x;p.dirZ=a.dir.z;if(k==='j'||k==='k'||k==='f')near=attackCone(s,a.dir);}
  if(k==='j'&&s.kyubi){const v=directionToward(p.dirX,p.dirZ),reach=clawReach(v.x,v.z,s.range);const targets=near.filter(e=>{const x=e.x-p.x,z=e.z-p.z,along=x*v.x+z*v.z,side=Math.abs(x*v.z-z*v.x);return along>=0&&along<=reach+.001&&side<=(s.clawWidth||.8)&&clearRasPath(p,e);}).slice(0,s.targets||1);if(p.anim)p.anim.clawRange=targets.length?Math.max(...targets.map(e=>dist(p,e))):reach;for(const [i,target] of targets.entries())hurt(target,Math.round(s.damage*(i?.7:1)),p,s,true);if(targets.length>1)audio.play('kyubiHit');return;}
@@ -606,7 +607,7 @@ function update(dt){
  if(boss?.id==='sasuke'&&boss.independent&&tickValleyElectric(boss,p,dt)&&!(p.dashGuard>0||p.dashTime>0||p.invuln>0)){const b=boss;if(!immortalActive())p.hp=Math.max(0,p.hp-VALLEY_RULES.trailDamage);feedback.number(p.x,p.z,immortalActive()?'IMMUNE':VALLEY_RULES.trailDamage,'player');p.flash=Math.max(p.flash||0,.10);if(!p.hp){startValleyUltimate(b);b.finalDuel.stage='failed';failValley(b);return;}}
  if(boss?.id==='sasuke'&&boss.independent&&tickValleyBurn(boss,p,dt)&&!(p.dashGuard>0||p.dashTime>0||p.invuln>0)){const b=boss;if(!immortalActive())p.hp=Math.max(0,p.hp-VALLEY_RULES.burnDamage);feedback.number(p.x,p.z,immortalActive()?'IMMUNE':VALLEY_RULES.burnDamage,'player');p.flash=Math.max(p.flash||0,.10);if(!p.hp){startValleyUltimate(b);b.finalDuel.stage='failed';failValley(b);return;}}
  if(wasEast!==inEast(p)){projectiles=[];clones=[];effects=effects.filter(e=>e.reference);msg(inEast(p)?'Wind Frontier · Explore the trail and shrine.':'Return to Konoha Forest',4);}
- if(p.anim&&!p.pending?.ras){p.anim.left-=dt;if(p.anim.rasRecovery)p.anim.rasPose=p.anim.left>p.anim.total*.5?4:5;if(p.anim.left<=0)p.anim=null;}
+ if(p.anim&&!p.pending?.ras){if(Number.isFinite(p.anim.dashImpactAge))p.anim.dashImpactAge+=dt;p.anim.left-=dt;if(p.anim.rasRecovery)p.anim.rasPose=p.anim.left>p.anim.total*.5?4:5;if(p.anim.left<=0)p.anim=null;}
  if(p.queued&&!p.anim&&!p.pending&&!(cd.j>0)){p.queued=false;attack('j');}
   drainAction();
  if(arenaIsolationAt===null){if(!boss&&!examRun)tickRespawn();reinforcements=reinforcements.filter(e=>e.hp>0&&e.expires>t);}const actors=activeEnemies(),team=enemyTeam(actors);

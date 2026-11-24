@@ -461,3 +461,21 @@ console.log('PASS v1.17a: immersive/tools controls, unchanged save, resource rea
 // v1.18a: actual Sandbox load, fixed metrics and isolation.
 {game.start(false);const original=JSON.stringify(game.snapshot());assert(!game.beginStress(24));assert(game.enterSandbox());assert(game.beginStress(48));assert.equal(game.state.reinforcements.filter(e=>e.stress).length,48);assert(game.immortalActive());assert(game.state.reinforcements.filter(e=>e.stress).every(e=>!game.blocked(e.x,e.z)));game.sampleStress(0,2);for(let i=1;i<=1500;i++)game.sampleStress(i*10,2);assert(!game.stressRun);assert(game.stressReport.includes('100.0 FPS'));assert(game.stressReport.includes('p95 10.0 ms'));assert(game.stressReport.includes('CPU 2.0 ms'));assert(game.beginStress(24));sim(2);game.render(.016);assert(game.state.reinforcements.filter(e=>e.stress).length>0);assert(game.beginStress(24));game.sampleStress(0,2);game.sampleStress(300,2);assert(!game.stressRun);assert(game.stressReport.includes('Interrupted'));assert(game.boost('stress:stop'));assert.equal(game.state.reinforcements.filter(e=>e.stress).length,0);assert(game.exitSandbox());assert.equal(JSON.stringify(game.snapshot()),original);}
 console.log('PASS v1.18a: deterministic 24/48 enemy Sandbox stress setup, metric calculation, interruption and campaign isolation.');
+
+// v1.18a: actual minimap code with Canvas call tracking and no layout/browser assumptions.
+{
+ const calls=[],nodes=new Map(),ctx={fillStyle:'',clearRect(){calls.push('clear')},fillRect(){calls.push('fill')},drawImage(){calls.push('base')}};
+ const doc={getElementById(id){if(!nodes.has(id))nodes.set(id,{dataset:{},hidden:false,textContent:'',getContext(){return ctx;}});return nodes.get(id)},createElement(){return {getContext(){return ctx;}}}};
+ const world=worldApi.newWorld(),rpg=rpgApi.newRPG(),bp=bossApi.newBossProgress(),p={x:-16,z:-2,coins:0};
+ const state={p,world,rpg,bossProgress:bp,enemies:[],quest:0,boss:null,campaign:{completed:false},exam:{wins:0},npcs:[],weather:'clear'};
+ const deps={document:doc,...worldApi,...bossApi,...rpgApi};
+ const ui=new Function(...Object.keys(deps),strip(src['world-ui'])+'\nreturn createWorldUI;')(...Object.values(deps))({state:()=>state});
+ calls.length=0;ui.tick();assert(calls.includes('clear'));const first=calls.length;ui.tick();assert.equal(calls.length,first);p.x+=.01;ui.tick();assert.equal(calls.length,first);p.x+=2;ui.tick();assert(calls.length>first);
+ const before=calls.length;doc.getElementById('hud').dataset.immersive='true';p.x+=3;ui.tick();assert.equal(calls.length,before);doc.getElementById('hud').dataset.immersive='false';ui.tick();assert(calls.length>before);
+ const after=calls.length;doc.getElementById('mapPanel').hidden=true;p.x=75;ui.tick();assert.equal(calls.length,after);doc.getElementById('mapPanel').hidden=false;ui.tick();assert(calls.length>after);
+ const room=worldApi.INTERIORS[0];state.interior=room;p.x=room.x;p.z=room.z;ui.tick();const inside=calls.length;ui.tick();assert.equal(calls.length,inside);state.interior=null;p.x=-16;p.z=-2;ui.tick();assert(calls.length>inside);
+}
+console.log('PASS v1.18a: minimap redraw suppression, movement, hidden/immersive, east and interior transition.');
+// Simulate 15 seconds in the high-load scenario with actual attack requests and enemies.
+{game.start(false);assert(game.enterSandbox());assert(game.beginStress(48));const p=game.state.p;for(let i=0;i<1500;i++){if(i%90===0)game.attack('l');if(i%23===0)game.attack('k');if(i%50===0)game.attack('j');if(i%110===0)game.dash();feedback.tick(.01);game.update(.01);if(i%10===0)game.render(.016);assert(Number.isFinite(p.x)&&Number.isFinite(p.z)&&Number.isFinite(p.chakra));assert(game.state.effects.length<=25);assert(game.state.reinforcements.filter(e=>e.stress).length<=48);}assert(game.exitSandbox());}
+console.log('PASS v1.18a: 15 simulated seconds of mixed combat with 48 extra enemies, rendering and bounded effects.');

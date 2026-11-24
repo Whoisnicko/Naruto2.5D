@@ -823,7 +823,7 @@ function render(dt,animDt=dt){
 $('error').textContent='';$('start').disabled=false;$('importMenu').disabled=false;refreshRecovery();try{$('continue').disabled=!readSave(DATA.enemies.length);}catch(e){$('continue').disabled=true;$('error').textContent='Guardado anterior inválido o almacenamiento bloqueado. Recuperá un respaldo local o importá un archivo.';}
 let renderRate=0,renderWorst=0,renderSampleAt=0,animSinceRender=0,renderDeadline=0,lastLimit='',lastRunning=false,lastActiveRender=null;
 function loop(now){requestAnimationFrame(loop);const frameStart=performance.now(),real=Math.max(.001,(now-last)/1000),dt=Math.min(.05,real);last=now;fps=fps*.95+(.05/real);
- if(stressRun&&(!running||real>.25))stopStress('Interrupted by pause or background tab');const frozen=feedback.frozen;feedback.tick(real);if(running){if(!frozen){update(dt);animSinceRender+=dt;}audio.music?.(dt,boss?'boss':'explore');if(t>=autosaveAt){autosaveAt=t+20;if(arenaIsolationAt===null)save(true);}}
+ if(stressRun&&(!running||real>.25||!sandbox||boss||interior||examRun||mistScene))stopStress('Interrupted by pause, scene or background tab');const frozen=feedback.frozen;feedback.tick(real);if(running){if(!frozen){update(dt);animSinceRender+=dt;}audio.music?.(dt,boss?'boss':'explore');if(t>=autosaveAt){autosaveAt=t+20;if(arenaIsolationAt===null)save(true);}}
  const limit=perf.fpsLimit,interval=limit==='unlimited'?0:1000/Number(limit);
  if(lastLimit!==limit||lastRunning!==running||real>.25){renderDeadline=now;lastLimit=limit;lastActiveRender=null;perf.resetWindow();if(!running)animSinceRender=0;}lastRunning=running;
  const due=running?(!interval||now+.75>=renderDeadline):now-pausedFrameAt>=(mistScene?32:100);

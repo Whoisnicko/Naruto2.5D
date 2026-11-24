@@ -55,3 +55,7 @@
 - Producción v1.5: https://naruto2-5d.pages.dev/ (PR 18).
 - v1.6a: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v16a-rasengan
 - Preview: consultar check Cloudflare del último commit.
+
+- Producción v1.6b: https://naruto2-5d.pages.dev/ (PR 20).
+- v1.7 beta: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v17-kyubi-awakening
+- Preview: consultar check Cloudflare del último commit.

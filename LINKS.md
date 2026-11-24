@@ -26,3 +26,8 @@
 - Producción: https://naruto2-5d.pages.dev/
 - Rama v0.11: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v011-boss-sandbox
 - Preview: https://feature-v011-boss-sandbox.naruto2-5d.pages.dev (verificar check del último commit).
+
+- Release v0.11: https://github.com/Whoisnicko/Naruto2.5D/pull/9
+- Producción: https://naruto2-5d.pages.dev/
+- Rama v1.0 RC: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v1-release-candidate
+- Preview: https://feature-v1-release-candidate.naruto2-5d.pages.dev (consultar check del último commit).

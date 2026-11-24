@@ -1,0 +1,50 @@
+/* v1.20b.2 — illustrated player profile. Existing DOM remains authoritative. */
+#livingHudArt,#livingFury,.living-transform-fallback{display:none}
+#hud[data-living-hud=true] #kyubiHUD{display:none!important}
+#hud[data-living-hud=true][data-character=naruto] #livingFury{display:block;margin:3px 0 5px;color:#ffd291;font:700 10px/1.3 system-ui;text-align:center;overflow-wrap:anywhere}
+#hud[data-living-hud=true][data-character=naruto] #top[data-living-state=active] #livingFury{color:#ff9777}
+#hud[data-living-hud=true][data-character=naruto] .portrait-frame{position:relative;isolation:isolate}
+#hud[data-living-hud=true][data-character=naruto] .portrait-frame:after{content:"";position:absolute;inset:-3px;border-radius:50%;background:conic-gradient(#ffad39 var(--living-rage,0%),#49404c 0);mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));pointer-events:none;z-index:2}
+#hud[data-living-hud=true][data-character=naruto][data-form=kyubi] .portrait-frame:after{background:conic-gradient(#ff4933 var(--living-rage,0%),#49404c 0)}
+#hud[data-living-hud=true][data-character=naruto] .living-transform-fallback{display:block;position:absolute;inset:-3px;width:100%;height:100%;border-radius:50%;z-index:3}
+#hud .living-transform{background:transparent!important;border:0!important;box-shadow:none!important;padding:0;pointer-events:auto;cursor:pointer;opacity:1}
+#hud .living-transform:disabled{cursor:default;pointer-events:none}
+#hud .living-transform:focus-visible{outline:2px solid #ffe49e;outline-offset:2px}
+/* Only Naruto has these two approved illustrations; other characters retain their own portrait. */
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]){--hero-width:min(440px,29vw)}
+#hud[data-living-art=ready][data-character=naruto][data-hud-scale=compact]:not([data-living-fallback=true]){--hero-width:min(365px,27vw)}
+#hud[data-living-art=ready][data-character=naruto][data-hud-scale=large]:not([data-living-fallback=true]){--hero-width:min(480px,30vw)}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top{background:none;border:0;box-shadow:none;padding:0;overflow:visible;border-radius:0;max-height:none}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #livingHudArt{display:block;position:relative;width:100%;aspect-ratio:880/310;isolation:isolate;filter:drop-shadow(0 2px 2px #0009)}
+#livingHudArt svg{display:block;width:100%;height:100%;overflow:visible}
+#livingHudArt .living-variant{transition:opacity .24s ease;opacity:0}
+#top[data-living-form=normal] #livingHudArt .living-normal,#top[data-living-form=active] #livingHudArt .living-active{opacity:1}
+#livingHudArt #livingTransform{position:absolute;left:9%;top:7%;width:32%;height:86%;border-radius:50%}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .hero-head{min-height:0;display:block;margin:0;padding:0 8%;border:0;background:none}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .portrait-frame{display:none}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .hero-heading{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:2px 7px;text-align:center;text-shadow:0 1px 3px #000,0 1px 3px #000;background:#171c27eb;border:1px solid #ae793a;border-radius:5px;padding:3px 6px;min-width:0}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .hero-heading .eyebrow{display:none}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .hero-heading h3{font-size:15px;margin:0;color:#ffc969;line-height:1.15}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .hero-heading #stats{font-size:10px;line-height:1.2;overflow-wrap:anywhere}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #livingFury{width:max-content;max-width:100%;margin:3px auto;background:#201b20e8;border:1px solid #ad793e;border-radius:4px;padding:2px 7px;text-shadow:0 1px #000}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .resource:not(.xp-resource){display:inline-flex;vertical-align:top;align-items:center;justify-content:center;gap:3px;width:calc(100% / 3 - 3px);margin:0 1px 3px;padding:3px 2px;background:#171c27e8;border:1px solid #9a753f;border-radius:3px;font-size:10px;white-space:nowrap;line-height:1.15}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .resource:not(.xp-resource) small{font-size:9px;margin:0;font-variant-numeric:tabular-nums}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .resource:not(.xp-resource) .bar{display:none}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .xp-resource{margin:0 8%;padding:3px 6px;background:#171c27e8;border:1px solid #9a753f;border-radius:4px;font-size:10px}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .combat-state{text-shadow:1px 1px #000,0 0 3px #000}
+@media(prefers-reduced-motion:no-preference){#top[data-living-state=ready] #livingHudArt,#top[data-living-state=ready] .portrait-frame:after{animation:living-ready 1.2s ease-in-out infinite}#top[data-living-form=active] #livingHudArt{animation:living-active 1.8s ease-in-out infinite}}
+@keyframes living-ready{50%{filter:drop-shadow(0 0 6px #ff9b38)}}
+@keyframes living-active{50%{filter:drop-shadow(0 0 5px #ff3c27)}}
+@media(min-width:901px) and (pointer:fine){#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #bossHUD{width:min(470px,calc(100vw - 2 * max(var(--hero-width),var(--quest-width)) - 2 * var(--edge) - 16px))}}
+@media(max-width:900px),(pointer:coarse){
+ #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]),#hud[data-living-art=ready][data-character=naruto][data-hud-scale]:not([data-living-fallback=true]){--hero-width:min(43vw,205px)}
+ #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .hero-head{padding:0 2%}
+ #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .hero-heading{padding:2px 3px;gap:2px}
+ #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .hero-heading h3{font-size:12px}
+ #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .hero-heading #stats{font-size:9px}
+ #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .resource:not(.xp-resource){font-size:8px;flex-direction:column;gap:1px;padding:2px 1px;width:calc(100% / 3 - 3px)}
+ #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .resource:not(.xp-resource) small{font-size:8px}
+ #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #livingFury{font-size:9px;padding:2px 4px}
+ #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .xp-resource{margin:0 2%;padding:2px 4px}
+}
+@media(prefers-reduced-motion:reduce){#livingHudArt,#livingHudArt .living-variant,#top .portrait-frame:after{animation:none!important;transition:none!important}}

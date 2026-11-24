@@ -8,6 +8,7 @@ export const ITEMS={
  pill:{name:'Píldora de soldado',desc:'Recupera 40 puntos de chakra.',icon:'pill',type:'consumable',rarity:'uncommon',maxStack:10,value:18,restore:40},
  bandage:{name:'Vendaje ninja',desc:'Recupera 20 puntos de vida.',icon:'bandage',type:'consumable',rarity:'common',maxStack:10,value:7,heal:20},
  cloth:{name:'Tela de renegado',desc:'Material de entrenamiento. Reservado para fabricación futura.',icon:'cloth',type:'material',rarity:'common',maxStack:20,value:4},
+ forestKey:{name:'Llave del bosque',desc:'Iruka la entrega al completar la ruta. Abre el alijo sellado.',icon:'key',type:'key',rarity:'rare',maxStack:1,value:0},
  scroll:{name:'Pergamino de chakra',desc:'Se consume al aprender el Rasengan gigante en el árbol.',icon:'scroll',type:'scroll',rarity:'rare',maxStack:5,value:50},
  headband:{name:'Protector de Konoha',desc:'Placa reforzada de un shinobi.',icon:'headband',type:'armor',slot:'head',rarity:'uncommon',maxStack:1,value:30,stats:{defense:2},visual:{color:'#c4dbe1',accent:'#547486'}},
  vest:{name:'Chaleco de entrenamiento',desc:'Protección ligera para misiones.',icon:'vest',type:'armor',slot:'torso',rarity:'rare',maxStack:1,value:70,stats:{defense:4},visual:{color:'#73945f',accent:'#d0bf83'}},
@@ -60,7 +61,7 @@ export function moveSlot(r,from,to){
  else{r.inventory[from]=b;r.inventory[to]=a;}return true;
 }
 export function sortInventory(r){const list=r.inventory.filter(Boolean);list.sort((a,b)=>ITEMS[a.id].type.localeCompare(ITEMS[b.id].type)||ITEMS[a.id].name.localeCompare(ITEMS[b.id].name));r.inventory.fill(null);for(const s of list)addItem(r,s.id,s.count,false);}
-export function discardSlot(r,index){const s=r.inventory[index];if(!s)return false;if(--s.count===0)r.inventory[index]=null;return true;}
+export function discardSlot(r,index){const s=r.inventory[index];if(!s||itemFor(s.id)?.type==='key')return false;if(--s.count===0)r.inventory[index]=null;return true;}
 export function equipSlot(r,index){const s=r.inventory[index],item=itemFor(s?.id);if(!item?.slot||s.count!==1)return false;const old=r.equipment[item.slot];r.equipment[item.slot]=s.id;r.inventory[index]=old?{id:old,count:1}:null;return true;}
 export function unequipSlot(r,slot){if(!SLOTS.includes(slot)||!r.equipment[slot])return false;const i=r.inventory.findIndex(s=>!s);if(i<0)return false;r.inventory[i]={id:r.equipment[slot],count:1};r.equipment[slot]=null;return true;}
 export function assignHotbar(r,index,id){if(!Number.isInteger(index)||index<0||index>=3||itemFor(id)?.type!=='consumable')return false;r.hotbar[index]=id;return true;}

@@ -26,3 +26,6 @@ Rama `feature/v07-game-feel`; abrir preview desde Cloudflare Deployments. Probar
 
 ## v0.8 beta
 Rama `feature/v08-advanced-combat`. Preview desde Cloudflare Deployments, URL pendiente de verificar. Probar Q/J/K/L/Espacio existentes, R Kawarimi y F Fūma, guardia, kunai y marcas de clones. Ejecutar `node tests/smoke.mjs`. Guardado compatible; importar JSON si cambia origen. No fusionar antes de validar.
+
+## v0.9 beta
+Producción v0.8: https://naruto2-5d.pages.dev/ — PR 6 fusionado, check Cloudflare success. Rama de prueba `feature/v09-rpg-progression`. Exportar partida v2 antes de probar. I inventario, P árbol, 1–3 consumibles, G técnica desbloqueable. Probar equipo visible, entrenamiento, reserva de botín y migración a v3. Ejecutar `node tests/smoke.mjs`. Mantener v0.9 fuera de main hasta validación.

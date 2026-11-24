@@ -1,0 +1,4951 @@
+[
+  {
+    "scenario": "explore",
+    "width": 1920,
+    "height": 1080,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 284,
+        "h": 417
+      },
+      "quest": {
+        "x": 1636,
+        "y": 16,
+        "w": 268,
+        "h": 566
+      },
+      "combatDock": {
+        "x": 624,
+        "y": 859,
+        "w": 673,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 16,
+        "y": 970,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 934,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1751,
+        "y": 1019,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 863,
+        "y": 818,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "long",
+    "width": 1920,
+    "height": 1080,
+    "config": {
+      "character": "kakashi",
+      "rage": 45,
+      "state": "building",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 284,
+        "h": 238
+      },
+      "quest": {
+        "x": 1636,
+        "y": 16,
+        "w": 268,
+        "h": 678
+      },
+      "combatDock": {
+        "x": 624,
+        "y": 859,
+        "w": 673,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 16,
+        "y": 970,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 934,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1751,
+        "y": 1019,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 736,
+        "y": 818,
+        "w": 448,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "boss",
+    "width": 1920,
+    "height": 1080,
+    "config": {
+      "character": "naruto",
+      "rage": 60,
+      "state": "active",
+      "scale": "normal",
+      "boss": true,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": true,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 284,
+        "h": 417
+      },
+      "bossHUD": {
+        "x": 725,
+        "y": 43,
+        "w": 470,
+        "h": 139
+      },
+      "combatDock": {
+        "x": 624,
+        "y": 859,
+        "w": 673,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 16,
+        "y": 970,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 934,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1751,
+        "y": 1019,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 736,
+        "y": 818,
+        "w": 448,
+        "h": 36
+      },
+      "sandboxDock": {
+        "x": 917,
+        "y": 7,
+        "w": 87,
+        "h": 28
+      }
+    }
+  },
+  {
+    "scenario": "fallback",
+    "width": 1920,
+    "height": 1080,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": false,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 284,
+        "h": 341
+      },
+      "quest": {
+        "x": 1636,
+        "y": 16,
+        "w": 268,
+        "h": 440
+      },
+      "combatDock": {
+        "x": 629,
+        "y": 861,
+        "w": 663,
+        "h": 203
+      },
+      "rpgButtons": {
+        "x": 16,
+        "y": 970,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 934,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1751,
+        "y": 1019,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 863,
+        "y": 820,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "immersive",
+    "width": 1920,
+    "height": 1080,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": true,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 284,
+        "h": 417
+      },
+      "combatDock": {
+        "x": 624,
+        "y": 859,
+        "w": 673,
+        "h": 205
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 934,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1751,
+        "y": 1019,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 863,
+        "y": 818,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "compact",
+    "width": 1920,
+    "height": 1080,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "compact",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 248,
+        "h": 384
+      },
+      "quest": {
+        "x": 1670,
+        "y": 12,
+        "w": 238,
+        "h": 583
+      },
+      "combatDock": {
+        "x": 664,
+        "y": 863,
+        "w": 593,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 974,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 938,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1755,
+        "y": 1023,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 863,
+        "y": 822,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "large",
+    "width": 1920,
+    "height": 1080,
+    "config": {
+      "character": "naruto",
+      "rage": 45,
+      "state": "building",
+      "scale": "large",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 310,
+        "h": 433
+      },
+      "quest": {
+        "x": 1616,
+        "y": 16,
+        "w": 288,
+        "h": 661
+      },
+      "combatDock": {
+        "x": 592,
+        "y": 859,
+        "w": 737,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 16,
+        "y": 970,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 934,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1751,
+        "y": 1019,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 736,
+        "y": 818,
+        "w": 448,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "explore",
+    "width": 1600,
+    "height": 900,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 284,
+        "h": 417
+      },
+      "quest": {
+        "x": 1316,
+        "y": 16,
+        "w": 268,
+        "h": 566
+      },
+      "combatDock": {
+        "x": 464,
+        "y": 679,
+        "w": 673,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 16,
+        "y": 790,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 754,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1431,
+        "y": 839,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 703,
+        "y": 638,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "long",
+    "width": 1600,
+    "height": 900,
+    "config": {
+      "character": "kakashi",
+      "rage": 45,
+      "state": "building",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 284,
+        "h": 238
+      },
+      "quest": {
+        "x": 1316,
+        "y": 16,
+        "w": 268,
+        "h": 678
+      },
+      "combatDock": {
+        "x": 464,
+        "y": 679,
+        "w": 673,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 16,
+        "y": 790,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 754,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1431,
+        "y": 839,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 576,
+        "y": 638,
+        "w": 448,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "boss",
+    "width": 1600,
+    "height": 900,
+    "config": {
+      "character": "naruto",
+      "rage": 60,
+      "state": "active",
+      "scale": "normal",
+      "boss": true,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": true,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 284,
+        "h": 417
+      },
+      "bossHUD": {
+        "x": 565,
+        "y": 43,
+        "w": 470,
+        "h": 139
+      },
+      "combatDock": {
+        "x": 464,
+        "y": 679,
+        "w": 673,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 16,
+        "y": 790,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 754,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1431,
+        "y": 839,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 576,
+        "y": 638,
+        "w": 448,
+        "h": 36
+      },
+      "sandboxDock": {
+        "x": 757,
+        "y": 7,
+        "w": 87,
+        "h": 28
+      }
+    }
+  },
+  {
+    "scenario": "fallback",
+    "width": 1600,
+    "height": 900,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": false,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 284,
+        "h": 341
+      },
+      "quest": {
+        "x": 1316,
+        "y": 16,
+        "w": 268,
+        "h": 440
+      },
+      "combatDock": {
+        "x": 469,
+        "y": 681,
+        "w": 663,
+        "h": 203
+      },
+      "rpgButtons": {
+        "x": 16,
+        "y": 790,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 754,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1431,
+        "y": 839,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 703,
+        "y": 640,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "immersive",
+    "width": 1600,
+    "height": 900,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": true,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 284,
+        "h": 417
+      },
+      "combatDock": {
+        "x": 464,
+        "y": 679,
+        "w": 673,
+        "h": 205
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 754,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1431,
+        "y": 839,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 703,
+        "y": 638,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "compact",
+    "width": 1600,
+    "height": 900,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "compact",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 248,
+        "h": 384
+      },
+      "quest": {
+        "x": 1350,
+        "y": 12,
+        "w": 238,
+        "h": 583
+      },
+      "combatDock": {
+        "x": 504,
+        "y": 683,
+        "w": 593,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 794,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 758,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1435,
+        "y": 843,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 703,
+        "y": 642,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "large",
+    "width": 1600,
+    "height": 900,
+    "config": {
+      "character": "naruto",
+      "rage": 45,
+      "state": "building",
+      "scale": "large",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 16,
+        "y": 16,
+        "w": 310,
+        "h": 433
+      },
+      "quest": {
+        "x": 1296,
+        "y": 16,
+        "w": 288,
+        "h": 661
+      },
+      "combatDock": {
+        "x": 432,
+        "y": 679,
+        "w": 737,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 16,
+        "y": 790,
+        "w": 228,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 16,
+        "y": 754,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1431,
+        "y": 839,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 576,
+        "y": 638,
+        "w": 448,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "explore",
+    "width": 1366,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 260,
+        "h": 397
+      },
+      "quest": {
+        "x": 1110,
+        "y": 12,
+        "w": 244,
+        "h": 514
+      },
+      "combatDock": {
+        "x": 371,
+        "y": 551,
+        "w": 625,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 662,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 626,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1201,
+        "y": 711,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 586,
+        "y": 510,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "long",
+    "width": 1366,
+    "height": 768,
+    "config": {
+      "character": "kakashi",
+      "rage": 45,
+      "state": "building",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 260,
+        "h": 230
+      },
+      "quest": {
+        "x": 1110,
+        "y": 12,
+        "w": 244,
+        "h": 627
+      },
+      "combatDock": {
+        "x": 371,
+        "y": 551,
+        "w": 625,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 662,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 626,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1201,
+        "y": 711,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 459,
+        "y": 510,
+        "w": 448,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "boss",
+    "width": 1366,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 60,
+      "state": "active",
+      "scale": "normal",
+      "boss": true,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": true,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 260,
+        "h": 397
+      },
+      "bossHUD": {
+        "x": 448,
+        "y": 43,
+        "w": 470,
+        "h": 139
+      },
+      "combatDock": {
+        "x": 371,
+        "y": 551,
+        "w": 625,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 662,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 626,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1201,
+        "y": 711,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 459,
+        "y": 510,
+        "w": 448,
+        "h": 36
+      },
+      "sandboxDock": {
+        "x": 640,
+        "y": 7,
+        "w": 87,
+        "h": 28
+      }
+    }
+  },
+  {
+    "scenario": "fallback",
+    "width": 1366,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": false,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 260,
+        "h": 331
+      },
+      "quest": {
+        "x": 1110,
+        "y": 12,
+        "w": 244,
+        "h": 440
+      },
+      "combatDock": {
+        "x": 376,
+        "y": 553,
+        "w": 615,
+        "h": 203
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 662,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 626,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1201,
+        "y": 711,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 586,
+        "y": 512,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "immersive",
+    "width": 1366,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": true,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 260,
+        "h": 397
+      },
+      "combatDock": {
+        "x": 371,
+        "y": 551,
+        "w": 625,
+        "h": 205
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 626,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1201,
+        "y": 711,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 586,
+        "y": 510,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "compact",
+    "width": 1366,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "compact",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 248,
+        "h": 378
+      },
+      "quest": {
+        "x": 1116,
+        "y": 12,
+        "w": 238,
+        "h": 514
+      },
+      "combatDock": {
+        "x": 387,
+        "y": 551,
+        "w": 593,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 662,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 626,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1201,
+        "y": 711,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 586,
+        "y": 510,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "large",
+    "width": 1366,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 45,
+      "state": "building",
+      "scale": "large",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 282,
+        "h": 412
+      },
+      "quest": {
+        "x": 1094,
+        "y": 12,
+        "w": 260,
+        "h": 609
+      },
+      "combatDock": {
+        "x": 355,
+        "y": 551,
+        "w": 657,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 662,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 626,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1201,
+        "y": 711,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 459,
+        "y": 510,
+        "w": 448,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "explore",
+    "width": 1280,
+    "height": 720,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 260,
+        "h": 397
+      },
+      "quest": {
+        "x": 1024,
+        "y": 12,
+        "w": 244,
+        "h": 514
+      },
+      "combatDock": {
+        "x": 328,
+        "y": 503,
+        "w": 625,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 614,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 578,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1115,
+        "y": 663,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 543,
+        "y": 462,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "long",
+    "width": 1280,
+    "height": 720,
+    "config": {
+      "character": "kakashi",
+      "rage": 45,
+      "state": "building",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 260,
+        "h": 230
+      },
+      "quest": {
+        "x": 1024,
+        "y": 12,
+        "w": 244,
+        "h": 612
+      },
+      "combatDock": {
+        "x": 328,
+        "y": 503,
+        "w": 625,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 614,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 578,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1115,
+        "y": 663,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 416,
+        "y": 462,
+        "w": 448,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "boss",
+    "width": 1280,
+    "height": 720,
+    "config": {
+      "character": "naruto",
+      "rage": 60,
+      "state": "active",
+      "scale": "normal",
+      "boss": true,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": true,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 260,
+        "h": 397
+      },
+      "bossHUD": {
+        "x": 405,
+        "y": 43,
+        "w": 470,
+        "h": 139
+      },
+      "combatDock": {
+        "x": 328,
+        "y": 503,
+        "w": 625,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 614,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 578,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1115,
+        "y": 663,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 416,
+        "y": 462,
+        "w": 448,
+        "h": 36
+      },
+      "sandboxDock": {
+        "x": 597,
+        "y": 7,
+        "w": 87,
+        "h": 28
+      }
+    }
+  },
+  {
+    "scenario": "fallback",
+    "width": 1280,
+    "height": 720,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": false,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 260,
+        "h": 331
+      },
+      "quest": {
+        "x": 1024,
+        "y": 12,
+        "w": 244,
+        "h": 440
+      },
+      "combatDock": {
+        "x": 333,
+        "y": 505,
+        "w": 615,
+        "h": 203
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 614,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 578,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1115,
+        "y": 663,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 543,
+        "y": 464,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "immersive",
+    "width": 1280,
+    "height": 720,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": true,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 260,
+        "h": 397
+      },
+      "combatDock": {
+        "x": 328,
+        "y": 503,
+        "w": 625,
+        "h": 205
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 578,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1115,
+        "y": 663,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 543,
+        "y": 462,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "compact",
+    "width": 1280,
+    "height": 720,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "compact",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 248,
+        "h": 378
+      },
+      "quest": {
+        "x": 1030,
+        "y": 12,
+        "w": 238,
+        "h": 514
+      },
+      "combatDock": {
+        "x": 344,
+        "y": 503,
+        "w": 593,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 614,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 578,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1115,
+        "y": 663,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 543,
+        "y": 462,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "large",
+    "width": 1280,
+    "height": 720,
+    "config": {
+      "character": "naruto",
+      "rage": 45,
+      "state": "building",
+      "scale": "large",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 282,
+        "h": 412
+      },
+      "quest": {
+        "x": 1008,
+        "y": 12,
+        "w": 260,
+        "h": 609
+      },
+      "combatDock": {
+        "x": 312,
+        "y": 503,
+        "w": 657,
+        "h": 205
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 614,
+        "w": 190,
+        "h": 94
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 578,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 1115,
+        "y": 663,
+        "w": 153,
+        "h": 46
+      },
+      "notice": {
+        "x": 416,
+        "y": 462,
+        "w": 448,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "explore",
+    "width": 1024,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 9,
+        "y": 9,
+        "w": 226,
+        "h": 345
+      },
+      "quest": {
+        "x": 801,
+        "y": 9,
+        "w": 214,
+        "h": 512
+      },
+      "combatDock": {
+        "x": 244,
+        "y": 550,
+        "w": 537,
+        "h": 209
+      },
+      "rpgButtons": {
+        "x": 9,
+        "y": 660,
+        "w": 150,
+        "h": 99
+      },
+      "consumableBar": {
+        "x": 9,
+        "y": 629,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 913,
+        "y": 646,
+        "w": 102,
+        "h": 114
+      },
+      "notice": {
+        "x": 415,
+        "y": 509,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "long",
+    "width": 1024,
+    "height": 768,
+    "config": {
+      "character": "kakashi",
+      "rage": 45,
+      "state": "building",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 9,
+        "y": 9,
+        "w": 226,
+        "h": 223
+      },
+      "quest": {
+        "x": 801,
+        "y": 9,
+        "w": 214,
+        "h": 601
+      },
+      "combatDock": {
+        "x": 244,
+        "y": 550,
+        "w": 537,
+        "h": 209
+      },
+      "rpgButtons": {
+        "x": 9,
+        "y": 660,
+        "w": 150,
+        "h": 99
+      },
+      "consumableBar": {
+        "x": 9,
+        "y": 629,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 913,
+        "y": 646,
+        "w": 102,
+        "h": 114
+      },
+      "notice": {
+        "x": 288,
+        "y": 509,
+        "w": 448,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "boss",
+    "width": 1024,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 60,
+      "state": "active",
+      "scale": "normal",
+      "boss": true,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": true,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 9,
+        "y": 9,
+        "w": 226,
+        "h": 352
+      },
+      "bossHUD": {
+        "x": 297,
+        "y": 43,
+        "w": 430,
+        "h": 95
+      },
+      "combatDock": {
+        "x": 244,
+        "y": 550,
+        "w": 537,
+        "h": 209
+      },
+      "rpgButtons": {
+        "x": 9,
+        "y": 660,
+        "w": 150,
+        "h": 99
+      },
+      "consumableBar": {
+        "x": 9,
+        "y": 629,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 913,
+        "y": 646,
+        "w": 102,
+        "h": 114
+      },
+      "notice": {
+        "x": 288,
+        "y": 509,
+        "w": 448,
+        "h": 36
+      },
+      "sandboxDock": {
+        "x": 469,
+        "y": 7,
+        "w": 87,
+        "h": 28
+      }
+    }
+  },
+  {
+    "scenario": "fallback",
+    "width": 1024,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": false,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 9,
+        "y": 9,
+        "w": 226,
+        "h": 306
+      },
+      "quest": {
+        "x": 801,
+        "y": 9,
+        "w": 214,
+        "h": 436
+      },
+      "combatDock": {
+        "x": 249,
+        "y": 546,
+        "w": 527,
+        "h": 213
+      },
+      "rpgButtons": {
+        "x": 9,
+        "y": 660,
+        "w": 150,
+        "h": 99
+      },
+      "consumableBar": {
+        "x": 9,
+        "y": 629,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 913,
+        "y": 646,
+        "w": 102,
+        "h": 114
+      },
+      "notice": {
+        "x": 415,
+        "y": 505,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "immersive",
+    "width": 1024,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": true,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 9,
+        "y": 9,
+        "w": 226,
+        "h": 345
+      },
+      "combatDock": {
+        "x": 244,
+        "y": 550,
+        "w": 537,
+        "h": 209
+      },
+      "consumableBar": {
+        "x": 9,
+        "y": 629,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 913,
+        "y": 646,
+        "w": 102,
+        "h": 114
+      },
+      "notice": {
+        "x": 415,
+        "y": 509,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "compact",
+    "width": 1024,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "compact",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 12,
+        "y": 12,
+        "w": 226,
+        "h": 340
+      },
+      "quest": {
+        "x": 798,
+        "y": 12,
+        "w": 214,
+        "h": 512
+      },
+      "combatDock": {
+        "x": 244,
+        "y": 547,
+        "w": 537,
+        "h": 209
+      },
+      "rpgButtons": {
+        "x": 12,
+        "y": 657,
+        "w": 150,
+        "h": 99
+      },
+      "consumableBar": {
+        "x": 12,
+        "y": 626,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 910,
+        "y": 643,
+        "w": 102,
+        "h": 114
+      },
+      "notice": {
+        "x": 415,
+        "y": 506,
+        "w": 194,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "large",
+    "width": 1024,
+    "height": 768,
+    "config": {
+      "character": "naruto",
+      "rage": 45,
+      "state": "building",
+      "scale": "large",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 9,
+        "y": 9,
+        "w": 226,
+        "h": 357
+      },
+      "quest": {
+        "x": 801,
+        "y": 9,
+        "w": 214,
+        "h": 601
+      },
+      "combatDock": {
+        "x": 244,
+        "y": 550,
+        "w": 537,
+        "h": 209
+      },
+      "rpgButtons": {
+        "x": 9,
+        "y": 660,
+        "w": 150,
+        "h": 99
+      },
+      "consumableBar": {
+        "x": 9,
+        "y": 629,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 913,
+        "y": 646,
+        "w": 102,
+        "h": 114
+      },
+      "notice": {
+        "x": 288,
+        "y": 509,
+        "w": 448,
+        "h": 36
+      }
+    }
+  },
+  {
+    "scenario": "explore",
+    "width": 390,
+    "height": 844,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 168,
+        "h": 235
+      },
+      "quest": {
+        "x": 216,
+        "y": 6,
+        "w": 168,
+        "h": 371
+      },
+      "combatDock": {
+        "x": 134,
+        "y": 580,
+        "w": 250,
+        "h": 258
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 570,
+        "w": 128,
+        "h": 159
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 539,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 306,
+        "y": 388,
+        "w": 78,
+        "h": 99
+      },
+      "touch": {
+        "x": 6,
+        "y": 739,
+        "w": 108,
+        "h": 99
+      },
+      "notice": {
+        "x": 183,
+        "y": 551,
+        "w": 153,
+        "h": 27
+      }
+    }
+  },
+  {
+    "scenario": "long",
+    "width": 390,
+    "height": 844,
+    "config": {
+      "character": "kakashi",
+      "rage": 45,
+      "state": "building",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 168,
+        "h": 166
+      },
+      "quest": {
+        "x": 216,
+        "y": 6,
+        "w": 168,
+        "h": 371
+      },
+      "combatDock": {
+        "x": 134,
+        "y": 580,
+        "w": 250,
+        "h": 258
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 570,
+        "w": 128,
+        "h": 159
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 539,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 306,
+        "y": 388,
+        "w": 78,
+        "h": 99
+      },
+      "touch": {
+        "x": 6,
+        "y": 739,
+        "w": 108,
+        "h": 99
+      },
+      "notice": {
+        "x": 135,
+        "y": 538,
+        "w": 248,
+        "h": 40
+      }
+    }
+  },
+  {
+    "scenario": "boss",
+    "width": 390,
+    "height": 844,
+    "config": {
+      "character": "naruto",
+      "rage": 60,
+      "state": "active",
+      "scale": "normal",
+      "boss": true,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": true,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 168,
+        "h": 236
+      },
+      "bossHUD": {
+        "x": 180,
+        "y": 40,
+        "w": 122,
+        "h": 115
+      },
+      "combatDock": {
+        "x": 134,
+        "y": 580,
+        "w": 250,
+        "h": 258
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 570,
+        "w": 128,
+        "h": 159
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 539,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 306,
+        "y": 6,
+        "w": 78,
+        "h": 99
+      },
+      "touch": {
+        "x": 6,
+        "y": 739,
+        "w": 108,
+        "h": 99
+      },
+      "notice": {
+        "x": 135,
+        "y": 538,
+        "w": 248,
+        "h": 40
+      },
+      "sandboxDock": {
+        "x": 236,
+        "y": 4,
+        "w": 64,
+        "h": 30
+      }
+    }
+  },
+  {
+    "scenario": "fallback",
+    "width": 390,
+    "height": 844,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": false,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 168,
+        "h": 221
+      },
+      "quest": {
+        "x": 216,
+        "y": 6,
+        "w": 168,
+        "h": 371
+      },
+      "combatDock": {
+        "x": 134,
+        "y": 576,
+        "w": 250,
+        "h": 262
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 570,
+        "w": 128,
+        "h": 159
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 539,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 306,
+        "y": 388,
+        "w": 78,
+        "h": 99
+      },
+      "touch": {
+        "x": 6,
+        "y": 739,
+        "w": 108,
+        "h": 99
+      },
+      "notice": {
+        "x": 183,
+        "y": 547,
+        "w": 153,
+        "h": 27
+      }
+    }
+  },
+  {
+    "scenario": "immersive",
+    "width": 390,
+    "height": 844,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": true,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 168,
+        "h": 235
+      },
+      "combatDock": {
+        "x": 134,
+        "y": 580,
+        "w": 250,
+        "h": 258
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 539,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 306,
+        "y": 6,
+        "w": 78,
+        "h": 99
+      },
+      "touch": {
+        "x": 6,
+        "y": 739,
+        "w": 108,
+        "h": 99
+      },
+      "notice": {
+        "x": 183,
+        "y": 551,
+        "w": 153,
+        "h": 27
+      }
+    }
+  },
+  {
+    "scenario": "compact",
+    "width": 390,
+    "height": 844,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "compact",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 168,
+        "h": 223
+      },
+      "quest": {
+        "x": 216,
+        "y": 6,
+        "w": 168,
+        "h": 371
+      },
+      "combatDock": {
+        "x": 134,
+        "y": 580,
+        "w": 250,
+        "h": 258
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 570,
+        "w": 128,
+        "h": 159
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 539,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 306,
+        "y": 388,
+        "w": 78,
+        "h": 99
+      },
+      "touch": {
+        "x": 6,
+        "y": 739,
+        "w": 108,
+        "h": 99
+      },
+      "notice": {
+        "x": 183,
+        "y": 551,
+        "w": 153,
+        "h": 27
+      }
+    }
+  },
+  {
+    "scenario": "large",
+    "width": 390,
+    "height": 844,
+    "config": {
+      "character": "naruto",
+      "rage": 45,
+      "state": "building",
+      "scale": "large",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 168,
+        "h": 236
+      },
+      "quest": {
+        "x": 216,
+        "y": 6,
+        "w": 168,
+        "h": 371
+      },
+      "combatDock": {
+        "x": 134,
+        "y": 580,
+        "w": 250,
+        "h": 258
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 570,
+        "w": 128,
+        "h": 159
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 539,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 306,
+        "y": 388,
+        "w": 78,
+        "h": 99
+      },
+      "touch": {
+        "x": 6,
+        "y": 739,
+        "w": 108,
+        "h": 99
+      },
+      "notice": {
+        "x": 135,
+        "y": 538,
+        "w": 248,
+        "h": 40
+      }
+    }
+  },
+  {
+    "scenario": "explore",
+    "width": 844,
+    "height": 390,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 205,
+        "h": 144
+      },
+      "quest": {
+        "x": 633,
+        "y": 6,
+        "w": 205,
+        "h": 140
+      },
+      "combatDock": {
+        "x": 298,
+        "y": 216,
+        "w": 540,
+        "h": 168
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 222,
+        "w": 190,
+        "h": 56
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 194,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 217,
+        "y": 152,
+        "w": 72,
+        "h": 99
+      },
+      "notice": {
+        "x": 492,
+        "y": 187,
+        "w": 153,
+        "h": 27
+      }
+    }
+  },
+  {
+    "scenario": "long",
+    "width": 844,
+    "height": 390,
+    "config": {
+      "character": "kakashi",
+      "rage": 45,
+      "state": "building",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 205,
+        "h": 144
+      },
+      "quest": {
+        "x": 633,
+        "y": 6,
+        "w": 205,
+        "h": 140
+      },
+      "combatDock": {
+        "x": 298,
+        "y": 216,
+        "w": 540,
+        "h": 168
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 222,
+        "w": 190,
+        "h": 56
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 194,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 217,
+        "y": 152,
+        "w": 72,
+        "h": 99
+      },
+      "notice": {
+        "x": 386,
+        "y": 187,
+        "w": 364,
+        "h": 27
+      }
+    }
+  },
+  {
+    "scenario": "boss",
+    "width": 844,
+    "height": 390,
+    "config": {
+      "character": "naruto",
+      "rage": 60,
+      "state": "active",
+      "scale": "normal",
+      "boss": true,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": true,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 205,
+        "h": 144
+      },
+      "bossHUD": {
+        "x": 217,
+        "y": 40,
+        "w": 539,
+        "h": 87
+      },
+      "combatDock": {
+        "x": 298,
+        "y": 216,
+        "w": 540,
+        "h": 168
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 222,
+        "w": 190,
+        "h": 56
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 194,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 217,
+        "y": 152,
+        "w": 72,
+        "h": 99
+      },
+      "notice": {
+        "x": 386,
+        "y": 187,
+        "w": 364,
+        "h": 27
+      },
+      "sandboxDock": {
+        "x": 379,
+        "y": 7,
+        "w": 87,
+        "h": 28
+      }
+    }
+  },
+  {
+    "scenario": "fallback",
+    "width": 844,
+    "height": 390,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": false,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 205,
+        "h": 144
+      },
+      "quest": {
+        "x": 633,
+        "y": 6,
+        "w": 205,
+        "h": 140
+      },
+      "combatDock": {
+        "x": 298,
+        "y": 225,
+        "w": 540,
+        "h": 159
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 222,
+        "w": 190,
+        "h": 56
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 194,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 217,
+        "y": 152,
+        "w": 72,
+        "h": 99
+      },
+      "notice": {
+        "x": 492,
+        "y": 196,
+        "w": 153,
+        "h": 27
+      }
+    }
+  },
+  {
+    "scenario": "immersive",
+    "width": 844,
+    "height": 390,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "ready",
+      "scale": "normal",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": true,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 205,
+        "h": 144
+      },
+      "combatDock": {
+        "x": 298,
+        "y": 216,
+        "w": 540,
+        "h": 168
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 194,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 217,
+        "y": 152,
+        "w": 72,
+        "h": 99
+      },
+      "notice": {
+        "x": 492,
+        "y": 187,
+        "w": 153,
+        "h": 27
+      }
+    }
+  },
+  {
+    "scenario": "compact",
+    "width": 844,
+    "height": 390,
+    "config": {
+      "character": "naruto",
+      "rage": 100,
+      "state": "locked",
+      "scale": "compact",
+      "boss": false,
+      "giant": true,
+      "long": false,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 205,
+        "h": 144
+      },
+      "quest": {
+        "x": 633,
+        "y": 6,
+        "w": 205,
+        "h": 140
+      },
+      "combatDock": {
+        "x": 298,
+        "y": 216,
+        "w": 540,
+        "h": 168
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 222,
+        "w": 190,
+        "h": 56
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 194,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 217,
+        "y": 152,
+        "w": 72,
+        "h": 99
+      },
+      "notice": {
+        "x": 492,
+        "y": 187,
+        "w": 153,
+        "h": 27
+      }
+    }
+  },
+  {
+    "scenario": "large",
+    "width": 844,
+    "height": 390,
+    "config": {
+      "character": "naruto",
+      "rage": 45,
+      "state": "building",
+      "scale": "large",
+      "boss": false,
+      "giant": true,
+      "long": true,
+      "immersive": false,
+      "map": true,
+      "art": true,
+      "tools": false,
+      "sandbox": false,
+      "margin": 0,
+      "orb": 0,
+      "slot": 0
+    },
+    "loadedArt": [
+      [
+        "orb",
+        true
+      ],
+      [
+        "portrait",
+        true
+      ],
+      [
+        "mission",
+        true
+      ],
+      [
+        "map",
+        true
+      ],
+      [
+        "toolkit",
+        true
+      ],
+      [
+        "icons",
+        true
+      ],
+      [
+        "boss",
+        true
+      ],
+      [
+        "scroll",
+        true
+      ]
+    ],
+    "issues": [],
+    "rects": {
+      "top": {
+        "x": 6,
+        "y": 6,
+        "w": 205,
+        "h": 144
+      },
+      "quest": {
+        "x": 633,
+        "y": 6,
+        "w": 205,
+        "h": 140
+      },
+      "combatDock": {
+        "x": 298,
+        "y": 216,
+        "w": 540,
+        "h": 168
+      },
+      "rpgButtons": {
+        "x": 6,
+        "y": 222,
+        "w": 190,
+        "h": 56
+      },
+      "consumableBar": {
+        "x": 6,
+        "y": 194,
+        "w": 125,
+        "h": 25
+      },
+      "utilityDock": {
+        "x": 217,
+        "y": 152,
+        "w": 72,
+        "h": 99
+      },
+      "notice": {
+        "x": 386,
+        "y": 187,
+        "w": 364,
+        "h": 27
+      }
+    }
+  }
+]

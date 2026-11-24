@@ -23,7 +23,7 @@ function cell(w,h){
  function line(x,y,xx,yy,col,w=1){const n=Math.max(1,Math.ceil(Math.max(Math.abs(xx-x),Math.abs(yy-y))));for(let i=0;i<=n;i++)rect(Math.round(x+(xx-x)*i/n)-Math.floor(w/2),Math.round(y+(yy-y)*i/n)-Math.floor(w/2),w,w,col);}
  return {c,ctx,rect,poly,ellipse,line};
 }
-function actorCell(kind,dir,frame){
+function actorCell(kind,dir,frame,gear=null){
  const role=kind;const p=PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
  const side=dir===1||dir===2,back=dir===3,run=frame>=6&&frame<=9,walk=frame>=2&&frame<=5,attack=frame>=10&&frame<=12||frame>=16,cast=frame===14||frame===15,kick=frame>=16&&frame<=18,finish=frame>=19;
  const f=walk?(frame-2):run?(frame-6):0,step=[-3,0,3,0][f],bob=(walk||run)&&f%2===1?1:frame===1?1:0;
@@ -72,13 +72,23 @@ function actorCell(kind,dir,frame){
    else{rect(hx-4,hy+6,2,1,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx,hy+7,2,1,'#9d574e');}
  }
  if(role==='guard'){rect(6,17,12,3,p.metal);rect(5,19,3,5,p.shade);rect(16,19,3,5,p.shade);}if(role==='thrower'){rect(6,22,3,4,p.metal);rect(15,22,3,4,p.metal);}
+ if(gear&&role==='player'){
+ const {head,torso,legs,feet,weapon,offhand,accessory}=gear;
+ if(head){rect(hx-5,hy+1,11,3,head.accent);rect(side?hx+1:hx-3,hy+1,side?5:7,2,head.color);rect(hx+1,hy+1,1,1,'#ecf6eb');}
+ if(torso){poly([[8+lean,bodyY+2],[15+lean,bodyY+2],[16,bodyY+5],[15,24],[9,24],[7,bodyY+5]],torso.color);rect(9,bodyY+5,3,3,torso.accent);rect(13,bodyY+5,2,3,torso.accent);rect(12,bodyY+3,1,5,ink);}
+ if(legs){if(side){line(10,24,8-step,27,legs.color,2);line(13,24,13+step,27,legs.color,3);}else{rect(7,25,4,3,legs.color);rect(13,25,4,3,legs.color);}}
+ if(feet){if(side){rect(6-step,28,4,2,feet.color);rect(12+step,28,4,2,feet.color);}else{rect(6,28+(step>0?-1:0),4,2,feet.color);rect(14,28+(step<0?-1:0),4,2,feet.color);}}
+ if(weapon){const wx=side?(run?5:attack?[8,21,17][phase]:cast?17+phase:16+step):17,wy=side?(run?22:attack?[18,16,21][phase]:cast?18-phase:22):22;line(wx,wy,Math.min(23,wx+2),Math.max(1,wy-6),weapon.accent,3);line(wx,wy-1,Math.min(23,wx+2),Math.max(1,wy-6),weapon.color,1);}
+ if(offhand){rect(side?8:5,bodyY+5,3,3,offhand.accent);rect(side?9:6,bodyY+5,2,2,offhand.color);}
+ if(accessory){rect(11,bodyY+3,2,3,accessory.accent);rect(11,bodyY+4,2,2,accessory.color);}
+ }
  if(frame===13){rect(2,10,2,2,'#ffe4bc');rect(20,13,2,2,'#ffe4bc');}
  if(dir===1){const out=cell(24,32);out.ctx.translate(24,0);out.ctx.scale(-1,1);out.ctx.drawImage(s.c,0,0);return out.c;}
  return s.c;
 }
-export function makeActorSheet(kind){
+export function makeActorSheet(kind,gear=null){
  const c=canvas(ACTOR_W*ACTOR_COLS,ACTOR_H*4),ctx=c.getContext('2d');
- for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++)ctx.drawImage(actorCell(kind,d,f),f*ACTOR_W,d*ACTOR_H);
+ for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++)ctx.drawImage(actorCell(kind,d,f,gear),f*ACTOR_W,d*ACTOR_H);
  return c;
 }
 // High-speed, deliberately stretched silhouettes. 32x32, three frames per direction.

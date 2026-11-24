@@ -70,3 +70,6 @@ Base v1.4 aprobada. Respaldo local rotativo, recuperación, controles y HUD revi
 
 ## v1.6a beta — Rasengan de referencia
 Producción v1.5 aprobada. Seis poses por dirección y 36 cuadros FX específicos para Rasengan normal. [Detalles y QA](docs/V16A-RASENGAN.md). Guardado y balance intactos.
+
+## v1.7 beta — Kyūbi Awakening
+Modo de una cola, ataques físicos extensibles, Rasengan púrpura y sandbox. [Detalles y pruebas](docs/V17-KYUBI-AWAKENING.md). Producción v1.6b intacta.

@@ -47,14 +47,14 @@ export function createAudio(){
  return {unlock,play,wind,music,setMusic,get musicEnabled(){return musicEnabled},setEnabled,setVolume,get enabled(){return enabled},get volume(){return volume}};
 }
 export function createFeedback(view,layer){
- let freeze=0,shake=0,clock=0,enabled=true;const numbers=[],pool=[];
+ let freeze=0,shake=0,clock=0,enabled=true,intensity=1;const numbers=[],pool=[];
  try{enabled=localStorage.getItem('shinobi-shake')!=='off';}catch{}
  function impact(amount,hitStop){shake=Math.max(shake,Number.isFinite(amount)?Math.max(0,amount):0);freeze=Math.max(freeze,Number.isFinite(hitStop)?Math.max(0,hitStop):0);}
  function number(x,z,amount,kind='normal'){if(!layer||numbers.length>=24)return;const el=pool.pop()||document.createElement('span');el.className='damage-number '+kind;el.textContent=String(amount)+(kind==='critical'?'!':'');el.style.opacity='1';layer.appendChild(el);numbers.push({el,x,z,life:.72});}
  function tick(dt){clock+=dt;freeze=Math.max(0,freeze-dt);shake=Math.max(0,shake-dt*1.5);}
  function updateNumbers(dt){for(let i=numbers.length-1;i>=0;i--){const n=numbers[i];n.life-=dt;if(n.life<=0){n.el.remove();pool.push(n.el);numbers.splice(i,1);continue;}const p=view.project?.(n.x,2.0+(1-n.life/.72)*1.0,n.z);if(!p){n.el.style.opacity='0';continue;}n.el.style.transform='translate('+p.x+'px,'+p.y+'px) translate(-50%,-50%)';n.el.style.opacity=String(Math.min(1,n.life/.22));}}
- function offset(){return enabled?{x:Math.sin(clock*111)*shake,z:Math.cos(clock*137)*shake*.65}:{x:0,z:0};}
+ function offset(){return enabled?{x:Math.sin(clock*111)*shake*intensity,z:Math.cos(clock*137)*shake*.65*intensity}:{x:0,z:0};}
  function reset(){freeze=shake=0;for(const n of numbers){n.el.remove();pool.push(n.el);}numbers.length=0;}
  function setShake(v){enabled=Boolean(v);try{localStorage.setItem('shinobi-shake',enabled?'on':'off');}catch{}}
- return {impact,number,tick,updateNumbers,offset,reset,setShake,get frozen(){return freeze>0},get shakeEnabled(){return enabled}};
+ return {impact,number,tick,updateNumbers,offset,reset,setShake,setIntensity(v){intensity=Number.isFinite(v)?Math.min(1,Math.max(0,v)):1;},get intensity(){return intensity},get frozen(){return freeze>0},get shakeEnabled(){return enabled}};
 }

@@ -33,13 +33,13 @@ function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material)
 export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
- const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[]},trails=[],fxPool=[];
+ const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[]},trails=[],fxPool=[];
  let generation=0,hero=null,gearKey=null,gearCanvas=null;
  function gearSheet(gear){const key=JSON.stringify(gear||{});if(key!==gearKey){gearKey=key;gearCanvas=makeActorSheet('player',gear);}return gearCanvas;}
  function previewEquipment(gear,canvas){const c=gearSheet(gear),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
  function portrait(kind,canvas){const c=sheets[kind]||sheets.npc,ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(c,0,0,24,19,0,0,canvas.width,canvas.height);}
  function makeActor(kind){
-  const s=sprite(maps[kind],ACTOR_COLS,4,1.80,2.40,true);s.kind=kind;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
+  const scale=kind==='zabuza'?1.3:1;const s=sprite(maps[kind],ACTOR_COLS,4,1.80*scale,2.40*scale,true);s.kind=kind;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
   scene.add(s.obj,s.shadow);return s;
  }
  function begin(){generation++;hero=null;}
@@ -72,7 +72,7 @@ export function createPixelSystem(scene){
    if(n>=limit)return;const f=getFX(n++),row=FX_ROWS.indexOf(type);if(row<0)return;
    setFrame(f,clamp(col,0,7),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=clamp(alpha,0,1);f.material.rotation=rotation;
   }
-  for(const e of list){const progress=clamp(1-e.life/e.max,0,.999),blue=e.col?.[2]>.75&&e.col?.[0]<.65;add(['dash','substitute','clone','giant'].includes(e.type)?e.type:blue?'rasengan':'hit',e.x,blue?1.12:.85,e.z,e.type==='giant'?5:blue?3.1:e.type==='heavy'?2.6:1.9,Math.floor(progress*8),1-progress*.72);}
+  for(const e of list){const progress=clamp(1-e.life/e.max,0,.999),blue=e.col?.[2]>.75&&e.col?.[0]<.65;add(['ice','water','dash','substitute','clone','giant'].includes(e.type)?e.type:blue?'rasengan':'hit',e.x,blue?1.12:.85,e.z,e.type==='giant'?5:['ice','water'].includes(e.type)?Math.max(2.6,e.r*1.7):blue?3.1:e.type==='heavy'?2.6:1.9,Math.floor(progress*8),1-progress*.72);}
   if(player?.pending?.k===' '||player?.pending?.k==='g'){const progress=1-player.pending.remaining/player.pending.s.windup;add(player.pending.k==='g'?'giant':'rasengan',player.x+player.dirX*.5,1.2,player.z+player.dirZ*.5,.75+progress*.8,Math.min(5,Math.floor(progress*6)),.9);}
   for(const c of clones){if(c.life>4.58)add('clone',c.x,.95,c.z,2.8,Math.floor(clamp((5-c.life)/.42,0,.999)*8),.9);}
   for(const a of projectiles)add(a.kind==='wind'?'wind':a.hostile?'kunai':'shuriken',a.x,.83,a.z,a.kind==='wind'?1.9:.75,Math.floor(t*25)%8,1,a.hostile?Math.atan2(-a.dx,-a.dz*.64):0);

@@ -17,6 +17,8 @@ export const ITEMS={
  kunai:{name:'Kunai templado',desc:'Hoja equilibrada: mejora todos los golpes directos y proyectiles.',icon:'blade',type:'weapon',slot:'weapon',rarity:'rare',maxStack:1,value:65,stats:{attack:4,crit:.03},visual:{color:'#d2e9eb',accent:'#42546b'}},
  bracer:{name:'Brazal de hierro',desc:'Protege el brazo secundario.',icon:'bracer',type:'armor',slot:'offhand',rarity:'uncommon',maxStack:1,value:32,stats:{defense:3},visual:{color:'#9db4bf',accent:'#526779'}},
  charm:{name:'Amuleto de espiral',desc:'Favorece el flujo de chakra.',icon:'charm',type:'accessory',slot:'accessory',rarity:'rare',maxStack:1,value:55,stats:{chakra:2},visual:{color:'#f0cb66',accent:'#a3673d'}},
+ mistBlade:{name:'Espada de la niebla',desc:'Trofeo de Zabuza. Aumenta el daño de ataques directos.',icon:'blade',type:'weapon',slot:'weapon',rarity:'epic',maxStack:1,value:180,stats:{attack:8,crit:.03},visual:{color:'#c8dce4',accent:'#466070'}},
+ iceMask:{name:'Máscara de hielo',desc:'Trofeo de Haku. Mejora defensa y crítico.',icon:'headband',type:'armor',slot:'head',rarity:'epic',maxStack:1,value:150,stats:{defense:4,crit:.05},visual:{color:'#eff4f2',accent:'#a76876'}},
  eliteVest:{name:'Chaleco de élite',desc:'Una prenda de entrenamiento avanzada.',icon:'vest',type:'armor',slot:'torso',rarity:'epic',maxStack:1,value:130,stats:{defense:6,chakra:1},visual:{color:'#566f91',accent:'#b5d8e4'}}
 };
 export const SKILLS={

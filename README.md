@@ -43,3 +43,6 @@ v0.8 fusionada a main (PR 6), check de Cloudflare exitoso para el commit. v0.9 a
 
 ## v0.10 beta — Living Open World
 v0.9 aprobada en main (PR 7), Cloudflare check exitoso. Nueva rama con NPC, diálogos, comercio, cofres, misiones y minimapa/ciclo día-noche. [Documentación y pruebas](docs/V010-LIVING-WORLD.md). Guardado v4 compatible hacia atrás al cargar v2/v3.
+
+## v0.11 beta — Boss Encounters & Sandbox
+v0.10 aprobada y publicada (PR 8, check Cloudflare exitoso). Zabuza/Haku en dos fases, recompensas, FX y sandbox temporal aislado. [Documentación y pruebas](docs/V011-BOSS-SANDBOX.md). Guardado v5 lee v2/v3/v4; pruebas simuladas aprobadas.

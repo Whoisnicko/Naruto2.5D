@@ -21,3 +21,8 @@
 - Producción: https://naruto2-5d.pages.dev/
 - Rama v0.10: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v010-living-world
 - Preview: https://feature-v010-living-world.naruto2-5d.pages.dev (verificar check del commit de la rama).
+
+- Release v0.10: https://github.com/Whoisnicko/Naruto2.5D/pull/8
+- Producción: https://naruto2-5d.pages.dev/
+- Rama v0.11: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v011-boss-sandbox
+- Preview: https://feature-v011-boss-sandbox.naruto2-5d.pages.dev (verificar check del último commit).

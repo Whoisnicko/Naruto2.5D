@@ -27,7 +27,22 @@ export function validateSave(raw,enemyCount){
 }
 export function packSave(state){return JSON.stringify({schema:SCHEMA,version:11,savedAt:new Date().toISOString(),state});}
 export function readSave(count){const raw=localStorage.getItem(SAVE_KEY);return raw?validateSave(JSON.parse(raw),count):null;}
-export function writeSave(state){const old=localStorage.getItem(SAVE_KEY);if(old&&!localStorage.getItem(SAVE_KEY+'-backup-v2')){try{const prior=JSON.parse(old);if(prior.version===2||!prior.schema)localStorage.setItem(SAVE_KEY+'-backup-v2',old);}catch{}}if(old&&!localStorage.getItem(SAVE_KEY+'-backup-v3')){try{if(JSON.parse(old).version===3)localStorage.setItem(SAVE_KEY+'-backup-v3',old);}catch{}}if(old&&!localStorage.getItem(SAVE_KEY+'-backup-v4')){try{if(JSON.parse(old).version===4)localStorage.setItem(SAVE_KEY+'-backup-v4',old);}catch{}}if(old&&!localStorage.getItem(SAVE_KEY+'-backup-v5')){try{if(JSON.parse(old).version===5)localStorage.setItem(SAVE_KEY+'-backup-v5',old);}catch{}}if(old&&!localStorage.getItem(SAVE_KEY+'-backup-v6')){try{if(JSON.parse(old).version===6)localStorage.setItem(SAVE_KEY+'-backup-v6',old);}catch{}}if(old&&!localStorage.getItem(SAVE_KEY+'-backup-v7')){try{if(JSON.parse(old).version===7)localStorage.setItem(SAVE_KEY+'-backup-v7',old);}catch{}}if(old&&!localStorage.getItem(SAVE_KEY+'-backup-v8')){try{if(JSON.parse(old).version===8)localStorage.setItem(SAVE_KEY+'-backup-v8',old);}catch{}}if(old&&!localStorage.getItem(SAVE_KEY+'-backup-v9')){try{if(JSON.parse(old).version===9)localStorage.setItem(SAVE_KEY+'-backup-v9',old);}catch{}}if(old&&!localStorage.getItem(SAVE_KEY+'-backup-v10')){try{if(JSON.parse(old).version===10)localStorage.setItem(SAVE_KEY+'-backup-v10',old);}catch{}}localStorage.setItem(SAVE_KEY,packSave(state));}
+// Rolling recovery copy plus legacy migration backups. A backup failure must not block a primary save.
+export function readRecovery(count){
+ const candidates=['-previous',...Array.from({length:9},(_,i)=>'-backup-v'+(10-i))];
+ for(const suffix of candidates){try{const raw=localStorage.getItem(SAVE_KEY+suffix);if(raw)return {state:validateSave(JSON.parse(raw),count),source:suffix};}catch{}}
+ return null;
+}
+export function writeSave(state){
+ const previous=localStorage.getItem(SAVE_KEY),next=packSave(state);
+ let prior=null;
+ if(previous)try{prior=JSON.parse(previous);validateSave(prior,state.enemies.length);}catch{prior=null;}
+ localStorage.setItem(SAVE_KEY,next);
+ if(prior){
+  try{if(JSON.stringify(prior.state??prior)!==JSON.stringify(state))localStorage.setItem(SAVE_KEY+'-previous',previous);}catch{}
+  const version=prior.version??2;if(version>=2&&version<11)try{const key=SAVE_KEY+'-backup-v'+version;if(!localStorage.getItem(key))localStorage.setItem(key,previous);}catch{}
+ }
+}
 export function exportSave(state){
   const url=URL.createObjectURL(new Blob([packSave(state)],{type:'application/json'}));
   const a=document.createElement('a');a.href=url;a.download='shinobi-partida.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);

@@ -41,3 +41,6 @@ Producción v0.11: https://naruto2-5d.pages.dev/ — PR 9, deploy exitoso. Rama 
 
 ## v1.1 beta
 Rama `feature/v11-konoha-expansion`, parte de RC original. Probar Shikamaru, jardín, mercado, mirador, cofre, equipo visible, guardado y FPS. Exportar respaldo v6 antes del preview. `node tests/smoke.mjs`. Main intacta; no fusionar antes de aprobar.
+
+## v1.2 beta
+Base v1.1 aprobada. Rama `feature/v12-world-expansion`. Exportar v7 antes del preview. Caminar hacia este por el camino del bosque, vencer tres renegados, cruzar puerta, vencer guardián, abrir relicario, regresar y guardar. `node tests/smoke.mjs`. No fusionar antes de validar.

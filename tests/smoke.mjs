@@ -501,3 +501,10 @@ console.log('PASS v1.20a: real seal charge, full/temporarily blocked/active/expi
 {p=rasSetup();p.kyubiRage=100;assert(game.activateKyubi());const e=game.state.enemies[0];e.hp=e.maxHP=1000;e.x=17;e.z=-2;e.stagger=100;e.attack=100;assert(game.attack(' '));sim(.7);assert(!game.state.effects.some(e=>e.type==='kyubiBlast'));}
 {p=rasSetup();const e=game.state.enemies[0];e.hp=e.maxHP=1000;e.x=17;e.z=-2;e.stagger=100;e.attack=100;game.keys.add(' ');assert(game.attack(' '));sim(1.4);game.keys.clear();assert(!game.state.effects.some(e=>e.type==='kyubiBlast'));}
 console.log('PASS v1.20b: full Kyubi Rasengan radial blast, range, one hit per victim, tap/normal exclusions.');
+
+// Direct impact fixture: solid river prevents secondary blast damage even within its radius.
+{p=rasSetup();p.kyubiRage=100;assert(game.activateKyubi());const [hit,blocked,near]=game.state.enemies;p.x=11;p.z=10;hit.x=11;hit.z=10;hit.hp=hit.maxHP=1000;blocked.x=5;blocked.z=10;blocked.hp=blocked.maxHP=1000;near.x=12;near.z=11;near.hp=near.maxHP=1000;assert(game.blocked(8,10));assert(!game.blocked(11,10));const skill={...COMBAT.skills[' '],kyubi:true,damage:99};game.finishRasengan({k:' ',q:1,scale:1.75,dx:1,dz:0,s:skill},hit);assert(hit.hp<1000);assert.equal(blocked.hp,1000);assert(near.hp<1000);assert(game.state.effects.some(e=>e.type==='kyubiBlast'&&e.r===6.5));}
+// Giant form uses its separate radius; a fully charged attack cannot create a blast after transformation expires.
+{p=rasSetup();p.kyubiRage=100;assert(game.activateKyubi());const [hit,near]=game.state.enemies;hit.x=17;hit.z=-2;hit.hp=hit.maxHP=1000;near.x=24.8;near.z=-2;near.hp=near.maxHP=1000;game.finishRasengan({k:'g',q:1,scale:1.65,dx:1,dz:0,s:{...COMBAT.skills.g,kyubi:true}},hit);assert(near.hp<1000);assert(game.state.effects.some(e=>e.type==='kyubiBlast'&&e.r===8.5));}
+{p=rasSetup();const e=game.state.enemies[0];e.x=17;e.z=-2;e.hp=e.maxHP=1000;game.finishRasengan({k:' ',q:1,scale:1.75,dx:1,dz:0,s:{...COMBAT.skills[' '],kyubi:true}},e);assert(!game.state.effects.some(e=>e.type==='kyubiBlast'));}
+console.log('PASS v1.20b: line-of-sight, Mega radius, and expired Kyubi exclusion.');

@@ -35,12 +35,12 @@
 #hud[data-art~="toolkit"] #bottom .skill[data-state=cooldown]{background-image:linear-gradient(#13131935,#13131935),url('./hud-art/paper-tag.webp')}
 #hud[data-art~="toolkit"] #bottom .skill:hover,#hud[data-art~="toolkit"] #bottom .skill:focus-visible{border-color:#ffb74d;box-shadow:0 0 4px #e9a649}
 #hud[data-art~="icons"] .skill[data-s="k"] .skill-orb{background:#212737 url('./hud-art/shuriken-icon.webp') center/contain no-repeat}
-#hud[data-art~="icons"] .skill[data-s="f"] .skill-orb{background:#212737 url('./hud-art/kunai-icon.webp') center/contain no-repeat}
+#hud[data-art~="icons"] .skill[data-s="f"] .skill-orb{background:#212737 url('./hud-art/shuriken-icon.webp') center/90% auto no-repeat}
 #hud[data-art~="icons"][data-character=naruto] .skill[data-s=" "] .skill-orb,#hud[data-art~="icons"][data-character=naruto] .skill[data-s="g"] .skill-orb{background:#212737 url('./hud-art/rasengan-icon.webp') center/cover no-repeat}
 #hud[data-art~="icons"][data-character=naruto] .skill[data-s="l"] .skill-orb{background:#212737 url('./hud-art/clone-icon.webp') center/cover no-repeat}
 #hud[data-art~="icons"][data-character=sasuke] .skill[data-s="l"] .skill-orb{background:#212737 url('./hud-art/sharingan-icon.webp') center/cover no-repeat}
 #hud[data-art~="icons"] .skill[data-s="k"] .skill-icon,#hud[data-art~="icons"] .skill[data-s="f"] .skill-icon,#hud[data-art~="icons"][data-character=naruto] .skill[data-s=" "] .skill-icon,#hud[data-art~="icons"][data-character=naruto] .skill[data-s="g"] .skill-icon,#hud[data-art~="icons"][data-character=naruto] .skill[data-s="l"] .skill-icon,#hud[data-art~="icons"][data-character=sasuke] .skill[data-s="l"] .skill-icon{visibility:hidden}
-/* F is character-specific: the illustrated kunai is Naruto's generic weapon art only. */
+/* F is character-specific: Fūma uses shuriken artwork only for Naruto. */
 #hud[data-art~="icons"]:not([data-character=naruto]) .skill[data-s="f"] .skill-orb{background:radial-gradient(circle at 35% 25%,#526078,#1e2539 65%)}
 #hud[data-art~="icons"]:not([data-character=naruto]) .skill[data-s="f"] .skill-icon{visibility:visible}
 #hud[data-art~="icons"][data-form=kyubi] .skill[data-s=" "] .skill-orb,#hud[data-art~="icons"][data-form=kyubi] .skill[data-s="g"] .skill-orb{filter:hue-rotate(65deg)}
@@ -62,3 +62,6 @@
 @media(max-width:1050px){#hud[data-art~="orb"] #kyubiHUD{grid-template-columns:74px minmax(0,1fr)}#hud[data-art~="orb"] .kyubi-meter{width:74px}#hud[data-art~="portrait"][data-character=naruto] #top .portrait-frame{width:57px;height:52px}#hud[data-art~="mission"] #quest{padding:37px 22px 26px}#hud[data-art~="mission"] .mission-scroll-content{max-height:calc(100dvh - 248px)}#notice{bottom:174px}}
 @media(max-width:840px),(pointer:coarse){#hud[data-art~="orb"] #kyubiHUD{grid-template-columns:49px minmax(0,1fr)}#hud[data-art~="orb"] .kyubi-meter{width:49px}#hud[data-art~="portrait"][data-character=naruto] #top .portrait-frame{width:36px;height:34px}#hud[data-art~="mission"] #quest{padding:21px 12px 16px;max-height:30dvh}#hud[data-art~="mission"] .mission-scroll-content{max-height:calc(30dvh - 37px)}#hud[data-art~="mission"] #quest h3{font-size:12px}#hud[data-art~="map"] .map-art-frame{width:100%}#hud[data-art~="toolkit"] #combatDock{padding:4px}#hud[data-art~="toolkit"] #bottom .skill{padding:2px 1px}#hud[data-art~="scroll"] #notice{padding:10px 19px}#notice{bottom:220px}}
 @media(prefers-reduced-motion:reduce){.seal-art-liquid{transition:none!important}}
+
+#hud[data-art~="icons"] .toolkit-kunai{background:url('./hud-art/kunai-icon.webp') center/contain no-repeat;transform:rotate(65deg)}#hud[data-art~="icons"] .toolkit-kunai.reverse{transform:rotate(-115deg)}#hud[data-art~="icons"] .toolkit-kunai svg{visibility:hidden}
+#hud[data-art~="mission"] .mission-scroll-content{pointer-events:auto}#hud[data-art~="mission"] #quest #mapPanel{background:transparent}

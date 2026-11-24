@@ -10,6 +10,7 @@ export function itemIcon(id){
  case 'bowl':rect(3,11,18,3,outline);rect(4,14,16,6,'#a85b45');rect(7,20,10,2,outline);rect(5,10,14,3,'#f4d798');rect(8,8,9,2,'#e1ae64');rect(8,4,2,4,metal);rect(14,3,2,4,metal);break;
  case 'pill':rect(7,4,10,16,outline);rect(5,7,14,10,outline);rect(7,7,10,10,'#79b999');rect(8,7,8,5,'#e3ead2');rect(9,8,2,2,'#ffffff');break;
  case 'bandage':rect(4,7,16,11,outline);rect(5,8,14,9,'#e6cba7');rect(9,8,6,9,'#b48372');rect(10,10,4,5,'#f2dbc0');break;
+ case 'key':rect(3,5,9,9,outline);rect(4,6,7,7,gold);rect(6,8,3,3,outline);rect(10,9,11,4,gold);rect(17,12,3,5,gold);rect(20,12,2,3,outline);break;
  case 'scroll':rect(5,4,14,16,outline);rect(7,5,10,14,'#e8cf9a');rect(4,4,16,3,gold);rect(4,17,16,3,gold);rect(10,9,4,7,'#a45854');rect(11,10,2,3,'#fae3a7');break;
  case 'blade':rect(10,2,4,3,metal);rect(8,5,8,8,metal);rect(10,7,2,5,'#f5ffff');rect(6,13,12,2,dark);rect(11,15,3,5,'#98705b');rect(10,20,5,2,outline);break;
  case 'headband':rect(2,7,20,11,outline);rect(4,9,16,7,dark);rect(7,9,10,7,metal);rect(11,11,3,3,'#557686');rect(20,15,2,5,dark);break;
@@ -45,7 +46,7 @@ export function createRPGUI(api){
    detail.append(button('Equipar',()=>act(()=>api.equip(selected))));
   }
   if(i.type==='consumable'){detail.append(button('Usar',()=>act(()=>api.use(s.id,selected))));for(let n=0;n<3;n++)detail.append(button('Asignar '+(n+1),()=>act(()=>api.assign(n,s.id))));}
-  const discard=button('Descartar 1',()=>{if(discard.dataset.confirm!=='yes'){discard.dataset.confirm='yes';discard.textContent='Confirmar descarte';return;}act(()=>api.discard(selected));});detail.append(discard);
+  const discard=button('Descartar 1',()=>{if(discard.dataset.confirm!=='yes'){discard.dataset.confirm='yes';discard.textContent='Confirmar descarte';return;}act(()=>api.discard(selected));});if(i.type!=='key')detail.append(discard);else detail.append(text('small','Objeto de misión: no se puede descartar.'));
  }
  function render(){
   if(!opened){hotbar();return;}const {rpg,p,quest,enemies}=state(),stats=statsFor(rpg);

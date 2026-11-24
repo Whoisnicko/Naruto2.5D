@@ -49,3 +49,6 @@ v0.10 aprobada y publicada (PR 8, check Cloudflare exitoso). Zabuza/Haku en dos 
 
 ## v1.0 RC — Primera campaña
 v0.11 aprobada y fusionada a main (PR 9), Cloudflare check exitoso. Seis capítulos, epílogo, diario U, pausa Esc, música procedural y guardado v6 compatible al cargar v2–v5. [Detalles y QA](docs/V1-RELEASE-CANDIDATE.md). Candidata pendiente de playtest.
+
+## RC HD experimental
+Fūma lateral con ocho cuadros de arte ilustrado generado, textura optimizada y fallback original. [Documentación y pruebas](docs/V1-HD-SPRITES.md). No altera guardados ni combate.

@@ -53,3 +53,6 @@ Producción v1.3 (8276d8c), aprobada. Rama `feature/v135-combat-art`. Exportar v
 
 ## v1.4 beta
 Rama `feature/v14-chunin-exams`, v1.35 aprobada funcionalmente. Exportar respaldo v10. N con Iruka o sandbox; aprobar 4/5, vencer rivales y recoger ambos pergaminos con E antes de 100 s, ganar tres duelos, comprobar recompensa y recarga. `node tests/smoke.mjs`. Pendiente WebGL/FPS. v1.5 validación y v1.6 arte de combate profundo.
+
+## v1.5 RC
+Rama `feature/v15-final-polish`. Exportar partida antes de probar. Probar dos guardados distintos, recuperar respaldo desde título, importación, personaje activo, torneo, inventario y FPS en alta/media/baja. No borrar el guardado principal para probar corrupción salvo en un perfil de navegador desechable. `node tests/smoke.mjs`. Publicar tras aprobación. v1.6: Rasengan de referencia, aprobación visual, resto de jutsus.

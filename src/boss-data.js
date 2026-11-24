@@ -1,5 +1,5 @@
 import {directionToward} from './combat-data.js';
-export const ARENA={x:32,z:-2,r:12};
+export const ARENA={x:-36,z:-18,r:12,name:'Western Forest'};
 export const BOSSES=[
  {id:'zabuza',name:'Zabuza Momochi',hp:1440,speed:3.6,reward:[['mistBlade',1],['pill',3]],xp:250,coins:180,intro:'The mist is my territory. Show me what you have learned, shinobi.',patterns:[{name:'Sword Slash',shape:'circle',radius:4.2,windup:.48,damage:24,reach:4.2},{name:'Water Dragon',shape:'line',radius:1.15,length:10,windup:2,damage:30,reach:12,special:'dragon'},{name:'Mist Whirlwind',shape:'circle',radius:5.2,windup:.55,damage:34,reach:5.2},{name:'Water Clone Jutsu',shape:'circle',radius:2.5,windup:.4,damage:0,reach:24,special:'clones'}]},
  {id:'haku',name:'Haku',hp:1200,speed:5.0,reward:[['iceMask',1],['scroll',1]],xp:300,coins:220,intro:'I do not want to hurt you. But I will not abandon my purpose.',patterns:[{name:'Ice Needles',shape:'line',radius:.8,length:12,windup:.30,damage:9,reach:24,special:'needles',count:5},{name:'Ice Mirrors',shape:'target',radius:2.3,windup:.40,damage:11,reach:24,special:'needles',count:7},{name:'Needle Dance',shape:'target',radius:3.1,windup:.34,damage:10,reach:24,special:'needles',count:9}]}

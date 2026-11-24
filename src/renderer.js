@@ -156,3 +156,67 @@ export async function createAssetActors(scene, report=()=>{}){
   function end(){for(const [actor,item] of active){if(item.seen!==generation){scene.remove(item.root);item.mixer.stopAllAction();item.mixer.uncacheRoot(item.root.children[0]);active.delete(actor);}}}
   return {begin,show,end};
 }
+
+// Rigged procedural backups: one reusable geometry per character type, independent skeleton per actor.
+// The original actor is still available if rig creation fails.
+function skinGeometry(raw){
+  const n=raw.length/6,a=arrays(n);fill(a,raw);
+  const g=geometry(a),indices=new Uint16Array(n*4),weights=new Float32Array(n*4);
+  const clamp=x=>Math.max(0,Math.min(1,x));
+  for(let i=0;i<n;i+=3){
+    const x=(a.pos[i*3]+a.pos[(i+1)*3]+a.pos[(i+2)*3])/3;
+    const y=(a.pos[i*3+1]+a.pos[(i+1)*3+1]+a.pos[(i+2)*3+1])/3;
+    let first=1,second=1,pivot=0;
+    if(y>1.25){first=2;second=2;}
+    else if(y<.63){first=x<0?7:9;second=first+1;pivot=.36;}
+    else if(Math.abs(x)>.335&&y<1.23){first=x<0?3:5;second=first+1;pivot=.91;}
+    for(let v=i;v<i+3;v++){
+      let w=first===second?1:clamp((a.pos[v*3+1]-pivot+.07)/.14);
+      indices[v*4]=first;indices[v*4+1]=second;
+      weights[v*4]=w;weights[v*4+1]=1-w;
+    }
+  }
+  g.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));
+  g.setAttribute('skinWeight',new THREE.Float32BufferAttribute(weights,4));
+  g.computeBoundingSphere();return g;
+}
+export function createProceduralActors(scene,material,rawByKind){
+  const templates=new Map(),active=new Map();
+  for(const [kind,raw] of Object.entries(rawByKind))templates.set(kind,skinGeometry(raw));
+  let generation=0;
+  function begin(){generation++;}
+  function make(kind){
+    const bones=[];
+    function bone(parent,x,y,z){const b=new THREE.Bone();b.position.set(x,y,z);if(parent!==null)bones[parent].add(b);bones.push(b);return b;}
+    bone(null,0,0,0);bone(0,0,.65,0);bone(1,0,.70,0);
+    bone(1,-.34,.48,0);bone(3,-.08,-.22,0);
+    bone(1,.34,.48,0);bone(5,.08,-.22,0);
+    bone(0,-.16,.67,0);bone(7,-.01,-.31,0);
+    bone(0,.16,.67,0);bone(9,.01,-.31,0);
+    const obj=new THREE.SkinnedMesh(templates.get(kind),material);
+    obj.add(bones[0]);obj.bind(new THREE.Skeleton(bones));obj.frustumCulled=false;
+    obj.castShadow=true;obj.receiveShadow=true;scene.add(obj);
+    return {obj,bones,seen:generation};
+  }
+  function show(a,kind){
+    if(!templates.has(kind))return false;
+    let item=active.get(a);
+    if(!item){try{item=make(kind);active.set(a,item);}catch(e){console.warn('Rig fallback',kind,e);return false;}}
+    item.seen=generation;
+    const {obj,bones:b}=item,w=Math.sin(a.walk||0),act=a.anim&&a.anim.left>0?Math.sin(Math.PI*(1-a.anim.left/a.anim.total)):0;
+    obj.position.set(a.x,Math.abs(w)*.035,a.z);
+    obj.rotation.y=Math.atan2(a.dirX||0,a.dirZ??1);
+    b[1].rotation.set(-.045*Math.abs(w)-act*.12,act*.16,w*.025);
+    b[2].rotation.set(0,-act*.09,0);
+    b[3].rotation.set(w*.44-act*.25,0,-act*.08);
+    b[4].rotation.x=-.12-act*.22;
+    b[5].rotation.set(-w*.44-act*1.14,0,act*.12);
+    b[6].rotation.x=-.12-act*.55;
+    b[7].rotation.x=-w*.43;b[8].rotation.x=Math.max(0,w)*.4;
+    b[9].rotation.x=w*.43;b[10].rotation.x=Math.max(0,-w)*.4;
+    if(a.anim?.k==='l'){b[3].rotation.x=-act*.9;b[5].rotation.x=-act*.9;b[4].rotation.x=-act*.65;b[6].rotation.x=-act*.65;}
+    return true;
+  }
+  function end(){for(const [actor,item] of active){if(item.seen!==generation){scene.remove(item.obj);item.obj.skeleton.dispose();active.delete(actor);}}}
+  return {begin,show,end};
+}

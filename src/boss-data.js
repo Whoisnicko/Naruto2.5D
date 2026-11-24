@@ -328,7 +328,7 @@ export function tickValleySasuke(b,p,clones,dt,move,hit,signal,random=Math.rando
  if(b.intent){const a=b.intent;a.left-=dt;if(a.rush&&a.left>c.rushLock){const v=directionToward(p.x-b.x,p.z-b.z);a.dx=v.x;a.dz=v.z;b.dirX=v.x;b.dirZ=v.z;}b.air=a.dive?Math.sin(Math.PI*Math.max(0,1-a.left/a.total))*1.15:0;if(a.left<=1e-8){b.intent=null;b.air=0;b.cooldowns[a.id]=a.cooldown;b.attack=(a.clash?1.05:.65)*c.recovery[b.phase-1];
   if(a.rush){b.rush={...a,remaining:c.rushTravel,hit:false};b.attack=0;b.anim=null;signal('valleyRushStart',b,a);return;}
   if(!a.projectile)for(const q of [p,...clones])if(alive(q)&&bossContains(a,q))hit(q,a.damage,b);
-  signal('strike',b,a);if(a.lunge)move(b,a.dx*a.lunge,a.dz*a.lunge);else if(a.dive&&a.shape==='target'){const v=directionToward(a.x-b.x,a.z-b.z),d=Math.min(8,distance(b,a));move(b,v.x*d,v.z*d);}
+  signal('strike',b,a);if(a.lunge){const x=b.x,z=b.z;move(b,a.dx*a.lunge,a.dz*a.lunge);if(b.phase===4&&a.clash)appendValleyTrail(b,a,x,z,b.x,b.z);}else if(a.dive&&a.shape==='target'){const v=directionToward(a.x-b.x,a.z-b.z),d=Math.min(8,distance(b,a));move(b,v.x*d,v.z*d);}
   if(a.pulses&&(a.pulse||1)<a.pulses){const v=directionToward(p.x-b.x,p.z-b.z),delay=a.id==='predatorRush'?.60:a.id==='curseFlurry'?.50:.48;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,pulse:(a.pulse||1)+1,left:delay,total:delay};b.cooldowns[a.id]=0;b.attack=0;b.dirX=v.x;b.dirZ=v.z;signal('windup',b,b.intent);}
  }return;}
  const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;

@@ -37,3 +37,6 @@ Base v0.6 validada a 144 FPS. Combos, dash, anticipación, impacto, audio y Spri
 
 ## v0.8 beta — Advanced Combat
 Base v0.7 aprobada. Tres roles de enemigos, avisos, guardia, Kawarimi (R), Fūma (F), clones con vida y sinergia de Rasengan. [Documentación y pruebas](docs/V08-ADVANCED-COMBAT.md). Pruebas simuladas aprobadas; GPU/FPS y balance pendientes.
+
+## v0.9 beta — RPG Progression
+v0.8 fusionada a main (PR 6), check de Cloudflare exitoso para el commit. v0.9 añade inventario, equipo visible, botín, árbol, entrenamiento y Rasengan gigante; migración de guardado a v3. [Detalles y QA](docs/V09-RPG-PROGRESSION.md). Pruebas simuladas aprobadas, pendiente playtest real.

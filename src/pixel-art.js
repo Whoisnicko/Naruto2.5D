@@ -1,7 +1,7 @@
 // Original, deterministic pixel sheets. All primitives rasterize on integer pixels;
 // no generated image or third-party character assets are needed.
-export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=38,DIRS=['down','left','right','up'];
-export const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12},thrust:{start:22,count:4,fps:12},release:{start:26,count:4,fps:12},seal:{start:30,count:4,fps:10},slam:{start:34,count:4,fps:12}};
+export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=44,DIRS=['down','left','right','up'];
+export const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12},thrust:{start:22,count:4,fps:12},release:{start:26,count:4,fps:12},seal:{start:30,count:4,fps:10},slam:{start:34,count:4,fps:12},rasengan:{start:38,count:6,fps:12}};
 export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice','lightning','fire','heal','earth','focus','shockwave','sparks','slash','firetrail','dragon','wall','cracks','aura','storm'];
 export const FX_SIZE=32,FX_COLS=8;
 export const TECH_ART={
@@ -42,11 +42,12 @@ function cell(w,h){
  return {c,ctx,rect,poly,ellipse,line};
 }
 function actorCell(kind,dir,frame,gear=null){
+ const ras=frame>=38?frame-38:-1;if(ras>=0)frame=[14,14,14,7,12,0][ras];
  const special=frame>=22?Math.floor((frame-22)/4):-1,stage=frame>=22?(frame-22)%4:0;if(special>=0)frame=[14,14,15,14][stage];
  const role=kind;const p=PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
  const side=dir===1||dir===2,back=dir===3,run=frame>=6&&frame<=9,walk=frame>=2&&frame<=5,attack=frame>=10&&frame<=12||frame>=16,cast=frame===14||frame===15,kick=frame>=16&&frame<=18,finish=frame>=19;
  const f=walk?(frame-2):run?(frame-6):0,step=[-3,0,3,0][f],bob=(walk||run)&&f%2===1?1:frame===1?1:0;
- const phase=kick?frame-16:finish?frame-19:attack?frame-10:cast?frame-14:0;const lean=side&&run?2:side&&attack?(phase===1?2:0):0;const hx=12+lean,hy=8+bob,bodyY=16+bob;
+ const phase=kick?frame-16:finish?frame-19:attack?frame-10:cast?frame-14:0;const lean=ras>=0&&kind==='player'?(side?[0,-1,0,3,2,0][ras]:0):side&&run?2:side&&attack?(phase===1?2:0):0;const hx=12+lean,hy=8+bob,bodyY=16+bob;
  // side frames are painted facing right, mirrored for left.
  function limb(x,y,xx,yy,c,w=4){line(x,y,xx,yy,ink,w+2);line(x,y,xx,yy,c,w);}
  if(side){
@@ -127,6 +128,21 @@ function actorCell(kind,dir,frame,gear=null){
    if(stage===1){rect(5,28,6,3,ink);rect(16,28,6,3,ink);}
   }
  }
+ // Dedicated Rasengan key poses, keeping the existing head, silhouette and equipment.
+ if(ras>=0&&role==='player'){
+  const sleeve=gear?.torso?.color||p.shirt,shade=gear?.offhand?.color||p.shade,leg=gear?.legs?.color||p.shirt,shoe=gear?.feet?.color||p.trim;
+  if(side){
+   const hand=[[11,20],[9,18],[14,16],[21,15],[22,17],[17,21]][ras],other=[[14,19],[13,17],[16,16],[8,20],[6,22],[10,21]][ras];
+   limb(8+lean,18,other[0],other[1],shade,3);rect(other[0]-1,other[1]-1,3,3,skin);
+   limb(15+lean,18,hand[0],hand[1],sleeve,3);rect(hand[0]-1,hand[1]-1,3,3,skin);rect(hand[0],hand[1]-1,2,1,skinLight);
+   if(ras===3||ras===4){limb(10,23,4,28,leg,3);rect(1,28,7,3,ink);rect(2,28,5,1,shoe);limb(15,23,19,27,leg,4);rect(17,28,6,3,ink);rect(18,28,4,1,shoe);}
+  }else{
+   const y=back?[20,18,15,10,12,21][ras]:[20,19,19,24,25,21][ras],x=back?[12,12,12,13,14,14][ras]:[12,11,12,13,14,16][ras];
+   limb(8,18,ras<3?x-2:5,ras<3?y:22,shade,3);limb(16,18,x,y,sleeve,3);rect(x-1,y-1,3,3,skin);rect(x,y-1,2,1,skinLight);
+   if(ras<3)rect(x-3,y-1,2,3,skin);
+   if(ras===3||ras===4){limb(9,23,6,28,leg,4);limb(14,23,18,28,leg,4);rect(3,28,6,3,ink);rect(16,28,6,3,ink);rect(4,28,4,1,shoe);rect(17,28,4,1,shoe);}
+  }
+ }
  if(frame===13){rect(2,10,2,2,'#ffe4bc');rect(20,13,2,2,'#ffe4bc');}
  if(dir===1){const out=cell(24,32);out.ctx.translate(24,0);out.ctx.scale(-1,1);out.ctx.drawImage(s.c,0,0);return out.c;}
  return s.c;
@@ -137,6 +153,44 @@ export function makeActorSheet(kind,gear=null){
  return c;
 }
 // High-speed, deliberately stretched silhouettes. 32x32, three frames per direction.
+// Rasengan reference atlas: discrete pixel ribbons, not a blurred glow or HD character.
+export const RAS_SIZE=48,RAS_COLS=12,RAS_ROWS=6;
+export function rasenganPose(anim){const e=Math.max(0,anim.total-anim.left),w=anim.windup||.26;return e<w?Math.min(2,Math.floor(e/w*3)):3+Math.min(2,Math.floor((e-w)/Math.max(.001,anim.total-w)*3));}
+export function rasenganHand(dir,pose){const d=dir===1?-1:dir===2?1:0;return {x:d*[0,-.22,.12,.66,.74,.38][pose],y:[.96,1.08,1.22,1.27,1.13,.86][pose],z:dir===0?[.22,.3,.39,.7,.75,.32][pose]:dir===3?-[.2,.32,.44,.72,.65,.3][pose]:0};}
+export function makeRasenganSheet(){
+ const atlas=canvas(RAS_SIZE*RAS_COLS,RAS_SIZE*RAS_ROWS),ctx=atlas.getContext('2d');ctx.imageSmoothingEnabled=false;
+ const palette=['#163c79','#285ba1','#369dcc','#64d8ee','#b5fbff','#f7ffff'];
+ const ribbon=[[0,-13],[5,-12],[10,-9],[13,-4],[12,2],[8,7],[3,8],[-2,5],[-3,1],[0,-2],[4,-1]];
+ const arc=[[0,-14],[6,-13],[11,-9],[14,-3],[14,3],[10,9],[4,13],[-3,14],[-10,10],[-14,3],[-13,-4],[-9,-10],[-4,-13]];
+ for(let row=0;row<RAS_ROWS;row++)for(let f=0;f<12;f++){
+  const c=cell(48,48),{rect,line,ellipse,poly}=c,q=f/11;
+  function stroke(path,angle,sx,sy,ox,oy,col,w){const pts=path.map(([x,y])=>[ox+(x*Math.cos(angle)-y*Math.sin(angle))*sx,oy+(x*Math.sin(angle)+y*Math.cos(angle))*sy]);for(let i=1;i<pts.length;i++)line(...pts[i-1],...pts[i],col,w);}
+  if(row===0){
+   const size=14+Math.sin(f*Math.PI/6)*.65,cx=24,cy=24;ellipse(cx,cy,size+1,size+1,palette[0]);ellipse(cx,cy,size,size,palette[1]);ellipse(cx-1,cy-1,size*.87,size*.87,palette[2]);
+   for(let k=0;k<3;k++){const angle=f*.82+k*2.094;stroke(ribbon,angle,size/14,size/14,cx,cy,palette[1],3);stroke(ribbon,angle+.12,size/14,size/14,cx,cy,palette[4],2);stroke(ribbon.slice(2,8),angle+.12,size/14,size/14,cx,cy,palette[5],1);}
+   ellipse(cx-1,cy,size*.23,size*.27,palette[5]);for(let k=0;k<5;k++){const ang=f*.6+k*1.26,r=size+3+(k%2)*2;line(cx+Math.cos(ang)*r,cy+Math.sin(ang)*r,cx+Math.cos(ang+.15)*r,cy+Math.sin(ang+.15)*r,palette[3],1);}
+  }else if(row===1){
+   // Forward burst. Bright, compact contact flash gives way to torn cyan ribbons.
+   const r=4+q*16,cy=24,cx=18+q*5;
+   if(f<5){const s=1+f*.85;poly([[cx-s*4,cy],[cx-s,cy-s],[cx,cy-s*4],[cx+s,cy-s],[cx+s*5,cy],[cx+s,cy+s],[cx,cy+s*4],[cx-s,cy+s]],palette[3]);ellipse(cx,cy,s*1.9,s*1.6,palette[5]);}
+   for(let k=0;k<3;k++){const ang=f*.26+k*2.094;const section=arc.slice(k,Math.max(k+2,11-Math.floor(q*5)));stroke(section,ang,r/14,r*.78/14,cx,cy,palette[0],f<6?4:2);stroke(section,ang+.04,r/14,r*.78/14,cx,cy,palette[f<7?3:2],f<6?2:1);if(f<8)stroke(section.slice(1,5),ang+.05,r/14,r*.78/14,cx,cy,palette[5],1);}
+   for(let k=0;k<8;k++){const angle=(k-3.5)*.38+f*.04,len=4+(k%3)*3,rr=6+q*14;const x=cx+Math.cos(angle)*rr,y=cy+Math.sin(angle)*rr;line(x-len*(1-q*.65),y-Math.sin(angle)*len,x,y,palette[k%3===0?5:3],f<4?2:1);}
+  }else if(row===2){
+   const r=4+q*17;for(let k=0;k<4;k++){const seg=arc.slice(k*2,k*2+5);stroke(seg,k*1.57+q*.5,r/14,r*.42/14,24,28,palette[2],2);if(f<9)stroke(seg,k*1.57+q*.5,r/14,r*.42/14,24,27,palette[4],1);}
+   for(let k=0;k<7;k++){const ang=k*2.4,rr=4+q*17,x=24+Math.cos(ang)*rr,y=28+Math.sin(ang)*rr*.4-q*4;rect(x,y,2,1,k%2?'#c9c1a4':'#92bed1');}
+  }else if(row===3){
+   // Orbiting torn ribbons, with bright tips and a dark blue pixel outline.
+   for(let k=0;k<4;k++){const angle=f*.61+k*1.57;const path=arc.slice(k, k+5);stroke(path,angle,1.28,1.18,24,24,palette[0],4);stroke(path,angle+.04,1.28,1.18,24,24,palette[3],2);stroke(path.slice(1,4),angle+.04,1.28,1.18,24,24,palette[5],1);}
+  }else if(row===4){
+   for(let k=0;k<10;k++){const angle=k*2.399+f*.41,rad=14+(k%4)*2.2,x=24+Math.cos(angle)*rad,y=24+Math.sin(angle)*rad;line(x,y,x+Math.cos(angle+.8)*4,y+Math.sin(angle+.8)*4,palette[k%3===0?5:3],k%3===0?2:1);rect(x-1,y-1,1,1,palette[4]);}
+  }else{
+   // Directional streaming tails pointing opposite the carry direction.
+   for(let k=0;k<7;k++){const y=10+k*4+Math.sin(f*.9+k)*3,x=34+(k%3)*3,len=13+(k%4)*4;poly([[x,y],[x-len*.6,y-2],[x-len,y+1],[x-3,y+3]],palette[0]);line(x-len,y+1,x-2,y,palette[3],2);line(x-len*.55,y,x,y,palette[5],1);}
+  }
+  ctx.drawImage(c.c,f*48,row*48);
+ }
+ return atlas;
+}
 export function makeSmearSheet(){
  const c=canvas(32*3,32*4),ctx=c.getContext('2d');
  for(let d=0;d<4;d++)for(let f=0;f<3;f++){

@@ -51,3 +51,7 @@
 
 - v1.5 RC: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v15-final-polish
 - Preview: consultar check Cloudflare. Producción v1.3: https://naruto2-5d.pages.dev/.
+
+- Producción v1.5: https://naruto2-5d.pages.dev/ (PR 18).
+- v1.6a: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v16a-rasengan
+- Preview: consultar check Cloudflare del último commit.

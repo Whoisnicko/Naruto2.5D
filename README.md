@@ -67,3 +67,6 @@ Examen escrito, bosque con dos pergaminos y torneo Lee/Neji/Gaara. [Detalles](do
 
 ## v1.5 RC — Validación y pulido
 Base v1.4 aprobada. Respaldo local rotativo, recuperación, controles y HUD revisados. Guardado v11 intacto. [Auditoría y pruebas](docs/V15-FINAL-POLISH.md). Próxima fase v1.6 Combat Art Overhaul.
+
+## v1.6a beta — Rasengan de referencia
+Producción v1.5 aprobada. Seis poses por dirección y 36 cuadros FX específicos para Rasengan normal. [Detalles y QA](docs/V16A-RASENGAN.md). Guardado y balance intactos.

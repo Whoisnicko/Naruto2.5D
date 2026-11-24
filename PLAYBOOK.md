@@ -56,3 +56,6 @@ Rama `feature/v14-chunin-exams`, v1.35 aprobada funcionalmente. Exportar respald
 
 ## v1.5 RC
 Rama `feature/v15-final-polish`. Exportar partida antes de probar. Probar dos guardados distintos, recuperar respaldo desde título, importación, personaje activo, torneo, inventario y FPS en alta/media/baja. No borrar el guardado principal para probar corrupción salvo en un perfil de navegador desechable. `node tests/smoke.mjs`. Publicar tras aprobación. v1.6: Rasengan de referencia, aprobación visual, resto de jutsus.
+
+## v1.6a beta
+Rama `feature/v16a-rasengan`. Probar Naruto con Espacio en cuatro direcciones, al aire y contra enemigos, equipo visible y FPS alta/media/baja. Sprite Lab: Naruto + Rasengan, exportar atlas real. `node tests/smoke.mjs`. No fusionar hasta aprobar estética. Producción v1.5, rollback de código `backup/production-v13-before-v15`.

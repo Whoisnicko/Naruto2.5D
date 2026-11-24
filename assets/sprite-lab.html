@@ -13,12 +13,13 @@
 <div class="buttons"><button id="json">Exportar animación JSON</button><button id="png">Exportar sheet PNG</button><button id="reset">Restaurar ajustes</button></div><p class="note">Las áreas de alcance son una representación ortográfica aproximada, no cajas de colisión exactas. El alcance numérico se obtiene de los datos del combate. Los colores editados y el anclaje se aplican al visor y a la exportación, no a la partida.</p></div></div></section>
 <section><h2>02 / Hojas originales</h2><div id="sheets"></div></section>
 </main><script type="module">
-import {makeSheets,ANIMS,DIRS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SIZE,FX_COLS} from '../src/pixel-art.js';
+import {makeSheets,ANIMS,DIRS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SIZE,FX_COLS,makeRasenganSheet,rasenganPose} from '../src/pixel-art.js';
 import {COMBAT} from '../src/combat-data.js';
 const $=id=>document.getElementById(id),sheets=makeSheets(),c=$('preview'),cx=c.getContext('2d');
 cx.imageSmoothingEnabled=false;
 const palette={lee:'#5b9b52',neji:'#e1d8bb',gaara:'#95624e',sasuke:'#465a8e',player:'#f58b36',npc:'#78935a',enemy:'#665272',thrower:'#427a71',guard:'#97564b',clone:'#f58b36',sakura:'#c64e5f',teuchi:'#e5d7b9',tenten:'#ddadad',iruka:'#779768',zabuza:'#687e87',haku:'#6a9e8c',shikamaru:'#859673'};
 const labels={lee:'Rock Lee',neji:'Neji',gaara:'Gaara',sasuke:'Sasuke',player:'Naruto',npc:'Kakashi',enemy:'Renegados',thrower:'Lanzadores',guard:'Guardianes',clone:'Clones',sakura:'Sakura',teuchi:'Teuchi',tenten:'Tenten',iruka:'Iruka',zabuza:'Zabuza',haku:'Haku',shikamaru:'Shikamaru',smear:'Smear / siluetas',fx:'Jutsus y efectos',trees:'Árboles',world:'Atlas de entorno'};
+const rasAtlas=makeRasenganSheet();
 let selected=0,playing=true,elapsed=0,last=0,durations=[],recolored=null;
 const value=id=>$(id).value,checked=id=>$(id).checked;
 function download(name,url){const a=document.createElement('a');a.download=name;a.href=url;a.click();}
@@ -28,40 +29,43 @@ function config(){
  const state=['rasengan','giant','lightning'].includes(key)?'thrust':['fire','wind','dragon','water','shuriken','firetrail'].includes(key)?'release':['clone','focus','heal','wall','substitute','aura'].includes(key)?'seal':['earth','storm','cracks','shockwave'].includes(key)?'slam':key==='dash'?'run':key;
  const a=ANIMS[state]||ANIMS.idle;
  const fx=FX_ROWS.includes(key)?key:null;
- const n=fx?8:a.count;return {key,state,a,skill,fx,n,defaultFPS:fx?14:a.fps};
+ const reference=['rasengan','giant'].includes(key)&&value('actor')==='player';const n=reference?36:fx?8:a.count;return {key,state,a,skill,fx,n,reference,defaultFPS:fx?14:a.fps};
 }
 function rebuildColor(){const kind=value('actor'),base=sheets[kind],target=value('color');recolored=document.createElement('canvas');recolored.width=base.width;recolored.height=base.height;const x=recolored.getContext('2d');x.drawImage(base,0,0);if(target===palette[kind])return;
  const parse=s=>[parseInt(s.slice(1,3),16),parseInt(s.slice(3,5),16),parseInt(s.slice(5,7),16)],from=parse(palette[kind]),to=parse(target),d=x.getImageData(0,0,base.width,base.height);
  for(let i=0;i<d.data.length;i+=4)if(d.data[i]===from[0]&&d.data[i+1]===from[1]&&d.data[i+2]===from[2]&&d.data[i+3]){d.data.set(to,i);}x.putImageData(d,0,0);
 }
-function frameAt(f){const q=config(),phase=f/Math.max(1,q.n-1);return q.a.start+Math.min(q.a.count-1,Math.floor(phase*q.a.count));}
+function frameAt(f){const q=config();if(q.reference){return 38+(f<12?Math.min(2,Math.floor(f/4)):f<24?3:f<30?4:5);}const phase=f/Math.max(1,q.n-1);return q.a.start+Math.min(q.a.count-1,Math.floor(phase*q.a.count));}
 function pick(f){selected=(f+durations.length)%durations.length;elapsed=0;$('duration').value=String(Math.round(durations[selected]));for(const [i,b] of [...$('timeline').children].entries())b.classList.toggle('active',i===selected);}
 function timeline(){
  $('timeline').replaceChildren();const q=config(),row=Number(value('dir'));
  for(let i=0;i<q.n;i++){const b=document.createElement('button'),v=document.createElement('canvas');v.width=24;v.height=32;const x=v.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(recolored,frameAt(i)*24,row*32,24,32,0,0,24,32);b.append(v,document.createTextNode(String(i+1)));b.onclick=()=>{playing=false;$('play').textContent='Reproducir';pick(i);};$('timeline').append(b);}
  pick(Math.min(selected,q.n-1));
 }
-function updateAnim(){const q=config();$('fps').value=q.defaultFPS;$('fpsLabel').textContent=q.defaultFPS+' FPS';durations=Array(q.n).fill(1000/q.defaultFPS);if(q.skill?.windup&&q.n>1)durations[0]=q.skill.windup*1000;selected=0;elapsed=0;timeline();}
+function updateAnim(){const q=config();$('fps').value=q.defaultFPS;$('fpsLabel').textContent=q.defaultFPS+' FPS';durations=Array(q.n).fill(1000/q.defaultFPS);if(q.reference){const spec=COMBAT.rasengan[q.key==='giant'?'g':' '];durations=Array.from({length:36},(_,i)=>i<12?spec.maxCharge*1000/12:i<24?spec.maxDistance/spec.speed*1000/12:spec.impact*1000/12);}else if(q.skill?.windup&&q.n>1)durations[0]=q.skill.windup*1000;selected=0;elapsed=0;timeline();}
 function drawFrame(ms){
  const dt=Math.min(100,ms-(last||ms));last=ms;
  if(playing){elapsed+=dt;while(elapsed>=durations[selected]){elapsed-=durations[selected];if(selected===durations.length-1&&!checked('loop')){playing=false;$('play').textContent='Reproducir';elapsed=0;break;}const carry=elapsed;pick(selected+1);elapsed=carry;}}
  const q=config(),row=Number(value('dir')),ax=Number(value('ax')),ay=Number(value('ay')),alpha=Number(value('alpha'))/100;
  cx.clearRect(0,0,192,128);cx.fillStyle='#263d48';cx.fillRect(0,0,192,128);cx.fillStyle='#526b57';cx.fillRect(0,94,192,34);cx.fillStyle='#73906a';for(let i=0;i<192;i+=12)cx.fillRect(i,94,6,1);
- const baseX=q.key==='dash'?54+selected*10:90,baseY=94,sign=row===1?-1:1,scale=2;
- if(checked('smear')&&['dash','run','attack','kick','finish','rasengan'].includes(q.key)&&selected>0){cx.globalAlpha=.38;cx.drawImage(sheets.smear,Math.min(2,selected-1)*32,row*32,32,32,baseX-32-sign*13,baseY-64,64,64);}
+ const baseX=q.reference?54+Math.max(0,Math.min(12,selected-12))*5:q.key==='dash'?54+selected*10:90,baseY=94,sign=row===1?-1:1,scale=2;
+ if(checked('smear')&&['dash','run','attack','kick','finish','rasengan'].includes(q.key)&&selected>0&&!q.reference){cx.globalAlpha=.38;cx.drawImage(sheets.smear,Math.min(2,selected-1)*32,row*32,32,32,baseX-32-sign*13,baseY-64,64,64);}
  cx.globalAlpha=alpha;cx.drawImage(recolored,frameAt(selected)*24,row*32,24,32,baseX-ax*scale,baseY-ay*scale,48,64);cx.globalAlpha=1;
- if(q.fx){const fxrow=FX_ROWS.indexOf(q.fx),center=['clone','heal','focus','wall','cracks','storm','earth'].includes(q.fx),x=center?baseX:q.fx==='dash'?baseX-sign*24:baseX+sign*28,size=['giant','cracks','storm','wall'].includes(q.fx)?76:56;cx.drawImage(sheets.fx,Math.min(7,selected)*32,fxrow*32,32,32,x-size/2,baseY-size,size,size);if(['rasengan','giant','lightning','storm','earth','cracks'].includes(q.fx)){cx.globalAlpha=.65;cx.drawImage(sheets.fx,selected*32,FX_ROWS.indexOf('shockwave')*32,32,32,x-38,baseY-36,76,40);cx.globalAlpha=1;}}
+ if(q.reference){const f=selected%12,charge=selected<12,carry=selected>=12&&selected<24,offset=row===1?-1:row===2?1:0,scale=q.key==='giant'?1.55:1,size=(charge?30+f*2.6:carry?61:98)*scale,dx=charge?offset*7:offset*25,dy=row===3?-48:-30;
+  const layer=(r,size,alpha=1)=>{cx.globalAlpha=alpha;cx.drawImage(rasAtlas,f*48,r*48,48,48,-size/2,-size/2,size,size);cx.globalAlpha=1;};
+  cx.save();cx.translate(baseX+dx,baseY+dy);if(row===1)cx.scale(-1,1);layer(charge||carry?0:1,size);layer(3,size*1.34,.85);layer(4,size*1.1,.8);if(carry){cx.translate(-size*.4,0);layer(5,size*1.3,.75);}cx.restore();if(!charge&&!carry){cx.globalAlpha=.7;cx.drawImage(rasAtlas,f*48,96,48,48,baseX+dx-size/2,baseY-size*.4,size,size);cx.globalAlpha=1;}
+ }else if(q.fx){const fxrow=FX_ROWS.indexOf(q.fx),center=['clone','heal','focus','wall','cracks','storm','earth'].includes(q.fx),x=center?baseX:q.fx==='dash'?baseX-sign*24:baseX+sign*28,size=['giant','cracks','storm','wall'].includes(q.fx)?76:56;cx.drawImage(sheets.fx,Math.min(7,selected)*32,fxrow*32,32,32,x-size/2,baseY-size,size,size);if(['rasengan','giant','lightning','storm','earth','cracks'].includes(q.fx)){cx.globalAlpha=.65;cx.drawImage(sheets.fx,selected*32,FX_ROWS.indexOf('shockwave')*32,32,32,x-38,baseY-36,76,40);cx.globalAlpha=1;}}
  if(checked('boxes')){cx.strokeStyle='#a7f4ac';cx.strokeRect(baseX-ax*scale+.5,baseY-ay*scale+.5,47,63);cx.fillStyle='#a7f4ac';cx.fillRect(baseX-2,baseY,5,1);cx.fillRect(baseX,baseY-2,1,5);if(q.skill){const radius=q.skill.range*18;cx.strokeStyle='#ffb36e';cx.beginPath();cx.ellipse(baseX,baseY,radius,radius*.64,0,0,Math.PI*2);cx.stroke();}}
  $('status').textContent=labels[value('actor')]+' · '+DIRS[row]+' · frame '+(selected+1)+'/'+q.n+' · '+Math.round(durations[selected])+' ms'+(q.skill?' · alcance '+q.skill.range:'');
  requestAnimationFrame(drawFrame);
 }
-$('actor').onchange=()=>{$('color').value=palette[value('actor')];rebuildColor();timeline();};$('anim').onchange=updateAnim;$('dir').onchange=timeline;$('color').oninput=()=>{rebuildColor();timeline();};
+$('actor').onchange=()=>{$('color').value=palette[value('actor')];rebuildColor();updateAnim();};$('anim').onchange=updateAnim;$('dir').onchange=timeline;$('color').oninput=()=>{rebuildColor();timeline();};
 $('fps').oninput=()=>{const fps=Number(value('fps'));$('fpsLabel').textContent=fps+' FPS';durations.fill(1000/fps);pick(selected);};
 $('duration').onchange=()=>{durations[selected]=Math.max(20,Math.min(1500,Number(value('duration'))||100));pick(selected);};
 $('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'Pausa':'Reproducir';};$('prev').onclick=()=>{playing=false;$('play').textContent='Reproducir';pick(selected-1);};$('next').onclick=()=>{playing=false;$('play').textContent='Reproducir';pick(selected+1);};$('restart').onclick=()=>{pick(0);playing=true;$('play').textContent='Pausa';};
 $('reset').onclick=()=>{$('ax').value=12;$('ay').value=32;$('alpha').value=100;$('color').value=palette[value('actor')];$('loop').checked=true;$('smear').checked=true;$('boxes').checked=false;rebuildColor();updateAnim();};
-$('json').onclick=()=>{const q=config();exportJSON({schema:'shinobi-animation-draft',version:1,actor:value('actor'),animation:q.key,dir:DIRS[Number(value('dir'))],cell:[ACTOR_W,ACTOR_H],columns:ACTOR_COLS,frames:durations.map((ms,i)=>({col:frameAt(i),durationMs:Math.round(ms),fxFrame:q.fx?i:null})),anchor:{x:Number(value('ax')),y:Number(value('ay'))},opacity:Number(value('alpha'))/100,shirt:value('color'),loop:checked('loop'),smear:checked('smear'),fx:q.fx,range:q.skill?.range??null});};
+$('json').onclick=()=>{const q=config();exportJSON({schema:'shinobi-animation-draft',version:1,actor:value('actor'),animation:q.key,dir:DIRS[Number(value('dir'))],cell:[ACTOR_W,ACTOR_H],columns:ACTOR_COLS,frames:durations.map((ms,i)=>({col:frameAt(i),durationMs:Math.round(ms),fxFrame:q.reference?i%12:q.fx?i:null})),anchor:{x:Number(value('ax')),y:Number(value('ay'))},opacity:Number(value('alpha'))/100,shirt:value('color'),loop:checked('loop'),smear:checked('smear'),fx:q.fx,range:q.skill?.range??null});};
 $('png').onclick=()=>download(value('actor')+'_edited.png',recolored.toDataURL('image/png'));
 for(const [name,sheet] of Object.entries(sheets)){const h=document.createElement('h3'),wrap=document.createElement('div'),btn=document.createElement('button');h.textContent=labels[name]+' · '+sheet.width+'×'+sheet.height;wrap.className='scroller';sheet.className='sheet';sheet.style.width=sheet.width*3+'px';sheet.style.height=sheet.height*3+'px';wrap.append(sheet);btn.textContent='Exportar PNG original';btn.onclick=()=>download(name+'_sheet.png',sheet.toDataURL('image/png'));$('sheets').append(h,wrap,btn);}
-rebuildColor();updateAnim();requestAnimationFrame(drawFrame);
+const rasTitle=document.createElement('h3'),rasWrap=document.createElement('div'),rasBtn=document.createElement('button');rasTitle.textContent='Rasengan v1.6b · atlas real 576×288 (carga, impacto, onda, órbita, chispas, estela)';rasWrap.className='scroller';rasAtlas.className='sheet';rasAtlas.style.width='1152px';rasAtlas.style.height='576px';rasWrap.append(rasAtlas);rasBtn.textContent='Exportar atlas Rasengan PNG';rasBtn.onclick=()=>download('rasengan-reference.png',rasAtlas.toDataURL('image/png'));$('sheets').append(rasTitle,rasWrap,rasBtn);rebuildColor();updateAnim();requestAnimationFrame(drawFrame);
 </script></body></html>

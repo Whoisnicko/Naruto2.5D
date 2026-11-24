@@ -35,5 +35,5 @@ export function createPerformanceController(initial){
   else if(good>=3){scale=Math.min(ceiling,Math.round((scale+.05)*100)/100);bad=good=0;}
   return scale!==prev;
  }
- return {configure,sample,report,resetWindow,get settings(){return {...settings}},get scale(){return scale},get current(){return lastReport}};
+ return {configure,sample,report,resetWindow,get settings(){return {...settings}},get fpsLimit(){return settings.fpsLimit},get scale(){return scale},get current(){return lastReport}};
 }

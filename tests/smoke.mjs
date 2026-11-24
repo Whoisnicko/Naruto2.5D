@@ -353,3 +353,13 @@ console.log('PASS v1.15a: actual keyboard combo queue, expiry, focus/modal flush
  game.start(false);const before=game.snapshot();node('perfPreset').onchange({target:{value:'balanced'}});assert.equal(node('perfResolution').value,'100');assert.equal(node('perfLimit').value,'60');assert.equal(feedback.intensity,.35);node('perfPreset').onchange({target:{value:'ultra'}});assert.equal(node('perfResolution').value,'125');assert.equal(node('perfLimit').value,'unlimited');assert.equal(node('perfParticles').value,'100');assert.equal(JSON.stringify(game.snapshot()),JSON.stringify(before));
 }
 console.log('PASS v1.15b: performance defaults, bounded adaptation, recovery, disable/reset and settings independent of save.');
+
+{
+ const frame=view.frame;let rendered=0;view.frame=function(...args){rendered++;frame.apply(this,args);};
+ function run(limit){game.start(false);game.state.p.chakra=0;node('perfLimit').onchange({target:{value:limit}});rendered=0;for(let i=0;i<288;i++){const callback=pendingFrame;assert(callback);pendingFrame=null;frameNow+=1000/144;callback(frameNow);}return {rendered,chakra:game.state.p.chakra};}
+ const capped=run('60'),uncapped=run('unlimited');assert(capped.rendered>=118&&capped.rendered<=122,'60 FPS cap on 144 Hz');assert.equal(uncapped.rendered,288);assert(Math.abs(capped.chakra-uncapped.chakra)<.00001,'simulation speed unchanged by frame cap');view.frame=frame;
+ const renderApi=new Function(strip(src.renderer)+'\nreturn {arrays,fill,dynamicArrays,fillDynamic};')();
+ const raw=[0,0,0,.3,.5,.8,1,0,0,.3,.5,.8,0,1,0,.3,.5,.8,1,2,3,.12,.34,.56,4,5,6,.7,.6,.5,7,8,9,.7,.6,.5];
+ const full=renderApi.arrays(6),fast=renderApi.dynamicArrays(6);renderApi.fill(full,raw);renderApi.fillDynamic(fast,raw);assert.equal(JSON.stringify([...full.pos]),JSON.stringify([...fast.pos]));assert.equal(JSON.stringify([...full.col]),JSON.stringify([...fast.col]));assert(!fast.norm&&!fast.uv);
+}
+console.log('PASS v1.15b: 60 FPS cap at simulated 144 Hz, independent simulation, dynamic vertex buffer equivalence.');

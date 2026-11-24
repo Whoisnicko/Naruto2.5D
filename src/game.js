@@ -730,7 +730,7 @@ $('error').textContent='';$('start').disabled=false;$('importMenu').disabled=fal
 let renderRate=0,renderWorst=0,renderSampleAt=0,animSinceRender=0,renderDeadline=0,lastLimit='',lastRunning=false,lastActiveRender=null;
 function loop(now){requestAnimationFrame(loop);const frameStart=performance.now(),real=Math.max(.001,(now-last)/1000),dt=Math.min(.05,real);last=now;fps=fps*.95+(.05/real);
  const frozen=feedback.frozen;feedback.tick(real);if(running){if(!frozen){update(dt);animSinceRender+=dt;}audio.music?.(dt,boss?'boss':'explore');if(t>=autosaveAt){autosaveAt=t+20;if(arenaIsolationAt===null)save(true);}}
- const limit=perf.settings.fpsLimit,interval=limit==='unlimited'?0:1000/Number(limit);
+ const limit=perf.fpsLimit,interval=limit==='unlimited'?0:1000/Number(limit);
  if(lastLimit!==limit||lastRunning!==running||real>.25){renderDeadline=now;lastLimit=limit;lastActiveRender=null;perf.resetWindow();if(!running)animSinceRender=0;}lastRunning=running;
  const due=running?(!interval||now+.75>=renderDeadline):now-pausedFrameAt>=(mistScene?32:100);
  if(due){const visualDt=Math.max(.001,Math.min(.1,(now-pausedFrameAt)/1000)),gap=lastActiveRender===null?null:now-lastActiveRender;render(visualDt,running?animSinceRender:0);animSinceRender=0;pausedFrameAt=now;

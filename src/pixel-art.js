@@ -2,7 +2,7 @@
 // no generated image or third-party character assets are needed.
 export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=44,DIRS=['down','left','right','up'];
 export const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12},thrust:{start:22,count:4,fps:12},release:{start:26,count:4,fps:12},seal:{start:30,count:4,fps:10},slam:{start:34,count:4,fps:12},rasengan:{start:38,count:6,fps:12}};
-export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice','lightning','fire','heal','earth','focus','shockwave','sparks','slash','firetrail','dragon','wall','cracks','aura','storm'];
+export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice','lightning','fire','heal','earth','focus','shockwave','sparks','slash','firetrail','dragon','wall','cracks','aura','storm','infernoOrb','infernoBurst','infernoEmber'];
 export const FX_SIZE=32,FX_COLS=8;
 export const TECH_ART={
  naruto:{' ':{pose:'thrust',fx:'rasengan'},f:{pose:'release',fx:'wind'},l:{pose:'seal',fx:'clone'},g:{pose:'thrust',fx:'giant'}},
@@ -279,7 +279,14 @@ export function makeFXSheet(){
    else if(row===22){for(let k=0;k<8;k++){const a=k*Math.PI/4+f*.04,r=4+f*1.4,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r*.62;line(16,16,x-3,y+2,'#594f49',2);line(x-3,y+2,x,y,'#d8ac77',2);rect(x,y-2-(f%3),3,3,'#b89b77');}if(f<3)ellipse(16,15,5-f,4-f,'#fff0be');}
    else if(row===23){for(let k=0;k<12;k++){const a=k*Math.PI/6+angle,r=9+Math.sin(k+f)*2;line(16+Math.cos(a)*r,18+Math.sin(a)*r*.65,16+Math.cos(a)*r*.8,9+Math.sin(a)*r*.5,'#a5e8bc',k%3===0?2:1);}}
    else if(row===24){for(let k=0;k<8;k++){const a=k*Math.PI/4+f*.12,r=5+f*1.35,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;line(16,16,x-3,y+2,'#48478e',3);line(x-3,y+2,x+2,y-2,'#83cfff',2);line(x+2,y-2,x,y,'#f7ffff',2);}if(f<5)ellipse(16,16,4,4,'#f1fbff');}
-   else{
+   else if(row===25||row===27){const ember=row===27,cx=ember?19:20,cy=16,rad=ember?6:10,heat=['#702231','#b42f24','#ef5424','#ff922a','#ffd34e','#fff2b5'];
+     for(let k=0;k<7;k++){const yy=cy+(k-3)*2.6,xx=2+(k%3)*2+Math.sin(angle+k)*2;poly([[xx,yy],[cx-3,yy-3],[cx+2,cy],[cx-5,yy+4]],heat[k%3]);poly([[xx+5,yy],[cx-1,yy-1],[cx+2,cy],[cx-4,yy+2]],heat[3+k%2]);}
+     for(let layer=0;layer<5;layer++){const rr=rad-layer*rad*.155,pts=Array.from({length:18},(_,k)=>{const th=k*Math.PI/9,noise=1+.13*Math.sin(th*5+angle+layer*.7)+.075*Math.cos(th*9-angle);return[cx+Math.cos(th)*rr*noise,cy+Math.sin(th)*rr*noise];});poly(pts,heat[layer]);}
+     for(let k=0;k<5;k++){const th=angle+k*1.25,r=rad*(.3+.11*(k%3));line(cx+Math.cos(th)*r,cy+Math.sin(th)*r,cx+Math.cos(th+.7)*r,cy+Math.sin(th+.7)*r,heat[4+k%2],2);}
+     for(let k=0;k<6;k++){const xx=2+(k*5+f*3)%13,yy=6+(k*7+f)%21;rect(xx,yy,k%3===0?2:1,1,heat[3+k%3]);}
+   }else if(row===26){const rr=3+f*1.65,heat=['#702231','#bb3928','#f45c26','#ff9a30','#ffe46c','#fff2b5'];for(let k=0;k<12;k++){const th=k*Math.PI/6+angle*.12,r=rr*(.75+.22*Math.sin(k*2+f)),xx=16+Math.cos(th)*r,yy=16+Math.sin(th)*r;poly([[16,16],[16+Math.cos(th-.31)*r*.7,16+Math.sin(th-.31)*r*.7],[xx,yy],[16+Math.cos(th+.31)*r*.7,16+Math.sin(th+.31)*r*.7]],heat[f<3?2+k%3:k%3]);if(f>2){const out=rr+2+(k%2);rect(16+Math.cos(th)*out,16+Math.sin(th)*out,2,2,heat[3+k%3]);}}
+     if(f<4){ellipse(16,16,rr*.70,rr*.70,heat[4]);ellipse(16,16,rr*.35,rr*.35,heat[5]);}else for(let k=0;k<18;k++){const th=k*Math.PI/9,rad=rr*.8;rect(16+Math.cos(th)*rad,16+Math.sin(th)*rad,2,1,heat[k%3+1]);}
+   }else{
      for(let k=0;k<4;k++){const a=angle+k*Math.PI/2;poly([[16,16],[16+Math.cos(a)*13,16+Math.sin(a)*13],[16+Math.cos(a+.45)*5,16+Math.sin(a+.45)*5]],'#252e45');line(16+Math.cos(a)*4,16+Math.sin(a)*4,16+Math.cos(a)*11,16+Math.sin(a)*11,'#d4e4e9');}ellipse(16,16,3,3,'#8597a6');ellipse(16,16,1.5,1.5,'#273044');
    }
    ctx.drawImage(s.c,f*32,row*32);

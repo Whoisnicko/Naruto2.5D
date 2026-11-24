@@ -98,7 +98,7 @@ export function createPixelSystem(scene){
    setFrame(tr,Math.min(2,Math.floor((1-tr.life/.18)*3)),tr.rowDir);tr.material.opacity=.52*tr.life/.18;}
  }
  function getFX(i){if(!fxPool[i]){const f=sprite(maps.fx,FX_COLS,FX_ROWS.length,2,2,false);f.material.depthWrite=false;scene.add(f.obj);fxPool[i]=f;}return fxPool[i];}
- function effects(list,clones,projectiles,t,dt,quality,player){
+ function effects(list,clones,projectiles,t,dt,quality,player,boss=null){
   drawTrails(dt);rasPool.begin();let kn=0,n=0,limit=quality===1?48:quality===.75?32:20;
   function add(type,x,y,z,size,col,alpha=1,rotation=0,red=false){
    if(n>=limit)return;const f=getFX(n++),row=FX_ROWS.indexOf(type);if(row<0)return;
@@ -132,7 +132,10 @@ export function createPixelSystem(scene){
   }
   // Priority: main effects and projectiles first, accents second. Shared pool remains capped.
   const accents=[];
-  for(const e of list){
+  // Reserve the high-priority Katon sprites before ordinary effects consume the shared pool.
+  if(boss?.intent?.projectile==='inferno'){const a=boss.intent,q=clamp(1-a.left/a.total,0,1),dx=a.dx,dz=a.dz;add('infernoOrb',boss.x+dx*.9,1.2,boss.z+dz*.9,.9+q*2.8,Math.floor(t*24)%8,1,Math.atan2(-dz*.64,dx));}
+  for(const a of projectiles)if(a.kind==='valleyInferno'||a.kind==='valleyEmber'){const big=a.kind==='valleyInferno',f=Math.floor(t*(big?24:20))%8,ang=Math.atan2(-a.dz*.64,a.dx);add(big?'infernoOrb':'infernoEmber',a.x,big?1.25:.83,a.z,big?4.5:1.24,f,1,ang);}
+  for(const e of list){if(e.type==='infernoBurst'){const q=clamp(1-e.life/e.max,0,.999);add('infernoBurst',e.x,1.05,e.z,2.2+q*e.r*2.1,Math.floor(q*8),1-q*.65);continue;}
    if(e.reference&&rasMap&&(e.type==='rasengan'||e.type==='giant')){const q=clamp(1-e.life/e.max,0,.999),angle=Math.atan2(-e.dz*.64,e.dx),size=(e.giant?5.0:3.5)*(e.kyubi?1.2:.74)*(e.scale||1),contact=e.contact&&q<.18,f=Math.floor(clamp((q-.18)/.82,0,.999)*12);if(ras(contact?0:1,contact?Math.floor(t*32)%12:f,e.x,1.15,e.z,contact?size*.68:size,1-q*.55,contact?0:angle,!!e.kyubi)){if(quality>=.75){ras(contact?3:2,contact?Math.floor(t*32)%12:f,e.x,contact?1.15:.20,e.z,size*.95,.9*(1-q),0,!!e.kyubi);if(!contact)ras(4,f,e.x,1.15,e.z,size*1.15,.85*(1-q),0,!!e.kyubi);}continue;}}
    const q=clamp(1-e.life/e.max,0,.999),f=Math.floor(q*8),type=FX_ROWS.includes(e.type)?e.type:e.type==='heavy'?'slash':'hit';
    const large=['giant','storm','earth','cracks','wall'].includes(type),size=large?Math.min(5.8,Math.max(2.6,e.r*1.12)):type==='rasengan'?2.9:type==='clone'?2.8:type==='hit'?1.6:2.7;

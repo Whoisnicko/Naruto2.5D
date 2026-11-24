@@ -158,25 +158,25 @@ export const WORLD_BOSSES={kabuto:{id:'kabuto',name:'Kabuto Yakushi',hp:1500,spe
  {id:'seedlingFern',name:'Dance of the Seedling Fern',shape:'target',radius:3.2,reach:30,windup:1.15,damage:25,cooldown:15,phase:3,pulses:4,forest:true},
  {id:'cursedTail',name:'Cursed Tail Sweep',shape:'circle',radius:5.2,reach:6,windup:.9,damage:35,cooldown:9,phase:3}
  ]},sasuke:{id:'sasuke',name:'Sasuke Uchiha',hp:2600,speed:5.5,arena:{x:-9,z:39,r:16,name:'Valley of the End'},marker:'#a8b3ff',xp:1800,coins:0,reward:[['valleyMemory',1]],patterns:[
- {id:'lionCombo',name:'Lion Combo',shape:'circle',radius:2.7,reach:3.1,windup:.48,damage:18,cooldown:4,pulses:2,phase:1},
- {id:'valleyFire',name:'Fireball Jutsu',shape:'line',radius:1.2,length:18,reach:23,windup:.85,damage:27,cooldown:8,projectile:'fire',phase:1},
- {id:'valleyWire',name:'Shuriken Wire',shape:'line',radius:1.6,length:16,reach:22,windup:.55,damage:9,cooldown:6,projectile:'wire',phase:1},
- {id:'valleyChidori',name:'Chidori Dash',shape:'line',radius:1.45,length:12,reach:13,windup:1,damage:34,cooldown:10,lunge:7,clash:true,phase:1},
- {id:'sharinganChidori',name:'Sharingan Chidori',shape:'line',radius:1.7,length:14,reach:15,windup:.85,damage:36,cooldown:8,lunge:8,clash:true,phase:2},
- {id:'sharinganCounter',name:'Counter Step',shape:'target',radius:2.6,reach:6,windup:.65,damage:24,cooldown:7,phase:2,flank:true},
- {id:'curseFlurry',name:'Curse Flurry',shape:'target',radius:2.5,reach:9,windup:.65,damage:18,cooldown:7,pulses:3,phase:3},
- {id:'darkChidori',name:'Dark Chidori Burst',shape:'line',radius:2.1,length:15,reach:16,windup:1,damage:41,cooldown:8,lunge:9,clash:true,phase:3},
- {id:'curseDive',name:'Aerial Dive',shape:'target',radius:3.5,reach:22,windup:1,damage:33,cooldown:10,dive:true,phase:3},
- {id:'wingChidori',name:'Wing Dive Chidori',shape:'line',radius:2.4,length:17,reach:18,windup:1.1,damage:46,cooldown:8,lunge:10,clash:true,dive:true,phase:4},
- {id:'wingNeedles',name:'Wing Shuriken Barrage',shape:'line',radius:2.2,length:20,reach:30,windup:.65,damage:11,cooldown:7,projectile:'wing',pulses:2,phase:4},
- {id:'wingShockwave',name:'Dark Shockwave',shape:'target',radius:4.3,reach:22,windup:1.15,damage:39,cooldown:11,dive:true,phase:4},
- {id:'predatorRush',name:'Predator Rush',shape:'target',radius:2.8,reach:25,windup:.8,damage:22,cooldown:12,pulses:3,dive:true,phase:4},
- {id:'curseBlackRush',name:'Black Chidori · Lightning Prison',shape:'line',radius:1.35,length:32,reach:32,windup:1.15,damage:14,cooldown:12,rush:true,phase:3},
- {id:'curseInferno',name:'Katon · Inferno Burst',shape:'target',radius:2.5,reach:32,windup:1.05,damage:32,cooldown:9,projectile:'inferno',phase:3},
- {id:'wingBlackRush',name:'Black Chidori · Lightning Prison',shape:'line',radius:1.45,length:32,reach:32,windup:1.0,damage:17,cooldown:11,rush:true,phase:4},
- {id:'wingInferno',name:'Katon · Inferno Burst',shape:'target',radius:2.7,reach:32,windup:.9,damage:36,cooldown:8,projectile:'inferno',phase:4}
+ {id:'lionCombo',name:'Lion Combo',shape:'circle',radius:2.7,reach:3.1,windup:.48,damage:18,cooldown:3.3,pulses:2,phase:1},
+ {id:'valleyFire',name:'Fireball Jutsu',shape:'line',radius:1.2,length:18,reach:23,windup:.85,damage:27,cooldown:6.6,projectile:'fire',phase:1},
+ {id:'valleyWire',name:'Shuriken Wire',shape:'line',radius:1.6,length:16,reach:22,windup:.55,damage:9,cooldown:4.9,projectile:'wire',phase:1},
+ {id:'valleyChidori',name:'Chidori Dash',shape:'line',radius:1.45,length:12,reach:13,windup:1,damage:34,cooldown:8.2,lunge:7,clash:true,phase:1},
+ {id:'sharinganChidori',name:'Sharingan Chidori',shape:'line',radius:1.7,length:14,reach:15,windup:.85,damage:36,cooldown:6.6,lunge:8,clash:true,phase:2},
+ {id:'sharinganCounter',name:'Counter Step',shape:'target',radius:2.6,reach:6,windup:.65,damage:24,cooldown:5.7,phase:2,flank:true},
+ {id:'curseFlurry',name:'Curse Flurry',shape:'target',radius:2.5,reach:9,windup:.65,damage:18,cooldown:5.7,pulses:3,phase:3},
+ {id:'darkChidori',name:'Dark Chidori Burst',shape:'line',radius:2.1,length:15,reach:16,windup:1,damage:41,cooldown:6.6,lunge:9,clash:true,phase:3},
+ {id:'curseDive',name:'Aerial Dive',shape:'target',radius:3.5,reach:22,windup:1,damage:33,cooldown:8.2,dive:true,phase:3},
+ {id:'wingChidori',name:'Wing Dive Chidori',shape:'line',radius:2.4,length:17,reach:18,windup:1.1,damage:46,cooldown:6.6,lunge:10,clash:true,dive:true,phase:4},
+ {id:'wingNeedles',name:'Wing Shuriken Barrage',shape:'line',radius:2.2,length:20,reach:30,windup:.65,damage:11,cooldown:5.7,projectile:'wing',pulses:2,phase:4},
+ {id:'wingShockwave',name:'Dark Shockwave',shape:'target',radius:4.3,reach:22,windup:1.15,damage:39,cooldown:9,dive:true,phase:4},
+ {id:'predatorRush',name:'Predator Rush',shape:'target',radius:2.8,reach:25,windup:.8,damage:22,cooldown:9.8,pulses:3,dive:true,phase:4},
+ {id:'curseBlackRush',name:'Black Chidori · Lightning Prison',shape:'line',radius:1.35,length:32,reach:32,windup:1.15,damage:14,cooldown:9.8,rush:true,phase:3},
+ {id:'curseInferno',name:'Katon · Inferno Burst',shape:'target',radius:2.5,reach:32,windup:1.05,damage:32,cooldown:7.4,projectile:'inferno',phase:3},
+ {id:'wingBlackRush',name:'Black Chidori · Lightning Prison',shape:'line',radius:1.45,length:32,reach:32,windup:1.0,damage:17,cooldown:9,rush:true,phase:4},
+ {id:'wingInferno',name:'Katon · Inferno Burst',shape:'target',radius:2.7,reach:32,windup:.9,damage:36,cooldown:6.6,projectile:'inferno',phase:4}
  ]}};
-export const VALLEY_RULES={thresholds:[.70,.45,.24,.05],speed:[1,1.65,1.42,1.55],damageScale:[1,1.30,1,1],evadeCooldown:1.4,evadeDistance:3.2,rushSpeed:31,rushLock:.30,shockDuration:5,shockPresses:10,shockDamage:10,fireSpeed:12,fireFragments:10,fragmentDamage:12,fragmentSpeed:13,fragmentLife:1.4,counterCooldown:8,clashRecovery:2,clashDistance:3.3,projectileCap:28,ultimateTime:4,ultimateCharge:1.25,ultimateRush:.9,ultimateImpact:2.15,ultimateRise:3.55,ultimateExit:5.65};
+export const VALLEY_RULES={thresholds:[.70,.45,.24,.05],speed:[1,1.65,1.42,1.55],damageScale:[1,1.30,1,1],evadeCooldown:1.4,evadeDistance:3.2,rushSpeed:43,rushLock:.10,rushTravel:44,rushRecovery:.85,rushNear:4.5,recovery:[1,.76,.72,.65],shockDuration:5,shockPresses:10,shockDamage:10,fireSpeed:12,fireFragments:10,fragmentDamage:12,fragmentSpeed:13,fragmentLife:1.4,counterCooldown:8,clashRecovery:2,clashDistance:3.3,projectileCap:28,ultimateTime:4,ultimateCharge:1.25,ultimateRush:.9,ultimateImpact:2.15,ultimateRise:3.55,ultimateExit:5.65};
 export const KIMI_RULES={stageOne:.65,stageTwo:.30,phaseSpeed:1.12,finalSpeed:1.28,forestLife:5,forestCap:4,forestSlow:.65,bulletCount:10,bulletSpeed:18,bulletCap:30};
 export const ORO_RULES={snakeHP:85,snakeCap:3,snakeLife:24,snakeSpeed:5.2,biteDamage:13,biteCooldown:3.2,biteWindup:.55,biteRange:1.7,phaseSpeed:1.2,shedThreshold:.30,huskHP:160,huskLife:3.5,shedHeal:360,venomLife:5,venomInterval:1,venomDamage:4,finalThreshold:.25,finalSpeed:1.36,cloudLife:4,cloudCap:2};
 export const GAARA_RULES={shieldHP:240,shieldDuration:4,shieldCooldown:18,shieldFirst:5,breakRecovery:1.5,zoneDuration:6,zoneSlow:.55,phaseSpeed:1.22,finalThreshold:.35,finalSpeed:1.38,finalScale:1.85,shurikenSpeed:15,shurikenCount:7,shurikenCap:28};
@@ -320,14 +320,14 @@ export function tickValleySasuke(b,p,clones,dt,move,hit,signal,random=Math.rando
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.attack=Math.max(0,b.attack-dt);b.counterAt=Math.max(0,b.counterAt-dt);b.evadeAt=Math.max(0,(b.evadeAt||0)-dt);b.evadeVisual=Math.max(0,(b.evadeVisual||0)-dt);b.motion=false;b.sprinting=false;
  for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
- if(b.phase<4&&b.hp<=valleyDamageFloor(b)+1e-8){b.phase++;b.intent=null;b.rush=null;b.anim=null;b.air=0;b.attack=1.3;b.lastPattern=null;signal(['','', 'sasukeSharingan','sasukeCurse','sasukeFinal'][b.phase],b);return;}
+ if(b.phase<4&&b.hp<=valleyDamageFloor(b)+1e-8){b.phase++;b.intent=null;b.rush=null;b.anim=null;b.air=0;b.mark=0;b.attack=1.3;b.lastPattern=null;signal(['','', 'sasukeSharingan','sasukeCurse','sasukeFinal'][b.phase],b);return;}
  if(b.phase===4&&b.hp<=valleyDamageFloor(b)+1e-8){if(!b.finalDuel)signal('sasukeUltimate',b);return;}
- if(b.rush){const r=b.rush,step=Math.min(r.remaining,c.rushSpeed*dt),n=Math.max(1,Math.ceil(step/.18));b.motion=b.sprinting=true;b.dirX=r.dx;b.dirZ=r.dz;for(let j=0;j<n;j++){move(b,r.dx*step/n,r.dz*step/n);if(!r.hit&&alive(p)&&distance(b,p)<=r.radius){r.hit=true;signal('valleyRushHit',b,r);if(!b.rush)return;}}r.remaining-=step;b.walk+=dt*24;if(r.remaining<=1e-8){b.rush=null;b.attack=1.25;b.motion=b.sprinting=false;signal('valleyRushEnd',b,r);}return;}
- if(b.intent){const a=b.intent;a.left-=dt;if(a.rush&&a.left>c.rushLock){const v=directionToward(p.x-b.x,p.z-b.z);a.dx=v.x;a.dz=v.z;b.dirX=v.x;b.dirZ=v.z;}b.air=a.dive?Math.sin(Math.PI*Math.max(0,1-a.left/a.total))*1.15:0;if(a.left<=1e-8){b.intent=null;b.air=0;b.cooldowns[a.id]=a.cooldown;b.attack=a.clash?1.05:.65;
-  if(a.rush){const ar=b.spec.arena,ox=b.x-ar.x,oz=b.z-ar.z,dot=ox*a.dx+oz*a.dz,edge=Math.max(0,-dot+Math.sqrt(Math.max(0,dot*dot+(ar.r-.5)**2-ox*ox-oz*oz)));b.rush={...a,remaining:Math.min(32,edge),hit:false};b.attack=0;b.anim=null;signal('valleyRushStart',b,a);return;}
+ if(b.rush){const r=b.rush,step=Math.min(r.remaining,c.rushSpeed*dt),n=Math.max(1,Math.ceil(step/.18));b.motion=b.sprinting=true;for(let j=0;j<n;j++){if(!r.hit){const v=directionToward(p.x-b.x,p.z-b.z,r.dx,r.dz);r.dx=v.x;r.dz=v.z;}b.dirX=r.dx;b.dirZ=r.dz;const x=b.x,z=b.z;move(b,r.dx*step/n,r.dz*step/n);if(!r.hit&&alive(p)&&distance(b,p)<=r.radius){r.hit=true;signal('valleyRushHit',b,r);if(!b.rush)return;}if(r.hit&&Math.hypot(b.x-x,b.z-z)<.001){r.remaining=0;break;}}r.remaining-=step;b.walk+=dt*32;if(r.remaining<=1e-8){b.rush=null;b.attack=c.rushRecovery;b.motion=b.sprinting=false;signal('valleyRushEnd',b,r);}return;}
+ if(b.intent){const a=b.intent;a.left-=dt;if(a.rush&&a.left>c.rushLock){const v=directionToward(p.x-b.x,p.z-b.z);a.dx=v.x;a.dz=v.z;b.dirX=v.x;b.dirZ=v.z;}b.air=a.dive?Math.sin(Math.PI*Math.max(0,1-a.left/a.total))*1.15:0;if(a.left<=1e-8){b.intent=null;b.air=0;b.cooldowns[a.id]=a.cooldown;b.attack=(a.clash?1.05:.65)*c.recovery[b.phase-1];
+  if(a.rush){b.rush={...a,remaining:c.rushTravel,hit:false};b.attack=0;b.anim=null;signal('valleyRushStart',b,a);return;}
   if(!a.projectile)for(const q of [p,...clones])if(alive(q)&&bossContains(a,q))hit(q,a.damage,b);
   signal('strike',b,a);if(a.lunge)move(b,a.dx*a.lunge,a.dz*a.lunge);else if(a.dive&&a.shape==='target'){const v=directionToward(a.x-b.x,a.z-b.z),d=Math.min(8,distance(b,a));move(b,v.x*d,v.z*d);}
-  if(a.pulses&&(a.pulse||1)<a.pulses){const v=directionToward(p.x-b.x,p.z-b.z),delay=a.id==='predatorRush'?.72:a.id==='curseFlurry'?.6:.55;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,pulse:(a.pulse||1)+1,left:delay,total:delay};b.cooldowns[a.id]=0;b.attack=0;b.dirX=v.x;b.dirZ=v.z;signal('windup',b,b.intent);}
+  if(a.pulses&&(a.pulse||1)<a.pulses){const v=directionToward(p.x-b.x,p.z-b.z),delay=a.id==='predatorRush'?.60:a.id==='curseFlurry'?.50:.48;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,pulse:(a.pulse||1)+1,left:delay,total:delay};b.cooldowns[a.id]=0;b.attack=0;b.dirX=v.x;b.dirZ=v.z;signal('windup',b,b.intent);}
  }return;}
  const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
  if(!b.attack){const ready=b.spec.patterns.filter(a=>(b.phase===4?a.phase===4:b.phase===3?a.phase>=2&&a.phase<=3:b.phase===2?a.phase<=2&&a.id!=='valleyChidori':a.phase===1)&&b.cooldowns[a.id]<=1e-8&&d<=a.reach),varied=ready.filter(a=>a.id!==b.lastPattern),opts=varied.length?varied:ready,a=opts.sort((x,y)=>(b.uses[x.id]||0)/(x.projectile==='inferno'?1.7:1)-(b.uses[y.id]||0)/(y.projectile==='inferno'?1.7:1)||Number(Boolean(y.rush||y.projectile==='inferno'))-Number(Boolean(x.rush||x.projectile==='inferno'))||Number(Boolean(y.clash))-Number(Boolean(x.clash)))[0];if(a){b.uses[a.id]=(b.uses[a.id]||0)+1;if(a.flank){move(b,-v.z*2*b.orbitDir,v.x*2*b.orbitDir);}const aim=directionToward(p.x-b.x,p.z-b.z);b.intent={...a,damage:Math.round(a.damage*c.damageScale[b.phase-1]),x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:aim.x,dz:aim.z,left:a.windup,total:a.windup};b.anim={k:a.clash||a.projectile||a.rush?'l':'j',left:a.windup+.3,total:a.windup+.3,windup:a.windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}

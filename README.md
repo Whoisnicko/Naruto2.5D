@@ -76,3 +76,6 @@ Modo de una cola, ataques físicos extensibles, Rasengan púrpura y sandbox. [De
 
 ## v1.8 beta — Kyūbi Evolution
 Tres formas progresivas, furia, ataques múltiples, colas animadas y FX. [Detalles](docs/V18-KYUBI-EVOLUTION.md). Guardado v11.
+
+## v1.8b — Kyūbi definitivo (tres colas)
+Decisión del jugador: una única forma de tres colas, activación directa con T al 100%, 14 s, y un botón de sandbox. Se conserva el arte, Rasengan púrpura, ataques extensibles, daño múltiple y furia de v1.8. No añadir más transformaciones por ahora. Guardado v11. Smoke tests de lógica aprobados; render/audio reales y deploy pendientes.

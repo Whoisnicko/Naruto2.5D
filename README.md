@@ -58,3 +58,6 @@ Región conectada al este, santuario y ruinas, cuatro enemigos, dos cofres, tali
 
 ## v1.3 beta — Equipo 7
 Sasuke, Sakura y Kakashi jugables, técnicas propias y progreso compartido. [Detalles](docs/V13-PLAYABLE-CHARACTERS.md). Guardado v9, pruebas simuladas aprobadas.
+
+## v1.35 beta — Artes Shinobi
+Cuatro árboles independientes, 24 nodos, poses de combate y FX ampliados. [Detalles y QA](docs/V135-COMBAT-ART.md). Guardado v10. Roadmap: v1.4 Exámenes Chūnin, v1.5 validación final.

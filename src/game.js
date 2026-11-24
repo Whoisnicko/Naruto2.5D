@@ -90,7 +90,7 @@ function changed(){syncRPG();return save(true);}
 function quick(i){if(!running||!rpg.hotbar[i])return;const err=useItem(rpg,p,rpg.hotbar[i]);if(err)msg(err);else{audio.play('reward');msg('Usaste '+itemFor(rpg.hotbar[i]).name);changed();rpgUI.hotbar();}}
 const rpgUI=createRPGUI({state:()=>({p,rpg,quest,enemies}),canOpen:()=>$('menu').style.display==='none'&&!worldUI.opened&&!modal,pause:on=>{if(on){wasRunning=running;running=false;}else running=wasRunning;keys.clear();audio.wind(running);$('pause').textContent=running?'II':'▶';},notice:s=>{$('rpgNotice').textContent=s;msg(s);},changed:()=>{if(sandbox){syncRPG();$('rpgNotice').textContent='Sandbox: cambios temporales.';return;}$('rpgNotice').textContent=changed()?'Cambios guardados.':'Cambios aplicados. Exportá la partida para conservarlos.';},nearTrainer:()=>dist(p,DATA.npc)<3,preview:el=>{if(!pixels?.previewEquipment)return false;pixels.previewEquipment(p.equipment,el);return true;},move:(a,b)=>moveSlot(rpg,a,b),sort:()=>sortInventory(rpg),equip:i=>equipSlot(rpg,i),unequip:s=>unequipSlot(rpg,s),discard:i=>discardSlot(rpg,i),assign:(i,id)=>assignHotbar(rpg,i,id),use:(id,i)=>useItem(rpg,p,id,i),unlock:id=>unlockSkill(rpg,p.xp,id),collect:()=>collectOverflow(rpg),quick,train});
 let worldWasRunning=false;const worldUI=createWorldUI({state:()=>({p,rpg,world,enemies:activeEnemies(),bossProgress,boss,quest,campaign}),pause:on=>{if(on){worldWasRunning=running;running=false;}else running=worldWasRunning;keys.clear();audio.wind(running);$('pause').textContent=running?'II':'▶';},changed,portrait:(kind,canvas)=>{if(!pixels?.portrait)return false;pixels.portrait(kind,canvas);return true;},accept:id=>acceptQuest(world,id),finish:id=>{const err=finishQuest(world,rpg,p,id);if(!err)audio.play('reward');return err;},buy:(shop,id)=>buyItem(rpg,p,shop,id),sell:id=>sellItem(rpg,p,id),heal:()=>healPlayer(p)});
-function dist(a,b){return Math.hypot(a.x-b.x,a.z-b.z)}function move(a,dx,dz){stepMotion(a,dx,dz,(x,z)=>blocked(x,z)||(a.regional&&x<51));}
+function dist(a,b){return Math.hypot(a.x-b.x,a.z-b.z)}function move(a,dx,dz){stepMotion(a,dx,dz,(x,z)=>blocked(x,z)||(a.regional&&x<51)||(!a.regional&&Number.isInteger(a.id)&&a.id>=0&&a.id<DATA.enemies.length&&x>49));}
 function resetRegional(){regionalEnemies=REGIONAL_ENEMIES.map(spec=>({...prepareEnemy({...spec,maxHP:spec.hp,hp:world.defeated.includes(spec.id)?0:spec.hp,hit:0,attack:0}),role:spec.role,regional:true,spec}));}
 function activeEnemies(){return inEast(p)?regionalEnemies:enemies;}
 function combatTargets(){const active=activeEnemies();return boss?[...active,boss]:active;}
@@ -179,7 +179,7 @@ addEventListener('blur',()=>keys.clear());
 document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{audio.unlock();b.dataset.s==='q'?dash():b.dataset.s==='r'?substitution():attack(b.dataset.s);});
 document.querySelectorAll('[data-key]').forEach(b=>{b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);if(b.dataset.key==='e')interact();else keys.add(b.dataset.key)};b.onpointerup=b.onpointercancel=()=>keys.delete(b.dataset.key)});
 function update(dt){
- t+=dt;world.clock=(world.clock+dt)%DAY_SECONDS;discover(world,p);
+ const wasEast=inEast(p);t+=dt;world.clock=(world.clock+dt)%DAY_SECONDS;discover(world,p);
  for(const k in cd)cd[k]=Math.max(0,cd[k]-dt);
  p.substitution=Math.max(0,(p.substitution||0)-dt);p.invuln=Math.max(0,(p.invuln||0)-dt);p.flash=Math.max(0,(p.flash||0)-dt);p.hit=Math.max(0,p.hit-dt);
  if(p.combo&&t-p.comboAt>COMBAT.comboWindow)p.combo=0;
@@ -191,6 +191,7 @@ function update(dt){
   if(p.motion){const v=directionToward(dx,dz),speed=(p.sprinting?8:5)*(1+bonus.speed);p.dirX=v.x;p.dirZ=v.z;move(p,v.x*speed*dt,v.z*speed*dt);p.walk+=dt*speed*2;if(t>=stepAt){audio.play('step');stepAt=t+(p.sprinting?.17:.28);}}
   else p.walk=0;
  }
+ if(wasEast!==inEast(p)){projectiles=[];clones=[];effects=[];msg(inEast(p)?'Frontera del viento · Explorá el sendero y el santuario.':'Regreso al bosque de Konoha',4);}
  p.chakra=Math.min(100,p.chakra+dt*(8+bonus.chakra));
  if(p.pending){p.pending.remaining-=dt;if(p.pending.remaining<=0){const a=p.pending;p.pending=null;resolveAttack(a);}}
  if(p.anim){p.anim.left-=dt;if(p.anim.left<=0)p.anim=null;}

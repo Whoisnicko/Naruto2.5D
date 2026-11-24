@@ -171,8 +171,7 @@ function hurt(e,d,source=p,skill=COMBAT.skills.j,allowCrit=false){
 function playerHurt(d,source){
  if(p.invuln>0)return;
  if(p.substitution>0){const origin={x:p.x,z:p.z},dest=safeSubstitution(p,source,blocked);p.x=dest.x;p.z=dest.z;p.substitution=0;p.invuln=COMBAT.substitution.invulnerable;p.pending=null;p.anim=null;p.queued=false;p.combo=0;effects.push({...origin,life:.6,max:.6,r:1,col:C.orange,type:'substitute',kyubi:kyubiActive()});effects.push({x:p.x,z:p.z,life:.35,max:.35,r:1,col:C.orange,type:'clone',kyubi:kyubiActive()});audio.play('clone');msg('¡Kawarimi! Ataque evitado');return;}
- d=Math.max(1,d-bonus.defense-characterFor(p.character).defense-(p.guardBuff>0?(p.guardPower||8):0));if(kyubiActive())d=Math.max(1,Math.round(d*kyubiForm().damageTaken));chargeKyubi(Math.min(p.hp,d)*COMBAT.kyubi.received);p.hp=Math.max(0,p.hp-d);p.hit=.2;p.flash=.12;p.invuln=.22;p.combo=0;p.queued=false;p.pending=null;p.anim=null;
- const v=directionToward(p.x-source.x,p.z-source.z);move(p,v.x*.23,v.z*.23);
+ d=Math.max(1,d-bonus.defense-characterFor(p.character).defense-(p.guardBuff>0?(p.guardPower||8):0));if(kyubiActive())d=Math.max(1,Math.round(d*kyubiForm().damageTaken));chargeKyubi(Math.min(p.hp,d)*COMBAT.kyubi.received);p.hp=Math.max(0,p.hp-d);p.hit=.2;p.flash=.12;p.invuln=.22;p.combo=0;p.queued=false;const protectedRas=p.character==='naruto'&&p.pending?.ras&&p.hp>0;if(!protectedRas){p.pending=null;p.anim=null;const v=directionToward(p.x-source.x,p.z-source.z);move(p,v.x*.23,v.z*.23);}
  feedback.number(p.x,p.z,d,'player');feedback.impact(.055,.035);audio.play('hurt');
  if(p.hp<=0){resetKyubi();if(examRun){endExam(false,'Derrota en el examen. Podés reintentar.');return;}p.focus=0;p.guardBuff=0;boss=null;projectiles=[];clones=[];effects=[];p.hp=100;p.chakra=100;p.x=-16;p.z=-2;p.dashTime=0;p.invuln=1;camX=p.x;camZ=p.z;save(true);msg('Sakura te recuperó en Konoha.');}
 }

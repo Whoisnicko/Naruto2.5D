@@ -1,8 +1,11 @@
 'use strict';
 import { createRenderer } from './renderer.js';
 import { createPixelSystem } from './pixel-renderer.js';
+import { COMBAT,stepMotion,directionToward } from './combat-data.js';
+import { createAudio,createFeedback } from './feedback.js';
 import { validateSave, readSave, writeSave, exportSave, importSave } from './save.js';
 const $=id=>document.getElementById(id), canvas=$('c'), view=createRenderer(canvas);
+const audio=createAudio(),feedback=createFeedback(view,$('damageLayer'));
 let pixels=null;try{pixels=createPixelSystem(view.scene);}catch(e){console.warn('Pixel assets fallback',e);} 
 const rgb=h=>[parseInt(h.slice(0,2),16)/255,parseInt(h.slice(2,4),16)/255,parseInt(h.slice(4,6),16)/255], C={grass:rgb('87ad59'),path:rgb('e0bf87'),wood:rgb('815744'),roof:rgb('b45745'),wall:rgb('f2d5a0'),dark:rgb('344357'),water:rgb('5dabc0'),leaf:rgb('50874d'),stone:rgb('a2a498'),orange:rgb('ed8332'),skin:rgb('eec09a'),hair:rgb('f4ca48'),blue:rgb('6ee8ff')};
 let mesh=[];function tri(a,b,c,color){for(const p of [a,b,c])mesh.push(...p,...color)}function quad(a,b,c,d,col){tri(a,b,c,col);tri(a,c,d,col)}
@@ -28,22 +31,135 @@ for(let i=0;i<9;i++){let z=-17+i*3.6;if(Math.abs(z+2)>4){sphere(5.1,.28,z,.55,rg
 // Ichiraku awning, fabric panels, stools and counter.
 box(-21,2.45,9.25,5.7,.15,1.5,rgb('963b32'));for(let i=0;i<5;i++){box(-23.35+i*1.17,1.98,9.95,1.08,.47,.07,rgb('d9b277'));box(-23.35+i*1.17,2.05,10.0,.14,.25,.035,rgb('963b32'))}box(-21,.92,9.7,5.1,.16,.65,C.wood);for(let i=0;i<3;i++){cone(-23+i*2,0,10.45,.14,.62,C.wood,8,.13);cone(-23+i*2,.61,10.45,.34,.13,C.roof,10,.34)}
 const bins=new Map();for(let i=0;i<mesh.length;i+=18){let x=(mesh[i]+mesh[i+6]+mesh[i+12])/3,z=(mesh[i+2]+mesh[i+8]+mesh[i+14])/3,k=Math.floor(x/20)+','+Math.floor(z/20);if(!bins.has(k))bins.set(k,[]);let a=bins.get(k);for(let j=0;j<18;j++)a.push(mesh[i+j])}const staticGeo=Array.from(bins,([key,arr])=>{let [x,z]=key.split(',').map(Number);return {...upload(arr),x:x*20+10,z:z*20+10}});
-const DATA={npc:{x:-12,z:-2,name:'Kakashi'},enemies:[{x:19,z:-2},{x:25,z:3},{x:30,z:-5},{x:36,z:8},{x:21,z:11}],skills:{j:{cost:0,cd:.35,range:2,damage:25},k:{cost:8,cd:.45,range:10,damage:24},l:{cost:25,cd:5,range:8,damage:32},' ':{cost:20,cd:1.6,range:3.5,damage:60}}};let p, enemies, quest, effects, clones, projectiles, cd, running=false,quality=1,noticeUntil=0,keys=new Set(),t=0,last=performance.now(),fps=60,uiAt=0;function reset(){p={x:-16,z:-2,hp:100,chakra:100,xp:0,coins:0,dirX:1,dirZ:0,walk:0,hit:0};enemies=DATA.enemies.map((a,i)=>({...a,id:i,hp:70,hit:0,attack:0}));quest=0;effects=[];clones=[];projectiles=[];cd={};}reset();function msg(s,sec=3){$('notice').textContent=s;noticeUntil=t+sec}function snapshot(){return validateSave({p,enemies,quest},DATA.enemies.length)}
+const DATA={npc:{x:-12,z:-2,name:'Kakashi'},enemies:[{x:19,z:-2},{x:25,z:3},{x:30,z:-5},{x:36,z:8},{x:21,z:11}],skills:COMBAT.skills};let p, enemies, quest, effects, clones, projectiles, cd, running=false,quality=1,noticeUntil=0,keys=new Set(),t=0,last=performance.now(),fps=60,uiAt=0;let stepAt=0;function reset(){feedback.reset();stepAt=t;p={x:-16,z:-2,hp:100,chakra:100,xp:0,coins:0,dirX:1,dirZ:0,walk:0,hit:0};enemies=DATA.enemies.map((a,i)=>({...a,id:i,hp:70,hit:0,attack:0}));quest=0;effects=[];clones=[];projectiles=[];cd={};}reset();function msg(s,sec=3){$('notice').textContent=s;noticeUntil=t+sec}function snapshot(){return validateSave({p,enemies,quest},DATA.enemies.length)}
 function applySave(s){reset();p=s.p;enemies=s.enemies;quest=s.quest;camX=p.x;camZ=p.z;}
 function save(silent=false){try{writeSave(snapshot());$('continue').disabled=false;if(!silent)msg('Partida guardada.');return true;}catch(e){if(!silent)msg('No se pudo guardar. Usá Exportar.');return false;}}
-function start(restore){if(restore){try{const s=readSave(DATA.enemies.length);if(!s){$('error').textContent='No hay una partida guardada.';return;}applySave(s);}catch(e){$('error').textContent='Partida inválida. Podés importar un respaldo.';return;}}else reset();running=true;keys.clear();$('menu').style.display='none';$('pause').textContent='II';msg(restore?'Partida recuperada.':'Buscá a Kakashi en la plaza.');}
+function start(restore){audio.unlock();if(restore){try{const s=readSave(DATA.enemies.length);if(!s){$('error').textContent='No hay una partida guardada.';return;}applySave(s);}catch(e){$('error').textContent='Partida inválida. Podés importar un respaldo.';return;}}else reset();running=true;audio.wind(true);keys.clear();$('menu').style.display='none';$('pause').textContent='II';msg(restore?'Partida recuperada.':'Buscá a Kakashi en la plaza.');}
 $('start').onclick=()=>start(false);$('continue').onclick=()=>start(true);$('save').onclick=()=>save(false);
 $('export').onclick=()=>{try{exportSave(snapshot());msg('Respaldo de partida exportado.');}catch(e){msg('No se pudo exportar.')}};
 $('import').onclick=$('importMenu').onclick=()=>$('saveFile').click();
-$('saveFile').onchange=async e=>{try{const s=await importSave(e.target.files[0],DATA.enemies.length);applySave(s);running=true;keys.clear();$('menu').style.display='none';$('pause').textContent='II';const persisted=save(true);msg(persisted?'Partida importada y guardada.':'Partida importada; almacenamiento bloqueado. Exportá para conservarla.');}catch(err){$('error').textContent='No se pudo importar: '+err.message;msg('No se pudo importar: '+err.message);}finally{e.target.value='';}};
-$('pause').onclick=()=>{running=!running;$('pause').textContent=running?'II':'▶';msg(running?'Continuar':'Pausa',running?2:999)};
+$('saveFile').onchange=async e=>{try{audio.unlock();const s=await importSave(e.target.files[0],DATA.enemies.length);applySave(s);running=true;audio.wind(true);keys.clear();$('menu').style.display='none';$('pause').textContent='II';const persisted=save(true);msg(persisted?'Partida importada y guardada.':'Partida importada; almacenamiento bloqueado. Exportá para conservarla.');}catch(err){$('error').textContent='No se pudo importar: '+err.message;msg('No se pudo importar: '+err.message);}finally{e.target.value='';}};
+$('pause').onclick=()=>{running=!running;audio.wind(running);keys.clear();$('pause').textContent=running?'II':'▶';msg(running?'Continuar':'Pausa',running?2:999)};
+$('sound').textContent=audio.enabled?'Sonido: Sí':'Sonido: No';$('sound').onclick=()=>{audio.setEnabled(!audio.enabled);audio.wind(running);$('sound').textContent=audio.enabled?'Sonido: Sí':'Sonido: No';};$('volume').value=String(Math.round(audio.volume*100));$('volume').oninput=e=>audio.setVolume(Number(e.target.value)/100);$('shake').textContent=feedback.shakeEnabled?'Impacto: Sí':'Impacto: No';$('shake').onclick=()=>{feedback.setShake(!feedback.shakeEnabled);$('shake').textContent=feedback.shakeEnabled?'Impacto: Sí':'Impacto: No';};
 $('quality').onclick=()=>{quality=quality===1?.75:quality===.75?.55:1;$('quality').textContent='Calidad: '+(quality===1?'Alta':quality===.75?'Media':'Baja');resize()};
 function resize(){view.resize(quality)}addEventListener('resize',resize);resize();
 let autosaveAt=20;addEventListener('pagehide',()=>{if($('menu').style.display==='none')save(true)});
-function dist(a,b){return Math.hypot(a.x-b.x,a.z-b.z)}function move(a,dx,dz){if(!blocked(a.x+dx,a.z))a.x+=dx;if(!blocked(a.x,a.z+dz))a.z+=dz}function hurt(e,d){if(e.hp<=0)return;e.hp=Math.max(0,e.hp-d);e.hit=.18;effects.push({x:e.x,z:e.z,life:.3,max:.3,r:1,col:C.orange});if(e.hp===0){p.xp+=25;p.coins+=12;msg('+25 EXP · +12 ryō');if(quest===1&&enemies.every(e=>!e.hp)){quest=2;msg('¡Misión cumplida! Volvé con Kakashi.')}}}function interact(){if(!running)return;if(dist(p,DATA.npc)<3){if(quest===0){quest=enemies.every(e=>!e.hp)?2:1;msg('Kakashi: derrotá a los cinco renegados del bosque.',5)}else if(quest===2){quest=3;p.coins+=100;p.xp+=50;p.hp=100;msg('Kakashi: ¡bien hecho! +100 ryō, +50 EXP',5)}else msg(quest===1?'Kakashi: cruzá el puente hacia el bosque.':'Kakashi: seguí entrenando.')}else msg('Acercate a Kakashi para hablar.')}
-function attack(k){if(!running||!DATA.skills[k]||cd[k]>0)return;let s=DATA.skills[k];if(p.chakra<s.cost){msg('Chakra insuficiente');return}p.chakra-=s.cost;cd[k]=s.cd;p.hit=.22;p.anim={k,left:k===' '?.65:k==='l'?.55:.32,total:k===' '?.65:k==='l'?.55:.32};let near=enemies.filter(e=>e.hp>0&&dist(p,e)<s.range).sort((a,b)=>dist(p,a)-dist(p,b));if(k==='k'){let target=near[0],dx=target?target.x-p.x:p.dirX,dz=target?target.z-p.z:p.dirZ,l=Math.hypot(dx,dz)||1;projectiles.push({x:p.x,z:p.z,dx:dx/l,dz:dz/l,life:.65})}else if(k==='l'){for(let i=0;i<2;i++)clones.push({x:p.x+(i?1:-1),z:p.z+1,life:5,hit:0,walk:0});msg('¡Kage Bunshin no Jutsu!')}else{effects.push({x:p.x+p.dirX*.8,z:p.z+p.dirZ*.8,life:k===' '? .65:.22,max:k===' '?.65:.22,r:k===' '?3:1.5,col:k===' '?C.blue:C.orange});for(let e of near.slice(0,k===' '?5:1))hurt(e,s.damage)}}
-const mapKey=k=>({arrowup:'w',arrowdown:'s',arrowleft:'a',arrowright:'d'}[k]||k);addEventListener('keydown',e=>{let k=mapKey(e.key.toLowerCase());if(['w','a','s','d',' ','shift','j','k','l','e'].includes(k))e.preventDefault();keys.add(k);if(!e.repeat){if(k==='e')interact();else attack(k)}});addEventListener('keyup',e=>keys.delete(mapKey(e.key.toLowerCase())));addEventListener('blur',()=>keys.clear());document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>attack(b.dataset.s));document.querySelectorAll('[data-key]').forEach(b=>{b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);if(b.dataset.key==='e')interact();else keys.add(b.dataset.key)};b.onpointerup=b.onpointercancel=()=>keys.delete(b.dataset.key)});
-function update(dt){t+=dt;let dx=(keys.has('d')?1:0)-(keys.has('a')?1:0),dz=(keys.has('s')?1:0)-(keys.has('w')?1:0);p.motion=Boolean(dx||dz);p.sprinting=p.motion&&keys.has('shift');if(dx||dz){let n=Math.hypot(dx,dz);p.dirX=dx/n;p.dirZ=dz/n;let speed=keys.has('shift')?8:5;move(p,dx/n*speed*dt,dz/n*speed*dt);p.walk+=dt*speed*2}else p.walk=0;p.chakra=Math.min(100,p.chakra+dt*8);p.hit=Math.max(0,p.hit-dt);if(p.anim){p.anim.left-=dt;if(p.anim.left<=0)p.anim=null;}for(let k in cd)cd[k]=Math.max(0,cd[k]-dt);for(let e of enemies){if(!e.hp||dist(e,p)>22)continue;e.hit=Math.max(0,e.hit-dt);if(e.anim){e.anim.left-=dt;if(e.anim.left<=0)e.anim=null;}e.attack-=dt;let d=dist(e,p);e.motion=d<12&&d>1.2;if(e.motion){e.dirX=(p.x-e.x)/d;e.dirZ=(p.z-e.z)/d;move(e,(p.x-e.x)/d*2.4*dt,(p.z-e.z)/d*2.4*dt);e.walk=(e.walk||0)+dt*7}else if(d<1.5&&e.attack<=0){e.attack=1.1;e.anim={k:"j",left:.36,total:.36};p.hp-=9;p.hit=.2;if(p.hp<=0){p.hp=100;p.chakra=100;p.x=-16;p.z=-2;msg('Sakura te recuperó en Konoha.')}}}for(let c of clones){c.life-=dt;c.hit-=dt;if(c.anim){c.anim.left-=dt;if(c.anim.left<=0)c.anim=null;}c.motion=false;let e=enemies.filter(e=>e.hp>0&&dist(c,e)<14).sort((a,b)=>dist(c,a)-dist(c,b))[0];if(e){let d=dist(c,e);if(d>1.1){c.motion=true;move(c,(e.x-c.x)/d*5*dt,(e.z-c.z)/d*5*dt);c.dirX=(e.x-c.x)/d;c.dirZ=(e.z-c.z)/d;c.walk+=dt*10}else if(c.hit<=0){hurt(e,18);c.hit=.65;c.anim={k:"j",left:.3,total:.3}}}}clones=clones.filter(c=>c.life>0);for(let a of projectiles){a.x+=a.dx*18*dt;a.z+=a.dz*18*dt;a.life-=dt;let e=enemies.find(e=>e.hp>0&&dist(a,e)<.9);if(e){hurt(e,24);a.life=0}}projectiles=projectiles.filter(a=>a.life>0);for(let e of effects)e.life-=dt;effects=effects.filter(e=>e.life>0).slice(-25);}
+function dist(a,b){return Math.hypot(a.x-b.x,a.z-b.z)}function move(a,dx,dz){stepMotion(a,dx,dz,blocked);}
+function hurt(e,d,source=p,skill=COMBAT.skills.j,allowCrit=false){
+ if(e.hp<=0)return false;
+ const critical=allowCrit&&Math.random()<COMBAT.criticalChance;
+ const damage=Math.round(d*(critical?COMBAT.criticalMultiplier:1));
+ e.hp=Math.max(0,e.hp-damage);e.hit=.18;e.flash=.12;e.pendingAttack=0;e.attack=Math.max(e.attack||0,.3);
+ const v=directionToward(e.x-source.x,e.z-source.z,p.dirX,p.dirZ);
+ e.kx=v.x*skill.knock;e.kz=v.z*skill.knock;e.knockTime=.14;
+ effects.push({x:e.x,z:e.z,life:.3,max:.3,r:1,col:C.orange,type:'hit'});
+ feedback.number(e.x,e.z,damage,critical?'critical':'normal');feedback.impact(skill.shake,skill.freeze);audio.play(skill.knock>=5?'heavy':'hit');
+ if(e.hp===0){p.xp+=25;p.coins+=12;msg('+25 EXP · +12 ryō');if(quest===1&&enemies.every(e=>!e.hp)){quest=2;msg('¡Misión cumplida! Volvé con Kakashi.');audio.play('reward');}}
+ return true;
+}
+function playerHurt(d,source){
+ if(p.invuln>0)return;
+ p.hp=Math.max(0,p.hp-d);p.hit=.2;p.flash=.12;p.invuln=.22;p.combo=0;p.queued=false;p.pending=null;p.anim=null;
+ const v=directionToward(p.x-source.x,p.z-source.z);move(p,v.x*.23,v.z*.23);
+ feedback.number(p.x,p.z,d,'player');feedback.impact(.055,.035);audio.play('hurt');
+ if(p.hp<=0){p.hp=100;p.chakra=100;p.x=-16;p.z=-2;p.dashTime=0;p.invuln=1;msg('Sakura te recuperó en Konoha.');}
+}
+function interact(){if(!running)return;if(dist(p,DATA.npc)<3){if(quest===0){quest=enemies.every(e=>!e.hp)?2:1;msg('Kakashi: derrotá a los cinco renegados del bosque.',5)}else if(quest===2){quest=3;p.coins+=100;p.xp+=50;p.hp=100;audio.play('reward');msg('Kakashi: ¡bien hecho! +100 ryō, +50 EXP',5)}else msg(quest===1?'Kakashi: cruzá el puente hacia el bosque.':'Kakashi: seguí entrenando.')}else msg('Acercate a Kakashi para hablar.')}
+function attack(k){
+ if(!running||!DATA.skills[k]||p.dashTime>0)return false;
+ if(p.anim||p.pending){if(k==='j'&&p.anim?.k==='j'&&p.anim.left<=.24)p.queued=true;return false;}
+ if(cd[k]>0)return false;
+ const base=DATA.skills[k];if(p.chakra<base.cost){msg('Chakra insuficiente');return false;}
+ let s=base,combo=0;
+ if(k==='j'){
+  combo=t-(p.comboAt??-99)<=COMBAT.comboWindow?(p.combo||0)%3+1:1;
+  s={...base,...COMBAT.combos[combo-1]};
+  p.combo=combo;p.comboAt=t;
+ }else{p.combo=0;p.queued=false;}
+ p.chakra-=base.cost;cd[k]=Math.max(base.cd,s.duration);
+ p.pending={k,s,remaining:s.windup,combo};p.anim={k,left:s.duration,total:s.duration,combo,windup:s.windup};
+ p.motion=false;p.sprinting=false;
+ audio.play(k===' '?'charge':k==='l'?'clone':'swing');
+ return true;
+}
+function resolveAttack(a){
+ const {k,s,combo}=a;
+ let near=enemies.filter(e=>e.hp>0&&dist(p,e)<s.range).sort((a,b)=>dist(p,a)-dist(p,b));
+ if(k==='k'){
+  const target=near[0],dir=directionToward(target?target.x-p.x:p.dirX,target?target.z-p.z:p.dirZ);
+  projectiles.push({x:p.x,z:p.z,dx:dir.x,dz:dir.z,life:.65});audio.play('shuriken');
+ }else if(k==='l'){
+  for(let i=0;i<2;i++){const x=p.x+(i?1:-1),z=p.z+1;clones.push({x:blocked(x,z)?p.x:x,z:blocked(x,z)?p.z:z,life:5,hit:0,walk:0});}
+  msg('¡Kage Bunshin no Jutsu!');audio.play('clone');
+ }else{
+  if(k===' '){
+   const target=near[0];const v=directionToward(target?target.x-p.x:p.dirX,target?target.z-p.z:p.dirZ);p.dirX=v.x;p.dirZ=v.z;
+   const lunge=target?Math.min(1.05,Math.max(0,dist(p,target)-.8)):.6;
+   move(p,v.x*lunge,v.z*lunge);audio.play('rasengan');
+   near=enemies.filter(e=>e.hp>0&&dist(p,e)<s.range).sort((a,b)=>dist(p,a)-dist(p,b));
+  }
+  effects.push({x:p.x+p.dirX*.8,z:p.z+p.dirZ*.8,life:k===' '?.65:.22,max:k===' '?.65:.22,r:k===' '?3:1.5,col:k===' '?C.blue:C.orange,type:k===' '?'rasengan':combo===3?'heavy':'hit'});
+  for(const e of near.slice(0,k===' '?5:1))hurt(e,s.damage,p,s,true);
+ }
+}
+function dash(){
+ if(!running||p.dashTime>0||cd.q>0||p.pending||p.chakra<COMBAT.dash.cost)return false;
+ const x=Number(keys.has('d'))-Number(keys.has('a')),z=Number(keys.has('s'))-Number(keys.has('w'));
+ const v=directionToward(x,z,p.dirX,p.dirZ);
+ p.dirX=v.x;p.dirZ=v.z;p.dashTime=COMBAT.dash.duration;p.invuln=COMBAT.dash.invulnerable;p.chakra-=COMBAT.dash.cost;cd.q=COMBAT.dash.cooldown;
+ p.anim=null;p.queued=false;p.combo=0;p.motion=true;p.sprinting=true;
+ effects.push({x:p.x,z:p.z,life:.18,max:.18,r:1,col:C.orange,type:'dash'});audio.play('dash');
+ return true;
+}
+const mapKey=k=>({arrowup:'w',arrowdown:'s',arrowleft:'a',arrowright:'d'}[k]||k);
+addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName))return;const k=mapKey(e.key.toLowerCase());if(['w','a','s','d',' ','shift','q','j','k','l','e'].includes(k))e.preventDefault();keys.add(k);if(!e.repeat){if(k==='e')interact();else if(k==='q')dash();else attack(k);}});
+addEventListener('keyup',e=>keys.delete(mapKey(e.key.toLowerCase())));
+addEventListener('blur',()=>keys.clear());
+document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{audio.unlock();b.dataset.s==='q'?dash():attack(b.dataset.s);});
+document.querySelectorAll('[data-key]').forEach(b=>{b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);if(b.dataset.key==='e')interact();else keys.add(b.dataset.key)};b.onpointerup=b.onpointercancel=()=>keys.delete(b.dataset.key)});
+function update(dt){
+ t+=dt;
+ for(const k in cd)cd[k]=Math.max(0,cd[k]-dt);
+ p.invuln=Math.max(0,(p.invuln||0)-dt);p.flash=Math.max(0,(p.flash||0)-dt);p.hit=Math.max(0,p.hit-dt);
+ if(p.combo&&t-p.comboAt>COMBAT.comboWindow)p.combo=0;
+ const dx=Number(keys.has('d'))-Number(keys.has('a')),dz=Number(keys.has('s'))-Number(keys.has('w'));
+ if(p.dashTime>0){
+  const delta=Math.min(dt,p.dashTime);move(p,p.dirX*COMBAT.dash.speed*delta,p.dirZ*COMBAT.dash.speed*delta);p.dashTime=Math.max(0,p.dashTime-dt);p.motion=true;p.sprinting=true;p.walk+=dt*24;
+ }else{
+  p.motion=Boolean(dx||dz)&&!p.pending;p.sprinting=p.motion&&keys.has('shift');
+  if(p.motion){const v=directionToward(dx,dz),speed=p.sprinting?8:5;p.dirX=v.x;p.dirZ=v.z;move(p,v.x*speed*dt,v.z*speed*dt);p.walk+=dt*speed*2;if(t>=stepAt){audio.play('step');stepAt=t+(p.sprinting?.17:.28);}}
+  else p.walk=0;
+ }
+ p.chakra=Math.min(100,p.chakra+dt*8);
+ if(p.pending){p.pending.remaining-=dt;if(p.pending.remaining<=0){const a=p.pending;p.pending=null;resolveAttack(a);}}
+ if(p.anim){p.anim.left-=dt;if(p.anim.left<=0)p.anim=null;}
+ if(p.queued&&!p.anim&&!p.pending&&!(cd.j>0)){p.queued=false;attack('j');}
+ for(const e of enemies){
+  if(!e.hp||dist(e,p)>22)continue;
+  e.hit=Math.max(0,e.hit-dt);e.flash=Math.max(0,(e.flash||0)-dt);
+  if(e.anim){e.anim.left-=dt;if(e.anim.left<=0)e.anim=null;}
+  e.attack-=dt;
+  if(e.knockTime>0){const delta=Math.min(dt,e.knockTime);move(e,e.kx*delta,e.kz*delta);e.knockTime=Math.max(0,e.knockTime-dt);e.motion=false;continue;}
+  if(e.pendingAttack>0){e.motion=false;e.pendingAttack-=dt;if(e.pendingAttack<=0&&dist(e,p)<COMBAT.enemy.range)playerHurt(COMBAT.enemy.damage,e);continue;}
+  const d=dist(e,p);e.motion=d<12&&d>1.2;
+  if(d<COMBAT.enemy.range&&e.attack<=0){e.motion=false;e.attack=COMBAT.enemy.cooldown;e.pendingAttack=COMBAT.enemy.windup;e.anim={k:'j',left:.42,total:.42,windup:COMBAT.enemy.windup};}
+  else if(e.motion&&d>0){e.dirX=(p.x-e.x)/d;e.dirZ=(p.z-e.z)/d;move(e,e.dirX*2.4*dt,e.dirZ*2.4*dt);e.walk=(e.walk||0)+dt*7;}
+ }
+ for(const c of clones){
+  c.life-=dt;c.hit-=dt;if(c.anim){c.anim.left-=dt;if(c.anim.left<=0)c.anim=null;}c.motion=false;
+  const e=enemies.filter(e=>e.hp>0&&dist(c,e)<14).sort((a,b)=>dist(c,a)-dist(c,b))[0];
+  if(e){const d=dist(c,e);if(d>1.1){c.motion=true;const v=directionToward(e.x-c.x,e.z-c.z);c.dirX=v.x;c.dirZ=v.z;move(c,v.x*5*dt,v.z*5*dt);c.walk+=dt*10;}else if(c.hit<=0){hurt(e,COMBAT.clone.damage,c,{...COMBAT.skills.j,knock:COMBAT.clone.knock,freeze:.018,shake:.018});c.hit=.65;c.anim={k:'j',left:.3,total:.3};}}
+ }
+ clones=clones.filter(c=>c.life>0);
+ for(const a of projectiles){
+  const steps=Math.max(1,Math.ceil(18*dt/.2));for(let i=0;i<steps&&a.life>0;i++){
+   a.x+=a.dx*18*dt/steps;a.z+=a.dz*18*dt/steps;
+   const e=enemies.find(e=>e.hp>0&&dist(a,e)<.9);if(e){hurt(e,COMBAT.skills.k.damage,{x:a.x-a.dx,z:a.z-a.dz},COMBAT.skills.k,true);a.life=0;}
+  }a.life-=dt;
+ }
+ projectiles=projectiles.filter(a=>a.life>0);
+ for(const e of effects)e.life-=dt;effects=effects.filter(e=>e.life>0).slice(-25);
+}
 function ninja(a,kind){let {x,z}=a,hero=kind==='player'||kind==='clone',npc=kind==='npc',enemy=kind==='enemy';let walk=Math.sin(a.walk||0),bob=Math.abs(walk)*.045,act=a.anim&&a.anim.left>0?Math.sin(Math.PI*(1-a.anim.left/a.anim.total)):0;let dark=rgb('202d39'),orange=rgb('f08a35'),body=hero?orange:npc?rgb('728560'):rgb('51475e'),hair=npc?rgb('c8d3d6'):enemy?dark:C.hair;if(!a.rigPreview)disc(x+.17,.031,z-.12,.55,rgb('526d47'));let start=mesh.length;let y=bob;
 for(let i of [-1,1]){let foot=i*walk*.24;limb([i*.16,.67+y,0],[i*.17,.36+y,foot*.5],.137,body);limb([i*.17,.36+y,foot*.5],[i*.17,.13+y,foot],.115,hero?orange:dark);box(i*.17,.05+y,foot+.07,.25,.14,.35,dark);box(i*.17,.105+y,foot+.20,.23,.07,.1,C.skin);if(i===1)box(i*.17,.24+y,foot,.24,.12,.23,rgb('d7d2bb'))}
 cone(0,.64+y,0,.34,.58,body,8,.40);box(0,.62+y,0,.65,.13,.42,dark);box(0,1.05+y,0,.68,.15,.48,dark);box(0,.75+y,.225,.035,.34,.025,rgb('d9a369'));if(hero){ring(0,1.215+y,0,.31,.055,orange,14);box(0,.91+y,-.25,.25,.23,.035,rgb('a52f32'));box(0,.95+y,-.28,.11,.10,.035,orange)}if(npc){for(let i of [-1,1])box(i*.18,.82+y,.27,.24,.22,.09,rgb('50694f'))}
@@ -55,23 +171,23 @@ function atmosphere(){if(quality<.7)return;let count=0;for(let f of foliage){if(
 function visualEffect(e){let progress=1-e.life/e.max,r=e.r*(.25+progress*.75),blue=e.col===C.blue,n=quality===1?24:quality===.75?16:10;ring(e.x,.05,e.z,r,.07,e.col,n);if(blue){let yy=.85+.13*Math.sin(t*20);sphere(e.x,yy,e.z,.44*(1-progress*.6),rgb('b5f7ff'));for(let i=0;i<n;i++){let a=i*6.283/n+t*13,b=a+.34;let rr=.45+r*.19,yp=yy+Math.sin(a*2)*.22;limb([e.x+Math.cos(a)*rr,yp,e.z+Math.sin(a)*rr],[e.x+Math.cos(b)*rr,yy+Math.sin(b*2)*.22,e.z+Math.sin(b)*rr],.035,C.blue,4);if(i%3===0) sphere(e.x+Math.cos(a)*r,.25+Math.sin(i*2+t*4)**2*.65,e.z+Math.sin(a)*r,.075,rgb('e2fbff'))}}else{for(let i=0;i<n;i+=2){let a=i*6.283/n+t*5;limb([e.x+Math.cos(a)*r*.7,.28,e.z+Math.sin(a)*r*.7],[e.x+Math.cos(a)*r,.42,e.z+Math.sin(a)*r],.045,e.col,4)}}}
 
 let camX=p.x,camZ=p.z;
-function render(dt){
+function render(dt,animDt=dt){
   camX+=(p.x-camX)*Math.min(1,dt*7);camZ+=(p.z-camZ)*Math.min(1,dt*7);
   const spanX=12*innerWidth/Math.max(1,innerHeight);
   for(const ch of chunks)ch.obj.visible=Math.abs(ch.x-camX)<spanX+17&&Math.abs(ch.z-camZ)<38;
   for(const ch of staticGeo)ch.obj.visible=Math.abs(ch.x-camX)<spanX+20&&Math.abs(ch.z-camZ)<42;
   mesh=[];pixels?.begin();
-  function actor(a,kind){if(!pixels?.show(a,kind,running?dt:0))ninja(a,kind);else{
+  function actor(a,kind){if(!pixels?.show(a,kind,running?animDt:0))ninja(a,kind);else{
     if(kind==='enemy'){box(a.x,2.08,a.z,.7,.07,.07,rgb('543f3c'));box(a.x-(70-a.hp)/70*.35,2.09,a.z,.7*a.hp/70,.08,.08,rgb('e46b51'))}
     if(kind==='npc'&&quest!==3){let y=2.5+Math.sin(t*3)*.12;cone(a.x,y,a.z,.19,.26,rgb('ffd162'),4);cone(a.x,y-.26,a.z,.01,.26,rgb('ffd162'),4,.19)}
   }}
   actor(p,'player');if(dist(p,DATA.npc)<35)actor(DATA.npc,'npc');for(const e of enemies)if(e.hp>0&&dist(p,e)<35)actor(e,'enemy');for(const c of clones)actor(c,'clone');
   pixels?.end();view.drawActors(mesh);mesh=[];
-  if(pixels){pixels.effects(effects,clones,projectiles,t,running?dt:0,quality);}else{
+  if(pixels){pixels.effects(effects,clones,projectiles,t,running?animDt:0,quality,p);}else{
   for(let a of projectiles){let ang=t*25;for(let i=0;i<4;i++){let q=ang+i*Math.PI/2;tri([a.x,.83,a.z],[a.x+Math.cos(q)*.33,.83,a.z+Math.sin(q)*.33],[a.x+Math.cos(q+.55)*.13,.83,a.z+Math.sin(q+.55)*.13],C.dark)}limb([a.x-a.dx*.65,.8,a.z-a.dz*.65],[a.x,.8,a.z],.018,rgb('c5dce1'),4)}for(let e of effects)visualEffect(e);}
   // Water highlights only; the tree crowns are static pixel silhouettes.
   if(quality>=.75)for(let i=0;i<18;i++){let z=-20+i*2.5+((t*.8)%2.5);if(Math.abs(z+2)<3||Math.abs(z-camZ)>24||Math.abs(camX-8)>24)continue;box(8+Math.sin(i*7)*1.7,.032,z,.45,.014,.055,rgb('a3d9d3'));}
-  view.drawEffects(mesh);view.frame(camX,camZ);
+  view.drawEffects(mesh);const offset=feedback.offset();view.frame(camX+offset.x,camZ+offset.z);feedback.updateNumbers(running?dt:0);
 }
 $('error').textContent='';$('start').disabled=false;$('importMenu').disabled=false;try{$('continue').disabled=!readSave(DATA.enemies.length);}catch(e){$('continue').disabled=true;$('error').textContent='Guardado anterior inválido o almacenamiento bloqueado. Podés importar un respaldo.';}
-function loop(now){let real=Math.max(.001,(now-last)/1000),dt=Math.min(.05,real);last=now;fps=fps*.95+(.05/real);if(running){update(dt);if(t>=autosaveAt){autosaveAt=t+20;save(true);}}render(dt);if(now>uiAt){uiAt=now+200;if(running&&t>noticeUntil){let hint=dist(p,DATA.npc)<3?'E · Hablar con Kakashi':'WASD · Explorar   |   Shift · Correr';if($('notice').textContent!==hint)$('notice').textContent=hint;}$('fps').textContent=Math.round(fps)+' FPS · Pixel Anime · v0.6'+(view.renderer?.info?.render?' · '+view.renderer.info.render.calls+' draw calls':'');for(const el of document.querySelectorAll('[data-s]')){let sk=DATA.skills[el.dataset.s],wait=cd[el.dataset.s]||0;el.style.opacity=wait>0?.55:p.chakra<sk.cost?.65:1;}$('hp').style.width=p.hp+'%';$('chakra').style.width=p.chakra+'%';$('stats').textContent='Nivel '+(1+Math.floor(p.xp/100))+' · '+p.coins+' ryō';$('qdesc').textContent=['Buscá a Kakashi en la plaza.','Derrotá renegados: '+enemies.filter(e=>!e.hp).length+'/5. Cruzá el puente al este.','Volvé con Kakashi.','¡Misión completada!'][quest];}requestAnimationFrame(loop)}requestAnimationFrame(loop);
+function loop(now){let real=Math.max(.001,(now-last)/1000),dt=Math.min(.05,real);last=now;fps=fps*.95+(.05/real);let animDt=0;if(running){const frozen=feedback.frozen;feedback.tick(real);if(!frozen){update(dt);animDt=dt;}if(t>=autosaveAt){autosaveAt=t+20;save(true);}}render(dt,animDt);if(now>uiAt){uiAt=now+200;if(running&&t>noticeUntil){let hint=dist(p,DATA.npc)<3?'E · Hablar con Kakashi':'WASD · Explorar   |   Shift · Correr';if($('notice').textContent!==hint)$('notice').textContent=hint;}$('fps').textContent=Math.round(fps)+' FPS · Pixel Anime · v0.7'+(view.renderer?.info?.render?' · '+view.renderer.info.render.calls+' draw calls':'');for(const el of document.querySelectorAll('[data-s]')){let sk=el.dataset.s==='q'?COMBAT.dash:DATA.skills[el.dataset.s],wait=cd[el.dataset.s]||0;el.style.opacity=wait>0?.55:p.chakra<sk.cost?.65:1;const label=el.querySelector('em');if(label)label.textContent=wait>0?wait.toFixed(1)+' s':el.dataset.name||label.textContent;}$('combo').textContent=p.combo?'COMBO '+p.combo+' / 3 · '+COMBAT.combos[p.combo-1].name:'';$('hp').style.width=p.hp+'%';$('chakra').style.width=p.chakra+'%';$('stats').textContent='Nivel '+(1+Math.floor(p.xp/100))+' · '+p.coins+' ryō';$('qdesc').textContent=['Buscá a Kakashi en la plaza.','Derrotá renegados: '+enemies.filter(e=>!e.hp).length+'/5. Cruzá el puente al este.','Volvé con Kakashi.','¡Misión completada!'][quest];}requestAnimationFrame(loop)}requestAnimationFrame(loop);

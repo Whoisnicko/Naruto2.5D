@@ -27,7 +27,7 @@ function config(){
  const key=value('anim'),skill=key==='giant'?COMBAT.skills.g:key==='rasengan'?COMBAT.skills[' ']:key==='clone'?COMBAT.skills.l:key==='wind'?COMBAT.skills.f:key==='shuriken'?COMBAT.skills.k:key==='attack'?COMBAT.combos[0]:key==='kick'?COMBAT.combos[1]:key==='finish'?COMBAT.combos[2]:null;
  const state=['rasengan','giant','clone','wind','substitute'].includes(key)?'cast':key==='shuriken'?'attack':key==='dash'?'run':key;
  const a=ANIMS[state]||ANIMS.idle;
- const fx=key==='rasengan'||key==='giant'?'rasengan':key==='clone'?'clone':key==='shuriken'?'shuriken':key==='dash'?'dash':['wind','substitute','kunai'].includes(key)?key:null;
+ const fx=key==='giant'?'giant':key==='rasengan'?'rasengan':key==='clone'?'clone':key==='shuriken'?'shuriken':key==='dash'?'dash':['wind','substitute','kunai'].includes(key)?key:null;
  const n=fx?8:a.count;return {key,state,a,skill,fx,n,defaultFPS:fx?14:a.fps};
 }
 function rebuildColor(){const kind=value('actor'),base=sheets[kind],target=value('color');recolored=document.createElement('canvas');recolored.width=base.width;recolored.height=base.height;const x=recolored.getContext('2d');x.drawImage(base,0,0);if(target===palette[kind])return;

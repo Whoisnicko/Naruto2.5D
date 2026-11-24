@@ -27,6 +27,7 @@ const PALETTES={
  teuchi:{hair:'#e9dec2',hairLight:'#fff7e7',hairShade:'#b6a78e',shirt:'#e5d7b9',shade:'#99876e',light:'#f8efda',trim:'#695646',metal:'#ede1c5'},
  tenten:{hair:'#593e39',hairLight:'#a57b65',hairShade:'#3b2830',shirt:'#ddadad',shade:'#a66877',light:'#ffe1c9',trim:'#4d4453',metal:'#cfdae1'},
  iruka:{hair:'#684536',hairLight:'#a47853',hairShade:'#392e35',shirt:'#779768',shade:'#43594d',light:'#a1be8a',trim:'#354457',metal:'#c0d2d7'},
+ kabuto:{hair:'#a8b7bd',hairLight:'#e1e8e6',hairShade:'#788491',shirt:'#75637d',shade:'#413b54',light:'#aa94af',trim:'#d5c8b0',metal:'#b7d6d7'},
  zabuza:{hair:'#313746',hairLight:'#6a7781',hairShade:'#222737',shirt:'#687e87',shade:'#384c5b',light:'#9eafb6',trim:'#344051',metal:'#d5dde0'},
  haku:{hair:'#272d3e',hairLight:'#67748a',hairShade:'#1d2434',shirt:'#6a9e8c',shade:'#385f60',light:'#a3cfb4',trim:'#6a455d',metal:'#e8e8dc'},
  shikamaru:{hair:'#34393b',hairLight:'#626966',hairShade:'#242a30',shirt:'#859673',shade:'#4a5c50',light:'#b1c09b',trim:'#343b45',metal:'#c4c9be'},
@@ -92,6 +93,7 @@ function actorCell(kind,dir,frame,gear=null,kyubi=false){
    else{rect(hx-4,hy+6,2,1,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx,hy+7,2,1,'#9d574e');}
  }
  if(role==='sakura'){rect(hx-6,hy-1,2,8,p.hairShade);rect(hx+5,hy-1,2,8,p.hair);rect(hx-5,hy-2,10,3,p.hair);rect(hx-2,hy-3,4,2,p.hairLight);}if(role==='teuchi'){rect(hx-6,hy-6,12,7,p.hair);rect(hx-7,hy-1,14,2,p.hairLight);rect(9,bodyY+3,7,7,'#f3ead8');}if(role==='tenten'){rect(hx-7,hy-7,4,5,p.hair);rect(hx+4,hy-7,4,5,p.hair);rect(hx-6,hy-6,2,2,p.hairLight);}if(role==='iruka'){rect(hx-1,hy-8,4,5,p.hair);if(!back)rect(hx-3,hy+6,7,1,'#a66c56');}
+ if(role==='kabuto'){rect(hx-3,hy-7,6,4,p.hairLight);if(back){rect(hx-2,hy+3,4,9,p.hairShade);rect(hx-1,hy+3,2,8,p.hairLight);}else{if(side){rect(hx+1,hy+3,5,4,'#303748');rect(hx+2,hy+4,3,2,'#d4e7eb');}else{rect(hx-5,hy+3,4,4,'#303748');rect(hx+1,hy+3,4,4,'#303748');rect(hx-4,hy+4,2,2,'#d4e7eb');rect(hx+2,hy+4,2,2,'#d4e7eb');rect(hx-1,hy+4,2,1,'#303748');}}rect(7,bodyY+5,10,2,p.trim);if(attack||cast){rect(4,bodyY+4,3,6,'#8cebd2');rect(17,bodyY+4,3,6,'#8cebd2');}}
  if(role==='zabuza'){rect(hx-5,hy+5,11,5,'#d6d9cf');rect(hx-4,hy+6,9,1,'#87999c');line(side?17:19,8,side?21:21,25,'#344051',4);line(side?17:19,8,side?21:21,22,'#b5ced5',3);rect(19,25,3,4,'#795c50');}if(role==='haku'){if(!back){rect(hx-4,hy+1,8,9,'#e7e8dc');rect(hx-3,hy+3,2,1,'#554253');rect(hx+1,hy+3,2,1,'#554253');rect(hx-1,hy+6,2,2,'#b06b78');}rect(hx-6,hy,2,11,p.hair);rect(hx+5,hy,2,11,p.hairShade);}
  if(role==='shikamaru'){rect(hx-2,hy-8,4,5,p.hair);rect(hx-3,hy-7,6,2,p.hairShade);rect(hx-1,hy-9,2,2,p.hairLight);rect(9,bodyY+5,6,2,p.shade);}
  if(role==='guard'){rect(6,17,12,3,p.metal);rect(5,19,3,5,p.shade);rect(16,19,3,5,p.shade);}if(role==='thrower'){rect(6,22,3,4,p.metal);rect(15,22,3,4,p.metal);}
@@ -273,4 +275,4 @@ export function makeWorldPattern(){
  }
  return c;
 }
-export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),kabuto:makeActorSheet('kabuto'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}

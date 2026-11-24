@@ -30,8 +30,8 @@ export function createRPGUI(api){
  function button(label,fn){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=fn;return b;}
  function text(tag,value,cls){const e=document.createElement(tag);e.textContent=value;if(cls)e.className=cls;return e;}
  function act(fn){const result=fn();if(result===true||result===null){api.changed();render();}else if(typeof result==='string')api.notice(result);else api.notice('No se pudo realizar esa acción.');}
- function open(which='inventory'){if(!api.canOpen())return;tab=which;if(!opened){opened=true;api.pause(true);}panel.hidden=false;render();}
- function close(){if(!opened)return;opened=false;panel.hidden=true;api.pause(false);}
+ function open(which='inventory'){if(!api.canOpen())return;tab=which;if(!opened){selected=-1;drag=-1;opened=true;api.pause(true);}panel.hidden=false;render();}
+ function close(){if(!opened)return;drag=-1;selected=-1;opened=false;panel.hidden=true;api.pause(false);}
  function toggle(which){if(opened&&tab===which)close();else open(which);}
  function hotbar(){
   const {rpg}=state(),key=rpg.hotbar.map(id=>id+':'+itemCount(rpg,id)).join('|');if(key===lastHot)return;lastHot=key;

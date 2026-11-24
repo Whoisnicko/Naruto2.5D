@@ -1,18 +1,23 @@
 import {itemFor,itemCount,addItem,removeItem,rewardItems} from './rpg-data.js';
 // Positions use the existing map, so legacy saves and the original five enemy IDs remain valid.
 export const NPCS=[
+ {id:'shikamaru',name:'Shikamaru',x:-13,z:10,kind:'shikamaru',role:'Estratega',root:'shikamaru'},
  {id:'sakura',name:'Sakura',x:-9,z:2,kind:'sakura',role:'Médica ninja',root:'sakura'},
  {id:'teuchi',name:'Teuchi',x:-21,z:11.8,kind:'teuchi',role:'Ichiraku',root:'teuchi'},
  {id:'tenten',name:'Tenten',x:-4,z:-2,kind:'tenten',role:'Comerciante',root:'tenten'},
  {id:'iruka',name:'Iruka',x:-13,z:-14.5,kind:'iruka',role:'Instructor',root:'iruka'}
 ];
 export const CHESTS=[
+ {id:'garden',name:'Reserva de la aldea',x:-16,z:12,type:'common',loot:[['ramen',2],['bandage',2]],coins:20},
  {id:'supply',name:'Cofre de suministros',x:-24,z:-2,type:'common',loot:[['ramen',2],['bandage',2]],coins:10},
  {id:'forest',name:'Cofre del explorador',x:23,z:-4,type:'rare',loot:[['pill',2],['cloth',3]],coins:35},
  {id:'sealed',name:'Alijo sellado',x:31,z:1,type:'locked',key:'forestKey',loot:[['scroll',1],['eliteVest',1]],coins:50},
  {id:'trap',name:'Cofre sospechoso',x:18,z:5,type:'trap',damage:18,loot:[['pill',2],['bandage',2]],coins:25}
 ];
 export const LANDMARKS=[
+ {id:'garden',name:'Jardín del clan Nara',x:-13,z:10,r:3},
+ {id:'market',name:'Mercado de Konoha',x:-5,z:10.8,r:3},
+ {id:'hokage',name:'Mirador Hokage',x:-13,z:-25.8,r:3},
  {id:'plaza',name:'Plaza de Konoha',x:-13,z:-2,r:4},
  {id:'ichiraku',name:'Ichiraku',x:-21,z:11.8,r:3},
  {id:'bridge',name:'Puente del este',x:8,z:-2,r:3},
@@ -20,11 +25,13 @@ export const LANDMARKS=[
  {id:'academy',name:'Academia ninja',x:-13,z:-14.5,r:4}
 ];
 export const SIDEQUESTS={
+ village:{name:'Un paseo estratégico',desc:'Visitá el jardín, el mercado y el mirador. Volvé con Shikamaru.',visits:['garden','market','hokage'],reward:[['pill',2],['charm',1]],xp:85,coins:65},
  supplies:{name:'Suministros para Sakura',desc:'Entregá 3 telas de renegado a Sakura.',reward:[['pill',2],['ramen',1]],xp:50,coins:35},
  scouting:{name:'Ruta del shinobi',desc:'Visitá Ichiraku, el puente y el bosque. Volvé con Iruka.',visits:['ichiraku','bridge','forest'],reward:[['forestKey',1]],xp:75,coins:50}
 };
 export const SHOPS={teuchi:['ramen','pill'],tenten:['bandage','pill','headband','kunai','bracer','sandals','charm']};
 export const DIALOGUES={
+ shikamaru:{text:'Qué problemático... Iruka me pidió revisar las rutas de la aldea. ¿Podés recorrer el jardín, el mercado y el mirador Hokage?',choices:[{label:'Aceptar recorrido',action:'accept',quest:'village',when:'villageNew'},{label:'Informar recorrido',action:'finish',quest:'village',when:'villageActive'},{label:'Hasta luego',action:'close'}]},
  sakura:{text:'¡Naruto! ¿Otra vez entrenando sin descansar? Necesito vendas para la enfermería.',choices:[
  {label:'¿Necesitás ayuda?',action:'accept',quest:'supplies',when:'suppliesNew'},
  {label:'Entregar tres telas',action:'finish',quest:'supplies',when:'suppliesActive'},
@@ -40,19 +47,19 @@ export const DIALOGUES={
  {label:'Hasta luego',action:'close'}]}
 };
 export const DAY_SECONDS=240;
-export function newWorld(){return {opened:[],quests:{supplies:0,scouting:0},visited:[],clock:60};}
-export function validateWorld(raw){
+export function newWorld(){return {opened:[],quests:{supplies:0,scouting:0,village:0},visited:[],clock:60};}
+export function validateWorld(raw,legacy=false){
  if(!raw||!Array.isArray(raw.opened)||!Array.isArray(raw.visited)||!raw.quests||!Number.isFinite(raw.clock)||raw.clock<0||raw.clock>=DAY_SECONDS)throw Error('Estado del mundo inválido.');
  const unique=(a,valid)=>{if(new Set(a).size!==a.length||a.some(k=>!valid.includes(k)))throw Error('Registro del mundo inválido.');return [...a];};
- const quests={};for(const id of Object.keys(SIDEQUESTS)){const v=raw.quests[id];if(![0,1,2].includes(v))throw Error('Misión secundaria inválida.');quests[id]=v;}
+ const quests={};for(const id of Object.keys(SIDEQUESTS)){const v=id==='village'&&legacy&&raw.quests[id]===undefined?0:raw.quests[id];if(![0,1,2].includes(v))throw Error('Misión secundaria inválida.');quests[id]=v;}
  return {opened:unique(raw.opened,CHESTS.map(c=>c.id)),quests,visited:unique(raw.visited,LANDMARKS.map(l=>l.id)),clock:raw.clock};
 }
 export function discover(world,p){for(const l of LANDMARKS)if(!world.visited.includes(l.id)&&Math.hypot(p.x-l.x,p.z-l.z)<=l.r)world.visited.push(l.id);}
 export function nearestWorld(p,world){return [...NPCS.map(o=>({...o,category:'npc'})),...CHESTS.filter(o=>!world.opened.includes(o.id)).map(o=>({...o,category:'chest'}))].map(o=>({...o,d:Math.hypot(p.x-o.x,p.z-o.z)})).filter(o=>o.d<(o.category==='npc'?2.5:1.9)).sort((a,b)=>a.d-b.d)[0]||null;}
 export function openChest(world,rpg,p,id){const c=CHESTS.find(c=>c.id===id);if(!c||world.opened.includes(id))return {error:'El cofre ya está abierto.'};if(c.key&&!itemCount(rpg,c.key))return {error:'Necesitás la llave de Iruka.'};if(c.key)removeItem(rpg,c.key);world.opened.push(id);p.coins+=c.coins;const loot=rewardItems(rpg,c.loot);if(c.damage)p.hp=Math.max(1,p.hp-c.damage);return {loot,coins:c.coins,damage:c.damage||0};}
-export function questProgress(world,rpg,id){if(id==='supplies')return Math.min(3,itemCount(rpg,'cloth'))+'/3 telas';if(id==='scouting')return SIDEQUESTS.scouting.visits.filter(v=>world.visited.includes(v)).length+'/3 lugares';return '';}
+export function questProgress(world,rpg,id){if(id==='supplies')return Math.min(3,itemCount(rpg,'cloth'))+'/3 telas';if(SIDEQUESTS[id]?.visits)return SIDEQUESTS[id].visits.filter(v=>world.visited.includes(v)).length+'/'+SIDEQUESTS[id].visits.length+' lugares';return '';}
 export function acceptQuest(world,id){if(world.quests[id]!==0)return 'Misión no disponible.';world.quests[id]=1;return null;}
-export function finishQuest(world,rpg,p,id){if(world.quests[id]!==1)return 'Misión no activa.';if(id==='supplies'&&itemCount(rpg,'cloth')<3)return 'Todavía faltan telas.';if(id==='scouting'&&!SIDEQUESTS.scouting.visits.every(v=>world.visited.includes(v)))return 'Todavía faltan lugares por visitar.';if(id==='supplies')removeItem(rpg,'cloth',3);const q=SIDEQUESTS[id];world.quests[id]=2;p.xp+=q.xp;p.coins+=q.coins;rewardItems(rpg,q.reward);return null;}
+export function finishQuest(world,rpg,p,id){if(world.quests[id]!==1)return 'Misión no activa.';if(id==='supplies'&&itemCount(rpg,'cloth')<3)return 'Todavía faltan telas.';if(SIDEQUESTS[id].visits&&!SIDEQUESTS[id].visits.every(v=>world.visited.includes(v)))return 'Todavía faltan lugares por visitar.';if(id==='supplies')removeItem(rpg,'cloth',3);const q=SIDEQUESTS[id];world.quests[id]=2;p.xp+=q.xp;p.coins+=q.coins;rewardItems(rpg,q.reward);return null;}
 export function choicesFor(world,id){return (DIALOGUES[id]?.choices||[]).filter(c=>!c.when||(c.when.endsWith('New')?world.quests[c.quest]===0:world.quests[c.quest]===1));}
 export function buyPrice(id){return itemFor(id)?.value||0;}
 export function sellPrice(id){return Math.max(1,Math.floor(buyPrice(id)*.5));}

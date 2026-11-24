@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const strip=x=>x.replace(/^import .*;\n/gm,'').replace(/^export /gm,'');
 const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
-const src=Object.fromEntries(['game','renderer','save','pixel-art','pixel-renderer','combat-data','feedback','enemy-ai','rpg-data','rpg-ui','world-data','world-ui','boss-data','campaign-data'].map(n=>[n,read('src/'+n+'.js')]));
+const src=Object.fromEntries(['game','renderer','save','pixel-art','pixel-renderer','combat-data','feedback','enemy-ai','rpg-data','rpg-ui','world-data','world-ui','boss-data','campaign-data','hd-animation'].map(n=>[n,read('src/'+n+'.js')]));
 for(const source of Object.values(src))new AsyncFunction(strip(source));
 const store=new Map(),localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v)};
 const rpgApi=new Function(strip(src['rpg-data'])+'\nreturn {newRPG,statsFor,equipmentVisuals,levelFor,rankFor,LOOT,QUEST_LOOT,TRAINING_LOOT,rewardItems,itemFor,moveSlot,sortInventory,discardSlot,equipSlot,unequipSlot,assignHotbar,useItem,unlockSkill,collectOverflow,validateRPG,migrateRPG,itemCount,addItem,removeItem,pointsFor,unlockReason};')();
@@ -12,6 +12,7 @@ const combat=new Function(strip(src['combat-data'])+'\nreturn {COMBAT,stepMotion
 const bossApi=new Function('directionToward',strip(src['boss-data'])+'\nreturn {ARENA,BOSSES,newBossProgress,validateBossProgress,nextBoss,makeBoss,bossContains,tickBoss,sandboxBoost};')(combat.directionToward);
 const campaignApi=new Function(strip(src['campaign-data'])+'\nreturn {CHAPTERS,FINALE,newCampaign,validateCampaign,chapterIndex,completeCampaign,campaignSummary};')();
 const saved=new Function('localStorage','validateRPG','migrateRPG','newWorld','validateWorld','newBossProgress','validateBossProgress','newCampaign','validateCampaign',strip(src.save)+'\nreturn {validateSave,packSave,readSave,writeSave,importSave,exportSave};')(localStorage,rpgApi.validateRPG,rpgApi.migrateRPG,worldApi.newWorld,worldApi.validateWorld,bossApi.newBossProgress,bossApi.validateBossProgress,campaignApi.newCampaign,campaignApi.validateCampaign);
+const hd=new Function(strip(src['hd-animation'])+'\nreturn {slashFrame,slashFacing,slashUV};')();
 const {COMBAT,stepMotion}=combat;
 const ai=new Function('directionToward',strip(src['enemy-ai'])+'\nreturn {prepareEnemy,roleFor,targetFor,damageModifier,tickEnemy,safeSubstitution};')(combat.directionToward);
 const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{style:{},textContent:'',disabled:false,click(){},dataset:{},value:''});return nodes.get(id)};
@@ -20,7 +21,7 @@ const view={scene:{},solid:{},addStatic:()=>({visible:true}),resize(){},frame(){
 const feedback=new Function('localStorage','document',strip(src.feedback)+'\nreturn createFeedback;')(localStorage,document)(view,null);
 const audio={enabled:true,volume:.32,unlock(){},wind(){},play(){},setEnabled(v){this.enabled=v;},setVolume(v){this.volume=v;}};
 const math=Object.create(Math);math.random=()=>.5;
-const args={document,Math:math,performance:{now:()=>0},innerWidth:1280,innerHeight:720,addEventListener(){},requestAnimationFrame(){},createRenderer:()=>view,createPixelSystem:()=>({begin(){},show:()=>true,end(){},effects(){},addTrees(p){assert(p.length>0);return true;},addBuildingShadows(p){assert(p.length>0);}}),createAudio:()=>audio,createFeedback:()=>feedback,createRPGUI:()=>({opened:false,hotbar(){},toggle(){},close(){}}),createWorldUI:()=>({opened:false,open(){},close(){},tick(){}}),...saved,...combat,...ai,...rpgApi,...worldApi,...bossApi,...campaignApi,localStorage};
+const args={document,Math:math,performance:{now:()=>0},innerWidth:1280,innerHeight:720,addEventListener(){},requestAnimationFrame(){},createRenderer:()=>view,createPixelSystem:()=>({begin(){},show:()=>true,end(){},effects(){},addTrees(p){assert(p.length>0);return true;},addBuildingShadows(p){assert(p.length>0);}}),createAudio:()=>audio,createFeedback:()=>feedback,createRPGUI:()=>({opened:false,hotbar(){},toggle(){},close(){}}),createWorldUI:()=>({opened:false,open(){},close(){},tick(){}}),...saved,...combat,...ai,...rpgApi,...worldApi,...bossApi,...campaignApi,...hd,localStorage};
 const game=await new AsyncFunction(...Object.keys(args),strip(src.game)+'\nreturn {start,interact,attack,dash,substitution,update,render,save,snapshot,blocked,playerHurt,hurt,hitTarget,train,syncRPG,enterSandbox,exitSandbox,boost,beginBoss,showModal,closeModal,finishStory,returnTitle,get state(){return {p,enemies,quest,running,projectiles,clones,rpg,world,bossProgress,boss,sandbox,campaign,modal}},get cd(){return cd},keys};')(...Object.values(args));
 function sim(seconds){for(let left=seconds;left>1e-8;left-=.01){feedback.tick(.01);game.update(Math.min(.01,left));}}
 game.start(false);game.render(.016);assert.equal(game.state.running,true);
@@ -88,9 +89,20 @@ const normal=JSON.stringify(game.snapshot()),storageBefore=JSON.stringify([...st
 const legacy5=game.snapshot();delete legacy5.campaign;const migrated5=saved.validateSave({schema:'shinobi25d',version:5,state:legacy5},5);assert.equal(migrated5.bossProgress.defeated.length,2);assert.equal(migrated5.campaign.completed,false);
 const xpFinal=game.state.p.xp,coinFinal=game.state.p.coins;game.state.p.x=-12;game.state.p.z=-2;game.interact();assert(game.state.campaign.completed);assert.equal(game.state.p.xp,xpFinal+100);assert.equal(game.state.p.coins,coinFinal+150);assert.equal(game.state.modal,'final');assert(!game.state.running);game.closeModal();game.interact();assert.equal(game.state.p.xp,xpFinal+100);assert(game.save());game.start(false);game.start(true);assert(game.state.campaign.completed);assert(game.showModal('journal'));assert.equal(game.state.running,false);assert(game.closeModal());assert(game.state.running);assert(game.showModal('pause'));assert(game.returnTitle());assert(!game.state.running);game.start(true);assert(game.state.campaign.completed);
 assert(game.enterSandbox());assert(game.boost('zabuza'));assert(!game.state.campaign.completed);assert(game.exitSandbox());assert(game.state.campaign.completed);assert(game.showModal('pause'));assert(game.state.modal==='pause');assert(game.closeModal());
+// HD slash: frame sequencing follows the existing Fūma timing; no gameplay or save changes.
+const attackAnim={k:'f',total:.55,windup:.25,left:.55};
+assert.equal(hd.slashFrame(attackAnim).index,0);
+assert.equal(hd.slashFrame({...attackAnim,left:.34}).index,2);
+assert.equal(hd.slashFrame({...attackAnim,left:.30}).index,3);
+assert.equal(hd.slashFrame({...attackAnim,left:.001}).index,7);
+assert.equal(hd.slashFrame({...attackAnim,left:0}),null);
+assert.equal(hd.slashFrame({...attackAnim,k:'j'}),null);
+assert.equal(hd.slashFacing(1,0),'right');assert.equal(hd.slashFacing(-1,0),'left');assert.equal(hd.slashFacing(0,1),null);
+const uv=hd.slashUV(3,1,true);assert.equal(uv.u,1);assert.equal(uv.sx,-.25);assert.equal(uv.v,0);
+game.start(false);p=game.state.p;p.dirX=1;p.dirZ=0;assert(game.attack('f'));assert.equal(p.anim.artFacing,'right');sim(.27);assert(game.state.projectiles.some(x=>x.kind==='wind'&&x.damage===34));
 // Independently test animation metadata and hit-stop decay.
 const art=new Function(strip(src['pixel-art'])+'\nreturn {ANIMS,ACTOR_COLS};')();
 const anim=new Function('ANIMS',strip(src['pixel-renderer'])+'\nreturn {frameFor};')(art.ANIMS);
 assert.equal(art.ACTOR_COLS,22);assert.equal(anim.frameFor({anim:{k:'j',combo:2,left:.3,total:.34,windup:.1}},0).state,'kick');assert.equal(anim.frameFor({anim:{k:'j',combo:3,left:.2,total:.43,windup:.14}},0).state,'finish');
 feedback.impact(.1,.07);assert(feedback.frozen);feedback.tick(.08);assert(!feedback.frozen);game.render(.016);
-console.log('PASS: syntax, collision, dash, invulnerability, anticipation, combo buffer, three combo stages, all techniques, mission/rewards, save/import, animation selection hit-stop, enemy roles, telegraphs, guard break, clone targeting, substitution and wind projectile. RPG inventory/overflow, equipment, skill unlocks, v2 migration, training and persistent progression. world quest/trade/key/chest persistence, v3 migration and reachable placements. boss phase/rewards/geometry, v4 migration and sandbox isolation. campaign epilogue, reward uniqueness, journal and pause, v5 migration. Renderer/audio/UI mocked; real GPU/audio/UI pending.');
+console.log('PASS: syntax, collision, dash, invulnerability, anticipation, combo buffer, three combo stages, all techniques, mission/rewards, save/import, animation selection hit-stop, enemy roles, telegraphs, guard break, clone targeting, substitution and wind projectile. RPG inventory/overflow, equipment, skill unlocks, v2 migration, training and persistent progression. world quest/trade/key/chest persistence, v3 migration and reachable placements. boss phase/rewards/geometry, v4 migration and sandbox isolation. campaign epilogue, reward uniqueness, journal and pause, v5 migration. HD frame timing, mirroring and Fūma regression. Renderer/audio/UI mocked; real GPU/audio/UI pending.');

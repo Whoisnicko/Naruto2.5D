@@ -83,7 +83,7 @@ export function createPixelSystem(scene){
   // Charge is a continuously rotating sphere; carry keeps it ahead of the hand.
   const pending=player?.pending;
   if(player?.character==='naruto'&&pending?.ras&&player.anim){
-   const carrying=pending.phase==='carry',spec=COMBAT.rasengan[pending.k],q=pending.q||0,dir=direction(player.dirX,player.dirZ),hand=rasenganHand(dir,player.anim.rasPose||0),size=spec.size*(pending.scale||1),f=Math.floor(t*(carrying?30:24))%12,ang=Math.atan2(-player.dirZ*.64,player.dirX);
+   const carrying=pending.phase==='carry',spec=COMBAT.rasengan[pending.k],q=pending.q||0,dir=direction(player.dirX,player.dirZ),hand=rasenganHand(dir,player.anim.rasPose||0),size=spec.size*(pending.scale||1)*(carrying?1:Math.min(1,.38+.62*pending.held/pending.s.windup)),f=Math.floor(t*(carrying?30:24))%12,ang=Math.atan2(-player.dirZ*.64,player.dirX);
    const x=player.x+(carrying?player.dirX*.85:hand.x),z=player.z+(carrying?player.dirZ*.85:hand.z),y=hand.y;
    if(rasMap){ras(0,f,x,y,z,size,1);if(quality>=.75){ras(3,f,x,y,z,size*1.34,.9);ras(4,(f+4)%12,x,y,z,size*1.1,.8);}if(carrying)ras(5,f,x-player.dirX*1.2,y,z-player.dirZ*1.2,size*1.5,.8,ang);else if(quality===1)ras(2,f,player.x,.15,player.z,size*1.15,.6);}
    else add(pending.k==='g'?'giant':'rasengan',x,y,z,size,Math.floor(t*24)%8,1);

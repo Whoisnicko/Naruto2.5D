@@ -83,7 +83,7 @@ export function makeSmearSheet(){
    poly([[1,19],[9,14],[4,10],[21,12],[28,9],[31,14],[27,20],[31,24],[17,26],[2,25],[12,21]],'#343450');
    poly([[2,20],[16,15],[9,12],[23,13],[29,12],[27,18],[21,20],[29,23],[17,24]],f===0?'#bc553c':f===1?'#f48a37':'#ffd079');
    line(3,15,19,15,'#f9bd61',2);line(1,23,18,23,'#ffd98a');rect(23,11,5,3,'#f7d56a');rect(25,15,3,2,'#dbe7ee');
-   s.ctx.save();s.ctx.globalAlpha=.8;s.ctx.drawImage(actorCell('player',d,6+f),8,0);s.ctx.restore();
+   s.ctx.save();s.ctx.globalAlpha=.8;s.ctx.drawImage(actorCell('player',d===1?2:d,6+f),8,0);s.ctx.restore();
    ctx.save();ctx.translate(f*32+(d===1?32:0),d*32);if(d===1)ctx.scale(-1,1);ctx.drawImage(s.c,0,0);ctx.restore();
  }
  return c;

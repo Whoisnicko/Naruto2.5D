@@ -25,3 +25,6 @@ v0.3 aprobada por el jugador en perspectiva y rendimiento; guardado pendiente de
 
 ## Jugar
 https://naruto2-5d.pages.dev/ (URL de producción informada por el propietario; prueba de acceso externa pendiente).
+
+## v0.4 beta — Three.js
+Ver [migración, arquitectura y pruebas](docs/V04-MIGRATION.md). Rama de evaluación: Three.js, esqueletos procedurales, luces/sombras, GLB opcional y guardado portable. No incluye modelos externos profesionales aún. Validación WebGL real y FPS pendientes. La versión anterior está en `legacy-v03.html`.

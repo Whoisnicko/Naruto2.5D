@@ -385,3 +385,19 @@ console.log('PASS v1.15b: 60 FPS cap at simulated 144 Hz, independent simulation
  assist(true);
 }
 console.log('PASS v1.15c: dash strike damage/cooldowns/distance/once per dash, assist toggle, no rear strike, recovery links and focus cancellation.');
+
+{
+ const press=key=>handlers.keydown({key,repeat:false,preventDefault(){}});
+ const release=key=>handlers.keyup({key});
+ game.start(false);let p=game.state.p;p.dirX=1;p.dirZ=0;press('b');sim(.1);assert(p.guarding);const stamina=p.stamina,hp=p.hp;
+ game.playerHurt(20,{x:p.x+1,z:p.z},'physical');assert.equal(p.hp,hp);assert(p.stamina<stamina);
+ release('b');sim(1);assert(p.stamina>stamina-31);
+ press('b');sim(.1);game.playerHurt(10,{x:p.x-1,z:p.z},'physical');assert(p.hp<hp);release('b');
+ game.start(false);p=game.state.p;press('b');sim(.1);game.playerHurt(12,{x:p.x+1,z:p.z},'special');assert(p.hp<100);release('b');
+ game.start(false);p=game.state.p;p.stamina=10;press('b');sim(.1);game.playerHurt(20,{x:p.x+1,z:p.z},'physical');assert.equal(p.stamina,0);assert(p.guardBreak>0);assert(p.hp<100);assert(!p.guarding);release('b');
+ game.start(false);p=game.state.p;p.chakra=0;press('v');sim(1);assert(p.charging);assert(p.chakra>20);game.playerHurt(10,{x:p.x+1,z:p.z});assert(!p.charging);assert(!game.keys.has('v'));
+ game.start(false);p=game.state.p;p.chakra=0;press('v');sim(.35);handlers.blur();assert(!p.charging);assert(!game.keys.has('v'));
+ const e=ai.prepareEnemy({id:0,x:0,z:0,hp:70,attack:0}),target={x:1,z:0,hp:100};let hits=0;const noop=()=>{};ai.tickEnemy(e,target,[],.01,noop,noop,noop);target.x=-1;ai.tickEnemy(e,target,[],.05,noop,noop,noop);assert(e.dirX<0);ai.tickEnemy(e,target,[],.35,noop,noop,(a,d,s,k)=>{assert.equal(k,'physical');hits++;});assert.equal(hits,1);
+ assert(performanceApi.normalizePerformance({targetAssist:false}).targetAssist);assert(bossApi.bossPhysical({id:'lionCombo'}));assert(!bossApi.bossPhysical({id:'darkChidori'}));
+}
+console.log('PASS v1.15d: front guard, stamina drain/recovery/break, rear and special hits, active charge and interruption, enemy reorientation, always-on assistance.');

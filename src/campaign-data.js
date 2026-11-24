@@ -1,10 +1,11 @@
+import {ARENA} from './boss-data.js';
 // The campaign is derived from existing mission and boss progress, with one persistent epilogue flag.
 export const CHAPTERS=[
  {title:'I · The First Lesson',goal:'Talk to Kakashi in the square.',x:-12,z:-2},
  {title:'II · The Training Forest',goal:'Defeat the five rogues east of the bridge.',x:23,z:-2},
  {title:'III · Return to Konoha',goal:'Report your success to Kakashi.',x:-12,z:-2},
- {title:'IV · The Demon of the Mist',goal:'Discover the Demon of the Mist in the eastern forest.',x:32,z:-2},
- {title:'V · The Ice Mirrors',goal:'Continue the Land of Waves encounter.',x:32,z:-2},
+ {title:'IV · The Demon of the Mist',goal:'Discover the Demon of the Mist in the western forest.',x:ARENA.x,z:ARENA.z},
+ {title:'V · The Ice Mirrors',goal:'Continue the Land of Waves encounter in the western forest.',x:ARENA.x,z:ARENA.z},
  {title:'VI · Path of the Shinobi',goal:'Return to Kakashi to conclude the campaign.',x:-12,z:-2},
  {title:'Campaign Complete',goal:'Keep exploring, training and completing side quests.'}
 ];

@@ -52,8 +52,8 @@ function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material)
 export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
- const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[]},trails=[],fxPool=[];
- const worldMeshes=[];let warmIndex=0;const warmKinds=['zabuza','haku','npc','sasuke'];
+ const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],kabuto:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[]},trails=[],fxPool=[];
+ const worldMeshes=[];let warmIndex=0;const warmKinds=['zabuza','haku','npc','sasuke','kabuto'];
  let generation=0,hero=null,gearKey=null,gearCanvas=null,redGearKey=null,redGearCanvas=null;const rasPool=createRasenganPool(base=>{const f=sprite(base,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);return f;});let rasMap=null;try{rasMap=texture(makeRasenganSheet());}catch(e){console.warn('Rasengan art fallback',e);}
  // Load exact approved art into canvas textures; keep visible procedural fallback if decoding fails.
  function pixelLayer(name,w,h,paint){

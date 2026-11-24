@@ -12,6 +12,10 @@ const PALETTES={
  enemy:{hair:'#34364d',hairLight:'#69627e',hairShade:'#262839',shirt:'#665272',shade:'#3d354f',light:'#93748a',trim:'#29283c',metal:'#b8b6c6'},
  thrower:{hair:'#4d625d',hairLight:'#91b5a1',hairShade:'#304840',shirt:'#427a71',shade:'#284b4d',light:'#7fbaa6',trim:'#263644',metal:'#ced6ce'},
  guard:{hair:'#70494f',hairLight:'#b68176',hairShade:'#422d3c',shirt:'#97564b',shade:'#58373f',light:'#c98468',trim:'#352c39',metal:'#e0c293'},
+ sakura:{hair:'#df7b92',hairLight:'#ffc0bb',hairShade:'#ad536f',shirt:'#c64e5f',shade:'#86364b',light:'#e88b85',trim:'#57394d',metal:'#e9d4cf'},
+ teuchi:{hair:'#e9dec2',hairLight:'#fff7e7',hairShade:'#b6a78e',shirt:'#e5d7b9',shade:'#99876e',light:'#f8efda',trim:'#695646',metal:'#ede1c5'},
+ tenten:{hair:'#593e39',hairLight:'#a57b65',hairShade:'#3b2830',shirt:'#ddadad',shade:'#a66877',light:'#ffe1c9',trim:'#4d4453',metal:'#cfdae1'},
+ iruka:{hair:'#684536',hairLight:'#a47853',hairShade:'#392e35',shirt:'#779768',shade:'#43594d',light:'#a1be8a',trim:'#354457',metal:'#c0d2d7'},
  clone:{hair:'#edc448',hairLight:'#fff0a1',hairShade:'#bf8739',shirt:'#f58b36',shade:'#b94b30',light:'#ffb650',trim:'#26344c',metal:'#bacfd3'}
 };
 function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
@@ -71,6 +75,7 @@ function actorCell(kind,dir,frame,gear=null){
    if(kind==='npc'||kind==='enemy'){rect(hx-4,hy+6,9,3,p.trim);if(kind==='npc')rect(hx-4,hy+3,4,3,p.trim);}
    else{rect(hx-4,hy+6,2,1,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx,hy+7,2,1,'#9d574e');}
  }
+ if(role==='sakura'){rect(hx-6,hy-1,2,8,p.hairShade);rect(hx+5,hy-1,2,8,p.hair);rect(hx-5,hy-2,10,3,p.hair);rect(hx-2,hy-3,4,2,p.hairLight);}if(role==='teuchi'){rect(hx-6,hy-6,12,7,p.hair);rect(hx-7,hy-1,14,2,p.hairLight);rect(9,bodyY+3,7,7,'#f3ead8');}if(role==='tenten'){rect(hx-7,hy-7,4,5,p.hair);rect(hx+4,hy-7,4,5,p.hair);rect(hx-6,hy-6,2,2,p.hairLight);}if(role==='iruka'){rect(hx-1,hy-8,4,5,p.hair);if(!back)rect(hx-3,hy+6,7,1,'#a66c56');}
  if(role==='guard'){rect(6,17,12,3,p.metal);rect(5,19,3,5,p.shade);rect(16,19,3,5,p.shade);}if(role==='thrower'){rect(6,22,3,4,p.metal);rect(15,22,3,4,p.metal);}
  if(gear&&role==='player'){
  const {head,torso,legs,feet,weapon,offhand,accessory}=gear;
@@ -158,4 +163,4 @@ export function makeWorldPattern(){
  }
  return c;
 }
-export function makeSheets(){return {player:makeActorSheet('player'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+export function makeSheets(){return {player:makeActorSheet('player'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}

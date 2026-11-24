@@ -12,5 +12,5 @@ Comparar FPS con v0.2 (144 reportados por el jugador), comprobar orientación y 
 
 ## Despliegue
 Repositorio: https://github.com/Whoisnicko/Naruto2.5D
-Rama de producción: main. Cloudflare Pages: framework None; comando de build vacío; directorio de salida `.` (raíz). No requiere variables ni dependencias en v0.3. URL pública pendiente de verificar.
+Rama de producción: main. Cloudflare Pages: framework None; comando de build vacío; directorio de salida `.` (raíz). No requiere variables ni dependencias en v0.3. URL pública: https://naruto2-5d.pages.dev/ (informada por el propietario; acceso externo y despliegue automático pendientes de verificar).
 Mantener main estable; desarrollar cambios grandes en ramas separadas y probar antes de integrar. No almacenar tokens, partidas ni credenciales en este repositorio público.

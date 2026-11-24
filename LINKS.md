@@ -38,3 +38,6 @@
 
 - Rama v1.2: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v12-world-expansion
 - Preview: consultar check de Cloudflare de la rama. Producción sin cambios.
+
+- v1.3: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v13-playable-characters
+- Preview: consultar check de Cloudflare del último commit. Main intacta.

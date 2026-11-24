@@ -99,5 +99,11 @@ export function createPixelSystem(scene){
    return true;
   }catch(e){for(const o of created)scene.remove(o);console.warn('Pixel tree fallback',e);return false;}
  }
- return {begin,show,end,effects,addTrees,maps,sheets};
+ function addBuildingShadows(buildings){
+ if(!buildings.length)return;
+ const obj=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),shadowMat,buildings.length),d=new THREE.Object3D();
+ for(let i=0;i<buildings.length;i++){const p=buildings[i];d.position.set(p.x+.5,.02,p.z+.35);d.rotation.set(-Math.PI/2,0,0);d.scale.set(p.w+1.8,p.d+1.5,1);d.updateMatrix();obj.setMatrixAt(i,d.matrix);}
+ obj.instanceMatrix.needsUpdate=true;obj.computeBoundingSphere();scene.add(obj);
+}
+return {begin,show,end,effects,addTrees,addBuildingShadows,maps,sheets};
 }

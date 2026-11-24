@@ -8,18 +8,18 @@ export const SAVE_KEY='shinobi25d-v1';
 const SCHEMA='shinobi25d';
 const finite=(v,lo,hi)=>typeof v==='number'&&Number.isFinite(v)&&v>=lo&&v<=hi;
 export function validateSave(raw,enemyCount){
-  if(raw?.schema!==undefined&&(raw.schema!==SCHEMA||![2,3,4,5,6,7,8,9,10,11].includes(raw.version)))throw Error('Versión de guardado no compatible.');
+  if(raw?.schema!==undefined&&(raw.schema!==SCHEMA||![2,3,4,5,6,7,8,9,10,11].includes(raw.version)))throw Error('Unsupported save version.');
   const s=raw?.schema===SCHEMA?raw.state:raw;
-  if(raw?.version>=6&&!s?.campaign)throw Error('Falta estado de campaña.');
-  if(raw?.version>=5&&!s?.bossProgress)throw Error('Falta progreso de jefes.');
-  if(raw?.version>=4&&!s?.world)throw Error('Falta el estado del mundo.');
-  if(raw?.version>=3&&!s?.rpg)throw Error('Falta el estado RPG.');
-  if(!s||!s.p||!Array.isArray(s.enemies)||s.enemies.length!==enemyCount||!Number.isInteger(s.quest)||s.quest<0||s.quest>3)throw Error('Formato de partida inválido.');
+  if(raw?.version>=6&&!s?.campaign)throw Error('Missing campaign state.');
+  if(raw?.version>=5&&!s?.bossProgress)throw Error('Missing boss progress.');
+  if(raw?.version>=4&&!s?.world)throw Error('Missing world state.');
+  if(raw?.version>=3&&!s?.rpg)throw Error('Missing RPG state.');
+  if(!s||!s.p||!Array.isArray(s.enemies)||s.enemies.length!==enemyCount||!Number.isInteger(s.quest)||s.quest<0||s.quest>3)throw Error('Invalid save format.');
   const p=s.p;
-  if(!finite(p.x,-49,109)||!finite(p.z,-49,49)||(p.x>49&&(raw?.version!==undefined&&raw.version<8||p.x<50&&Math.abs(p.z+2)>2.6||p.x>=50&&Math.abs(p.z)>19))||!finite(p.hp,0,100)||!finite(p.chakra,0,100)||!finite(p.xp,0,1e9)||!finite(p.coins,0,1e9))throw Error('Datos de jugador inválidos.');
+  if(!finite(p.x,-49,109)||!finite(p.z,-49,49)||(p.x>49&&(raw?.version!==undefined&&raw.version<8||p.x<50&&Math.abs(p.z+2)>2.6||p.x>=50&&Math.abs(p.z)>19))||!finite(p.hp,0,100)||!finite(p.chakra,0,100)||!finite(p.xp,0,1e9)||!finite(p.coins,0,1e9))throw Error('Invalid player data.');
   const ids=new Set();
   const enemies=s.enemies.map(e=>{
-    if(!e||!Number.isInteger(e.id)||e.id<0||e.id>=enemyCount||ids.has(e.id)||!finite(e.x,-49,49)||!finite(e.z,-49,49)||!finite(e.hp,0,70))throw Error('Datos de enemigo inválidos.');
+    if(!e||!Number.isInteger(e.id)||e.id<0||e.id>=enemyCount||ids.has(e.id)||!finite(e.x,-49,49)||!finite(e.z,-49,49)||!finite(e.hp,0,70))throw Error('Invalid enemy data.');
     ids.add(e.id);
     return {id:e.id,x:e.x,z:e.z,hp:e.hp,dirX:finite(e.dirX,-1,1)?e.dirX:0,dirZ:finite(e.dirZ,-1,1)?e.dirZ:1,walk:0,hit:0,attack:0};
   });
@@ -48,6 +48,6 @@ export function exportSave(state){
   const a=document.createElement('a');a.href=url;a.download='shinobi-partida.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 export async function importSave(file,count){
-  if(!file||file.size>1024*1024)throw Error('Archivo demasiado grande o ausente.');
+  if(!file||file.size>1024*1024)throw Error('File too large or missing.');
   return validateSave(JSON.parse(await file.text()),count);
 }

@@ -22,3 +22,6 @@ Sintaxis JS comprobada. Prueba automatizada de lógica con WebGL simulado: acept
 
 ## Estado actual
 v0.3 aprobada por el jugador en perspectiva y rendimiento; guardado pendiente de corregir. Próxima fase: modelos 3D con licencias compatibles, animaciones, iluminación y exportación/importación de partidas. Proyecto fan-made no oficial, no comercial; no implica autorización de los titulares de Naruto.
+
+## Jugar
+https://naruto2-5d.pages.dev/ (URL de producción informada por el propietario; prueba de acceso externa pendiente).

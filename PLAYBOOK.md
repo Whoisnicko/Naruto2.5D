@@ -17,3 +17,6 @@ Mantener main estable; desarrollar cambios grandes en ramas separadas y probar a
 
 ## v0.4 beta
 Trabajar en `feature/v04-threejs`. Ejecutar `node tests/smoke.mjs`; el adaptador gráfico está simulado. Usar el preview de Cloudflare para verificar GPU y FPS antes de fusionar. La URL principal sigue en main. Ver [migración](docs/V04-MIGRATION.md).
+
+## v0.6 beta — pivot pixel anime
+Rama `feature/v06-pixel-anime` basada en v0.4. Preview desde Cloudflare Deployments; no asumir URL hasta confirmación. Abrir `assets/sprite-lab.html` en ese mismo preview para hojas reales. Ejecutar `node tests/smoke.mjs`. Guardado compatible por JSON entre orígenes. No fusionar a producción antes de validar visual y FPS.

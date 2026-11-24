@@ -49,3 +49,6 @@ v0.10 aprobada y publicada (PR 8, check Cloudflare exitoso). Zabuza/Haku en dos 
 
 ## v1.0 RC — Primera campaña
 v0.11 aprobada y fusionada a main (PR 9), Cloudflare check exitoso. Seis capítulos, epílogo, diario U, pausa Esc, música procedural y guardado v6 compatible al cargar v2–v5. [Detalles y QA](docs/V1-RELEASE-CANDIDATE.md). Candidata pendiente de playtest.
+
+## v1.1 beta — Konoha
+Base RC original sin HD. Tres lugares, Shikamaru, misión, cofre y decoración estática. [Detalles](docs/V11-KONOHA-EXPANSION.md). Guardado v7 lee v2–v6. Pruebas simuladas aprobadas.

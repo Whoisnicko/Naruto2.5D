@@ -91,10 +91,10 @@ export const NPC_ROUTES={
  sakura:[[0,0],[1.4,0],[1.4,1.3],[0,1.3]],
  teuchi:[[0,0],[-1.1,0],[-1.1,1],[0,1]],
  tenten:[[0,0],[1.5,0],[1.5,1.3],[0,1.3]],
- iruka:[[0,0],[1.3,0],[1.3,.8],[0,.8]]
+ iruka:[[0,0],[-1.3,0],[-1.3,.8],[0,.8]]
 };
 export function npcDestination(n,clock){
- const route=NPC_ROUTES[n.id]||[[0,0]],index=Math.floor(clock/15)%route.length,[dx,dz]=route[index];return {x:n.homeX+dx,z:n.homeZ+dz,activity:['Descanso','Trabajo','Recorrido','Regreso'][index]||'Descanso'};
+ const route=NPC_ROUTES[n.id]||[[0,0]],index=Math.floor(clock/60)%route.length,[dx,dz]=route[index];return {x:n.homeX+dx,z:n.homeZ+dz,activity:['Descanso','Trabajo','Recorrido','Regreso'][index]||'Descanso'};
 }
 export const INTERIORS=[
  {id:'academy',name:'Academia ninja',door:{x:-11.6,z:-14.5},x:-180,z:0,npc:'iruka',floor:'b49b74',wall:'e2cf9c',furniture:[[-3,-2,2.3,1.1,'desk'],[1.5,-2,2.3,1.1,'desk'],[-3,1,2.3,1.1,'desk'],[1.5,1,2.3,1.1,'desk']]},

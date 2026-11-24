@@ -1,6 +1,5 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
+import { makeWorldPattern } from './pixel-art.js';
 
 const lin = v => v <= .04045 ? v / 12.92 : ((v+.055)/1.055)**2.4;
 function arrays(capacity) {
@@ -30,41 +29,43 @@ function geometry(a,dynamic=false){
   }
   return g;
 }
-function terrainTexture(){
-  const data=new Uint8Array(64*64*4);let seed=19;
-  for(let i=0;i<64*64;i++){
-    seed=(seed*1664525+1013904223)>>>0;
-    const v=224+Math.floor(seed/4294967296*32);
-    data.set([v,v,v,255],i*4);
-  }
-  const t=new THREE.DataTexture(data,64,64);
-  t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;
-  t.magFilter=THREE.LinearFilter;t.minFilter=THREE.LinearMipmapLinearFilter;t.generateMipmaps=true;t.needsUpdate=true;
-  return t;
+// A single nearest-neighbor texture for grass, pavement, wood, and roof tiles.
+// All lighting for static geometry is baked once into vertex colors.
+function pixelMaterial(){
+ const mat=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide});
+ try{
+  const tex=new THREE.CanvasTexture(makeWorldPattern());tex.magFilter=tex.minFilter=THREE.NearestFilter;tex.generateMipmaps=false;tex.colorSpace=THREE.SRGBColorSpace;
+  mat.onBeforeCompile=shader=>{
+   shader.uniforms.pixelAtlas={value:tex};
+   shader.vertexShader='attribute float surfaceType; varying float vSurface; varying vec3 vPixelPos; varying vec3 vPixelNormal;\n'+shader.vertexShader;
+   shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvSurface=surfaceType;vPixelPos=position;vPixelNormal=normal;');
+   shader.fragmentShader='uniform sampler2D pixelAtlas; varying float vSurface; varying vec3 vPixelPos; varying vec3 vPixelNormal;\n'+shader.fragmentShader;
+   shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\nvec3 pn=abs(normalize(vPixelNormal));vec2 pp=pn.y>.55?vPixelPos.xz:(pn.x>pn.z?vPixelPos.zy:vPixelPos.xy);float tile=floor(vSurface+.5);vec2 uvp=fract(pp*.70);vec2 uvAtlas=vec2((tile+uvp.x)/4.,uvp.y);diffuseColor.rgb*=mix(vec3(1.),texture2D(pixelAtlas,uvAtlas).rgb,.55);');
+  };
+  mat.customProgramCacheKey=()=> 'shinobi-pixel-world-1';
+ }catch(e){console.warn('World texture fallback',e);}
+ return mat;
 }
-const gradient=new THREE.DataTexture(new Uint8Array([95,155,218,255]),4,1,THREE.RedFormat);
-gradient.minFilter=gradient.magFilter=THREE.NearestFilter;gradient.generateMipmaps=false;gradient.needsUpdate=true;
-const toon=()=>new THREE.MeshToonMaterial({vertexColors:true,side:THREE.DoubleSide,gradientMap:gradient});
-
+function surface(r,g,b,terrain){
+ if(g>r*1.08&&g>b*1.12)return 0;
+ if(terrain)return 1;
+ if(r>g*1.2&&g>b*1.1&&r<.68)return 2;
+ if(r>g*1.3&&r>b*1.25)return 3;
+ return 1;
+}
 export function createRenderer(canvas){
-  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:false,powerPreference:'high-performance'});
   renderer.outputColorSpace=THREE.SRGBColorSpace;
-  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  const scene=new THREE.Scene();scene.background=new THREE.Color(0xb5d5cc);scene.fog=new THREE.Fog(0xb5d5cc,58,130);
+  renderer.shadowMap.enabled=false;
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0xadcbb6);scene.fog=new THREE.Fog(0xadcbb6,61,125);
   const camera=new THREE.OrthographicCamera(-12,12,12,-12,.1,180);
-  scene.add(new THREE.HemisphereLight(0xfff2d4,0x829bb0,1.2));
-  const sun=new THREE.DirectionalLight(0xffe2ad,2.1);
-  sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
-  Object.assign(sun.shadow.camera,{left:-23,right:23,top:23,bottom:-23,near:.5,far:100});
-  sun.shadow.camera.updateProjectionMatrix();sun.shadow.bias=-.00015;sun.shadow.normalBias=.035;
-  scene.add(sun,sun.target);
-  const solid=toon(),ground=toon();ground.map=terrainTexture();
+  const solid=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide}),world=pixelMaterial();
   const fxmat=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide});
   let quality=1;
   function addStatic(raw,terrain=false){
     const a=arrays(raw.length/6);fill(a,raw);const g=geometry(a);g.computeBoundingSphere();
-    const obj=new THREE.Mesh(g,terrain?ground:solid);
-    obj.receiveShadow=true;obj.castShadow=!terrain;scene.add(obj);return obj;
+    const types=new Float32Array(raw.length/6);for(let i=0;i<raw.length;i+=18){const v=surface(raw[i+3],raw[i+4],raw[i+5],terrain);types.fill(v,i/6,i/6+3);const j=i/2,ny=a.norm[j+1],nz=a.norm[j+2],nx=a.norm[j];const dot=nx*.32+ny*.78+nz*.42;const shade=dot>.6?1:dot>.1?.91:dot>-.35?.77:.67;for(let q=j;q<j+9;q++)a.col[q]*=shade;}
+    g.setAttribute('surfaceType',new THREE.BufferAttribute(types,1));const obj=new THREE.Mesh(g,world);scene.add(obj);return obj;
   }
   function batch(material,cast){
     let cap=0,a=null;
@@ -84,139 +85,16 @@ export function createRenderer(canvas){
   }
   const drawActors=batch(solid,true),drawEffects=batch(fxmat,false);
   function resize(q){
-    quality=q;renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5)*q);
+    quality=q;renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1)*q);
     renderer.setSize(Math.max(1,innerWidth),Math.max(1,innerHeight),false);
     const aspect=innerWidth/Math.max(1,innerHeight);
     camera.left=-12*aspect;camera.right=12*aspect;camera.updateProjectionMatrix();
-    renderer.shadowMap.enabled=q>=.75;sun.castShadow=q>=.75;
-    const size=q===1?1024:512;
-    if(sun.shadow.mapSize.x!==size){sun.shadow.mapSize.set(size,size);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}}
+
   }
   function frame(x,z){
     camera.position.set(x,25,z+30);camera.lookAt(x,0,z);
-    sun.position.set(x+14,32,z+18);sun.target.position.set(x,0,z);sun.target.updateMatrixWorld();
     renderer.render(scene,camera);
   }
   return {scene,renderer,camera,addStatic,drawActors,drawEffects,resize,frame,solid,get quality(){return quality}};
 }
 
-// Optional GLB actors. Missing or invalid assets never replace the working procedural actor.
-export async function createAssetActors(scene, report=()=>{}){
-  const templates=new Map(),active=new Map(),loader=new GLTFLoader();
-  let generation=0;
-  async function load(){
-    try{
-      const response=await fetch(new URL('../assets/manifest.json',import.meta.url));
-      if(!response.ok)throw Error('manifest unavailable');
-      const manifest=await response.json();
-      await Promise.all(Object.entries(manifest.characters||{}).map(async ([kind,config])=>{
-        if(!config?.url)return;
-        try{
-          const gltf=await loader.loadAsync(new URL(config.url,new URL('../assets/manifest.json',import.meta.url)).href);
-          templates.set(kind,{gltf,config});report(kind+' GLB listo');
-        }catch(e){console.warn('GLB fallback',kind,e);report(kind+': modelo de respaldo');}
-      }));
-    }catch(e){console.warn('Manifest fallback',e);}
-  }
-  void load();
-  function begin(){generation++;}
-  function show(actor,kind,dt){
-    const template=templates.get(kind==='clone'?'player':kind);
-    if(!template)return false;
-    let item=active.get(actor);
-    if(!item){
-      try{
-        const {gltf,config}=template,model=cloneSkeleton(gltf.scene);
-        const bounds=new THREE.Box3().setFromObject(model),height=bounds.max.y-bounds.min.y;
-        if(!Number.isFinite(height)||height<.00001)return false;
-        const scale=(config.height||1.85)/height;
-        model.scale.multiplyScalar(scale);
-        model.position.set(-(bounds.min.x+bounds.max.x)*scale/2,-bounds.min.y*scale,-(bounds.min.z+bounds.max.z)*scale/2);
-        model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
-        const root=new THREE.Group();root.add(model);
-        const mixer=new THREE.AnimationMixer(model),actions={};
-        for(const name of ['idle','walk','run','attack','shuriken','clone','rasengan']){
-          const requested=config.animations?.[name];
-          const clip=gltf.animations.find(c=>requested?c.name===requested:c.name.toLowerCase().includes(name));
-          if(clip)actions[name]=mixer.clipAction(clip);
-        }
-        scene.add(root);item={root,mixer,actions,current:null,config,seen:generation};active.set(actor,item);
-      }catch(e){console.warn('Actor fallback',e);return false;}
-    }
-    item.seen=generation;item.root.visible=true;
-    item.root.position.set(actor.x,0,actor.z);
-    item.root.rotation.y=Math.atan2(actor.dirX||0,actor.dirZ??1)+(item.config.rotationY||0);
-    const skill=actor.anim?.k;
-    const state=skill?({'j':'attack','k':'shuriken','l':'clone',' ':'rasengan'}[skill]||'attack'):(actor.walk?'walk':'idle');
-    const next=item.actions[state]||item.actions.attack&&skill&&item.actions.attack||item.actions.idle||Object.values(item.actions)[0];
-    if(next&&next!==item.current){item.current?.fadeOut(.12);next.reset().fadeIn(.12).play();item.current=next;}
-    if(dt>0)item.mixer.update(dt);
-    return true;
-  }
-  function end(){for(const [actor,item] of active){if(item.seen!==generation){scene.remove(item.root);item.mixer.stopAllAction();item.mixer.uncacheRoot(item.root.children[0]);active.delete(actor);}}}
-  return {begin,show,end};
-}
-
-// Rigged procedural backups: one reusable geometry per character type, independent skeleton per actor.
-// The original actor is still available if rig creation fails.
-function skinGeometry(raw){
-  const n=raw.length/6,a=arrays(n);fill(a,raw);
-  const g=geometry(a),indices=new Uint16Array(n*4),weights=new Float32Array(n*4);
-  const clamp=x=>Math.max(0,Math.min(1,x));
-  for(let i=0;i<n;i+=3){
-    const x=(a.pos[i*3]+a.pos[(i+1)*3]+a.pos[(i+2)*3])/3;
-    const y=(a.pos[i*3+1]+a.pos[(i+1)*3+1]+a.pos[(i+2)*3+1])/3;
-    let first=1,second=1,pivot=0;
-    if(y>1.25){first=2;second=2;}
-    else if(y<.63){first=x<0?7:9;second=first+1;pivot=.36;}
-    else if(Math.abs(x)>.335&&y<1.23){first=x<0?3:5;second=first+1;pivot=.91;}
-    for(let v=i;v<i+3;v++){
-      let w=first===second?1:clamp((a.pos[v*3+1]-pivot+.07)/.14);
-      indices[v*4]=first;indices[v*4+1]=second;
-      weights[v*4]=w;weights[v*4+1]=1-w;
-    }
-  }
-  g.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));
-  g.setAttribute('skinWeight',new THREE.Float32BufferAttribute(weights,4));
-  g.computeBoundingSphere();return g;
-}
-export function createProceduralActors(scene,material,rawByKind){
-  const templates=new Map(),active=new Map();
-  for(const [kind,raw] of Object.entries(rawByKind))templates.set(kind,skinGeometry(raw));
-  let generation=0;
-  function begin(){generation++;}
-  function make(kind){
-    const bones=[];
-    function bone(parent,x,y,z){const b=new THREE.Bone();b.position.set(x,y,z);if(parent!==null)bones[parent].add(b);bones.push(b);return b;}
-    bone(null,0,0,0);bone(0,0,.65,0);bone(1,0,.70,0);
-    bone(1,-.34,.48,0);bone(3,-.08,-.22,0);
-    bone(1,.34,.48,0);bone(5,.08,-.22,0);
-    bone(0,-.16,.67,0);bone(7,-.01,-.31,0);
-    bone(0,.16,.67,0);bone(9,.01,-.31,0);
-    const obj=new THREE.SkinnedMesh(templates.get(kind),material);
-    obj.add(bones[0]);obj.bind(new THREE.Skeleton(bones));obj.frustumCulled=false;
-    obj.castShadow=true;obj.receiveShadow=true;scene.add(obj);
-    return {obj,bones,seen:generation};
-  }
-  function show(a,kind){
-    if(!templates.has(kind))return false;
-    let item=active.get(a);
-    if(!item){try{item=make(kind);active.set(a,item);}catch(e){console.warn('Rig fallback',kind,e);return false;}}
-    item.seen=generation;
-    const {obj,bones:b}=item,w=Math.sin(a.walk||0),act=a.anim&&a.anim.left>0?Math.sin(Math.PI*(1-a.anim.left/a.anim.total)):0;
-    obj.position.set(a.x,Math.abs(w)*.035,a.z);
-    obj.rotation.y=Math.atan2(a.dirX||0,a.dirZ??1);
-    b[1].rotation.set(-.045*Math.abs(w)-act*.12,act*.16,w*.025);
-    b[2].rotation.set(0,-act*.09,0);
-    b[3].rotation.set(w*.44-act*.25,0,-act*.08);
-    b[4].rotation.x=-.12-act*.22;
-    b[5].rotation.set(-w*.44-act*1.14,0,act*.12);
-    b[6].rotation.x=-.12-act*.55;
-    b[7].rotation.x=-w*.43;b[8].rotation.x=Math.max(0,w)*.4;
-    b[9].rotation.x=w*.43;b[10].rotation.x=Math.max(0,-w)*.4;
-    if(a.anim?.k==='l'){b[3].rotation.x=-act*.9;b[5].rotation.x=-act*.9;b[4].rotation.x=-act*.65;b[6].rotation.x=-act*.65;}
-    return true;
-  }
-  function end(){for(const [actor,item] of active){if(item.seen!==generation){scene.remove(item.obj);item.obj.skeleton.dispose();active.delete(actor);}}}
-  return {begin,show,end};
-}

@@ -52,3 +52,6 @@ v0.11 aprobada y fusionada a main (PR 9), Cloudflare check exitoso. Seis capítu
 
 ## RC HD experimental
 Fūma lateral con ocho cuadros de arte ilustrado generado, textura optimizada y fallback original. [Documentación y pruebas](docs/V1-HD-SPRITES.md). No altera guardados ni combate.
+
+### HD2 — Naruto ilustrado permanente
+Nuevo atlas de 12 poses. Naruto HD visible en reposo y movimiento, F lateral con atlas especial. Indicador HD activo y fallback. Equipo HD de traje fijo; modo original conserva capas. Guardados intactos.

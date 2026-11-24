@@ -1,8 +1,8 @@
 import {directionToward} from './combat-data.js';
 export const ARENA={x:32,z:-2,r:12};
 export const BOSSES=[
- {id:'zabuza',name:'Zabuza Momochi',hp:360,speed:2.4,reward:[['eliteVest',1],['pill',3]],xp:250,coins:180,intro:'La niebla es mi territorio. Demostrame qué aprendiste, shinobi.',patterns:[{name:'Corte de espada',shape:'circle',radius:2.8,windup:.65,damage:24,reach:3.1},{name:'Dragón de agua',shape:'line',radius:1.15,length:10,windup:.9,damage:30,reach:10},{name:'Torbellino de niebla',shape:'circle',radius:4.2,windup:.8,damage:34,reach:4.5}]},
- {id:'haku',name:'Haku',hp:300,speed:3.5,reward:[['charm',1],['scroll',1]],xp:300,coins:220,intro:'No quiero lastimarte. Pero no voy a abandonar mi propósito.',patterns:[{name:'Agujas de hielo',shape:'line',radius:.8,length:12,windup:.55,damage:20,reach:12},{name:'Espejos de hielo',shape:'target',radius:2.3,windup:.85,damage:30,reach:10},{name:'Danza de agujas',shape:'target',radius:3.1,windup:.65,damage:32,reach:12}]}
+ {id:'zabuza',name:'Zabuza Momochi',hp:360,speed:2.4,reward:[['mistBlade',1],['pill',3]],xp:250,coins:180,intro:'La niebla es mi territorio. Demostrame qué aprendiste, shinobi.',patterns:[{name:'Corte de espada',shape:'circle',radius:2.8,windup:.65,damage:24,reach:3.1},{name:'Dragón de agua',shape:'line',radius:1.15,length:10,windup:.9,damage:30,reach:10},{name:'Torbellino de niebla',shape:'circle',radius:4.2,windup:.8,damage:34,reach:4.5}]},
+ {id:'haku',name:'Haku',hp:300,speed:3.5,reward:[['iceMask',1],['scroll',1]],xp:300,coins:220,intro:'No quiero lastimarte. Pero no voy a abandonar mi propósito.',patterns:[{name:'Agujas de hielo',shape:'line',radius:.8,length:12,windup:.55,damage:20,reach:12},{name:'Espejos de hielo',shape:'target',radius:2.3,windup:.85,damage:30,reach:10},{name:'Danza de agujas',shape:'target',radius:3.1,windup:.65,damage:32,reach:12}]}
 ];
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 export function newBossProgress(){return {defeated:[]};}

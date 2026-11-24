@@ -12,6 +12,7 @@ export function makeBoss(spec){return {id:spec.id,kind:spec.id,spec,x:ARENA.x,z:
 export function bossContains(intent,target){const dx=target.x-intent.x,dz=target.z-intent.z;if(intent.shape!=='line')return Math.hypot(dx,dz)<=intent.radius;const along=dx*intent.dx+dz*intent.dz,side=Math.abs(dx*intent.dz-dz*intent.dx);return along>=0&&along<=intent.length&&side<=intent.radius;}
 export function tickBoss(b,p,clones,dt,move,hit,signal){
  if(b.id==='zabuza'&&b.worldBoss)return tickZabuza(b,p,clones,dt,move,hit,signal);
+ if(b.id==='haku'&&b.worldBoss)return tickHaku(b,p,dt,move,signal);
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
  if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;b.intent=null;b.anim=null;b.attack=.55;signal('phase',b);return;}
@@ -40,7 +41,7 @@ export function mistAlly(id,x,z){const spec=MIST_ALLIES[id];return {id:'ally-'+i
 export const MIST_CAMERA={opening:[{zoom:1.32,yaw:-.18},{zoom:1.7,yaw:.21},{zoom:1.62,yaw:-.12}],arrival:[{zoom:1.55,yaw:.18},{zoom:1.85,yaw:-.2},{zoom:1.45,yaw:-.1},{zoom:1.72,yaw:.16}],awakening:[{zoom:1.45,yaw:.15},{zoom:1.55,yaw:-.18},{zoom:2.05,yaw:-.26},{zoom:2.5,yaw:.14},{zoom:4.8,yaw:.08,lookY:1.7}],wrath:[{zoom:1.65,yaw:.2},{zoom:1.45,yaw:-.17},{zoom:1.78,yaw:.24},{zoom:1.9,yaw:-.2},{zoom:2.02,yaw:.19},{zoom:1.5,yaw:-.15}],ending:[{zoom:1.55,yaw:.16},{zoom:1.48,yaw:-.16},{zoom:1.55,yaw:.12},{zoom:1.4,yaw:0}]};
 
 // Encounter combat constants, shared by the game and tests.
-export const MIST_COMBAT={dragon:{life:3,speed:7.5,turn:5.5},clone:{hp:45,life:9,speed:4.7,count:3,max:4,reach:1.1},prison:{duration:4.5,presses:12,failDamage:22,immunity:2.5},mirror:{intervalMin:.85,intervalMax:1.65,needleSpeed:13,projectileCap:40}};
+export const MIST_COMBAT={dragon:{life:3,speed:7.5,turn:5.5},clone:{hp:45,life:9,speed:4.7,count:3,max:4,reach:1.1},prison:{duration:4.5,presses:12,failDamage:22,immunity:2.5},mirror:{needleSpeed:13,projectileCap:40}};
 
  // Independent cooldown groups: both sword variants share one timer.
 export const ZABUZA_TIMING={sword:3,dragon:12,clones:20,initial:{sword:0,dragon:2.5,clones:5},recovery:.24};
@@ -80,4 +81,35 @@ export function tickZabuza(b,p,clones,dt,move,hit,signal,random=Math.random){
  const dir=directionToward(v.x*radial-v.z*tangent*b.orbitDir,v.z*radial+v.x*tangent*b.orbitDir);
  const x=b.x,z=b.z,speed=b.spec.speed*(b.phase===2?1.12:1);move(b,dir.x*dt*speed,dir.z*dt*speed);
  b.motion=Math.hypot(b.x-x,b.z-z)>.0001;if(b.motion)b.walk+=dt*speed*2.5;else{b.orbitDir*=-1;b.orbitLeft=.65;}
+}
+
+// Haku has a single shared offensive timer for teleport + needle volleys.
+// Ice protection has an independent start-to-start timer.
+export const HAKU_TIMING={needles:5,shield:20,shieldDuration:3,initialNeedles:5,recovery:.35};
+export function tickHaku(b,p,dt,move,signal,random=Math.random){
+ const cfg=HAKU_TIMING;
+ b.needleAt??=cfg.initialNeedles;b.shieldAt??=cfg.shield;b.shieldLeft??=0;b.orbitDir??=1;b.orbitLeft??=2;
+ b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;
+ b.needleAt=Math.max(0,b.needleAt-dt);b.shieldAt=Math.max(0,b.shieldAt-dt);
+ if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
+ if(b.shieldLeft>0){
+  b.shieldLeft=Math.max(0,b.shieldLeft-dt);
+  if(b.shieldLeft<=1e-8){b.shieldLeft=0;b.needleAt=Math.max(b.needleAt,cfg.recovery);signal('shieldEnd',b);}
+  return;
+ }
+ if(b.shieldAt<=1e-8){b.shieldAt=cfg.shield;b.shieldLeft=cfg.shieldDuration;b.intent=null;b.anim=null;b.motion=false;b.needleAt=Math.max(b.needleAt,cfg.recovery);signal('shield',b);return;}
+ if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;b.intent=null;b.anim=null;b.needleAt=Math.max(b.needleAt,.55);signal('phase',b);return;}
+ if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.needleAt=cfg.needles;signal('strike',b,a);}return;}
+ const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
+ if(b.needleAt<=1e-8){
+  const available=b.spec.patterns.filter(a=>a.name!==b.lastPattern),options=available.length?available:b.spec.patterns;
+  const pattern=options[Math.floor(random()*options.length)],windup=pattern.windup;
+  b.intent={...pattern,x:pattern.shape==='target'?p.x:b.x,z:pattern.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:windup,total:windup};
+  b.anim={k:'k',left:windup+.25,total:windup+.25,windup};b.lastPattern=pattern.name;b.index++;signal('windup',b,b.intent);return;
+ }
+ // Reposition without firing or teleporting between the five-second volleys.
+ b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.8+random()*1.2;}
+ const radial=Math.max(-.75,Math.min(1,(d-5)*.45)),tangent=d>8?.18:.63;
+ const dir=directionToward(v.x*radial-v.z*tangent*b.orbitDir,v.z*radial+v.x*tangent*b.orbitDir),x=b.x,z=b.z;
+ move(b,dir.x*dt*b.spec.speed*.78,dir.z*dt*b.spec.speed*.78);b.motion=Math.hypot(b.x-x,b.z-z)>.0001;if(b.motion)b.walk+=dt*8;else{b.orbitDir*=-1;b.orbitLeft=.6;}
 }

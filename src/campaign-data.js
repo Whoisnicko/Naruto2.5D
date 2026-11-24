@@ -1,4 +1,4 @@
-import {ARENA} from './boss-data.js';
+import {ARENA,BOSSES,WORLD_BOSSES} from './boss-data.js';
 // The campaign is derived from existing mission and boss progress, with one persistent epilogue flag.
 export const CHAPTERS=[
  {title:'I · The First Lesson',goal:'Talk to Kakashi in the square.',x:-12,z:-2},
@@ -15,3 +15,6 @@ export function validateCampaign(raw,quest,bossProgress){if(!raw||typeof raw.com
 export function chapterIndex(quest,bossProgress,campaign){return quest<3?quest:campaign.completed?6:bossProgress.defeated.length===2?5:bossProgress.mistStage>=1?4:3+bossProgress.defeated.length;}
 export function completeCampaign(campaign,quest,bossProgress,p){if(campaign.completed||quest!==3||bossProgress.defeated.length!==2)return false;campaign.completed=true;p.xp=Math.min(1e9,p.xp+FINALE.xp);p.coins=Math.min(1e9,p.coins+FINALE.coins);return true;}
 export function campaignSummary(quest,bossProgress,campaign,world,rpg,p){return {chapter:chapterIndex(quest,bossProgress,campaign),bosses:bossProgress.defeated.length,side:Object.values(world.quests).filter(x=>x===2).length,chests:world.opened.length,places:world.visited.length,skills:rpg.skills.length+Object.values(rpg.trees||{}).reduce((n,a)=>n+a.length,0),rounds:rpg.round,xp:p.xp};}
+
+// Part I includes the Mist saga and six independent story encounters.
+export function partOneProgress(progress){const entries=[...BOSSES.map(b=>({id:b.id,name:b.name,done:progress.defeated.includes(b.id)})),...Object.values(WORLD_BOSSES).map(b=>({id:b.id,name:b.name,done:progress.worldDefeated.includes(b.id)}))];return {entries,done:entries.filter(b=>b.done).length,total:entries.length};}

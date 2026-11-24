@@ -64,7 +64,7 @@ export function tickZabuza(b,p,clones,dt,move,hit,signal,random=Math.random){
   const a=b.intent;a.left-=dt;
   if(a.special==='dragon'&&a.left>.35){const v=directionToward(p.x-b.x,p.z-b.z);b.dirX=a.dx=v.x;b.dirZ=a.dz=v.z;}
   if(a.left<=1e-8){b.intent=null;const group=zabuzaGroup(a);b.cooldowns[group]=ZABUZA_TIMING[group];b.attack=ZABUZA_TIMING.recovery;
-   if(group==='sword'&&b.enraged){b.polishFollow={...a,name:'Executioner · Returning Sweep',x:b.x,z:b.z,radius:a.radius*.86,damage:Math.round(a.damage*.55),left:.48,total:.48,follow:true};b.attack=.48;signal('polishWarn',b,b.polishFollow);}
+   if(group==='sword'&&b.enraged){b.polishFollow={...a,name:'Executioner · Returning Sweep',x:b.x,z:b.z,radius:a.radius*.86,damage:Math.round(a.damage*.55),left:.48,total:.48,follow:true};b.attack=.48;b.anim={k:'j',left:.73,total:.73,windup:.48};signal('polishWarn',b,b.polishFollow);}
    if(group==='sword')for(const target of [p,...clones])if((target.hp??0)>0&&(target.life??1)>0&&bossContains(a,target))hit(target,a.damage,b);
    signal('strike',b,a);
   }return;
@@ -277,7 +277,7 @@ export function tickOrochimaru(b,p,clones,dt,move,hit,signal,random=Math.random)
  b.snakes=b.snakes.filter(alive);
  if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.cooldowns[a.id]=a.cooldown;b.attack=b.phase===3?.65:.7;
   if(a.summon){for(let i=b.snakes.length;i<c.snakeCap;i++){const th=i*2*Math.PI/3;const q={id:'oro-snake-'+(++b.serial),oroSnake:true,x:b.x,z:b.z,hp:c.snakeHP,maxHP:c.snakeHP,life:c.snakeLife,attack:1+i*.55,flash:0,dirX:1,dirZ:0};move(q,Math.cos(th)*2.3,Math.sin(th)*2.3);b.snakes.push(q);}signal('oroSummon',b,a);}
-  else{for(const q of [p,...clones])if(alive(q)&&bossContains(a,q)){const landed=q===p&&!(p.invuln>0)&&!(p.substitution>0);hit(q,a.damage,b);if(a.venom&&landed)signal('oroVenom',b,a);}signal('strike',b,a);if(a.cloud){b.clouds.push({x:a.x,z:a.z,radius:a.radius,life:c.cloudLife,applied:distance(a,p)<=a.radius&&!(p.substitution>0)&&!(p.invuln>0)&&!(p.dashGuard>0)&&!(p.dashTime>0)});b.clouds=b.clouds.slice(-c.cloudCap);}if(a.lunge){const x=b.x,z=b.z;move(b,a.dx*a.lunge,a.dz*a.lunge);if(a.id==='trueFang'){b.clouds.push({x:(x+b.x)/2,z:(z+b.z)/2,radius:2.0,life:BOSS_POLISH.oroVenomTrailLife,applied:false});b.clouds=b.clouds.slice(-c.cloudCap);}}}
+  else{let applied=false;for(const q of [p,...clones])if(alive(q)&&bossContains(a,q)){const landed=q===p&&!(p.invuln>0)&&!(p.substitution>0)&&!(p.dashGuard>0)&&!(p.dashTime>0);hit(q,a.damage,b);if(a.venom&&landed){applied=true;signal('oroVenom',b,a);}}signal('strike',b,a);if(a.cloud){b.clouds.push({x:a.x,z:a.z,radius:a.radius,life:c.cloudLife,applied});b.clouds=b.clouds.slice(-c.cloudCap);}if(a.lunge){const x=b.x,z=b.z;move(b,a.dx*a.lunge,a.dz*a.lunge);if(a.id==='trueFang'){b.clouds.push({x:(x+b.x)/2,z:(z+b.z)/2,radius:2.0,life:BOSS_POLISH.oroVenomTrailLife,applied:false});b.clouds=b.clouds.slice(-c.cloudCap);}}}
   if(a.pulses&&(a.pulse||1)<a.pulses){const v=directionToward(p.x-b.x,p.z-b.z);b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:.85,total:.85,pulse:(a.pulse||1)+1};b.cooldowns[a.id]=0;b.attack=0;signal('windup',b,b.intent);}
  }return;}
  const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;

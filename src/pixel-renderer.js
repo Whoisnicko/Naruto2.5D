@@ -35,7 +35,7 @@ function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material)
 export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
- const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[],shikamaru:[],sasuke:[]},trails=[],fxPool=[];
+ const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[]},trails=[],fxPool=[];
  let generation=0,hero=null,gearKey=null,gearCanvas=null;
  function gearSheet(gear,kind='player'){const key=kind+JSON.stringify(gear||{});if(key!==gearKey){gearKey=key;gearCanvas=makeActorSheet(kind,gear);}return gearCanvas;}
  function previewEquipment(gear,canvas,kind='player'){const c=gearSheet(gear,kind),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}

@@ -20,7 +20,7 @@ export const COMBAT={
  ],
  criticalChance:.10,criticalMultiplier:1.5,
  enemy:{windup:.24,damage:9,range:1.5,cooldown:1.1},
- clone:{damage:18,knock:1.4,hp:22,markDuration:2.5,synergy:1.25}
+ clone:{damage:18,knock:1.4,hp:1,duration:5,markDuration:2.5,synergy:1.25}
 };
 export function stepMotion(actor,dx,dz,blocked){
  const steps=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.12));

@@ -91,8 +91,10 @@ export function createRenderer(canvas){
     camera.left=-12*aspect;camera.right=12*aspect;camera.updateProjectionMatrix();
 
   }
-  function frame(x,z){
-    camera.position.set(x,25,z+30);camera.lookAt(x,0,z);
+  function frame(x,z,shot={}){
+    const zoom=shot.zoom||1,yaw=shot.yaw||0,lookY=shot.lookY||0;
+    if(Math.abs(camera.zoom-zoom)>.0005){camera.zoom=zoom;camera.updateProjectionMatrix();}
+    camera.position.set(x+Math.sin(yaw)*30,25,z+Math.cos(yaw)*30);camera.lookAt(x,lookY,z);
     renderer.render(scene,camera);
   }
   const projection=new THREE.Vector3();function project(x,y,z){projection.set(x,y,z).project(camera);if(Math.abs(projection.x)>1.15||Math.abs(projection.y)>1.15||Math.abs(projection.z)>1)return null;return {x:(projection.x+1)*innerWidth/2,y:(1-projection.y)*innerHeight/2};}

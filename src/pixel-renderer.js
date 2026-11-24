@@ -53,6 +53,7 @@ export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
  const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[]},trails=[],fxPool=[];
+ const worldMeshes=[];let warmIndex=0;const warmKinds=['zabuza','haku','npc','sasuke'];
  let generation=0,hero=null,gearKey=null,gearCanvas=null,redGearKey=null,redGearCanvas=null;const rasPool=createRasenganPool(base=>{const f=sprite(base,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);return f;});let rasMap=null;try{rasMap=texture(makeRasenganSheet());}catch(e){console.warn('Rasengan art fallback',e);}
  // Load exact approved art into canvas textures; keep visible procedural fallback if decoding fails.
  function pixelLayer(name,w,h,paint){
@@ -79,8 +80,8 @@ export function createPixelSystem(scene){
   const row=direction(a.dirX||0,a.dirZ??1),anim=frameFor(a,item.clock);
   if(kind==='player'){try{const red=a.character==='naruto'&&(a.kyubiLeft>0||a.anim?.kyubi),sheet=gearSheet(a.equipment,characterFor(a.character).art,red);if(item.map.image!==sheet){item.map.image=sheet;item.map.needsUpdate=true;}}catch(e){console.warn('Equipment art fallback',e);}}
   setFrame(item,anim.col,row);
-  item.obj.position.set(a.x,.035,a.z);item.shadow.position.set(a.x,.024,a.z);
-  item.material.opacity=kind==='clone'?.84:1;item.material.color.setHex(a.kyubiLeft>0||a.kyubi?0xffb8a0:a.flash>0?0xffe8cb:a.guard?0xffd98b:a.substitution>0?0xc9f1e4:a.hit>0&&!a.anim?0xffc1a3:a.patrol||a.temporary?(roleFor(a).tint||0xffffff):0xffffff);item.material.opacity=a.invuln>0&&kind==='player'?.75:a.role==='assassin'&&a.ai==='flank'?.55:item.material.opacity;
+  item.obj.center.set(.5,a.fallen?.5:0);item.material.rotation=a.fallen?-Math.PI/2:0;item.obj.position.set(a.x,a.fallen?.28:.035,a.z);item.shadow.position.set(a.x,.024,a.z);
+  item.material.opacity=a.waterClone?.66:kind==='clone'?.84:1;item.material.color.setHex(a.shieldLeft>0?0xa5e5ff:a.waterClone?0x79d5ee:a.kyubiLeft>0||a.kyubi?0xffb8a0:a.flash>0?0xffe8cb:a.guard?0xffd98b:a.substitution>0?0xc9f1e4:a.hit>0&&!a.anim?0xffc1a3:a.patrol||a.temporary?(roleFor(a).tint||0xffffff):0xffffff);item.material.opacity=a.invuln>0&&kind==='player'?.75:a.role==='assassin'&&a.ai==='flank'?.55:item.material.opacity;
   if(kind==='player'){hero={actor:a,row,item};if(characterFor(a.character).art==='player'&&a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>(a.dashTime>0?.035:.085)){item.trailAt=item.clock;spawnTrail(a,row);}if(characterFor(a.character).art==='player'&&a.anim&&a.anim!==item.lastAnim&&a.anim.k==='j')spawnTrail(a,row);item.lastAnim=a.anim||null;}
   return true;
  }
@@ -146,8 +147,8 @@ export function createPixelSystem(scene){
   }
   for(const c of clones){if(c.life>4.58)add('clone',c.x,.95,c.z,2.8,Math.floor(clamp((5-c.life)/.42,0,.999)*8),.9,0,!!c.kyubi);}
   for(const a of projectiles){
-   const type=a.kind==='water'?'dragon':['fire','lightning','wind'].includes(a.kind)?a.kind:a.hostile?'kunai':'shuriken',elemental=['dragon','fire','lightning','wind'].includes(type),f=Math.floor(t*25)%8,angle=Math.atan2(-a.dz*.64,a.dx);
-   add(type,a.x,.83,a.z,elemental?(type==='dragon'?3.2:2.2):.75,f,1,elemental?angle:Math.atan2(-a.dx,-a.dz*.64),!!a.kyubi);
+   const type=a.kind==='water'?'dragon':a.kind==='iceNeedle'?'ice':['fire','lightning','wind'].includes(a.kind)?a.kind:a.hostile?'kunai':'shuriken',elemental=['dragon','fire','lightning','wind'].includes(type),f=Math.floor(t*25)%8,angle=Math.atan2(-a.dz*.64,a.dx);
+   add(type,a.x,.83,a.z,elemental?(type==='dragon'?(a.homing?4.2:3.2):2.2):a.kind==='iceNeedle'?.75:.75,f,1,elemental||a.kind==='iceNeedle'?angle:Math.atan2(-a.dx,-a.dz*.64),!!a.kyubi);
    if(elemental)accents.push(()=>{const tail=type==='fire'?'firetrail':type==='dragon'?'water':type;add(tail,a.x-a.dx*.85,.8,a.z-a.dz*.85,1.8,f,.6,angle,!!a.kyubi);if(quality===1)add('sparks',a.x-a.dx*1.4,.8,a.z-a.dz*1.4,1.3,f,.45,0,!!a.kyubi);});
   }
   if(quality>=.75)for(const draw of accents)draw();
@@ -175,7 +176,7 @@ export function createPixelSystem(scene){
      dummy.rotation.set(-Math.PI/2,0,0);dummy.scale.set(2.9*p.s,2.1*p.s,1);dummy.position.set(p.x+.4*p.s,.027,p.z);dummy.updateMatrix();shadows.setMatrixAt(i,dummy.matrix);
     }
     inst.instanceMatrix.needsUpdate=shadows.instanceMatrix.needsUpdate=true;inst.computeBoundingSphere();shadows.computeBoundingSphere();
-    scene.add(inst,shadows);created.push(inst,shadows);
+    scene.add(inst,shadows);created.push(inst,shadows);worldMeshes.push(inst,shadows);
    }
    return true;
   }catch(e){for(const o of created)scene.remove(o);console.warn('Pixel tree fallback',e);return false;}
@@ -184,7 +185,9 @@ export function createPixelSystem(scene){
  if(!buildings.length)return;
  const obj=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),shadowMat,buildings.length),d=new THREE.Object3D();
  for(let i=0;i<buildings.length;i++){const p=buildings[i];d.position.set(p.x+.5,.02,p.z+.35);d.rotation.set(-Math.PI/2,0,0);d.scale.set(p.w+1.8,p.d+1.5,1);d.updateMatrix();obj.setMatrixAt(i,d.matrix);}
- obj.instanceMatrix.needsUpdate=true;obj.computeBoundingSphere();scene.add(obj);
+ obj.instanceMatrix.needsUpdate=true;obj.computeBoundingSphere();scene.add(obj);worldMeshes.push(obj);
 }
-return {begin,show,end,effects,addTrees,addBuildingShadows,previewEquipment,portrait,maps,sheets};
+function setWorldVisible(visible){for(const o of worldMeshes)o.visible=visible;}
+function warmNext(renderer){if(warmIndex>=warmKinds.length)return false;const kind=warmKinds[warmIndex++];try{const item=makeActor(kind);item.obj.visible=item.shadow.visible=false;free[kind].push(item);renderer?.initTexture?.(item.map);}catch(e){console.warn('Optional encounter warmup',e);}return true;}
+return {begin,show,end,effects,addTrees,addBuildingShadows,previewEquipment,portrait,maps,sheets,setWorldVisible,warmNext};
 }

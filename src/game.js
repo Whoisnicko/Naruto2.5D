@@ -78,7 +78,7 @@ $('sandboxStart').disabled=false;$('sandboxStart').onclick=enterSandbox;$('sandb
 let modal=null,resumeAfterModal=false,finalLine=0;
 function showModal(kind){
  if($('menu').style.display!=='none'||rpgUI.opened||worldUI.opened||modal)return false;
- modal=kind;resumeAfterModal=running;running=false;keys.clear();audio.wind(false);$('pause').textContent='▶';
+ cancelRasengan();modal=kind;resumeAfterModal=running;running=false;keys.clear();audio.wind(false);$('pause').textContent='▶';
  $('pauseWindow').hidden=kind!=='pause';$('journalWindow').hidden=kind!=='journal';$('finalWindow').hidden=kind!=='final';$('characterWindow').hidden=kind!=='characters';$('examWindow').hidden=kind!=='exam';if(kind==='exam')renderExam();if(kind==='characters')renderCharacters();$('releaseModal').hidden=false;
  if(kind==='pause'){$('titleGame').disabled=sandbox;$('pauseSave').disabled=sandbox;$('pauseExport').disabled=sandbox;$('pauseStatus').textContent=sandbox?'Modo práctica: salí del Sandbox para regresar al menú.':'';$('pauseSound').textContent=$('sound').textContent;$('pauseVolume').value=$('volume').value;$('pauseShake').textContent=$('shake').textContent;$('pauseMusic').textContent=audio.musicEnabled===false?'Música: No':'Música: Sí';}if(kind==='journal')renderJournal();if(kind==='final'){finalLine=0;showFinalLine();}return true;
 }
@@ -116,8 +116,8 @@ let autosaveAt=20;let pausedFrameAt=-1000;addEventListener('pagehide',()=>{if($(
 let wasRunning=false;function train(){if(examRun||boss||quest!==3||dist(p,DATA.npc)>=3||enemies.some(e=>e.hp>0))return false;rpg.round++;enemies=DATA.enemies.map((a,i)=>prepareEnemy({...a,id:i,hp:70,hit:0,attack:0}));effects=[];clones=[];projectiles=[];p.hp=100;p.chakra=100;p.pending=null;p.anim=null;p.queued=false;p.combo=0;p.focus=0;p.guardBuff=0;cd={};msg('Entrenamiento '+rpg.round+' · cruzá el puente');return true;}
 function changed(){syncRPG();return save(true);}
 function quick(i){if(!running||!rpg.hotbar[i])return;const err=useItem(rpg,p,rpg.hotbar[i]);if(err)msg(err);else{audio.play('reward');msg('Usaste '+itemFor(rpg.hotbar[i]).name);changed();rpgUI.hotbar();}}
-const rpgUI=createRPGUI({state:()=>({p,rpg,quest,enemies}),canOpen:()=>$('menu').style.display==='none'&&!worldUI.opened&&!modal,pause:on=>{if(on){wasRunning=running;running=false;}else running=wasRunning;keys.clear();audio.wind(running);$('pause').textContent=running?'II':'▶';},notice:s=>{$('rpgNotice').textContent=s;msg(s);},changed:()=>{if(sandbox){syncRPG();$('rpgNotice').textContent='Sandbox: cambios temporales.';return;}$('rpgNotice').textContent=changed()?'Cambios guardados.':'Cambios aplicados. Exportá la partida para conservarlos.';},nearTrainer:()=>dist(p,DATA.npc)<3,preview:el=>{if(!pixels?.previewEquipment)return false;pixels.previewEquipment(p.equipment,el,characterFor(p.character).art);return true;},move:(a,b)=>moveSlot(rpg,a,b),sort:()=>sortInventory(rpg),equip:i=>equipSlot(rpg,i),unequip:s=>unequipSlot(rpg,s),discard:i=>discardSlot(rpg,i),assign:(i,id)=>assignHotbar(rpg,i,id),use:(id,i)=>useItem(rpg,p,id,i),unlock:id=>unlockSkill(rpg,p.xp,id,p.character),collect:()=>collectOverflow(rpg),quick,train});
-let worldWasRunning=false;const worldUI=createWorldUI({state:()=>({p,rpg,world,enemies:activeEnemies(),bossProgress,boss,quest,campaign,exam,examRun}),pause:on=>{if(on){worldWasRunning=running;running=false;}else running=worldWasRunning;keys.clear();audio.wind(running);$('pause').textContent=running?'II':'▶';},changed,portrait:(kind,canvas)=>{if(!pixels?.portrait)return false;pixels.portrait(kind,canvas);return true;},accept:id=>acceptQuest(world,id),finish:id=>{const err=finishQuest(world,rpg,p,id);if(!err)audio.play('reward');return err;},buy:(shop,id)=>buyItem(rpg,p,shop,id),sell:id=>sellItem(rpg,p,id),heal:()=>healPlayer(p)});
+const rpgUI=createRPGUI({state:()=>({p,rpg,quest,enemies}),canOpen:()=>$('menu').style.display==='none'&&!worldUI.opened&&!modal,pause:on=>{if(on){cancelRasengan();wasRunning=running;running=false;}else running=wasRunning;keys.clear();audio.wind(running);$('pause').textContent=running?'II':'▶';},notice:s=>{$('rpgNotice').textContent=s;msg(s);},changed:()=>{if(sandbox){syncRPG();$('rpgNotice').textContent='Sandbox: cambios temporales.';return;}$('rpgNotice').textContent=changed()?'Cambios guardados.':'Cambios aplicados. Exportá la partida para conservarlos.';},nearTrainer:()=>dist(p,DATA.npc)<3,preview:el=>{if(!pixels?.previewEquipment)return false;pixels.previewEquipment(p.equipment,el,characterFor(p.character).art);return true;},move:(a,b)=>moveSlot(rpg,a,b),sort:()=>sortInventory(rpg),equip:i=>equipSlot(rpg,i),unequip:s=>unequipSlot(rpg,s),discard:i=>discardSlot(rpg,i),assign:(i,id)=>assignHotbar(rpg,i,id),use:(id,i)=>useItem(rpg,p,id,i),unlock:id=>unlockSkill(rpg,p.xp,id,p.character),collect:()=>collectOverflow(rpg),quick,train});
+let worldWasRunning=false;const worldUI=createWorldUI({state:()=>({p,rpg,world,enemies:activeEnemies(),bossProgress,boss,quest,campaign,exam,examRun}),pause:on=>{if(on){cancelRasengan();worldWasRunning=running;running=false;}else running=worldWasRunning;keys.clear();audio.wind(running);$('pause').textContent=running?'II':'▶';},changed,portrait:(kind,canvas)=>{if(!pixels?.portrait)return false;pixels.portrait(kind,canvas);return true;},accept:id=>acceptQuest(world,id),finish:id=>{const err=finishQuest(world,rpg,p,id);if(!err)audio.play('reward');return err;},buy:(shop,id)=>buyItem(rpg,p,shop,id),sell:id=>sellItem(rpg,p,id),heal:()=>healPlayer(p)});
 function dist(a,b){return Math.hypot(a.x-b.x,a.z-b.z)}function move(a,dx,dz){stepMotion(a,dx,dz,(x,z)=>blocked(x,z)||(a.exam&&examRun&&Math.hypot(x-examRun.arena.x,z-examRun.arena.z)>examRun.arena.r-.45)||(a.regional&&x<51)||(!a.regional&&Number.isInteger(a.id)&&a.id>=0&&a.id<DATA.enemies.length&&x>49));}
 function resetRegional(){regionalEnemies=REGIONAL_ENEMIES.map(spec=>({...prepareEnemy({...spec,maxHP:spec.hp,hp:world.defeated.includes(spec.id)?0:spec.hp,hit:0,attack:0}),role:spec.role,regional:true,spec}));}
 function activeEnemies(){return examRun?[]:inEast(p)?regionalEnemies:enemies;}
@@ -165,12 +165,65 @@ function attack(k){
   s={...base,...COMBAT.combos[combo-1]};s.damage=Math.round(s.damage*characterFor(p.character).combo);
   p.combo=combo;p.comboAt=t;
  }else{p.combo=0;p.queued=false;}
- if(p.character==='naruto'&&k===' '){const target=combatTargets().filter(e=>e.hp>0&&dist(p,e)<s.range).sort((a,b)=>dist(p,a)-dist(p,b))[0];if(target){const d=directionToward(target.x-p.x,target.z-p.z,p.dirX,p.dirZ);p.dirX=d.x;p.dirZ=d.z;}}
+ if(p.character==='naruto'&&COMBAT.rasengan[k])return beginRasengan(k,s);
  p.chakra-=base.cost;cd[k]=Math.max(base.cd,s.duration);
  p.pending={k,s,remaining:s.windup,combo};p.anim={k,left:s.duration,total:s.duration,combo,windup:s.windup};
  p.motion=false;p.sprinting=false;
  audio.play(k===' '||k==='f'||k==='g'?'charge':k==='l'?'clone':'swing');
  return true;
+}
+// Charge/carry is kept in pending, so damage, interruption, reset and sandbox share the existing lifecycle.
+function beginRasengan(k,s){
+ const spec=COMBAT.rasengan[k],v=directionToward(p.dirX,p.dirZ);
+ const target=combatTargets().filter(e=>e.hp>0&&dist(p,e)<=spec.minDistance+spec.contact&&(dist(p,e)<1.5||(e.x-p.x)*v.x+(e.z-p.z)*v.z>dist(p,e)*.65)).sort((a,b)=>dist(p,a)-dist(p,b))[0];
+ if(target){const d=directionToward(target.x-p.x,target.z-p.z,v.x,v.z);p.dirX=d.x;p.dirZ=d.z;}
+ p.chakra-=s.cost;cd[k]=s.cd;
+ p.pending={k,s,remaining:s.windup,combo:0,ras:true,phase:'charge',held:0,q:0,scale:1};
+ p.anim={k,left:s.duration,total:s.duration,windup:s.windup,rasPose:0};p.motion=false;p.sprinting=false;audio.play('charge');return true;
+}
+function cancelRasengan(){if(!p.pending?.ras)return false;p.pending=null;p.anim=null;p.motion=false;p.sprinting=false;return true;}
+function finishRasengan(a,target=null){
+ const spec=COMBAT.rasengan[a.k],giant=a.k==='g',v={x:a.dx,z:a.dz};
+ p.pending=null;p.motion=false;p.sprinting=false;p.anim={k:a.k,left:spec.recovery,total:spec.recovery,windup:0,rasRecovery:true,rasPose:4};
+ const center=target?{x:target.x,z:target.z}:{x:p.x+v.x*.65,z:p.z+v.z*.65};
+ effects.push({...center,reference:true,dx:v.x,dz:v.z,scale:a.scale,giant,contact:!!target,life:spec.impact,max:spec.impact,r:spec.splash*a.scale,col:C.blue,type:giant?'giant':'rasengan'});
+ audio.play('rasengan');
+ // A missed attack does not damage behind walls. Each valid target is hit at most once.
+ if(!target)return;
+ const near=combatTargets().filter(e=>e.hp>0&&(e===target||dist(e,center)<spec.splash*a.scale)&&clearRasPath(p,e)).sort((x,y)=>dist(x,center)-dist(y,center)).slice(0,5);
+ const skill={...a.s,damage:Math.round(a.s.damage*(1+spec.bonusDamage*a.q)),shake:a.s.shake*(1+a.q*.3),freeze:a.s.freeze*(1+a.q*.2)};
+ for(const e of near){hurt(e,skill.damage,p,skill,true);if(!p.anim)break;}
+}
+function clearRasPath(from,to){
+ const d=dist(from,to),steps=Math.ceil(d/.25);
+ for(let i=1;i<steps;i++)if(blocked(from.x+(to.x-from.x)*i/steps,from.z+(to.z-from.z)*i/steps,.08))return false;
+ return true;
+}
+function tickRasengan(dt,dx,dz){
+ const a=p.pending,spec=COMBAT.rasengan[a.k];
+ if(a.phase==='charge'){
+  a.held=Math.min(spec.maxCharge,a.held+dt);a.remaining=Math.max(0,a.s.windup-a.held);
+  a.q=Math.max(0,(a.held-a.s.windup)/(spec.maxCharge-a.s.windup));
+  // Limit paid charge to available chakra; the visual scale matches actual power.
+  a.q=Math.min(a.q,p.chakra/spec.extraCost);a.scale=1+(spec.maxScale-1)*a.q;
+  if(dx||dz){const v=directionToward(dx,dz);p.dirX=v.x;p.dirZ=v.z;}
+  p.anim.rasPose=a.held<a.s.windup*.5?0:a.held<a.s.windup?1:2;
+  if(a.held+1e-6<a.s.windup||(keys.has(a.k)&&a.held+1e-6<spec.maxCharge))return;
+  p.chakra=Math.max(0,p.chakra-spec.extraCost*a.q);cd[a.k]=a.s.cd;
+  const v=directionToward(p.dirX,p.dirZ);a.dx=v.x;a.dz=v.z;a.phase='carry';a.remainingDistance=spec.minDistance+(spec.maxDistance-spec.minDistance)*a.q;a.elapsed=0;p.anim.rasPose=3;audio.play('dash');
+ }
+ if(a.phase==='carry'){
+  a.elapsed+=dt;p.anim.rasPose=3;p.motion=false;p.sprinting=false;
+  const contact=()=>combatTargets().filter(e=>e.hp>0&&dist(p,e)<=spec.contact*(.85+.15*a.scale)&&((e.x-p.x)*a.dx+(e.z-p.z)*a.dz>=-.3||dist(p,e)<.6)&&clearRasPath(p,e)).sort((x,y)=>dist(p,x)-dist(p,y))[0];
+  let target=contact();if(target){finishRasengan(a,target);return;}
+  let travel=Math.min(a.remainingDistance,spec.speed*dt);
+  while(travel>1e-6){const step=Math.min(.12,travel),x=p.x+a.dx*step,z=p.z+a.dz*step;
+   if(blocked(x,z)||(examRun&&dist({x,z},examRun.arena)>examRun.arena.r-.45)||(boss&&!boss.exam&&dist({x,z},ARENA)>ARENA.r-.45)){finishRasengan(a);return;}
+   p.x=x;p.z=z;a.remainingDistance-=step;travel-=step;
+   target=contact();if(target){finishRasengan(a,target);return;}
+  }
+  if(a.remainingDistance<=1e-6)finishRasengan(a);
+ }
 }
 function resolveAttack(a){
  const {k,s,combo}=a;
@@ -214,8 +267,8 @@ function dash(){
 const mapKey=k=>({arrowup:'w',arrowdown:'s',arrowleft:'a',arrowright:'d'}[k]||k);
 addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)||e.target?.isContentEditable||importBusy)return;if($('menu').style.display!=='none')return;const k=mapKey(e.key.toLowerCase());if(modal){if(k==='escape'&&modal!=='final'){e.preventDefault();closeModal();}return;}if(worldUI.opened){if(k==='escape'){e.preventDefault();worldUI.close();}return;}if(k==='m'&&!e.repeat){$('mapPanel').hidden=!$('mapPanel').hidden;return;}if(k==='escape'&&rpgUI.opened){e.preventDefault();rpgUI.close();return;}if(!e.repeat&&(k==='i'||k==='p')){e.preventDefault();rpgUI.toggle(k==='i'?'inventory':'skills');return;}if(rpgUI.opened)return;if(!e.repeat&&k==='escape'){e.preventDefault();showModal('pause');return;}if(!e.repeat&&k==='n'){e.preventDefault();openExam();return;}if(!e.repeat&&k==='c'){e.preventDefault();showModal('characters');return;}if(!e.repeat&&k==='u'){e.preventDefault();showModal('journal');return;}if(!e.repeat&&['1','2','3'].includes(k)){e.preventDefault();quick(Number(k)-1);return;}if(['w','a','s','d',' ','shift','q','j','k','l','e','r','f','g'].includes(k))e.preventDefault();keys.add(k);if(!e.repeat){if(k==='e')interact();else if(k==='q')dash();else if(k==='r')substitution();else attack(k);}});
 addEventListener('keyup',e=>keys.delete(mapKey(e.key.toLowerCase())));
-addEventListener('blur',()=>{keys.clear();});addEventListener('visibilitychange',()=>{keys.clear();});
-document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{audio.unlock();b.dataset.s==='q'?dash():b.dataset.s==='r'?substitution():attack(b.dataset.s);});
+addEventListener('blur',()=>{keys.clear();cancelRasengan();});addEventListener('visibilitychange',()=>{keys.clear();cancelRasengan();});
+document.querySelectorAll('[data-s]').forEach(b=>{const charge=()=>p.character==='naruto'&&Object.hasOwn(COMBAT.rasengan,b.dataset.s);b.onpointerdown=e=>{if(!charge())return;e.preventDefault();audio.unlock();b.setPointerCapture(e.pointerId);keys.add(b.dataset.s);attack(b.dataset.s);};b.onpointerup=b.onlostpointercapture=()=>keys.delete(b.dataset.s);b.onpointercancel=()=>{keys.delete(b.dataset.s);if(p.pending?.ras&&p.pending.k===b.dataset.s)cancelRasengan();};b.onclick=()=>{if(charge())return;audio.unlock();b.dataset.s==='q'?dash():b.dataset.s==='r'?substitution():attack(b.dataset.s);};});
 document.querySelectorAll('[data-key]').forEach(b=>{b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);if(b.dataset.key==='e')interact();else keys.add(b.dataset.key)};b.onpointerup=b.onpointercancel=b.onlostpointercapture=()=>keys.delete(b.dataset.key)});
 function update(dt){
  const wasEast=inEast(p);t+=dt;world.clock=(world.clock+dt)%DAY_SECONDS;discover(world,p);
@@ -223,17 +276,17 @@ function update(dt){
  p.focus=Math.max(0,(p.focus||0)-dt);p.guardBuff=Math.max(0,(p.guardBuff||0)-dt);p.substitution=Math.max(0,(p.substitution||0)-dt);p.invuln=Math.max(0,(p.invuln||0)-dt);p.flash=Math.max(0,(p.flash||0)-dt);p.hit=Math.max(0,p.hit-dt);
  if(p.combo&&t-p.comboAt>COMBAT.comboWindow)p.combo=0;
  const dx=Number(keys.has('d'))-Number(keys.has('a')),dz=Number(keys.has('s'))-Number(keys.has('w'));
- if(p.dashTime>0){
+ if(p.pending?.ras){p.motion=false;p.sprinting=false;}else if(p.dashTime>0){
   const delta=Math.min(dt,p.dashTime);move(p,p.dirX*COMBAT.dash.speed*delta,p.dirZ*COMBAT.dash.speed*delta);p.dashTime=Math.max(0,p.dashTime-dt);p.motion=true;p.sprinting=true;p.walk+=dt*24;
  }else{
-  p.motion=Boolean(dx||dz)&&!p.pending;p.sprinting=p.motion&&keys.has('shift');
+  p.motion=Boolean(dx||dz)&&!p.pending&&!p.anim?.rasRecovery;p.sprinting=p.motion&&keys.has('shift');
   if(p.motion){const v=directionToward(dx,dz),speed=(p.sprinting?8:5)*(1+bonus.speed)*characterFor(p.character).speed;p.dirX=v.x;p.dirZ=v.z;move(p,v.x*speed*dt,v.z*speed*dt);p.walk+=dt*speed*2;if(t>=stepAt){audio.play('step');stepAt=t+(p.sprinting?.17:.28);}}
   else p.walk=0;
  }
  if(wasEast!==inEast(p)){projectiles=[];clones=[];effects=[];msg(inEast(p)?'Frontera del viento · Explorá el sendero y el santuario.':'Regreso al bosque de Konoha',4);}
  p.chakra=Math.min(100,p.chakra+dt*(8+bonus.chakra+characterFor(p.character).regen));
- if(p.pending){p.pending.remaining-=dt;if(p.pending.remaining<=0){const a=p.pending;p.pending=null;resolveAttack(a);}}
- if(p.anim){p.anim.left-=dt;if(p.anim.left<=0)p.anim=null;}
+ if(p.pending?.ras)tickRasengan(dt,dx,dz);else if(p.pending){p.pending.remaining-=dt;if(p.pending.remaining<=0){const a=p.pending;p.pending=null;resolveAttack(a);}}
+ if(p.anim&&!p.pending?.ras){p.anim.left-=dt;if(p.anim.rasRecovery)p.anim.rasPose=p.anim.left>p.anim.total*.5?4:5;if(p.anim.left<=0)p.anim=null;}
  if(p.queued&&!p.anim&&!p.pending&&!(cd.j>0)){p.queued=false;attack('j');}
  for(const e of activeEnemies()){
   if(!e.hp||dist(e,p)>26)continue;
@@ -301,4 +354,4 @@ function render(dt,animDt=dt){
   view.drawEffects(mesh);const offset=feedback.offset();view.frame(camX+offset.x,camZ+offset.z);feedback.updateNumbers(running?dt:0);
 }
 $('error').textContent='';$('start').disabled=false;$('importMenu').disabled=false;refreshRecovery();try{$('continue').disabled=!readSave(DATA.enemies.length);}catch(e){$('continue').disabled=true;$('error').textContent='Guardado anterior inválido o almacenamiento bloqueado. Recuperá un respaldo local o importá un archivo.';}
-function loop(now){let real=Math.max(.001,(now-last)/1000),dt=Math.min(.05,real);last=now;fps=fps*.95+(.05/real);let animDt=0;if(running){const frozen=feedback.frozen;feedback.tick(real);if(!frozen){update(dt);animDt=dt;}audio.music?.(dt,boss?'boss':'explore');if(t>=autosaveAt){autosaveAt=t+20;save(true);}}if(running||now-pausedFrameAt>=100){render(dt,animDt);pausedFrameAt=now;}if(now>uiAt){uiAt=now+200;if(running&&t>noticeUntil){const target=nearestWorld(p,world);let hint=examRun?(examRun.scroll?'E · Recoger pergamino '+examRun.scroll.id:'Examen activo · N para abandonar'):dist(p,EXAM_DESK)<3&&examEligible(quest,sandbox)?'N · Inscribirte a los exámenes Chūnin · E hablar con Iruka':quest===3&&!boss&&nextBoss(bossProgress)&&dist(p,ARENA)<4&&!target?'E · Desafiar a '+nextBoss(bossProgress).name:dist(p,DATA.npc)<3?'E · Hablar con Kakashi':target?'E · '+(target.category==='npc'?'Hablar con ':'Abrir ')+target.name:inEast(p)?'Ruinas del viento · '+world.defeated.length+'/4 enemigos · M mapa':'Explorá Konoha · salida al este · M mapa';if($('notice').textContent!==hint)$('notice').textContent=hint;}$('fps').textContent=Math.round(fps)+' FPS · Pixel Anime · v1.6a'+(view.renderer?.info?.render?' · '+view.renderer.info.render.calls+' draw calls':'');for(const el of document.querySelectorAll('[data-s]')){let sk=el.dataset.s==='q'?COMBAT.dash:el.dataset.s==='r'?COMBAT.substitution:{...characterSkill(p.character,el.dataset.s,DATA.skills[el.dataset.s]),...skillModifiers(rpg,p.character,el.dataset.s)},wait=cd[el.dataset.s]||0;el.style.opacity=wait>0?.55:p.chakra<sk.cost?.65:1;const label=el.querySelector('em');if(label)label.textContent=wait>0?wait.toFixed(1)+' s':skillLabel(p.character,el.dataset.s);el.title=skillLabel(p.character,el.dataset.s)+' · '+sk.cost+' chakra'+(wait>0?' · '+wait.toFixed(1)+' s':'');}$('tactics').textContent=p.focus>0?'SHARINGAN · '+p.focus.toFixed(1)+' s':p.guardBuff>0?'MURO DE TIERRA · '+p.guardBuff.toFixed(1)+' s':p.substitution>0?'KAWARIMI · '+p.substitution.toFixed(1)+' s':clones.length?'Clones activos: '+clones.length:'';$('combo').textContent=p.combo?'COMBO '+p.combo+' / 3 · '+COMBAT.combos[p.combo-1].name:'';$('hp').style.width=p.hp+'%';$('chakra').style.width=p.chakra+'%';$('heroName').textContent=characterFor(p.character).name;$('stats').textContent=(exam.wins===3?'Examen Chūnin ✓ · ':'')+rankFor(p.xp)+' · Nivel '+levelFor(p.xp)+' · '+p.coins+' ryō';$('xpFill').style.width=(p.xp%100)+'%';$('giantSkill').hidden=!advancedUnlocked(rpg,p.character);rpgUI.hotbar();worldUI.tick();$('examHUD').hidden=!examRun;$('examHUD').textContent=examRun?(examRun.kind==='forest'?'Bosque · '+examRun.index+'/2 pergaminos · '+Math.ceil(examRun.time)+' s':'Torneo · duelo '+(exam.wins+1)+'/3'):'';$('bossHUD').hidden=!boss;$('bossIntro').hidden=!boss||!(boss.introLeft>0);if(boss){$('bossName').textContent=boss.spec.name+' · Fase '+boss.phase;$('bossHP').style.width=(boss.hp/boss.maxHP*100)+'%';$('bossAttack').textContent=boss.intent?.name||' ';}$('bossQuest').textContent=quest===3?(nextBoss(bossProgress)?'Desafío: '+nextBoss(bossProgress).name+' · Este del bosque':'¡Desafíos completados!'):'';const chapter=CHAPTERS[chapterIndex(quest,bossProgress,campaign)];$('qtitle').textContent=chapter.title;$('qdesc').textContent=quest===1?chapter.goal+' '+enemies.filter(e=>!e.hp).length+'/5':quest===3&&rpg.round&&enemies.some(e=>e.hp>0)?'Entrenamiento '+rpg.round+' · '+enemies.filter(e=>!e.hp).length+'/5':chapter.goal;}requestAnimationFrame(loop)}requestAnimationFrame(loop);
+function loop(now){let real=Math.max(.001,(now-last)/1000),dt=Math.min(.05,real);last=now;fps=fps*.95+(.05/real);let animDt=0;if(running){const frozen=feedback.frozen;feedback.tick(real);if(!frozen){update(dt);animDt=dt;}audio.music?.(dt,boss?'boss':'explore');if(t>=autosaveAt){autosaveAt=t+20;save(true);}}if(running||now-pausedFrameAt>=100){render(dt,animDt);pausedFrameAt=now;}if(now>uiAt){uiAt=now+200;if(running&&t>noticeUntil){const target=nearestWorld(p,world);let hint=examRun?(examRun.scroll?'E · Recoger pergamino '+examRun.scroll.id:'Examen activo · N para abandonar'):dist(p,EXAM_DESK)<3&&examEligible(quest,sandbox)?'N · Inscribirte a los exámenes Chūnin · E hablar con Iruka':quest===3&&!boss&&nextBoss(bossProgress)&&dist(p,ARENA)<4&&!target?'E · Desafiar a '+nextBoss(bossProgress).name:dist(p,DATA.npc)<3?'E · Hablar con Kakashi':target?'E · '+(target.category==='npc'?'Hablar con ':'Abrir ')+target.name:inEast(p)?'Ruinas del viento · '+world.defeated.length+'/4 enemigos · M mapa':'Explorá Konoha · salida al este · M mapa';if($('notice').textContent!==hint)$('notice').textContent=hint;}$('fps').textContent=Math.round(fps)+' FPS · Pixel Anime · v1.6b'+(view.renderer?.info?.render?' · '+view.renderer.info.render.calls+' draw calls':'');for(const el of document.querySelectorAll('[data-s]')){let sk=el.dataset.s==='q'?COMBAT.dash:el.dataset.s==='r'?COMBAT.substitution:{...characterSkill(p.character,el.dataset.s,DATA.skills[el.dataset.s]),...skillModifiers(rpg,p.character,el.dataset.s)},wait=cd[el.dataset.s]||0;el.style.opacity=wait>0?.55:p.chakra<sk.cost?.65:1;const label=el.querySelector('em');if(label)label.textContent=wait>0?wait.toFixed(1)+' s':skillLabel(p.character,el.dataset.s);el.title=skillLabel(p.character,el.dataset.s)+' · '+sk.cost+' chakra'+(p.character==='naruto'&&COMBAT.rasengan[el.dataset.s]?' · mantener para cargar':'')+(wait>0?' · '+wait.toFixed(1)+' s':'');}$('tactics').textContent=p.pending?.ras?(p.pending.phase==='charge'?'CHAKRA · '+Math.round(p.pending.q*100)+'% · soltá para embestir':'RASENGAN · EMBESTIDA'):p.focus>0?'SHARINGAN · '+p.focus.toFixed(1)+' s':p.guardBuff>0?'MURO DE TIERRA · '+p.guardBuff.toFixed(1)+' s':p.substitution>0?'KAWARIMI · '+p.substitution.toFixed(1)+' s':clones.length?'Clones activos: '+clones.length:'';$('combo').textContent=p.combo?'COMBO '+p.combo+' / 3 · '+COMBAT.combos[p.combo-1].name:'';$('hp').style.width=p.hp+'%';$('chakra').style.width=p.chakra+'%';$('heroName').textContent=characterFor(p.character).name;$('stats').textContent=(exam.wins===3?'Examen Chūnin ✓ · ':'')+rankFor(p.xp)+' · Nivel '+levelFor(p.xp)+' · '+p.coins+' ryō';$('xpFill').style.width=(p.xp%100)+'%';$('giantSkill').hidden=!advancedUnlocked(rpg,p.character);rpgUI.hotbar();worldUI.tick();$('examHUD').hidden=!examRun;$('examHUD').textContent=examRun?(examRun.kind==='forest'?'Bosque · '+examRun.index+'/2 pergaminos · '+Math.ceil(examRun.time)+' s':'Torneo · duelo '+(exam.wins+1)+'/3'):'';$('bossHUD').hidden=!boss;$('bossIntro').hidden=!boss||!(boss.introLeft>0);if(boss){$('bossName').textContent=boss.spec.name+' · Fase '+boss.phase;$('bossHP').style.width=(boss.hp/boss.maxHP*100)+'%';$('bossAttack').textContent=boss.intent?.name||' ';}$('bossQuest').textContent=quest===3?(nextBoss(bossProgress)?'Desafío: '+nextBoss(bossProgress).name+' · Este del bosque':'¡Desafíos completados!'):'';const chapter=CHAPTERS[chapterIndex(quest,bossProgress,campaign)];$('qtitle').textContent=chapter.title;$('qdesc').textContent=quest===1?chapter.goal+' '+enemies.filter(e=>!e.hp).length+'/5':quest===3&&rpg.round&&enemies.some(e=>e.hp>0)?'Entrenamiento '+rpg.round+' · '+enemies.filter(e=>!e.hp).length+'/5':chapter.goal;}requestAnimationFrame(loop)}requestAnimationFrame(loop);

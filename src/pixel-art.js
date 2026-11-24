@@ -2,7 +2,7 @@
 // no generated image or third-party character assets are needed.
 export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=22,DIRS=['down','left','right','up'];
 export const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12}};
-export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant'];
+export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice'];
 export const FX_SIZE=32,FX_COLS=8;
 export const TREE_W=40,TREE_H=48;
 const ink='#273044',skin='#f7c08a',skinShade='#bc795d',skinLight='#ffe0a8';
@@ -135,6 +135,8 @@ export function makeFXSheet(){
    else if(row===6){poly([[16,1],[20,18],[16,25],[12,18]],'#c3c9cc');line(16,3,16,22,'#f6d7a7',2);rect(14,21,4,7,'#7b4447');ellipse(16,28,3,2,'#292c3d');}
    else if(row===7){rect(10,6,12,21,'#69483d');rect(12,7,8,19,'#9f7852');line(14,9,14,24,'#c69c68',2);for(let k=0;k<6;k++){const a=k*1.047+angle;ellipse(16+Math.cos(a)*(4+f*1.4),16+Math.sin(a)*(4+f),Math.max(2,5-f*.4),3,'#dce6e2');}}
    else if(row===8){const r=5+Math.sin(Math.PI*t)*9;ellipse(16,16,r,r,'#1d5eae');ellipse(16,16,r*.83,r*.83,'#3cbae7');ellipse(16,16,r*.55,r*.55,'#b9fbff');ellipse(16,16,r*.25,r*.25,'#ffffff');for(let k=0;k<4;k++)for(let j=0;j<14;j++){const a=angle+k*Math.PI/2+j*.13,rr=r*.67+j*.32;rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr,2,2,j%2?'#d7ffff':'#76c6f8');}for(let k=0;k<8;k++){const a=k*Math.PI/4+angle;line(16+Math.cos(a)*r,16+Math.sin(a)*r,16+Math.cos(a)*15,16+Math.sin(a)*15,'#e4ffff');}}
+   else if(row===9){const radius=5+f*1.25;for(let k=0;k<4;k++)for(let j=0;j<12;j++){const a=angle*.55+k*Math.PI/2+j*.13,rr=radius+j*.23;const x=16+Math.cos(a)*rr,y=16+Math.sin(a)*rr*.76;rect(x,y,3,3,'#285b83');rect(x,y,2,2,j%3?'#5cc7e1':'#e4fbf6');}for(let k=0;k<6;k++){const a=k*1.05+angle;rect(16+Math.cos(a)*(radius+3),16+Math.sin(a)*(radius+3),2,2,'#b7e7e9');}}
+   else if(row===10){for(let k=0;k<6;k++){const a=k*Math.PI/3+angle*.12,r=4+f*1.55,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;poly([[x,y-6],[x+3,y-1],[x+1,y+5],[x-3,y+1]],'#4f92b5');poly([[x,y-5],[x+2,y-1],[x,y+3],[x-1,y-1]],'#e1f7ff');rect(x,y-3,1,2,'#ffffff');}ellipse(16,16,Math.max(1,5-f*.4),Math.max(1,5-f*.4),'#b7f3ff');}
    else{
      for(let k=0;k<4;k++){const a=angle+k*Math.PI/2;poly([[16,16],[16+Math.cos(a)*13,16+Math.sin(a)*13],[16+Math.cos(a+.45)*5,16+Math.sin(a+.45)*5]],'#252e45');line(16+Math.cos(a)*4,16+Math.sin(a)*4,16+Math.cos(a)*11,16+Math.sin(a)*11,'#d4e4e9');}ellipse(16,16,3,3,'#8597a6');ellipse(16,16,1.5,1.5,'#273044');
    }

@@ -328,3 +328,17 @@ for(const stage of [1,2]){
 
 feedback.impact(.1,.07);assert(feedback.frozen);feedback.tick(.08);assert(!feedback.frozen);game.render(.016);
 console.log('PASS: syntax, collision, dash, invulnerability, anticipation, combo buffer, three combo stages, all techniques, mission/rewards, save/import, animation selection hit-stop, enemy roles, telegraphs, guard break, clone targeting, substitution and wind projectile. RPG inventory/overflow, equipment, skill unlocks, v2 migration, training and persistent progression. world quest/trade/key/chest persistence, v3 migration and reachable placements. boss phase/rewards/geometry, v4 migration and sandbox isolation. campaign epilogue, reward uniqueness, journal and pause, v5 migration. v1.2 regional gate, rewards, original quest isolation, v7 migration and regional persistence. v1.3 characters, shared progression, passive modifiers, distinct attacks, cooldowns, guard, migration and sandbox isolation. v1.35 independent trees, v9 migration, ability modifiers, actual impact types and pose timing. v1.4 quiz pass/fail, two scrolls, timer, three tournament checkpoints, unique reward, save migration, defeat and sandbox isolation. v1.5 rolling backup, corrupt save recovery, title save protection, death checkpoint and feedback safety. v1.6b charge, tap/partial/full displacement, giant, collision, single-hit, interruption and unchanged v11 save. Renderer/audio/UI mocked; real GPU/audio/UI pending.');
+// v1.15a: actual keyboard dispatch, not direct attack() calls.
+{
+ const press=key=>handlers.keydown({key,repeat:false,preventDefault(){}});
+ const release=key=>handlers.keyup({key});
+ game.start(false);const p=game.state.p;
+ press('j');release('j');sim(.19);
+ press('j');release('j');assert.equal(p.bufferedAction?.k,'j');sim(.18);assert.equal(p.combo,2);assert(!p.bufferedAction);
+ sim(.5);press('l');release('l');sim(.05);press('j');release('j');assert.equal(p.bufferedAction?.k,'j');sim(.25);assert(!p.bufferedAction);sim(.35);assert(!p.pending);
+ game.start(false);const p2=game.state.p;press('j');release('j');sim(.20);press('k');release('k');assert.equal(p2.bufferedAction?.k,'k');handlers.blur();assert(!p2.bufferedAction);sim(.3);assert(!(game.cd.k>0));
+ game.start(false);const p3=game.state.p;game.cd.q=.10;press('q');release('q');assert.equal(p3.bufferedAction?.k,'q');press('j');release('j');assert.equal(p3.bufferedAction?.k,'q');sim(.12);assert(p3.dashTime>0);assert(!(game.cd.j>0));
+ game.start(false);const p4=game.state.p;const x=p4.x,z=p4.z;press('d');sim(.01);assert(p4.x>x&&p4.x-x<.05);sim(.19);assert(p4.x>x+.5);release('d');const stop=p4.x;sim(.1);assert.equal(p4.x,stop);assert.equal(p4.z,z);
+ game.start(false);const p5=game.state.p;press('j');release('j');sim(.20);press('k');release('k');assert.equal(p5.bufferedAction?.k,'k');game.showModal('pause');assert(!p5.bufferedAction);game.closeModal();sim(.4);assert(!(game.cd.k>0));
+}
+console.log('PASS v1.15a: actual keyboard combo queue, expiry, focus/modal flush, dash priority, acceleration and immediate stop.');

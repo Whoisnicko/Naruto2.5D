@@ -359,10 +359,11 @@ function interact(){if(mistScene){advanceMistScene();return;}if(!running)return;
 // Transient input only; excluded from save data.
 function clearInput(){keys.clear();if(p){p.bufferedAction=null;p.moveBlend=0;p.queued=false;}}
 function requestAction(k){
+ if(k!=='q'&&p.bufferedAction?.k==='q'&&p.bufferedAction.until>=t&&!(p.character==='naruto'&&Object.hasOwn(COMBAT.rasengan,k)))return false;
  if(k==='q'){if(dash()){p.bufferedAction=null;return true;}}
  else{
   if(!Object.hasOwn(DATA.skills,k))return false;
-  if(p.character==='naruto'&&Object.hasOwn(COMBAT.rasengan,k)||valleyFinal()||mentorLesson())return attack(k);
+  if(p.character==='naruto'&&Object.hasOwn(COMBAT.rasengan,k)||valleyFinal()||mentorLesson()){p.bufferedAction=null;return attack(k);}
   if(!p.pending&&!p.anim&&!p.dashTime&&!(cd[k]>0)){p.bufferedAction=null;return attack(k);}
  }
  if(!running||interior||waterPrison||mistScene||valleyFinal()||mentorLesson()||p.hp<=0)return false;

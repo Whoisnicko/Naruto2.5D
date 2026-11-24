@@ -18,6 +18,7 @@ export function tickBoss(b,p,clones,dt,move,hit,signal){
  if(b.id==='orochimaru'&&b.independent)return tickOrochimaru(b,p,clones,dt,move,hit,signal);
  if(b.id==='kimimaro'&&b.independent)return tickKimimaro(b,p,clones,dt,move,hit,signal);
  if(b.id==='sasuke'&&b.independent)return tickValleySasuke(b,p,clones,dt,move,hit,signal);
+ if(b.id==='jiraiya'&&b.independent)return tickJiraiya(b,p,clones,dt,move,hit,signal);
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
  if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;b.intent=null;b.anim=null;b.attack=.55;signal('phase',b);return;}
@@ -188,7 +189,7 @@ Object.assign(MIST_SCENES,{
  kabutoEnd:{title:'THE FAILED EXPERIMENT',lines:[['Kabuto','So much for my calculations. We will meet again.'],['Naruto','Next time, try fighting without the cheap tricks.']]}
 });
 Object.assign(MIST_CAMERA,{kabutoIntro:[{zoom:1.8,yaw:.18},{zoom:1.55,yaw:-.16},{zoom:2.2,yaw:.24}],kabutoPhase:[{zoom:2.4,yaw:-.22},{zoom:1.8,yaw:.14}],kabutoEnd:[{zoom:1.9,yaw:.2},{zoom:1.55,yaw:-.12}]});
-export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,...(id==='sasuke'?{cooldowns:Object.fromEntries(spec.patterns.map((a,i)=>[a.id,i%3*2])),lastPattern:null,counterAt:0,evadeAt:0,evadeVisual:0,uses:{},rush:null,chain:null,electricTrails:[],electricExposure:0,fireZones:[],fireExposure:0,clashes:0,air:0}:id==='kimimaro'?{cooldowns:Object.fromEntries(spec.patterns.map((a,i)=>[a.id,i%3*2])),zones:[],lastPattern:null}:id==='orochimaru'?{cooldowns:{kusanagiSweep:0,snakeStrike:4,snakeSummon:7,venomBurst:3,serpentRush:6,trueFang:0,trueMiasma:0,trueEruption:0,trueCoil:0},clouds:[],snakes:[],husk:null,shedUsed:false,serial:0}:id==='gaara'?{cooldowns:{sandWave:0,sandCoffin:3,sandBurst:0,shukakuClaw:3,sandTsunami:7,sandDetonation:0,sandShuriken:0,tailRend:0,sandEruption:0},sandShield:0,sandShieldLeft:0,shieldAt:GAARA_RULES.shieldFirst,zones:[]}:{cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0}),orbitDir:1,orbitLeft:2};}
+export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,...(id==='jiraiya'?{cooldowns:Object.fromEntries(spec.patterns.map((a,i)=>[a.id,i%3])),lastPattern:null,oil:[],oilExposure:0,uses:{},lesson:null,air:0}:id==='sasuke'?{cooldowns:Object.fromEntries(spec.patterns.map((a,i)=>[a.id,i%3*2])),lastPattern:null,counterAt:0,evadeAt:0,evadeVisual:0,uses:{},rush:null,chain:null,electricTrails:[],electricExposure:0,fireZones:[],fireExposure:0,clashes:0,air:0}:id==='kimimaro'?{cooldowns:Object.fromEntries(spec.patterns.map((a,i)=>[a.id,i%3*2])),zones:[],lastPattern:null}:id==='orochimaru'?{cooldowns:{kusanagiSweep:0,snakeStrike:4,snakeSummon:7,venomBurst:3,serpentRush:6,trueFang:0,trueMiasma:0,trueEruption:0,trueCoil:0},clouds:[],snakes:[],husk:null,shedUsed:false,serial:0}:id==='gaara'?{cooldowns:{sandWave:0,sandCoffin:3,sandBurst:0,shukakuClaw:3,sandTsunami:7,sandDetonation:0,sandShuriken:0,tailRend:0,sandEruption:0},sandShield:0,sandShieldLeft:0,shieldAt:GAARA_RULES.shieldFirst,zones:[]}:{cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0}),orbitDir:1,orbitLeft:2};}
 export function tickKabuto(b,p,clones,dt,move,hit,signal,random=Math.random){
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;b.attack=Math.max(0,b.attack-dt);
  for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
@@ -360,6 +361,7 @@ export const PRACTICE_BOSSES={
  orochimaru:{name:'Orochimaru',stages:[{label:'1 · Serpent Master',hp:1},{label:'2 · White Serpent / Body Shedding',hp:.5},{label:'3 · True White Serpent',hp:ORO_RULES.finalThreshold}]},
  kimimaro:{name:'Kimimaro',stages:[{label:'1 · Shikotsumyaku',hp:1},{label:'2 · Curse Mark I',hp:KIMI_RULES.stageOne},{label:'3 · Curse Mark II',hp:KIMI_RULES.stageTwo}]},
  sasuke:{name:'Sasuke',stages:[{label:'1 · Base',hp:1},{label:'2 · Sharingan',hp:VALLEY_RULES.thresholds[0]},{label:'3 · Curse Mark I',hp:VALLEY_RULES.curseRecoveryHP},{label:'4 · Curse Mark II / Black Hunt',hp:VALLEY_RULES.thresholds[2]},{label:'5 · Mega Clash',hp:VALLEY_RULES.thresholds[3],ultimate:true}]},
+ jiraiya:{name:'Jiraiya',stages:[{label:'1 · The Fundamentals',hp:1},{label:'2 · Toad Arts',hp:.70},{label:'3 · Sage Trial',hp:.38}]},
  mistSaga:{name:'Mist Saga',stages:[{label:'1 · Zabuza opening'},{label:'2 · Haku arrival'},{label:'3 · Kyūbi awakening'},{label:'4 · Zabuza wrath'}]}
 };
 export function practiceStage(id,phase){return Number.isInteger(phase)&&phase>=1&&Object.hasOwn(PRACTICE_BOSSES,id)?PRACTICE_BOSSES[id].stages[phase-1]||null:null;}
@@ -369,3 +371,46 @@ export function applyPracticeStage(b,phase){const entry=practiceStage(b.id,phase
  if(b.id==='gaara'&&phase===3){b.sandShield=0;b.sandShieldLeft=0;b.cooldowns.sandDetonation=0;b.cooldowns.sandShuriken=2;b.cooldowns.tailRend=3.5;b.cooldowns.sandEruption=5;}
  if(b.id==='kimimaro'&&phase===3){b.cooldowns.seedlingFern=2;b.cooldowns.cursedDrill=0;b.cooldowns.cursedVolley=4;b.cooldowns.cursedTail=3;}
  return true;}
+
+export const JIRAIYA_RULES={thresholds:[.70,.38,.10],speed:[1,1.16,1.32],oilLife:8,burnLife:5,oilRadius:2.6,oilCap:4,oilSlow:.62,burnDamage:4,burnInterval:.75,guardReduction:.18,lessonCharge:2.4,lessonImpact:2.85,lessonEnd:4.2};
+WORLD_BOSSES.jiraiya={id:'jiraiya',name:'Jiraiya · The Toad Sage',hp:3000,speed:5.3,arena:{x:-34,z:-23,r:15,name:'Toad Sage Training Grounds'},marker:'#f2c56d',xp:1500,coins:0,reward:[],patterns:[
+{id:'sagePalm',name:'Toad Palm',phase:1,shape:'circle',radius:3.6,reach:4,windup:.42,damage:23,cooldown:3.2},
+{id:'hairLash',name:'Wild Lion Mane',phase:1,shape:'line',radius:1.5,length:12,reach:13,windup:.65,damage:27,cooldown:6},
+{id:'hairGuard',name:'Needle Jizo · Break with Rasengan',phase:1,shape:'circle',radius:4.2,reach:7,windup:2.0,damage:30,cooldown:10,guard:true},
+{id:'oilShot',name:'Toad Oil Bullet',phase:2,shape:'target',radius:2.6,reach:30,windup:.7,damage:10,cooldown:7,oil:true},
+{id:'flameSweep',name:'Fire Style · Flame Bullet',phase:2,shape:'line',radius:2.2,length:24,reach:30,windup:1.0,damage:31,cooldown:8,ignite:true},
+{id:'toadStomp',name:'Summoning · Toad Stomp',phase:2,shape:'target',radius:4.8,reach:30,windup:1.05,damage:26,cooldown:12,pulses:3,stomp:true},
+{id:'sageRush',name:'Sage Art · Wild Mane',phase:3,shape:'line',radius:2.1,length:22,reach:30,windup:.65,damage:34,cooldown:6,lunge:10},
+{id:'sageRings',name:'Sage Art · Toad Quake',phase:3,shape:'annulus',inner:3.1,radius:15,reach:32,windup:1.1,damage:32,cooldown:10,pulses:3,quake:true},
+{id:'sageInferno',name:'Sage Art · Oil Flame',phase:3,shape:'target',radius:4,reach:30,windup:1.05,damage:36,cooldown:9,oil:true,ignite:true},
+{id:'sageRasengan',name:'Great Rasengan · Counter or Dodge',phase:3,shape:'line',radius:2.4,length:19,reach:30,windup:1.5,damage:42,cooldown:11,lunge:9,guard:true}
+]};
+export function jiraiyaEligible(progress){return valleyEligible(progress)&&progress.worldDefeated?.includes('sasuke');}
+export function worldBossEligible(id,progress){return id==='sasuke'?valleyEligible(progress):id==='jiraiya'?jiraiyaEligible(progress):true;}
+export function jiraiyaFloor(b){return b.maxHP*JIRAIYA_RULES.thresholds[Math.min(2,b.phase-1)];}
+export function jiraiyaSlow(b,p){return b?.id==='jiraiya'&&b.oil?.some(q=>!q.burning&&distance(q,p)<=q.r)?JIRAIYA_RULES.oilSlow:1;}
+export function tickJiraiya(b,p,clones,dt,move,hit,signal,random=Math.random){const c=JIRAIYA_RULES;if(b.lesson)return;
+ b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.attack=Math.max(0,b.attack-dt);b.motion=b.sprinting=false;
+ for(const k in b.cooldowns)b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
+ if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
+ if(b.hp<=jiraiyaFloor(b)+1e-8){b.intent=null;b.anim=null;b.oil=[];b.oilExposure=0;b.air=0;b.attack=1.15;if(b.phase<3){b.phase++;signal(b.phase===2?'jiraiyaPhase':'jiraiyaSage',b);return;}signal('jiraiyaLesson',b);return;}
+ let exposure=0;for(const q of b.oil){if(q.burning&&distance(q,p)<=q.r)exposure=Math.max(exposure,Math.min(dt,q.life));q.life-=dt;}b.oil=b.oil.filter(q=>q.life>0);b.oilExposure=exposure>0?b.oilExposure+exposure:0;if(b.oilExposure>=c.burnInterval){b.oilExposure-=c.burnInterval;signal('jiraiyaBurn',b,{damage:c.burnDamage});if(b.lesson||p.hp<=0)return;}
+ if(b.intent){const a=b.intent;a.left-=dt;b.air=a.stomp?Math.sin(Math.PI*Math.max(0,1-a.left/a.total))*.9:0;if(a.left>1e-8)return;b.intent=null;b.air=0;b.cooldowns[a.id]=a.cooldown;b.attack=.65;
+ if(a.oil){b.oil.push({x:a.x,z:a.z,r:c.oilRadius,life:c.oilLife,burning:false});if(b.oil.length>c.oilCap)b.oil.shift();}
+ if(a.ignite)for(const q of b.oil)if(bossContains({...a,radius:a.radius+q.r},q)){q.burning=true;q.life=c.burnLife;}
+ for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&bossContains(a,q)){hit(q,a.damage,b);if(b.lesson||p.hp<=0)return;}
+ signal('jiraiyaStrike',b,a);if(a.lunge)move(b,a.dx*a.lunge,a.dz*a.lunge);
+ if(a.id==='oilShot'&&b.phase===2&&b.cooldowns.flameSweep<=1e-8){const f=b.spec.patterns.find(x=>x.id==='flameSweep'),v=directionToward(a.x-b.x,a.z-b.z);b.intent={...f,x:b.x,z:b.z,dx:v.x,dz:v.z,left:1.1,total:1.1};b.dirX=v.x;b.dirZ=v.z;b.anim={k:'l',left:1.35,total:1.35,windup:1.1};b.lastPattern=f.id;b.uses[f.id]=(b.uses[f.id]||0)+1;signal('jiraiyaWindup',b,b.intent);return;}
+ if(a.pulses&&(a.pulse||1)<a.pulses){const delay=a.stomp?.66:.85;b.intent={...a,x:a.quake?b.spec.arena.x:p.x,z:a.quake?b.spec.arena.z:p.z,shape:a.quake?(a.pulse===2?'annulus':'circle'):a.shape,inner:a.quake?(a.pulse===2?8.5:0):a.inner,radius:a.quake?(a.pulse===2?15:5.8):a.radius,pulse:(a.pulse||1)+1,left:delay,total:delay};b.cooldowns[a.id]=0;b.attack=0;signal('jiraiyaWindup',b,b.intent);}return;}
+ const v=directionToward(p.x-b.x,p.z-b.z),d=distance(p,b);b.dirX=v.x;b.dirZ=v.z;
+ if(!b.attack){const ready=b.spec.patterns.filter(a=>(b.phase===3?a.phase===3||a.id==='oilShot':a.phase<=b.phase)&&b.cooldowns[a.id]<=1e-8&&d<=a.reach),varied=ready.filter(a=>a.id!==b.lastPattern),opts=varied.length?varied:ready;opts.sort((x,y)=>(b.uses[x.id]||0)-(b.uses[y.id]||0)||Number(Boolean(y.ignite&&b.oil.some(q=>!q.burning)))-Number(Boolean(x.ignite&&b.oil.some(q=>!q.burning))));const a=opts[0];if(a){b.uses[a.id]=(b.uses[a.id]||0)+1;b.lastPattern=a.id;b.intent={...a,x:a.quake?b.spec.arena.x:a.shape==='target'?p.x:b.x,z:a.quake?b.spec.arena.z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,total:a.windup,left:a.windup};b.anim={k:a.guard||a.oil||a.ignite?'l':'j',left:a.windup+.25,total:a.windup+.25,windup:a.windup};signal('jiraiyaWindup',b,b.intent);return;}}
+ const radial=Math.max(-.8,Math.min(1,(d-4)*.55)),aim=directionToward(v.x*radial-v.z*.56*b.orbitDir,v.z*radial+v.x*.56*b.orbitDir),speed=b.spec.speed*c.speed[b.phase-1];move(b,aim.x*speed*dt,aim.z*speed*dt);b.motion=true;b.sprinting=b.phase===3;b.walk+=dt*speed*2.5;b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitLeft=1+random();b.orbitDir*=-1;}
+}
+Object.assign(MIST_SCENES,{
+ jiraiyaIntro:{title:'THE LAST LESSON',lines:[['Jiraiya','You could not bring Sasuke home. I know that pain.'],['Naruto','Then train me! I will never give up on him.'],['Jiraiya','Show me what you learned. Strength is not the same as mastery.']]},
+ jiraiyaPhase:{title:'THE TOAD ARTS',lines:[['Jiraiya','Good. Now read the battlefield, not just your opponent.'],['Naruto','Bring it on, Pervy Sage!']]},
+ jiraiyaSage:{title:'THE SAGE TRIAL',lines:[['Jiraiya','You have spirit. But the world outside this village is far more dangerous.'],['Naruto','I am not backing down!']]},
+ jiraiyaEnd:{title:'A NEW JOURNEY',lines:[['Naruto','Even with all that power... I still could not beat you.'],['Jiraiya','You have grown stronger, Naruto. But strength alone will not be enough for what is coming.'],['Naruto','Then teach me! I will become stronger than anyone!'],['Jiraiya','Heh. Pack your things, kid. We are going on a journey.']]},
+ jiraiyaRetry:{title:'A LESSON IN HUMILITY',lines:[['Jiraiya','That is enough for now. Catch your breath and try again.'],['Naruto','I am not done yet!']]}
+});
+for(const id of ['jiraiyaIntro','jiraiyaPhase','jiraiyaSage','jiraiyaEnd','jiraiyaRetry'])MIST_CAMERA[id]=MIST_SCENES[id].lines.map((_,i)=>({zoom:i%2?1.65:1.85,yaw:i%2?-.15:.17,lookY:1.2}));

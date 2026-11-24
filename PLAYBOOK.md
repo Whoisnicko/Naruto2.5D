@@ -68,3 +68,6 @@ Probar 1, 2 y 3 colas en Sandbox; T evoluciona con furia 100. Validar combos, im
 
 ## v1.8b — Kyūbi definitivo (tres colas)
 Decisión del jugador: una única forma de tres colas, activación directa con T al 100%, 14 s, y un botón de sandbox. Se conserva el arte, Rasengan púrpura, ataques extensibles, daño múltiple y furia de v1.8. No añadir más transformaciones por ahora. Guardado v11. Smoke tests de lógica aprobados; render/audio reales y deploy pendientes.
+
+## v1.9 beta — Shinobi Combat Intelligence
+Probar patrullas en bosque/frontera, marcar bajas, esperar 60 s de juego, botón Reaparecer enemigos, médico/asesino/invocador/élite y aislamiento de misiones. `node tests/smoke.mjs`. Preview prevista: https://feature-v19-shinobi-ai.naruto2-5d.pages.dev/ (confirmar Cloudflare).

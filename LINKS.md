@@ -16,3 +16,8 @@
 - Producción: https://naruto2-5d.pages.dev/
 - Rama v0.9: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v09-rpg-progression
 - Preview: consultar check Cloudflare del último commit de la rama.
+
+- Release v0.9: https://github.com/Whoisnicko/Naruto2.5D/pull/7
+- Producción: https://naruto2-5d.pages.dev/
+- Rama v0.10: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v010-living-world
+- Preview: https://feature-v010-living-world.naruto2-5d.pages.dev (verificar check del commit de la rama).

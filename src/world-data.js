@@ -1,0 +1,62 @@
+import {itemFor,itemCount,addItem,removeItem,rewardItems} from './rpg-data.js';
+// Positions use the existing map, so legacy saves and the original five enemy IDs remain valid.
+export const NPCS=[
+ {id:'sakura',name:'Sakura',x:-9,z:2,kind:'sakura',role:'Médica ninja',root:'sakura'},
+ {id:'teuchi',name:'Teuchi',x:-21,z:11.8,kind:'teuchi',role:'Ichiraku',root:'teuchi'},
+ {id:'tenten',name:'Tenten',x:-4,z:-2,kind:'tenten',role:'Comerciante',root:'tenten'},
+ {id:'iruka',name:'Iruka',x:-13,z:-14.5,kind:'iruka',role:'Instructor',root:'iruka'}
+];
+export const CHESTS=[
+ {id:'supply',name:'Cofre de suministros',x:-24,z:-2,type:'common',loot:[['ramen',2],['bandage',2]],coins:10},
+ {id:'forest',name:'Cofre del explorador',x:23,z:-4,type:'rare',loot:[['pill',2],['cloth',3]],coins:35},
+ {id:'sealed',name:'Alijo sellado',x:31,z:1,type:'locked',key:'forestKey',loot:[['scroll',1],['eliteVest',1]],coins:50},
+ {id:'trap',name:'Cofre sospechoso',x:18,z:5,type:'trap',damage:18,loot:[['pill',2],['bandage',2]],coins:25}
+];
+export const LANDMARKS=[
+ {id:'plaza',name:'Plaza de Konoha',x:-13,z:-2,r:4},
+ {id:'ichiraku',name:'Ichiraku',x:-21,z:11.8,r:3},
+ {id:'bridge',name:'Puente del este',x:8,z:-2,r:3},
+ {id:'forest',name:'Bosque de entrenamiento',x:25,z:-2,r:7},
+ {id:'academy',name:'Academia ninja',x:-13,z:-14.5,r:4}
+];
+export const SIDEQUESTS={
+ supplies:{name:'Suministros para Sakura',desc:'Entregá 3 telas de renegado a Sakura.',reward:[['pill',2],['ramen',1]],xp:50,coins:35},
+ scouting:{name:'Ruta del shinobi',desc:'Visitá Ichiraku, el puente y el bosque. Volvé con Iruka.',visits:['ichiraku','bridge','forest'],reward:[['forestKey',1]],xp:75,coins:50}
+};
+export const SHOPS={teuchi:['ramen','pill'],tenten:['bandage','pill','headband','kunai','bracer','sandals','charm']};
+export const DIALOGUES={
+ sakura:{text:'¡Naruto! ¿Otra vez entrenando sin descansar? Necesito vendas para la enfermería.',choices:[
+ {label:'¿Necesitás ayuda?',action:'accept',quest:'supplies',when:'suppliesNew'},
+ {label:'Entregar tres telas',action:'finish',quest:'supplies',when:'suppliesActive'},
+ {label:'Curarme (15 ryō)',action:'heal'},
+ {label:'Hasta luego',action:'close'}]},
+ teuchi:{text:'¡Bienvenido a Ichiraku! Un buen ramen es parte del entrenamiento.',choices:[
+ {label:'Ver menú',action:'shop',shop:'teuchi'},{label:'Hasta luego',action:'close'}]},
+ tenten:{text:'Tengo suministros y equipo para tus misiones. También compro materiales.',choices:[
+ {label:'Comprar equipo',action:'shop',shop:'tenten'},{label:'Vender objetos',action:'sell',shop:'tenten'},{label:'Hasta luego',action:'close'}]},
+ iruka:{text:'Conocer tu aldea es tan importante como dominar un jutsu. ¿Me ayudás a revisar la ruta?',choices:[
+ {label:'Aceptar misión de exploración',action:'accept',quest:'scouting',when:'scoutingNew'},
+ {label:'Informar ruta explorada',action:'finish',quest:'scouting',when:'scoutingActive'},
+ {label:'Hasta luego',action:'close'}]}
+};
+export const DAY_SECONDS=240;
+export function newWorld(){return {opened:[],quests:{supplies:0,scouting:0},visited:[],clock:60};}
+export function validateWorld(raw){
+ if(!raw||!Array.isArray(raw.opened)||!Array.isArray(raw.visited)||!raw.quests||!Number.isFinite(raw.clock)||raw.clock<0||raw.clock>=DAY_SECONDS)throw Error('Estado del mundo inválido.');
+ const unique=(a,valid)=>{if(new Set(a).size!==a.length||a.some(k=>!valid.includes(k)))throw Error('Registro del mundo inválido.');return [...a];};
+ const quests={};for(const id of Object.keys(SIDEQUESTS)){const v=raw.quests[id];if(![0,1,2].includes(v))throw Error('Misión secundaria inválida.');quests[id]=v;}
+ return {opened:unique(raw.opened,CHESTS.map(c=>c.id)),quests,visited:unique(raw.visited,LANDMARKS.map(l=>l.id)),clock:raw.clock};
+}
+export function discover(world,p){for(const l of LANDMARKS)if(!world.visited.includes(l.id)&&Math.hypot(p.x-l.x,p.z-l.z)<=l.r)world.visited.push(l.id);}
+export function nearestWorld(p,world){return [...NPCS.map(o=>({...o,category:'npc'})),...CHESTS.filter(o=>!world.opened.includes(o.id)).map(o=>({...o,category:'chest'}))].map(o=>({...o,d:Math.hypot(p.x-o.x,p.z-o.z)})).filter(o=>o.d<(o.category==='npc'?2.5:1.9)).sort((a,b)=>a.d-b.d)[0]||null;}
+export function openChest(world,rpg,p,id){const c=CHESTS.find(c=>c.id===id);if(!c||world.opened.includes(id))return {error:'El cofre ya está abierto.'};if(c.key&&!itemCount(rpg,c.key))return {error:'Necesitás la llave de Iruka.'};if(c.key)removeItem(rpg,c.key);world.opened.push(id);p.coins+=c.coins;const loot=rewardItems(rpg,c.loot);if(c.damage)p.hp=Math.max(1,p.hp-c.damage);return {loot,coins:c.coins,damage:c.damage||0};}
+export function questProgress(world,rpg,id){if(id==='supplies')return Math.min(3,itemCount(rpg,'cloth'))+'/3 telas';if(id==='scouting')return SIDEQUESTS.scouting.visits.filter(v=>world.visited.includes(v)).length+'/3 lugares';return '';}
+export function acceptQuest(world,id){if(world.quests[id]!==0)return 'Misión no disponible.';world.quests[id]=1;return null;}
+export function finishQuest(world,rpg,p,id){if(world.quests[id]!==1)return 'Misión no activa.';if(id==='supplies'&&itemCount(rpg,'cloth')<3)return 'Todavía faltan telas.';if(id==='scouting'&&!SIDEQUESTS.scouting.visits.every(v=>world.visited.includes(v)))return 'Todavía faltan lugares por visitar.';if(id==='supplies')removeItem(rpg,'cloth',3);const q=SIDEQUESTS[id];world.quests[id]=2;p.xp+=q.xp;p.coins+=q.coins;rewardItems(rpg,q.reward);return null;}
+export function choicesFor(world,id){return (DIALOGUES[id]?.choices||[]).filter(c=>!c.when||(c.when.endsWith('New')?world.quests[c.quest]===0:world.quests[c.quest]===1));}
+export function buyPrice(id){return itemFor(id)?.value||0;}
+export function sellPrice(id){return Math.max(1,Math.floor(buyPrice(id)*.5));}
+export function buyItem(rpg,p,shop,id){if(!SHOPS[shop]?.includes(id))return 'No está a la venta.';const price=buyPrice(id);if(p.coins<price)return 'Ryō insuficientes.';if(addItem(rpg,id,1,false))return 'Mochila llena.';p.coins-=price;return null;}
+export function sellItem(rpg,p,id){const item=itemFor(id);if(!item||item.type==='key'||item.type==='scroll')return 'Objeto de misión: no se vende.';if(!removeItem(rpg,id))return 'No tenés ese objeto.';p.coins+=sellPrice(id);return null;}
+export function healPlayer(p){if(p.hp===100&&p.chakra===100)return 'Ya estás recuperado.';if(p.coins<15)return 'Necesitás 15 ryō.';p.coins-=15;p.hp=p.chakra=100;return null;}
+export function worldTime(clock){const h=Math.floor(clock/DAY_SECONDS*24);return String(h).padStart(2,'0')+':'+String(Math.floor(clock/DAY_SECONDS*1440)%60).padStart(2,'0');}

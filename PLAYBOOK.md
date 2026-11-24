@@ -29,3 +29,6 @@ Rama `feature/v08-advanced-combat`. Preview desde Cloudflare Deployments, URL pe
 
 ## v0.9 beta
 Producción v0.8: https://naruto2-5d.pages.dev/ — PR 6 fusionado, check Cloudflare success. Rama de prueba `feature/v09-rpg-progression`. Exportar partida v2 antes de probar. I inventario, P árbol, 1–3 consumibles, G técnica desbloqueable. Probar equipo visible, entrenamiento, reserva de botín y migración a v3. Ejecutar `node tests/smoke.mjs`. Mantener v0.9 fuera de main hasta validación.
+
+## v0.10 beta
+Producción v0.9: https://naruto2-5d.pages.dev/ — PR 7 fusionado, check Cloudflare success. Rama `feature/v010-living-world`. Exportar JSON v3 antes del preview. E diálogo/cofre, M minimapa. Probar comercio, misiones, llave, persistencia y rendimiento; ejecutar `node tests/smoke.mjs`. No fusionar hasta validar.

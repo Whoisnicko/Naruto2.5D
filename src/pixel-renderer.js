@@ -49,6 +49,8 @@ export function createPixelSystem(scene){
  const kyPool=[];let purpleMap=null;try{purpleMap=texture(makeRasenganSheet(true));const img=new Image();img.onload=()=>{const cx=purpleMap.image.getContext('2d');cx.clearRect(0,0,576,48);cx.drawImage(img,0,0);purpleMap.needsUpdate=true;for(const f of rasPool)if(f.purple)f.map.needsUpdate=true;};img.src=KYUBI_ASSETS.orb;}catch{}
  const auraMap=pixelLayer('aura',512,256,cx=>{for(let d=0;d<4;d++)for(let f=0;f<8;f++){cx.fillStyle='#aa2536';cx.fillRect(f*64+17,d*64+21,4,32);cx.fillRect(f*64+43,d*64+19,4,32);cx.fillRect(f*64+21,d*64+47,22,4);cx.fillStyle='#ff6b42';cx.fillRect(f*64+18,d*64+24,2,24);cx.fillRect(f*64+44,d*64+20,2,26);}});
  const armMap=pixelLayer('arm',512,24,cx=>{for(let f=0;f<8;f++){cx.fillStyle='#a52b39';cx.fillRect(f*64,7,62,10);cx.fillStyle='#ff7548';cx.fillRect(f*64,10,64,4);}});
+ const tailCanvas=document.createElement('canvas');tailCanvas.width=512;tailCanvas.height=512;const tc=tailCanvas.getContext('2d');tc.imageSmoothingEnabled=false;
+ for(let count=1;count<=2;count++)for(let row=0;row<4;row++)for(let f=0;f<8;f++)for(let j=0;j<count;j++){const ox=f*64,oy=((count-1)*4+row)*64,side=row===1?1:row===2?-1:(j%2?1:-1),wave=Math.sin(f*Math.PI/4+j*1.9),spread=count===2?(j?1:-1):side;for(let k=0;k<=24;k++){const u=k/24,x=Math.round(32+side*9*u+spread*(12+j*3)*Math.sin(u*1.6)+wave*4*u),y=Math.round(43-26*u+4*Math.sin(u*4+j)),w=Math.max(1,Math.round(5*(1-u)));tc.fillStyle='#781d33';tc.fillRect(ox+x-w,oy+y-w,w*2+1,w*2+1);tc.fillStyle='#d73e43';tc.fillRect(ox+x-w+1,oy+y-w+1,Math.max(1,w*2-1),Math.max(1,w*2-1));tc.fillStyle='#ff864a';tc.fillRect(ox+x,oy+y,Math.max(1,w),Math.max(1,w));}}const tailMap=texture(tailCanvas);
  function gearSheet(gear,kind='player',red=false){const key=kind+JSON.stringify(gear||{});if(red){if(key!==redGearKey){redGearKey=key;redGearCanvas=makeActorSheet(kind,gear,true);}return redGearCanvas;}if(key!==gearKey){gearKey=key;gearCanvas=makeActorSheet(kind,gear);}return gearCanvas;}
  function previewEquipment(gear,canvas,kind='player'){const c=gearSheet(gear,kind),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
  function portrait(kind,canvas){const c=sheets[kind]||sheets.npc,ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(c,0,0,24,19,0,0,canvas.width,canvas.height);}
@@ -90,13 +92,13 @@ export function createPixelSystem(scene){
    const base=purple&&purpleMap?purpleMap:rasMap;if(!base||rn>=8)return false;let f=rasPool[rn];if(!f){f=sprite(base,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);rasPool[rn]=f;}rn++;if(f.map.image!==base.image){f.map.image=base.image;f.map.needsUpdate=true;}f.purple=purple&&!!purpleMap;setFrame(f,clamp(col,0,11),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=alpha;f.material.rotation=rotation;return true;
   }
   function ky(base,cols,rows,col,row,x,y,z,w,h,angle=0,order=4,centerY=.5,opacity=1){
-   if(kn>=5)return;let f=kyPool[kn];if(!f){f=sprite(base,cols,rows,w,h,false);f.material.depthWrite=false;scene.add(f.obj);kyPool[kn]=f;}kn++;
+   if(kn>=8)return;let f=kyPool[kn];if(!f){f=sprite(base,cols,rows,w,h,false);f.material.depthWrite=false;scene.add(f.obj);kyPool[kn]=f;}kn++;
    if(f.base!==base){f.base=base;f.map.image=base.image;f.cols=cols;f.rows=rows;f.map.repeat.set(1/cols,1/rows);f.map.needsUpdate=true;f.col=f.row=-1;}
    setFrame(f,col,row);f.obj.position.set(x,y,z);f.obj.scale.set(w,h,1);f.obj.center.set(.5,centerY);f.obj.renderOrder=order;f.material.rotation=angle;f.material.opacity=opacity;f.obj.visible=true;
   }
   if(player?.character==='naruto'&&(player.kyubiLeft>0||player.anim?.kyubi)){
    const row=direction(player.dirX,player.dirZ),f=Math.floor(t*13)%8;
-   ky(auraMap,8,4,f,row,player.x,.035,player.z,4.8,4.8,0,-1,13/64,.93);
+   const stage=player.kyubiStage||1,burst=player.kyubiIntro||0;if(stage>=2)ky(tailMap,8,8,f,(stage-2)*4+row,player.x,.05,player.z,4.8+(stage-2)*.5,4.8,0,-2,13/64,.96);ky(auraMap,8,4,f,row,player.x,.035,player.z,4.8+(stage-1)*.35,4.8+(stage-1)*.35,0,-1,13/64,.93);if(stage>=2&&quality>=.75)add('sparks',player.x,1.2,player.z,2.5+stage*.6,f,.55,0,true);if(burst>0)add('shockwave',player.x,.25,player.z,2.0+(1-burst/.85)*5,Math.floor((1-burst/.85)*7),burst/.85,0,true);
    if(player.anim?.k==='j'&&player.anim.kyubi){
     const a=player.anim,elapsed=a.total-a.left,w=a.windup||.095,after=Math.max(.001,a.total-w),extend=elapsed<w?Math.max(.12,elapsed/w):Math.max(0,1-(elapsed-w)/after);
     const reach=(a.clawRange||0)*extend,dx=player.dirX||0,dz=player.dirZ??1,proj=Math.hypot(dx,dz*.64);

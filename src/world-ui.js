@@ -37,7 +37,7 @@ export function createWorldUI(api){
   mark(-12,-2,'#e8cb86',3);for(const room of INTERIORS)mark(room.door.x,room.door.z,'#77e1d7',3);if(worldEvent)mark(worldEvent.x,worldEvent.z,'#f5d359',4);
   for(const c of CHESTS)if(!world.opened.includes(c.id))mark(c.x,c.z,'#e5a25d',2);
   for(const e of enemies)if(e.hp>0){const color=e.role==='elite'?'#ff536e':e.role==='medic'?'#ff9f75':e.temporary?'#b78cf2':'#f36c62';mark(e.x,e.z,color,e.role==='elite'?4:3);}else if(e.respawnAt!=null)mark(e.homeX,e.homeZ,'#858b83',2);
-  if(bossProgress?.mistStage<4&&(bossProgress.mistStage>0||Math.hypot(p.x-32,p.z+2)<18))mark(32,-2,'#e7a6dc',4);else if(quest===3&&bossProgress?.defeated.length===2&&!campaign?.completed)mark(-12,-2,'#e7a6dc',4);if(quest===3&&exam?.wins!==3)mark(-13,-14.5,'#e7a6dc',4);if(examRun?.scroll)mark(examRun.scroll.x,examRun.scroll.z,'#f8d893',4);if(boss)mark(boss.x,boss.z,'#f17685',4);mark(p.x,p.z,'#ffffff',3);
+  if(bossProgress?.mistStage<4)mark(32,-2,'#f5b6ef',6);else if(quest===3&&bossProgress?.defeated.length===2&&!campaign?.completed)mark(-12,-2,'#e7a6dc',4);if(quest===3&&exam?.wins!==3)mark(-13,-14.5,'#e7a6dc',4);if(examRun?.scroll)mark(examRun.scroll.x,examRun.scroll.z,'#f8d893',4);if(boss)mark(boss.x,boss.z,'#f17685',4);mark(p.x,p.z,'#ffffff',3);
  }
  $('worldClose').onclick=close;$('worldBody').onclick=stopText;
  $('mapToggle').onclick=()=>{$('mapPanel').hidden=!$('mapPanel').hidden;};

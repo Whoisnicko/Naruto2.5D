@@ -157,9 +157,9 @@ export function makeActorSheet(kind,gear=null){
 export const RAS_SIZE=48,RAS_COLS=12,RAS_ROWS=6;
 export function rasenganPose(anim){const e=Math.max(0,anim.total-anim.left),w=anim.windup||.26;return e<w?Math.min(2,Math.floor(e/w*3)):3+Math.min(2,Math.floor((e-w)/Math.max(.001,anim.total-w)*3));}
 export function rasenganHand(dir,pose){const d=dir===1?-1:dir===2?1:0;return {x:d*[0,-.22,.12,.66,.74,.38][pose],y:[.96,1.08,1.22,1.27,1.13,.86][pose],z:dir===0?[.22,.3,.39,.7,.75,.32][pose]:dir===3?-[.2,.32,.44,.72,.65,.3][pose]:0};}
-export function makeRasenganSheet(){
+export function makeRasenganSheet(purple=false){
  const atlas=canvas(RAS_SIZE*RAS_COLS,RAS_SIZE*RAS_ROWS),ctx=atlas.getContext('2d');ctx.imageSmoothingEnabled=false;
- const palette=['#163c79','#285ba1','#369dcc','#64d8ee','#b5fbff','#f7ffff'];
+ const palette=purple?['#30134f','#5a258f','#9144d8','#c17aff','#ffffff','#ffffff']:['#163c79','#285ba1','#369dcc','#64d8ee','#b5fbff','#f7ffff'];
  const ribbon=[[0,-13],[5,-12],[10,-9],[13,-4],[12,2],[8,7],[3,8],[-2,5],[-3,1],[0,-2],[4,-1]];
  const arc=[[0,-14],[6,-13],[11,-9],[14,-3],[14,3],[10,9],[4,13],[-3,14],[-10,10],[-14,3],[-13,-4],[-9,-10],[-4,-13]];
  for(let row=0;row<RAS_ROWS;row++)for(let f=0;f<12;f++){

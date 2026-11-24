@@ -52,8 +52,8 @@ function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material)
 export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
- const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],kabuto:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[],shukaku:[],orochimaru:[],whiteSerpent:[],kimimaro:[],kimiMarked:[],kimiCursed:[],sasukeSharingan:[],sasukeMarked:[],sasukeCursed:[],sasukeInjured:[]},trails=[],fxPool=[];
- const worldMeshes=[];let warmIndex=0;const warmKinds=['zabuza','haku','npc','sasuke','kabuto','shukaku','orochimaru','whiteSerpent','kimimaro','kimiMarked','kimiCursed','sasukeSharingan','sasukeMarked','sasukeCursed','sasukeInjured'];
+ const active=new Map(),free={jiraiya:[],jiraiyaSage:[],player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],kabuto:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[],shukaku:[],orochimaru:[],whiteSerpent:[],kimimaro:[],kimiMarked:[],kimiCursed:[],sasukeSharingan:[],sasukeMarked:[],sasukeCursed:[],sasukeInjured:[]},trails=[],fxPool=[];
+ const worldMeshes=[];let warmIndex=0;const warmKinds=['jiraiya','jiraiyaSage','zabuza','haku','npc','sasuke','kabuto','shukaku','orochimaru','whiteSerpent','kimimaro','kimiMarked','kimiCursed','sasukeSharingan','sasukeMarked','sasukeCursed','sasukeInjured'];
  let generation=0,hero=null,gearKey=null,gearCanvas=null,redGearKey=null,redGearCanvas=null;const rasPool=createRasenganPool(base=>{const f=sprite(base,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);return f;});let rasMap=null;try{rasMap=texture(makeRasenganSheet());}catch(e){console.warn('Rasengan art fallback',e);}
  // Load exact approved art into canvas textures; keep visible procedural fallback if decoding fails.
  function pixelLayer(name,w,h,paint){
@@ -69,7 +69,7 @@ export function createPixelSystem(scene){
  function previewEquipment(gear,canvas,kind='player'){const c=gearSheet(gear,kind),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
  function portrait(kind,canvas){const c=sheets[kind]||sheets.npc,ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(c,0,0,24,19,0,0,canvas.width,canvas.height);}
  function makeActor(kind){
-  const scale=kind==='sasukeCursed'?1.22:kind==='kimiCursed'?1.4:kind==='whiteSerpent'?2:kind==='shukaku'?1.85:kind==='zabuza'?1.3:1;const s=sprite(maps[kind],ACTOR_COLS,4,1.80*scale,2.40*scale,true);s.kind=kind;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
+  const scale=kind==='jiraiyaSage'?1.26:kind==='jiraiya'?1.14:kind==='sasukeCursed'?1.22:kind==='kimiCursed'?1.4:kind==='whiteSerpent'?2:kind==='shukaku'?1.85:kind==='zabuza'?1.3:1;const s=sprite(maps[kind],ACTOR_COLS,4,1.80*scale,2.40*scale,true);s.kind=kind;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
   scene.add(s.obj,s.shadow);return s;
  }
  function begin(){generation++;hero=null;}

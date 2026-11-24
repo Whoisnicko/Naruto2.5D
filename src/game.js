@@ -103,8 +103,8 @@ function bossSignal(event,b,a){if(event==='phase'){msg(b.spec.name+' · FASE 2',
 function hurt(e,d,source=p,skill=COMBAT.skills.j,allowCrit=false){
  if(e.hp<=0)return false;
  const critical=allowCrit&&Math.random()<COMBAT.criticalChance+bonus.crit+characterFor(p.character).crit+(p.focus>0?.22:0);
- const coordinated=source===p&&e.mark>0&&(skill===COMBAT.skills[' ']||skill===COMBAT.skills.g);
- const modifier=damageModifier(e,source,skill);const base=allowCrit?d+bonus.attack:d;const ninjutsu=allowCrit&&(skill.characterTechnique||skill===COMBAT.skills[' ']||skill===COMBAT.skills.g||skill===COMBAT.skills.f)?1+bonus.ninjutsu:1;const damage=Math.round(base*ninjutsu*(critical?COMBAT.criticalMultiplier:1)*modifier*(coordinated?COMBAT.clone.synergy:1));
+ const coordinated=source===p&&p.character==='naruto'&&e.mark>0&&(skill===COMBAT.skills[' ']||skill===COMBAT.skills.g||skill.narutoImpact);
+ const modifier=damageModifier(e,source,skill);const base=allowCrit?d+bonus.attack:d;const ninjutsu=allowCrit&&(skill.characterTechnique||skill.narutoImpact||skill===COMBAT.skills[' ']||skill===COMBAT.skills.g||skill===COMBAT.skills.f)?1+bonus.ninjutsu:1;const damage=Math.round(base*ninjutsu*(critical?COMBAT.criticalMultiplier:1)*modifier*(coordinated?COMBAT.clone.synergy:1));
  if(coordinated){e.mark=0;msg('¡Ataque coordinado! Rasengan +25%');}
  if(e.role==='guard'&&e.guard&&skill.breakGuard){e.stagger=.9;e.guard=false;msg('¡Guardia rota!');}
  if(modifier<1)msg('Bloqueado · rodealo o rompé su guardia');
@@ -135,7 +135,7 @@ function attack(k){
  if(p.anim||p.pending){if(k==='j'&&p.anim?.k==='j'&&p.anim.left<=.24)p.queued=true;return false;}
  if(cd[k]>0)return false;
  const base={...characterSkill(p.character,k,DATA.skills[k]),...skillModifiers(rpg,p.character,k)};if(p.chakra<base.cost){msg('Chakra insuficiente');return false;}
- let s=base,combo=0;
+ let s=p.character==='naruto'&&[' ','g','f'].includes(k)?{...base,narutoImpact:k!=='f',characterTechnique:true}:base,combo=0;
  if(k==='j'){
   combo=t-(p.comboAt??-99)<=COMBAT.comboWindow?(p.combo||0)%3+1:1;
   s={...base,...COMBAT.combos[combo-1]};s.damage=Math.round(s.damage*characterFor(p.character).combo);
@@ -153,10 +153,10 @@ function resolveAttack(a){
  if(s.mode){resolveCharacterTechnique(s,near);return;}
  if(k==='k'||k==='f'){
   const target=near[0],dir=directionToward(target?target.x-p.x:p.dirX,target?target.z-p.z:p.dirZ);
-  projectiles.push({x:p.x,z:p.z,dx:dir.x,dz:dir.z,life:k==='f'?1:.65,speed:k==='f'?14:18,kind:k==='f'?'wind':'shuriken',damage:s.damage,pierce:k==='f',hits:new Set()});audio.play(k==='f'?'rasengan':'shuriken');
+  projectiles.push({x:p.x,z:p.z,dx:dir.x,dz:dir.z,life:k==='f'?1:.65,speed:k==='f'?14:18,kind:k==='f'?'wind':'shuriken',damage:s.damage,skill:s,pierce:k==='f',hits:new Set()});audio.play(k==='f'?'rasengan':'shuriken');
  }else if(k==='l'){
   for(let i=0;i<2;i++){const x=p.x+(i?1:-1),z=p.z+1;clones.push({x:blocked(x,z)?p.x:x,z:blocked(x,z)?p.z:z,life:5,hp:COMBAT.clone.hp+bonus.cloneHP,maxHP:COMBAT.clone.hp+bonus.cloneHP,hit:0,walk:0});}
-  msg('¡Kage Bunshin no Jutsu!');audio.play('clone');
+  effects.push({x:p.x,z:p.z,life:.55,max:.55,r:2,col:C.orange,type:'clone'});msg('¡Kage Bunshin no Jutsu!');audio.play('clone');
  }else{
   if(k===' '||k==='g'){
    const target=near[0];const v=directionToward(target?target.x-p.x:p.dirX,target?target.z-p.z:p.dirZ);p.dirX=v.x;p.dirZ=v.z;
@@ -164,7 +164,7 @@ function resolveAttack(a){
    move(p,v.x*lunge,v.z*lunge);audio.play('rasengan');
    near=combatTargets().filter(e=>e.hp>0&&dist(p,e)<s.range).sort((a,b)=>dist(p,a)-dist(p,b));
   }
-  effects.push({x:p.x+p.dirX*.8,z:p.z+p.dirZ*.8,life:k==='g'?.9:k===' '?.65:.22,max:k==='g'?.9:k===' '?.65:.22,r:k==='g'?4.6:k===' '?3:1.5,col:k===' '||k==='g'?C.blue:C.orange,type:k==='g'?'giant':k===' '?'rasengan':combo===3?'heavy':'hit'});
+  effects.push({x:p.x+p.dirX*.8,z:p.z+p.dirZ*.8,life:k==='g'?.9:k===' '?.65:.22,max:k==='g'?.9:k===' '?.65:.22,r:k==='g'?4.6:k===' '?3:1.5,col:k===' '||k==='g'?C.blue:C.orange,type:k==='g'?'giant':k===' '?'rasengan':combo===3?'heavy':'slash'});
   for(const e of near.slice(0,k===' '||k==='g'?5:1))hurt(e,s.damage,p,s,true);
  }
 }
@@ -172,10 +172,10 @@ function resolveCharacterTechnique(s,near){
  const label=skillLabel(p.character,p.anim?.k);msg(label,2);
  const effect=(type,r=2,x=p.x,z=p.z)=>effects.push({x,z,type,r,life:.65,max:.65,col:type==='heal'?rgb('83dca0'):C.blue});
  if(s.mode==='heal'){p.hp=Math.min(100,p.hp+s.heal);effect('heal',2.5);audio.play('reward');return;}
- if(s.mode==='focus'||s.mode==='guard'){if(s.mode==='focus')p.focus=s.buff;else{p.guardBuff=s.buff;p.guardPower=s.guard||8;}effect(s.mode==='focus'?'focus':'earth',2.5);audio.play('charge');return;}
+ if(s.mode==='focus'||s.mode==='guard'){if(s.mode==='focus')p.focus=s.buff;else{p.guardBuff=s.buff;p.guardPower=s.guard||8;}effect(s.mode==='focus'?'focus':'wall',2.5);audio.play('charge');return;}
  if(s.mode==='projectile'){const target=near[0],dir=directionToward(target?target.x-p.x:p.dirX,target?target.z-p.z:p.dirZ);projectiles.push({x:p.x,z:p.z,dx:dir.x,dz:dir.z,life:1,speed:14,kind:s.fx,damage:s.damage,skill:s,pierce:true,hits:new Set()});audio.play('rasengan');return;}
  if(s.mode==='lunge'){const target=near[0],v=directionToward(target?target.x-p.x:p.dirX,target?target.z-p.z:p.dirZ);p.dirX=v.x;p.dirZ=v.z;const lunge=target?Math.min(1.4,Math.max(0,dist(p,target)-.8)):.6;move(p,v.x*lunge,v.z*lunge);near=combatTargets().filter(e=>e.hp>0&&dist(p,e)<s.range).sort((a,b)=>dist(p,a)-dist(p,b));}
- effect(s.fx,s.range,p.x,p.z);audio.play('heavy');for(const e of near.slice(0,s.targets||1))hurt(e,s.damage,p,s,true);
+ effect(s.mode==='area'&&s.fx==='lightning'?'storm':s.mode==='area'&&s.fx==='earth'?'cracks':s.fx,s.range,p.x,p.z);audio.play('heavy');for(const e of near.slice(0,s.targets||1))hurt(e,s.damage,p,s,true);
 }
 function dash(){
  if(!running||p.dashTime>0||cd.q>0||p.pending||p.chakra<COMBAT.dash.cost)return false;
@@ -231,7 +231,7 @@ function update(dt){
    if(blocked(x,z,.06)){a.life=0;break;}a.x=x;a.z=z;
    if(a.hostile){const target=[...clones,p].find(e=>(e.hp??0)>0&&(e.life??1)>0&&dist(a,e)<.64);if(target){hitTarget(target,a.damage,{x:a.x-a.dx,z:a.z-a.dz});a.life=0;}}
    else{const e=combatTargets().find(e=>e.hp>0&&!a.hits?.has(e.id)&&dist(a,e)<(a.pierce?1.15:.9));
-    if(e){a.hits?.add(e.id);hurt(e,a.damage||24,{x:a.x-a.dx,z:a.z-a.dz},a.skill||COMBAT.skills[a.kind==='wind'?'f':'k'],true);if(!a.pierce)a.life=0;}}
+    if(e){a.hits?.add(e.id);if(['fire','water','wind'].includes(a.kind))effects.push({x:e.x,z:e.z,life:.45,max:.45,r:2,col:C.blue,type:a.kind==='water'?'water':a.kind});hurt(e,a.damage||24,{x:a.x-a.dx,z:a.z-a.dz},a.skill||COMBAT.skills[a.kind==='wind'?'f':'k'],true);if(!a.pierce)a.life=0;}}
   }a.life-=dt;
  }
  projectiles=projectiles.filter(a=>a.life>0);
@@ -266,6 +266,8 @@ function render(dt,animDt=dt){
   pixels?.end();view.drawActors(mesh);mesh=[];
   if(pixels){pixels.effects(effects,clones,projectiles,t,running?animDt:0,quality,p);}else{
   for(let a of projectiles){let ang=t*25;for(let i=0;i<4;i++){let q=ang+i*Math.PI/2;tri([a.x,.83,a.z],[a.x+Math.cos(q)*.33,.83,a.z+Math.sin(q)*.33],[a.x+Math.cos(q+.55)*.13,.83,a.z+Math.sin(q+.55)*.13],C.dark)}limb([a.x-a.dx*.65,.8,a.z-a.dz*.65],[a.x,.8,a.z],.018,rgb('c5dce1'),4)}for(let e of effects)visualEffect(e);}
+  // Brief ground-level rings on powerful impacts; kept outside damage logic.
+  if(pixels&&quality>=.75)for(const e of effects.slice(-12))if(['rasengan','giant','storm','earth','cracks'].includes(e.type)){const q=1-e.life/e.max;if(q<.7)ring(e.x,.05,e.z,Math.max(.15,e.r*(.25+q*.9)),.035,rgb(e.type==='earth'||e.type==='cracks'?'c4a47e':'a3d9ea'),20);}
   // Sparse pixel ambience: no new textures, lights or shadow maps.
   if(quality>=.75){const night=world.clock<45||world.clock>195;for(let i=0;i<(night?12:7);i++){let x=Math.floor(camX/8)*8-12+(i*7.17)%25,z=Math.floor(camZ/8)*8-10+(i*11.3)%23;let y=.5+(Math.sin(t*.65+i*2)+1)*.65;if(night){if(Math.sin(t*1.7+i)>-.25)box(x+Math.sin(t*.5+i)*.5,y,z,.045,.06,.045,rgb('dbdb85'));}else if(p.x>12){box(x+Math.sin(t*.6+i)*.6,y,z+Math.cos(t*.4+i)*.3,.075,.025,.045,rgb('a6bd66'));}}}
   // Water highlights only; the tree crowns are static pixel silhouettes.

@@ -20,3 +20,6 @@ Trabajar en `feature/v04-threejs`. Ejecutar `node tests/smoke.mjs`; el adaptador
 
 ## v0.6 beta — pivot pixel anime
 Rama `feature/v06-pixel-anime` basada en v0.4. Preview desde Cloudflare Deployments; no asumir URL hasta confirmación. Abrir `assets/sprite-lab.html` en ese mismo preview para hojas reales. Ejecutar `node tests/smoke.mjs`. Guardado compatible por JSON entre orígenes. No fusionar a producción antes de validar visual y FPS.
+
+## v0.7 beta
+Rama `feature/v07-game-feel`; abrir preview desde Cloudflare Deployments. Probar Q, J encadenado, K/L/Espacio, números, cámara y sonido. Ejecutar `node tests/smoke.mjs`. Abrir `assets/sprite-lab.html` y revisar/exportar animaciones reales. Exportar JSON del guardado antes de cambiar de origen. No fusionar hasta validar.

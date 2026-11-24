@@ -95,6 +95,7 @@ export function createRenderer(canvas){
     camera.position.set(x,25,z+30);camera.lookAt(x,0,z);
     renderer.render(scene,camera);
   }
-  return {scene,renderer,camera,addStatic,drawActors,drawEffects,resize,frame,solid,get quality(){return quality}};
+  const projection=new THREE.Vector3();function project(x,y,z){projection.set(x,y,z).project(camera);if(Math.abs(projection.x)>1.15||Math.abs(projection.y)>1.15||Math.abs(projection.z)>1)return null;return {x:(projection.x+1)*innerWidth/2,y:(1-projection.y)*innerHeight/2};}
+  return {scene,renderer,camera,addStatic,drawActors,drawEffects,resize,frame,project,solid,get quality(){return quality}};
 }
 

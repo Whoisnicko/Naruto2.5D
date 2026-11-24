@@ -52,8 +52,8 @@ function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material)
 export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
- const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],kabuto:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[],shukaku:[],orochimaru:[]},trails=[],fxPool=[];
- const worldMeshes=[];let warmIndex=0;const warmKinds=['zabuza','haku','npc','sasuke','kabuto','shukaku','orochimaru'];
+ const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],kabuto:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[],shukaku:[],orochimaru:[],whiteSerpent:[]},trails=[],fxPool=[];
+ const worldMeshes=[];let warmIndex=0;const warmKinds=['zabuza','haku','npc','sasuke','kabuto','shukaku','orochimaru','whiteSerpent'];
  let generation=0,hero=null,gearKey=null,gearCanvas=null,redGearKey=null,redGearCanvas=null;const rasPool=createRasenganPool(base=>{const f=sprite(base,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);return f;});let rasMap=null;try{rasMap=texture(makeRasenganSheet());}catch(e){console.warn('Rasengan art fallback',e);}
  // Load exact approved art into canvas textures; keep visible procedural fallback if decoding fails.
  function pixelLayer(name,w,h,paint){
@@ -69,7 +69,7 @@ export function createPixelSystem(scene){
  function previewEquipment(gear,canvas,kind='player'){const c=gearSheet(gear,kind),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
  function portrait(kind,canvas){const c=sheets[kind]||sheets.npc,ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(c,0,0,24,19,0,0,canvas.width,canvas.height);}
  function makeActor(kind){
-  const scale=kind==='shukaku'?1.85:kind==='zabuza'?1.3:1;const s=sprite(maps[kind],ACTOR_COLS,4,1.80*scale,2.40*scale,true);s.kind=kind;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
+  const scale=kind==='whiteSerpent'?2:kind==='shukaku'?1.85:kind==='zabuza'?1.3:1;const s=sprite(maps[kind],ACTOR_COLS,4,1.80*scale,2.40*scale,true);s.kind=kind;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
   scene.add(s.obj,s.shadow);return s;
  }
  function begin(){generation++;hero=null;}
@@ -81,7 +81,7 @@ export function createPixelSystem(scene){
   const row=direction(a.dirX||0,a.dirZ??1),anim=frameFor(a,item.clock);
   if(kind==='player'){try{const red=a.character==='naruto'&&(a.kyubiLeft>0||a.anim?.kyubi),sheet=gearSheet(a.equipment,characterFor(a.character).art,red);if(item.map.image!==sheet){item.map.image=sheet;item.map.needsUpdate=true;}}catch(e){console.warn('Equipment art fallback',e);}}
   setFrame(item,anim.col,row);
-  item.obj.center.set(.5,a.fallen?.5:0);item.material.rotation=a.fallen?-Math.PI/2:0;item.obj.position.set(a.x,a.fallen?.28:.035,a.z);item.shadow.position.set(a.x,.024,a.z);item.shadow.scale.set(kind==='shukaku'?1.85:1,kind==='shukaku'?1.85:1,1);
+  item.obj.center.set(.5,a.fallen?.5:0);item.material.rotation=a.fallen?-Math.PI/2:0;item.obj.position.set(a.x,a.fallen?.28:.035,a.z);item.shadow.position.set(a.x,.024,a.z);item.shadow.scale.set(kind==='whiteSerpent'?2:kind==='shukaku'?1.85:1,kind==='whiteSerpent'?2:kind==='shukaku'?1.85:1,1);
   item.material.opacity=a.waterClone?.66:kind==='clone'?.84:1;item.material.color.setHex(a.shieldLeft>0?0xa5e5ff:a.waterClone?0x79d5ee:a.kyubiLeft>0||a.kyubi?0xffb8a0:a.flash>0?0xffe8cb:a.guard?0xffd98b:a.substitution>0?0xc9f1e4:a.hit>0&&!a.anim?0xffc1a3:a.patrol||a.temporary?(roleFor(a).tint||0xffffff):0xffffff);item.material.opacity=a.invuln>0&&kind==='player'?.75:a.role==='assassin'&&a.ai==='flank'?.55:item.material.opacity;
   if(kind==='player'){hero={actor:a,row,item};if(characterFor(a.character).art==='player'&&a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>(a.dashTime>0?.035:.085)){item.trailAt=item.clock;spawnTrail(a,row);}if(characterFor(a.character).art==='player'&&a.anim&&a.anim!==item.lastAnim&&a.anim.k==='j')spawnTrail(a,row);item.lastAnim=a.anim||null;}
   return true;

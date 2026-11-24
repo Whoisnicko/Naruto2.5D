@@ -58,7 +58,22 @@ function shukakuCell(dir,frame){
  line(10,17,7,20,mark,2);line(7,20,11,23,mark,2);line(14,17,17,20,mark,2);line(17,20,13,23,mark,2);rect(11,24,3,2,mark);
  return s.c;
 }
+// White Serpent: dedicated coiled-body directional pixel art.
+function whiteSerpentCell(dir,frame){
+ const s=cell(24,32),{rect,poly,line,ellipse}=s,ink='#423b51',shade='#a6a1b6',white='#e4e0db',light='#fff5e6',purple='#82629c',eye='#f5d858',back=dir===3,side=dir===1||dir===2,attack=frame>=10&&frame<=12||frame>=16&&frame<=21,cast=frame===14||frame===15||frame>=22;
+ const wig=frame>=2&&frame<=9?[-1,0,1,0][(frame-2)%4]:0,hx=side?(dir===1?9:15):12,hy=attack?7:cast?5:6+wig;
+ ellipse(12,26,11,5,ink);ellipse(12,25,10,5,shade);ellipse(12,24,9,3,white);
+ ellipse(12,21,9,5,ink);ellipse(12,20,8,5,white);ellipse(12,20,5,2,shade);
+ line(10,24,16,18,ink,9);line(10,24,16,18,white,7);line(16,18,hx,hy+5,ink,10);line(16,18,hx,hy+5,white,8);line(hx-1,hy+6,14,18,light,2);
+ for(let i=0;i<4;i++){line(11+i%2,17+i*2,16,18+i*2,purple,1);}
+ poly([[hx-7,hy],[hx-4,hy-3],[hx+4,hy-3],[hx+7,hy],[hx+6,hy+6],[hx+3,hy+9],[hx-4,hy+9],[hx-7,hy+5]],ink);
+ poly([[hx-6,hy],[hx-3,hy-2],[hx+3,hy-2],[hx+6,hy],[hx+5,hy+5],[hx+3,hy+8],[hx-3,hy+8],[hx-6,hy+4]],white);
+ rect(hx-4,hy-1,8,1,light);if(!back){if(side){const ex=dir===1?hx-5:hx+2;rect(ex,hy+2,3,3,purple);rect(ex+1,hy+3,1,2,eye);}else{rect(hx-5,hy+2,4,3,purple);rect(hx+1,hy+2,4,3,purple);rect(hx-4,hy+3,2,1,eye);rect(hx+2,hy+3,2,1,eye);}rect(hx-3,hy+6,6,attack?3:1,ink);rect(hx-3,hy+6,1,2,light);rect(hx+2,hy+6,1,2,light);if(attack||cast)rect(hx,hy+8,1,3,'#be6884');}else line(hx-3,hy+2,hx+3,hy+5,purple,2);
+ for(let i=0;i<4;i++)rect(4+i*4,28+(i%2),2,1,purple);
+ return s.c;
+}
 function actorCell(kind,dir,frame,gear=null,kyubi=false){
+ if(kind==='whiteSerpent')return whiteSerpentCell(dir,frame);
  if(kind==='shukaku')return shukakuCell(dir,frame);
  const ras=frame>=38?frame-38:-1;if(ras>=0)frame=[14,14,14,7,12,0][ras];
  const special=frame>=22?Math.floor((frame-22)/4):-1,stage=frame>=22?(frame-22)%4:0;if(special>=0)frame=[14,14,15,14][stage];
@@ -293,4 +308,4 @@ export function makeWorldPattern(){
  }
  return c;
 }
-export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),orochimaru:makeActorSheet('orochimaru'),shukaku:makeActorSheet('shukaku'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),kabuto:makeActorSheet('kabuto'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),orochimaru:makeActorSheet('orochimaru'),whiteSerpent:makeActorSheet('whiteSerpent'),shukaku:makeActorSheet('shukaku'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),kabuto:makeActorSheet('kabuto'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}

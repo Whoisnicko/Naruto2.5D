@@ -62,3 +62,6 @@ Rama `feature/v16a-rasengan`. Probar Naruto con Espacio en cuatro direcciones, a
 
 ## v1.7 beta
 Rama `feature/v17-kyubi-awakening`. Entrar en Sandbox con Naruto, pulsar Kyūbi · 15 s, probar J a distancia, Espacio y G cargables, renovar modo y salir. En campaña T al llenar medidor; G requiere árbol. Guardado v11. `node tests/smoke.mjs`. Validar visual/FPS antes de fusionar.
+
+## v1.8 beta — Kyūbi Evolution
+Probar 1, 2 y 3 colas en Sandbox; T evoluciona con furia 100. Validar combos, impulso involuntario, expiración y FPS. `node tests/smoke.mjs`. Preview prevista: https://feature-v18-kyubi-evolution.naruto2-5d.pages.dev/

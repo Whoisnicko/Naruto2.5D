@@ -82,3 +82,6 @@ Decisión del jugador: una única forma de tres colas, activación directa con T
 
 ## v1.9 beta — Shinobi Combat Intelligence
 15 patrullas, siete arquetipos, respawn 60 s, minimapa y botón de sandbox. [Detalles](docs/V19-SHINOBI-AI.md). Guardado v11.
+
+## v1.10 beta — Living World
+v1.9 aprobada y fusionada a producción (PR #22). Living World agrega rutas NPC, tres interiores, clima y dos eventos dinámicos. [Detalles](docs/V110-LIVING-WORLD.md). Guardado v11.

@@ -11,3 +11,6 @@ Base v1.7 aprobada. Naruto únicamente. T activa una cola al alcanzar 100 de fur
 Dos colas: remate hasta dos objetivos. Tres colas: segundo golpe hasta dos, remate hasta tres; secundarios 70% de daño. Furia: cada 2.8 s, si libre y con enemigo hostil visible a menos de 5.8 unidades, intenta J automáticamente. No selecciona NPC ni atraviesa obstáculos. FX: atlas procedural de colas extra, aura escalada, pulso de suelo, viñeta roja, sonidos sintéticos y sacudida; sin shader de refracción real. Mantiene Rasengan púrpura de v1.7.
 
 Pruebas: `node tests/smoke.mjs`; suite ejecutada con V8 y adaptador de lectura/aserciones, PASS, renderer/audio/UI simulados. Comprobar visualmente transformación por T, tres botones de sandbox, colas en cuatro direcciones, combos, daño, furia junto a enemigos y ausencia de furia junto a NPC, expiración, retorno de sandbox y FPS. Preview prevista: https://feature-v18-kyubi-evolution.naruto2-5d.pages.dev/ (confirmar despliegue en Cloudflare).
+
+## v1.8b — Kyūbi definitivo (tres colas)
+Decisión del jugador: una única forma de tres colas, activación directa con T al 100%, 14 s, y un botón de sandbox. Se conserva el arte, Rasengan púrpura, ataques extensibles, daño múltiple y furia de v1.8. No añadir más transformaciones por ahora. Guardado v11. Smoke tests de lógica aprobados; render/audio reales y deploy pendientes.

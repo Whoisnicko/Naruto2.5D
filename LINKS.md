@@ -63,3 +63,7 @@
 ## v1.8 beta — Kyūbi Evolution
 - Rama: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v18-kyubi-evolution
 - Preview prevista: https://feature-v18-kyubi-evolution.naruto2-5d.pages.dev/ (confirmar check Cloudflare).
+
+## v1.9 beta — Shinobi Combat Intelligence
+Rama: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v19-shinobi-ai
+Preview prevista: https://feature-v19-shinobi-ai.naruto2-5d.pages.dev/ (despliegue sin confirmar).

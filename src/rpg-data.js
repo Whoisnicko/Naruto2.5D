@@ -9,7 +9,7 @@ export const ITEMS={
  bandage:{name:'Vendaje ninja',desc:'Recupera 20 puntos de vida.',icon:'bandage',type:'consumable',rarity:'common',maxStack:10,value:7,heal:20},
  cloth:{name:'Tela de renegado',desc:'Material de entrenamiento. Reservado para fabricación futura.',icon:'cloth',type:'material',rarity:'common',maxStack:20,value:4},
  forestKey:{name:'Llave del bosque',desc:'Iruka la entrega al completar la ruta. Abre el alijo sellado.',icon:'key',type:'key',rarity:'rare',maxStack:1,value:0},
- scroll:{name:'Pergamino de chakra',desc:'Se consume al aprender el Rasengan gigante en el árbol.',icon:'scroll',type:'scroll',rarity:'rare',maxStack:5,value:50},
+ scroll:{name:'Pergamino de chakra',desc:'Se consume al aprender una técnica avanzada en el árbol correspondiente.',icon:'scroll',type:'scroll',rarity:'rare',maxStack:5,value:50},
  headband:{name:'Protector de Konoha',desc:'Placa reforzada de un shinobi.',icon:'headband',type:'armor',slot:'head',rarity:'uncommon',maxStack:1,value:30,stats:{defense:2},visual:{color:'#c4dbe1',accent:'#547486'}},
  vest:{name:'Chaleco de entrenamiento',desc:'Protección ligera para misiones.',icon:'vest',type:'armor',slot:'torso',rarity:'rare',maxStack:1,value:70,stats:{defense:4},visual:{color:'#73945f',accent:'#d0bf83'}},
  pants:{name:'Pantalón de explorador',desc:'Tela flexible para moverse sin ruido.',icon:'pants',type:'armor',slot:'legs',rarity:'uncommon',maxStack:1,value:35,stats:{defense:1,speed:.04},visual:{color:'#466578',accent:'#88a7a8'}},
@@ -30,6 +30,38 @@ export const SKILLS={
  bond:{name:'Vínculo de sombra',branch:'Clones',cost:1,level:2,desc:'+4 daño por golpe de clon',stats:{clone:4}},
  endurance:{name:'Sombras resistentes',branch:'Clones',cost:1,level:3,requires:'bond',desc:'+10 vida de cada clon',cloneHP:10}
 };
+// Independent point budgets at the shared account level. Naruto's original IDs remain stable.
+export const CHARACTER_TREES={
+ naruto:SKILLS,
+ sasuke:{
+  precision:{name:'Precisión Uchiha',branch:'Sharingan',cost:1,level:2,desc:'+5 puntos de crítico',stats:{crit:.05}},
+  insight:{name:'Ojo del combate',branch:'Sharingan',cost:1,level:3,requires:'precision',desc:'Sharingan dura 8 s (+3 s)',mods:{l:{buff:8}}},
+  flame:{name:'Katon ardiente',branch:'Katon',cost:1,level:2,desc:'Katon +12 daño base',mods:{f:{damage:57}}},
+  flameMaster:{name:'Maestría de fuego',branch:'Katon',cost:1,level:4,requires:'flame',desc:'Katon cuesta 17 chakra',mods:{f:{cost:17}}},
+  current:{name:'Chidori concentrado',branch:'Raiton',cost:1,level:2,desc:'Chidori +10 daño base',mods:{' ':{damage:78}}},
+  nagashi:{name:'Chidori Nagashi',branch:'Raiton',cost:1,level:3,requires:'current',scroll:'scroll',advanced:true,desc:'Desbloquea G: descarga de área, 94 daño'}
+ },
+ sakura:{
+  strength:{name:'Fuerza precisa',branch:'Taijutsu médico',cost:1,level:2,desc:'+4 ataque',stats:{attack:4}},
+  shock:{name:'Onda expansiva',branch:'Taijutsu médico',cost:1,level:3,requires:'strength',desc:'Onda sísmica +12 daño base',mods:{f:{damage:52}}},
+  medicine:{name:'Pulso vital',branch:'Medicina',cost:1,level:2,desc:'Curación de 50 HP (+15)',mods:{l:{heal:50}}},
+  renewal:{name:'Recuperación rápida',branch:'Medicina',cost:1,level:3,requires:'medicine',desc:'Curación: 6 s de recarga',mods:{l:{cd:6}}},
+  control:{name:'Control preciso',branch:'Chakra',cost:1,level:2,desc:'+2 chakra/s, +1 defensa',stats:{chakra:2,defense:1}},
+  devastation:{name:'Impacto devastador',branch:'Chakra',cost:1,level:3,requires:'control',scroll:'scroll',advanced:true,desc:'Desbloquea G: golpe de área, 90 daño'}
+ },
+ kakashi:{
+  tactics:{name:'Lectura táctica',branch:'Estrategia',cost:1,level:2,desc:'+3 puntos de crítico y +1 defensa',stats:{crit:.03,defense:1}},
+  wall:{name:'Muro reforzado',branch:'Estrategia',cost:1,level:3,requires:'tactics',desc:'Muro dura 6 s y reduce 11 daño',mods:{l:{buff:6,guard:11}}},
+  stream:{name:'Corriente de agua',branch:'Suiton',cost:1,level:2,desc:'Dragón de agua +12 daño base',mods:{f:{damage:52}}},
+  flow:{name:'Flujo elemental',branch:'Suiton',cost:1,level:4,requires:'stream',desc:'Dragón de agua cuesta 14 chakra',mods:{f:{cost:14}}},
+  blade:{name:'Raikiri afinado',branch:'Raiton',cost:1,level:2,desc:'Raikiri +10 daño base',mods:{' ':{damage:75}}},
+  storm:{name:'Raikiri múltiple',branch:'Raiton',cost:1,level:3,requires:'blade',scroll:'scroll',advanced:true,desc:'Desbloquea G: descarga múltiple, 88 daño'}
+ }
+};
+export function treeFor(id='naruto'){return CHARACTER_TREES[id]||SKILLS;}
+export function learnedFor(r,id='naruto'){return id==='naruto'?r.skills:r.trees?.[id]||[];}
+export function advancedUnlocked(r,id='naruto'){return id==='naruto'?r.skills.includes('giant'):learnedFor(r,id).some(k=>treeFor(id)[k]?.advanced);}
+export function skillModifiers(r,id,key){const out={};for(const k of learnedFor(r,id))Object.assign(out,treeFor(id)[k]?.mods?.[key]||{});return out;}
 export const LOOT=[
  [['bandage',2],['headband',1]],
  [['kunai',1],['cloth',2]],
@@ -45,7 +77,7 @@ export const rankFor=xp=>levelFor(xp)>=10?'Jōnin':levelFor(xp)>=5?'Chūnin':'Ge
 const owns=(o,k)=>typeof k==='string'&&Object.prototype.hasOwnProperty.call(o,k);
 export const itemFor=id=>owns(ITEMS,id)?ITEMS[id]:null;
 const cloneStack=s=>s?{id:s.id,count:s.count}:null;
-export function newRPG(){const r={inventory:Array(CAPACITY).fill(null),equipment:Object.fromEntries(SLOTS.map(k=>[k,null])),hotbar:['ramen','pill','bandage'],skills:[],overflow:{},round:0};addItem(r,'ramen',2);addItem(r,'pill',1);addItem(r,'bandage',2);return r;}
+export function newRPG(){const r={inventory:Array(CAPACITY).fill(null),equipment:Object.fromEntries(SLOTS.map(k=>[k,null])),hotbar:['ramen','pill','bandage'],skills:[],trees:{sasuke:[],sakura:[],kakashi:[]},overflow:{},round:0};addItem(r,'ramen',2);addItem(r,'pill',1);addItem(r,'bandage',2);return r;}
 export function itemCount(r,id){return r.inventory.reduce((n,s)=>n+(s?.id===id?s.count:0),0);}
 export function addItem(r,id,amount,stash=true){
  const item=itemFor(id);if(!item||!Number.isSafeInteger(amount)||amount<=0)return 0;
@@ -76,24 +108,24 @@ export function useItem(r,p,id,index=null){
  if(item.heal)p.hp=Math.min(100,p.hp+item.heal);if(item.restore)p.chakra=Math.min(100,p.chakra+item.restore);
  return null;
 }
-export function pointsFor(r,xp){return Math.max(0,levelFor(xp)-1-r.skills.reduce((n,k)=>n+SKILLS[k].cost,0));}
-export function unlockReason(r,xp,id){
- if(!owns(SKILLS,id))return 'Técnica desconocida';const s=SKILLS[id];
- if(r.skills.includes(id))return 'Aprendida';if(levelFor(xp)<s.level)return 'Requiere nivel '+s.level;
- if(s.requires&&!r.skills.includes(s.requires))return 'Requiere '+SKILLS[s.requires].name;
- if(pointsFor(r,xp)<s.cost)return 'Sin puntos disponibles';if(s.scroll&&!itemCount(r,s.scroll))return 'Requiere pergamino de chakra';return '';
+export function pointsFor(r,xp,char='naruto'){return Math.max(0,levelFor(xp)-1-learnedFor(r,char).reduce((n,k)=>n+treeFor(char)[k].cost,0));}
+export function unlockReason(r,xp,id,char='naruto'){
+ const tree=treeFor(char),learned=learnedFor(r,char);if(!owns(tree,id))return 'Técnica desconocida';const s=tree[id];
+ if(learned.includes(id))return 'Aprendida';if(levelFor(xp)<s.level)return 'Requiere nivel '+s.level;
+ if(s.requires&&!learned.includes(s.requires))return 'Requiere '+tree[s.requires].name;
+ if(pointsFor(r,xp,char)<s.cost)return 'Sin puntos disponibles';if(s.scroll&&!itemCount(r,s.scroll))return 'Requiere pergamino de chakra';return '';
 }
-export function unlockSkill(r,xp,id){const reason=unlockReason(r,xp,id);if(reason)return reason;const s=SKILLS[id];if(s.scroll)removeItem(r,s.scroll);r.skills.push(id);return null;}
-export function statsFor(r){
+export function unlockSkill(r,xp,id,char='naruto'){const reason=unlockReason(r,xp,id,char);if(reason)return reason;const s=treeFor(char)[id];if(s.scroll)removeItem(r,s.scroll);learnedFor(r,char).push(id);return null;}
+export function statsFor(r,char='naruto'){
  const out={attack:0,defense:0,speed:0,crit:0,chakra:0,clone:0,ninjutsu:0,cloneHP:0};
  function add(s){for(const [k,v] of Object.entries(s||{}))if(k in out)out[k]+=v;}
  for(const id of Object.values(r.equipment))add(itemFor(id)?.stats);
- for(const id of r.skills){add(SKILLS[id].stats);out.cloneHP+=SKILLS[id].cloneHP||0;}
+ for(const id of learnedFor(r,char)){const skill=treeFor(char)[id];add(skill.stats);out.cloneHP+=skill.cloneHP||0;}
  return out;
 }
 export function equipmentVisuals(r){return Object.fromEntries(SLOTS.map(s=>[s,itemFor(r.equipment[s])?.visual||null]));}
 export function migrateRPG(enemies,quest){const r=newRPG();for(const e of enemies)if(e.hp===0)rewardItems(r,LOOT[e.id]||[]);if(quest===3)rewardItems(r,QUEST_LOOT);return r;}
-export function validateRPG(raw,xp){
+export function validateRPG(raw,xp,legacy=true){
  if(!raw||!Array.isArray(raw.inventory)||raw.inventory.length!==CAPACITY||!raw.equipment||!Array.isArray(raw.hotbar)||raw.hotbar.length!==3||!Array.isArray(raw.skills)||!raw.overflow||!Number.isSafeInteger(raw.round)||raw.round<0||raw.round>1000000)throw Error('Inventario inválido.');
  const inventory=raw.inventory.map(s=>{if(s===null)return null;const i=itemFor(s?.id);if(!i||!Number.isSafeInteger(s.count)||s.count<1||s.count>i.maxStack)throw Error('Objeto inválido.');return cloneStack(s);});
  const equipment={};for(const slot of SLOTS){const id=raw.equipment[slot];if(id!==null&&itemFor(id)?.slot!==slot)throw Error('Equipo inválido.');equipment[slot]=id;}
@@ -101,5 +133,10 @@ export function validateRPG(raw,xp){
  const skills=[];for(const id of raw.skills){if(!owns(SKILLS,id)||skills.includes(id)||SKILLS[id].level>levelFor(xp)||SKILLS[id].requires&&!skills.includes(SKILLS[id].requires))throw Error('Árbol de habilidades inválido.');skills.push(id);}
  if(skills.reduce((n,k)=>n+SKILLS[k].cost,0)>levelFor(xp)-1)throw Error('Puntos de habilidad inválidos.');
  const overflow={};for(const [id,n] of Object.entries(raw.overflow)){if(!itemFor(id)||!Number.isSafeInteger(n)||n<1||n>1000000)throw Error('Reserva inválida.');overflow[id]=n;}
- return {inventory,equipment,hotbar,skills,overflow,round:raw.round};
+ const trees={};for(const char of ['sasuke','sakura','kakashi']){
+ const tree=treeFor(char),arr=raw.trees?.[char]??(legacy?(skills.includes('giant')?({sasuke:['current','nagashi'],sakura:['control','devastation'],kakashi:['blade','storm']}[char]):[]):null);
+ if(!Array.isArray(arr))throw Error('Falta árbol de '+char);const learned=[];for(const id of arr){if(!owns(tree,id)||learned.includes(id)||tree[id].level>levelFor(xp)||tree[id].requires&&!learned.includes(tree[id].requires))throw Error('Árbol inválido de '+char);learned.push(id);}
+ if(learned.reduce((n,k)=>n+tree[k].cost,0)>levelFor(xp)-1)throw Error('Puntos inválidos de '+char);trees[char]=learned;
+ }
+ return {inventory,equipment,hotbar,skills,trees,overflow,round:raw.round};
 }

@@ -40,3 +40,6 @@ Base v0.7 aprobada. Tres roles de enemigos, avisos, guardia, Kawarimi (R), Fūma
 
 ## v0.9 beta — RPG Progression
 v0.8 fusionada a main (PR 6), check de Cloudflare exitoso para el commit. v0.9 añade inventario, equipo visible, botín, árbol, entrenamiento y Rasengan gigante; migración de guardado a v3. [Detalles y QA](docs/V09-RPG-PROGRESSION.md). Pruebas simuladas aprobadas, pendiente playtest real.
+
+## v0.10 beta — Living Open World
+v0.9 aprobada en main (PR 7), Cloudflare check exitoso. Nueva rama con NPC, diálogos, comercio, cofres, misiones y minimapa/ciclo día-noche. [Documentación y pruebas](docs/V010-LIVING-WORLD.md). Guardado v4 compatible hacia atrás al cargar v2/v3.

@@ -4,6 +4,7 @@ const CUES={
  swing:[['triangle',280,95,.08,.10]],hit:[['square',115,48,.075,.11],['triangle',310,90,.07,.055]],
  heavy:[['sawtooth',105,36,.15,.10],['triangle',430,72,.18,.08]],
  shuriken:[['triangle',920,310,.11,.075]],clone:[['sine',190,520,.18,.09]],
+ sharingan:[['sine',260,1580,.28,.095],['triangle',980,360,.52,.075],['square',112,65,.32,.025]],megaChidori:[['sawtooth',70,330,3.8,.08],['triangle',180,760,3.9,.055],['square',290,950,2.8,.022]],megaLaunch:[['sawtooth',880,150,.52,.10],['triangle',92,250,.6,.12]],megaImpact:[['sawtooth',135,28,1.3,.14],['triangle',84,23,1.6,.18],['square',830,95,.4,.055],['sine',1800,130,.6,.09]],
  kyubi:[['sawtooth',88,35,.65,.12],['triangle',52,34,.8,.15],['square',155,48,.38,.035]],kyubiHit:[['sawtooth',145,42,.25,.12],['triangle',240,55,.28,.085]],
  event:[['triangle',392,523,.18,.13],['sine',523,784,.31,.1],['triangle',196,294,.45,.07]],
  thunder:[['sawtooth',62,24,.8,.11],['triangle',48,22,1.1,.13]],

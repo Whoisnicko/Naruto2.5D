@@ -73,3 +73,6 @@ Producción v1.5 aprobada. Seis poses por dirección y 36 cuadros FX específico
 
 ## v1.7 beta — Kyūbi Awakening
 Modo de una cola, ataques físicos extensibles, Rasengan púrpura y sandbox. [Detalles y pruebas](docs/V17-KYUBI-AWAKENING.md). Producción v1.6b intacta.
+
+## v1.8 beta — Kyūbi Evolution
+Tres formas progresivas, furia, ataques múltiples, colas animadas y FX. [Detalles](docs/V18-KYUBI-EVOLUTION.md). Guardado v11.

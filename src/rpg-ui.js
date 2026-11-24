@@ -1,3 +1,4 @@
+import {skillArt,branchLabel} from './shinobi-art.js';
 import {inventoryIcon} from './inventory-art.js';
 import {characterFor} from './character-data.js';
 import {ITEMS,SLOTS,SLOT_NAMES,RARITIES,STAT_NAMES,SKILLS,treeFor,learnedFor,CAPACITY,itemFor,itemCount,statsFor,levelFor,rankFor,pointsFor,unlockReason} from './rpg-data.js';
@@ -37,7 +38,7 @@ export function createRPGUI(api){
  let opened=false,selected=-1,tab='inventory',drag=-1,lastHot='',filter='all';
  const panel=$('rpgPanel'),grid=$('inventoryGrid'),equipment=$('equipmentGrid'),detail=$('itemDetail'),tree=$('skillTree');
  function state(){return api.state();}
- const icon=id=>inventoryIcon(itemFor(id),()=>itemIcon(id));
+ const icon=id=>inventoryIcon(itemFor(id),()=>itemIcon(id),id);
  const filterMatches=i=>filter==='all'||(filter==='gear'?!!i.slot:filter==='other'?(!i.slot&&i.type!=='consumable'):i.type===filter);
  const filters=$('inventoryFilters');for(const [key,name] of [['all','All'],['gear','Equipment'],['consumable','Consumables'],['other','Materials & scrolls']]){const b=button(name,()=>{filter=key;selected=-1;render();});b.dataset.filter=key;filters.append(b);}
  function dropTo(ev,fn){ev.preventDefault();const from=drag;drag=-1;if(from>=0)fn(from);}
@@ -51,7 +52,7 @@ export function createRPGUI(api){
  function hotbar(){
   const {rpg}=state(),key=rpg.hotbar.map(id=>id+':'+itemCount(rpg,id)).join('|');if(key===lastHot)return;lastHot=key;
   const bar=$('consumableBar');bar.replaceChildren();
-  rpg.hotbar.forEach((id,i)=>{const b=button('',()=>api.quick(i));b.className='quick-item';b.title=(itemFor(id)?.name||'Empty')+' · '+(i+1);b.append(text('small',String(i+1)),itemIcon(id),text('b',String(itemCount(rpg,id))));b.disabled=!id||!itemCount(rpg,id);bar.append(b);});
+  rpg.hotbar.forEach((id,i)=>{const b=button('',()=>api.quick(i));b.className='quick-item';b.title=(itemFor(id)?.name||'Empty')+' · '+(i+1);b.append(text('small',String(i+1)),icon(id),text('b',String(itemCount(rpg,id))));b.disabled=!id||!itemCount(rpg,id);bar.append(b);});
  }
  function showDetail(){
   detail.replaceChildren();detail.style.removeProperty('--item-rarity');const {rpg}=state(),s=rpg.inventory[selected],i=itemFor(s?.id);
@@ -66,6 +67,7 @@ export function createRPGUI(api){
  }
  function render(){
   if(!opened){hotbar();return;}const {rpg,p,quest,enemies}=state(),stats=statsFor(rpg,p.character),spec=characterFor(p.character),skills=treeFor(p.character),learned=learnedFor(rpg,p.character);
+  $('rpgWindow').dataset.character=p.character;
   $('rpgLevel').textContent=spec.name+' · '+rankFor(p.xp)+' · Level '+levelFor(p.xp)+' · '+p.xp+' EXP · '+pointsFor(rpg,p.xp,p.character)+' personal points';
   $('rpgStats').textContent='Attack +'+stats.attack+' · Defense '+(stats.defense+spec.defense)+' · Speed '+Math.round(((1+stats.speed)*spec.speed-1)*100)+'% · Critical '+Math.round((.1+stats.crit+spec.crit)*100)+'% · Chakra/s '+(8+stats.chakra+spec.regen);
   $('inventoryPage').hidden=tab!=='inventory';$('skillsPage').hidden=tab!=='skills';$('invTab').classList.toggle('active',tab==='inventory');$('skillsTab').classList.toggle('active',tab==='skills');
@@ -78,7 +80,8 @@ export function createRPGUI(api){
   equipment.replaceChildren();for(const slot of SLOTS){const id=rpg.equipment[slot],b=button('',()=>{if(id)act(()=>api.unequip(slot));});b.className='equip-slot';b.title=id?'Unequip '+ITEMS[id].name:SLOT_NAMES[slot];b.dataset.slot=slot;b.dataset.filled=String(!!id);if(id)b.style.setProperty('--rarity',RARITIES[ITEMS[id].rarity].color);b.append(id?icon(id):text('span','◇','slot-placeholder'),text('small',SLOT_NAMES[slot]),text('span',itemFor(id)?.name||'Empty'));b.setAttribute('aria-label',SLOT_NAMES[slot]+': '+(itemFor(id)?.name||'Empty')+(id?' · Click to unequip':''));b.ondragover=ev=>{if(drag>=0&&itemFor(rpg.inventory[drag]?.id)?.slot===slot)ev.preventDefault();};b.ondrop=ev=>dropTo(ev,from=>{if(itemFor(rpg.inventory[from]?.id)?.slot===slot){selected=from;act(()=>api.equip(from));}});equipment.append(b);}
   const quick=$('inventoryQuick');quick.replaceChildren();rpg.hotbar.forEach((id,n)=>{const b=button('',()=>{const item=itemFor(rpg.inventory[selected]?.id);if(item?.type==='consumable')act(()=>api.assign(n,rpg.inventory[selected].id));else api.notice('Select a consumable to assign to this slot.');});b.className='inventory-quick-slot';b.title='Quick slot '+(n+1)+' · '+(itemFor(id)?.name||'Empty');b.append(text('small',String(n+1)),icon(id),text('b',String(itemCount(rpg,id))));b.ondragover=ev=>{if(drag>=0&&itemFor(rpg.inventory[drag]?.id)?.type==='consumable')ev.preventDefault();};b.ondrop=ev=>dropTo(ev,from=>{const id=rpg.inventory[from]?.id;if(itemFor(id)?.type==='consumable')act(()=>api.assign(n,id));});quick.append(b);});
   const avatar=$('equipmentPreview');let drawn=false;try{drawn=!!api.preview?.(avatar);}catch(e){console.warn('Equipment preview fallback',e);}if(!drawn)drawEquipmentFallback(avatar,p.character,rpg.equipment);showDetail();
-  tree.replaceChildren();for(const branch of new Set(Object.values(skills).map(s=>s.branch))){const column=text('div','','skill-branch');column.append(text('h3',branch));for(const [id,s] of Object.entries(skills).filter(([,s])=>s.branch===branch)){const reason=unlockReason(rpg,p.xp,id,p.character),b=button(s.name,()=>act(()=>api.unlock(id)));b.className='tree-node'+(learned.includes(id)?' learned':'');b.disabled=!!reason;b.append(text('small',s.desc),text('small',reason||'Learn · 1 point'));column.append(b);}tree.append(column);}
+  tree.replaceChildren();const points=pointsFor(rpg,p.xp,p.character);$('jutsuPoints').textContent=points+' skill point'+(points===1?'':'s')+' available';$('jutsuProgress').textContent=learned.length+' / '+Object.keys(skills).length+' learned';
+  for(const branch of new Set(Object.values(skills).map(s=>s.branch))){const column=text('div','','skill-branch');const entries=Object.entries(skills).filter(([,s])=>s.branch===branch);column.append(text('h3',branchLabel(branch)));for(const [id,s] of entries){const done=learned.includes(id),reason=unlockReason(rpg,p.xp,id,p.character),b=button('',()=>act(()=>api.unlock(id)));b.className='tree-node'+(done?' learned':'');b.dataset.skill=id;b.dataset.state=done?'learned':reason?'locked':'available';b.disabled=!!reason;const info=text('span','','jutsu-info');info.append(text('strong',s.name),text('small',s.desc,'jutsu-description'),text('small','Lv. '+s.level+(s.scroll?' · Chakra Scroll':''),'jutsu-requirements'));const status=text('span',done?'✓ Learned':reason||'Learn · '+s.cost+' point','jutsu-status');b.append(skillArt(id),info,status);if(s.requires){const link=text('div','','jutsu-link');link.dataset.learned=String(learned.includes(s.requires));link.append(text('span','↓'));column.append(link);}column.append(b);}tree.append(column);}
   hotbar();
  }
  $('inventoryBtn').onclick=()=>toggle('inventory');$('skillTreeBtn').onclick=()=>toggle('skills');$('rpgClose').onclick=close;

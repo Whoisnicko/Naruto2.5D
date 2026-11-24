@@ -1,3 +1,4 @@
+import {itemArt} from './shinobi-art.js';
 // Original vector artwork for the inventory. The game's pixel icons remain the fallback.
 const art={
  bowl:`<ellipse cx="32" cy="42" rx="24" ry="8" fill="#0b111d" opacity=".5"/><path d="M9 29Q12 51 32 52Q52 51 55 29Z" fill="#b34627"/><path d="M14 35Q32 46 50 35L46 43Q32 52 18 43Z" fill="#6e2c24"/><ellipse cx="32" cy="29" rx="24" ry="11" fill="#f4c76e"/><ellipse cx="32" cy="29" rx="20" ry="7" fill="#bb7132"/><path d="M15 29q8-9 15 0t17-1M19 31q8-8 14 0t13-1" fill="none" stroke="#ffdf91" stroke-width="2"/><path d="M22 22l7 4m10-6 5 4" stroke="#76b66e" stroke-width="4"/><path d="M34 23L50 6M41 25L57 9" stroke="#f3c18b" stroke-width="2.7"/>`,
@@ -14,11 +15,11 @@ const art={
  charm:`<path d="M32 4q-22 4-19 20t19 9q17 0 19-9T32 4" fill="none" stroke="#c99a51" stroke-width="3"/><path d="M32 22 46 33 42 51 32 59 22 51 18 33Z" fill="url(#gold)"/><path d="M32 28 41 38 32 52 23 38Z" fill="var(--accent)"/><path d="M32 30l-7 8 7 11" fill="none" stroke="#fff3c4" stroke-width="2"/>`,
  cloth:`<path d="M10 13 47 8 55 48 17 56 22 36Z" fill="var(--cloth)"/><path d="M14 15 48 10l3 12-33 5m5 9 29-7M20 48l34-7" fill="none" stroke="var(--accent)" stroke-width="3"/>`
 };
-export function inventoryIcon(item,fallback){
- if(!item||!art[item.icon])return fallback();
+export function inventoryIcon(item,fallback,itemId){
+ if(!item||!(itemArt[itemId]||art[item.icon]))return fallback();
  try{const el=document.createElement('span');el.className='inventory-art-icon';el.setAttribute('aria-hidden','true');el.style.setProperty('--cloth',item.visual?.color||'#729489');el.style.setProperty('--accent',item.visual?.accent||'#dfb578');
  // Gradient IDs must be unique when many slots display the same type.
- const id='inv'+(++inventoryIcon.serial);let source=art[item.icon].replaceAll('url(#metal)','url(#'+id+'m)').replaceAll('url(#gold)','url(#'+id+'g)').replaceAll('url(#paper)','url(#'+id+'p)');
+ const id='inv'+(++inventoryIcon.serial);let source=(itemArt[itemId]||art[item.icon]).replaceAll('url(#metal)','url(#'+id+'m)').replaceAll('url(#gold)','url(#'+id+'g)').replaceAll('url(#paper)','url(#'+id+'p)');
  el.innerHTML=`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="${id}m" x2="1" y2="1"><stop stop-color="#f9eee1"/><stop offset=".45" stop-color="#a4b8c6"/><stop offset="1" stop-color="#526171"/></linearGradient><linearGradient id="${id}g" x2="1" y2="1"><stop stop-color="#ffe5a0"/><stop offset=".5" stop-color="#c48a38"/><stop offset="1" stop-color="#775029"/></linearGradient><linearGradient id="${id}p" x2="1" y2="1"><stop stop-color="#fff0c1"/><stop offset="1" stop-color="#bb8b51"/></linearGradient></defs><g stroke="#29212b" stroke-width="1.6" stroke-linejoin="round">${source}</g></svg>`;return el;}catch{return fallback();}
 }
 inventoryIcon.serial=0;

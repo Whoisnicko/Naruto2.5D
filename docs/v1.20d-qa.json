@@ -1,0 +1,123 @@
+{
+  "scope": "Chromium actual RPG UI and data modules, fixture state, no campaign/Cloudflare; avatar fallback",
+  "checks": [
+    "24 slots",
+    "comparison positive",
+    "equip swaps actual inventory",
+    "comparison negative",
+    "unequip",
+    "drag equip",
+    "drag assign",
+    "consume health and count",
+    "key protected",
+    "filter preserves indices",
+    "drag move",
+    "sort preserves items",
+    "skill tab unchanged",
+    "six nodes and three links",
+    "giant initially locked",
+    "focus learned",
+    "giant available",
+    "giant unlock consumes scroll",
+    "six illustrated skills sasuke",
+    "six illustrated skills sakura",
+    "six illustrated skills kakashi",
+    "six illustrated skills naruto",
+    "skill mobile no horizontal overflow",
+    "close unpauses",
+    "no page errors"
+  ],
+  "layouts": [
+    {
+      "w": 1920,
+      "h": 1080,
+      "window": [
+        400,
+        100.875,
+        1120,
+        878.234375
+      ],
+      "overflow": false,
+      "bodyOverflow": false,
+      "grid": false
+    },
+    {
+      "w": 1366,
+      "h": 768,
+      "window": [
+        123,
+        30.1875,
+        1120,
+        707.625
+      ],
+      "overflow": false,
+      "bodyOverflow": false,
+      "grid": false
+    },
+    {
+      "w": 1280,
+      "h": 720,
+      "window": [
+        80,
+        21.59375,
+        1120,
+        676.796875
+      ],
+      "overflow": false,
+      "bodyOverflow": false,
+      "grid": false
+    },
+    {
+      "w": 1024,
+      "h": 768,
+      "window": [
+        12,
+        30.1875,
+        1000,
+        707.625
+      ],
+      "overflow": false,
+      "bodyOverflow": false,
+      "grid": false
+    },
+    {
+      "w": 768,
+      "h": 1024,
+      "window": [
+        12,
+        30.71875,
+        744,
+        962.546875
+      ],
+      "overflow": false,
+      "bodyOverflow": false,
+      "grid": false
+    },
+    {
+      "w": 390,
+      "h": 844,
+      "window": [
+        12,
+        21.09375,
+        366,
+        801.796875
+      ],
+      "overflow": false,
+      "bodyOverflow": false,
+      "grid": false
+    },
+    {
+      "w": 844,
+      "h": 390,
+      "window": [
+        12,
+        11.703125,
+        820,
+        366.59375
+      ],
+      "overflow": false,
+      "bodyOverflow": false,
+      "grid": false
+    }
+  ]
+}

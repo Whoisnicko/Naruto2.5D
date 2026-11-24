@@ -9,7 +9,7 @@ export function normalizePerformance(value={}){
  const v=value&&typeof value==='object'?value:{},base=PERFORMANCE_PRESETS[v.preset]||PERFORMANCE_PRESETS.ultra;
  return {preset:base.preset,fpsLimit:['60','120','144','unlimited'].includes(String(v.fpsLimit))?String(v.fpsLimit):base.fpsLimit,
  resolution:Math.round(bound(v.resolution,55,125,base.resolution)/5)*5,particles:[50,75,100].includes(Number(v.particles))?Number(v.particles):base.particles,
- shake:Math.round(bound(v.shake,0,100,base.shake)),targetAssist:typeof v.targetAssist==='boolean'?v.targetAssist:base.targetAssist,dynamic:typeof v.dynamic==='boolean'?v.dynamic:base.dynamic};
+ shake:Math.round(bound(v.shake,0,100,base.shake)),targetAssist:true,dynamic:typeof v.dynamic==='boolean'?v.dynamic:base.dynamic};
 }
 export function createPerformanceController(initial){
  let settings=normalizePerformance(initial),scale=settings.resolution/100,good=0,bad=0,windowStart=null,head=0,count=0,lastReport={fps:0,p95:0,max:0,cpu:0,samples:0};

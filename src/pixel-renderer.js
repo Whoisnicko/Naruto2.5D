@@ -9,6 +9,8 @@ const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 export function direction(x=0,z=1){return Math.abs(x)>Math.abs(z)?(x<0?1:2):(z<0?3:0);}
 export function frameFor(actor,clock){
  const a=actor.anim;
+ if(!a&&actor.guarding)return {col:ANIMS.attack.start,state:'guard'};
+ if(!a&&actor.charging)return {col:ANIMS.cast.start+Math.floor(clock*6)%Math.min(2,ANIMS.cast.count),state:'charge'};
  if(a&&a.left>0){
   if(actor.character==='naruto'&&Number.isInteger(a.rasPose))return {col:38+a.rasPose,state:'rasengan'};
   if(actor.character==='naruto'&&a.k===' ')return {col:38+rasenganPose(a),state:'rasengan'};

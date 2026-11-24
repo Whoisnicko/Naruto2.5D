@@ -1,4 +1,4 @@
-import {directionToward} from './combat-data.js';
+import {directionToward,COMBAT} from './combat-data.js';
 // Stable enemy IDs map to roles; save files keep the original five IDs and 70 HP.
 export const ENEMY_ROLES=['brawler','thrower','guard','brawler','thrower'];
 export const ROLES={
@@ -41,12 +41,12 @@ export function tickEnemy(e,p,clones,dt,move,fire,hit,blocked=()=>false,team={})
  const r=roleFor(e);e.motion=false;e.attack=Math.max(0,(e.attack||0)-dt);e.stagger=Math.max(0,(e.stagger||0)-dt);
  if(e.stagger>0){e.ai='stagger';e.guard=false;e.intent=null;e.pendingAttack=0;return;}
  if(e.intent){
-  e.guard=false;e.ai='windup';e.intent.left-=dt;e.pendingAttack=Math.max(0,e.intent.left);
+  e.guard=false;e.ai='windup';if(e.intent.mode==='melee'&&e.intent.left-dt>COMBAT.defense.enemyAimLock){const target=targetFor(e,p,clones),v=directionToward(target.x-e.x,target.z-e.z);e.dirX=e.intent.dx=v.x;e.dirZ=e.intent.dz=v.z;}e.intent.left-=dt;e.pendingAttack=Math.max(0,e.intent.left);
   if(e.intent.left<=0){const intent=e.intent;e.intent=null;e.ai='recover';e.attack=r.cooldown;
    if(intent.mode==='heal'){team.heal?.(e,intent);}
    else if(intent.mode==='summon'){team.summon?.(e);}
-   else if(intent.mode==='ranged'||e.role==='thrower')fire(e,intent,r);
-   else for(const target of [p,...clones])if((target.life??1)>0&&(target.hp??100)>0&&dist(target,e)<=r.radius)hit(target,r.damage,e);
+   else if(intent.mode==='ranged')fire(e,intent,r);
+   else for(const target of [p,...clones])if((target.life??1)>0&&(target.hp??100)>0&&dist(target,e)<=r.radius){const v=directionToward(target.x-e.x,target.z-e.z);if(v.x*intent.dx+v.z*intent.dz>=.2&&!Array.from({length:5},(_,i)=>i+1).some(i=>blocked(e.x+(target.x-e.x)*i/6,e.z+(target.z-e.z)*i/6,.08)))hit(target,r.damage,e,'physical');}
   }return;
  }
  const target=targetFor(e,p,clones),d=dist(e,target),v=directionToward(target.x-e.x,target.z-e.z);

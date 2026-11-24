@@ -83,21 +83,22 @@ export function createPixelSystem(scene){
   setFrame(item,anim.col,row);
   item.obj.center.set(.5,a.fallen?.5:0);item.material.rotation=a.fallen?-Math.PI/2:0;item.obj.position.set(a.x,a.fallen?.28:.035+(a.air||0),a.z);item.shadow.position.set(a.x,.024,a.z);item.shadow.scale.set(kind==='whiteSerpent'?2:kind==='shukaku'?1.85:1,kind==='whiteSerpent'?2:kind==='shukaku'?1.85:1,1);
   item.material.opacity=a.waterClone?.66:kind==='clone'?.84:1;item.material.color.setHex(a.shieldLeft>0?0xa5e5ff:a.waterClone?0x79d5ee:a.kyubiLeft>0||a.kyubi?0xffb8a0:a.flash>0?0xffe8cb:a.guard?0xffd98b:a.substitution>0?0xc9f1e4:a.hit>0&&!a.anim?0xffc1a3:a.patrol||a.temporary?(roleFor(a).tint||0xffffff):0xffffff);item.material.opacity=a.invuln>0&&kind==='player'?.75:a.role==='assassin'&&a.ai==='flank'?.55:item.material.opacity;
+  if(['sasukeSharingan','sasukeMarked','sasukeCursed'].includes(kind)&&a.sprinting&&dt>0&&item.clock-item.trailAt>.075){item.trailAt=item.clock;spawnTrail(a,row,true);}
   if(kind==='player'){hero={actor:a,row,item};if(characterFor(a.character).art==='player'&&a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>(a.dashTime>0?.035:.085)){item.trailAt=item.clock;spawnTrail(a,row);}if(characterFor(a.character).art==='player'&&a.anim&&a.anim!==item.lastAnim&&a.anim.k==='j')spawnTrail(a,row);item.lastAnim=a.anim||null;}
   return true;
  }
  function end(){for(const [a,item] of active)if(item.seen!==generation){item.obj.visible=item.shadow.visible=false;active.delete(a);free[item.kind].push(item);}}
- function spawnTrail(a,row){
+ function spawnTrail(a,row,valley=false){
   let t=trails.find(o=>o.life<=0);
   if(!t){if(trails.length>=8)return;t=sprite(maps.smear,3,4,2.4,2.4,true,.5);t.material.depthWrite=false;scene.add(t.obj);trails.push(t);}
-  t.life=.18;t.material.color.setHex(a.kyubiLeft>0?0xe94c38:0xffffff);t.rowDir=row;t.obj.visible=true;t.obj.position.set(a.x-(a.dirX||0)*.45,.035,a.z-(a.dirZ||0)*.45);
+  t.life=.18;t.material.color.setHex(valley?0xc1a5f2:a.kyubiLeft>0?0xe94c38:0xffffff);t.rowDir=row;t.obj.visible=true;t.obj.position.set(a.x-(a.dirX||0)*.45,.035,a.z-(a.dirZ||0)*.45);
  }
  function drawTrails(dt){
   for(const tr of trails){if(tr.life<=0){tr.obj.visible=false;continue;}tr.life=Math.max(0,tr.life-dt);tr.obj.visible=tr.life>0;
    setFrame(tr,Math.min(2,Math.floor((1-tr.life/.18)*3)),tr.rowDir);tr.material.opacity=.52*tr.life/.18;}
  }
  function getFX(i){if(!fxPool[i]){const f=sprite(maps.fx,FX_COLS,FX_ROWS.length,2,2,false);f.material.depthWrite=false;scene.add(f.obj);fxPool[i]=f;}return fxPool[i];}
- function effects(list,clones,projectiles,t,dt,quality,player){
+ function effects(list,clones,projectiles,t,dt,quality,player,boss=null){
   drawTrails(dt);rasPool.begin();let kn=0,n=0,limit=quality===1?48:quality===.75?32:20;
   function add(type,x,y,z,size,col,alpha=1,rotation=0,red=false){
    if(n>=limit)return;const f=getFX(n++),row=FX_ROWS.indexOf(type);if(row<0)return;
@@ -131,7 +132,13 @@ export function createPixelSystem(scene){
   }
   // Priority: main effects and projectiles first, accents second. Shared pool remains capped.
   const accents=[];
-  for(const e of list){
+  // Reserve the high-priority Katon sprites before ordinary effects consume the shared pool.
+  if(boss?.intent?.projectile==='inferno'){const a=boss.intent,q=clamp(1-a.left/a.total,0,1),dx=a.dx,dz=a.dz;add('infernoOrb',boss.x+dx*.9,1.2,boss.z+dz*.9,.9+q*2.8,Math.floor(t*24)%8,1,Math.atan2(-dz*.64,dx));}
+  const fires=projectiles.filter(a=>a.kind==='valleyInferno'||a.kind==='valleyEmber'),zones=boss?.fireZones||[];limit=Math.min(48,Math.max(limit,n+fires.length+zones.length+2));
+  for(const a of fires){const big=a.kind==='valleyInferno',f=Math.floor(t*(big?28:24))%8,ang=Math.atan2(-a.dz*.64,a.dx);add(big?'infernoOrb':'infernoEmber',a.x,big?1.25:.83,a.z,big?4.6:1.3,f,1,ang);}
+  for(const q of zones)add('infernoGround',q.x,.86,q.z,q.r*2.2,Math.floor(t*13+q.x*2+q.z*3)&7,Math.min(1,q.life/.8));
+  for(const a of fires)if(a.kind==='valleyInferno'){const trail=a.trail||[],count=quality===1?5:quality===.75?3:2;for(let k=0;k<count;k++){const idx=trail.length-2-k*2;if(idx<0)break;const q=trail[idx],ang=Math.atan2(-(q.dz??a.dz)*.64,q.dx??a.dx),size=2.5*(1-k/(count+1));add('infernoTrail',q.x,.95+.12*Math.sin(t*17+k),q.z,size,(Math.floor(t*28)-k+8)%8,.9*(1-k/(count+1)),ang);}}
+  for(const e of list){if(e.type==='infernoBurst'){const q=clamp(1-e.life/e.max,0,.999);add('infernoBurst',e.x,1.05,e.z,2.2+q*e.r*2.1,Math.floor(q*8),1-q*.65);continue;}
    if(e.reference&&rasMap&&(e.type==='rasengan'||e.type==='giant')){const q=clamp(1-e.life/e.max,0,.999),angle=Math.atan2(-e.dz*.64,e.dx),size=(e.giant?5.0:3.5)*(e.kyubi?1.2:.74)*(e.scale||1),contact=e.contact&&q<.18,f=Math.floor(clamp((q-.18)/.82,0,.999)*12);if(ras(contact?0:1,contact?Math.floor(t*32)%12:f,e.x,1.15,e.z,contact?size*.68:size,1-q*.55,contact?0:angle,!!e.kyubi)){if(quality>=.75){ras(contact?3:2,contact?Math.floor(t*32)%12:f,e.x,contact?1.15:.20,e.z,size*.95,.9*(1-q),0,!!e.kyubi);if(!contact)ras(4,f,e.x,1.15,e.z,size*1.15,.85*(1-q),0,!!e.kyubi);}continue;}}
    const q=clamp(1-e.life/e.max,0,.999),f=Math.floor(q*8),type=FX_ROWS.includes(e.type)?e.type:e.type==='heavy'?'slash':'hit';
    const large=['giant','storm','earth','cracks','wall'].includes(type),size=large?Math.min(5.8,Math.max(2.6,e.r*1.12)):type==='rasengan'?2.9:type==='clone'?2.8:type==='hit'?1.6:2.7;
@@ -148,7 +155,7 @@ export function createPixelSystem(scene){
   }
   for(const c of clones){if(c.life>4.58)add('clone',c.x,.95,c.z,2.8,Math.floor(clamp((5-c.life)/.42,0,.999)*8),.9,0,!!c.kyubi);}
   for(const a of projectiles){
-   if(a.kind==='sandShuriken'||a.kind==='boneBullet'||a.kind==='valleyBlade')continue;
+   if(a.kind==='sandShuriken'||a.kind==='boneBullet'||a.kind==='valleyBlade'||a.kind==='valleyInferno'||a.kind==='valleyEmber')continue;
    const type=a.kind==='water'?'dragon':a.kind==='iceNeedle'?'ice':['fire','lightning','wind'].includes(a.kind)?a.kind:a.hostile?'kunai':'shuriken',elemental=['dragon','fire','lightning','wind'].includes(type),f=Math.floor(t*25)%8,angle=Math.atan2(-a.dz*.64,a.dx);
    add(type,a.x,.83,a.z,elemental?(type==='dragon'?(a.homing?4.2:3.2):2.2):a.kind==='iceNeedle'?.75:.75,f,1,elemental||a.kind==='iceNeedle'?angle:Math.atan2(-a.dx,-a.dz*.64),!!a.kyubi);
    if(elemental)accents.push(()=>{const tail=type==='fire'?'firetrail':type==='dragon'?'water':type;add(tail,a.x-a.dx*.85,.8,a.z-a.dz*.85,1.8,f,.6,angle,!!a.kyubi);if(quality===1)add('sparks',a.x-a.dx*1.4,.8,a.z-a.dz*1.4,1.3,f,.45,0,!!a.kyubi);});

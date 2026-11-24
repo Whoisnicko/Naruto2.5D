@@ -65,3 +65,6 @@ Rama `feature/v17-kyubi-awakening`. Entrar en Sandbox con Naruto, pulsar Kyūbi 
 
 ## v1.8 beta — Kyūbi Evolution
 Probar 1, 2 y 3 colas en Sandbox; T evoluciona con furia 100. Validar combos, impulso involuntario, expiración y FPS. `node tests/smoke.mjs`. Preview prevista: https://feature-v18-kyubi-evolution.naruto2-5d.pages.dev/
+
+## v1.8b — Kyūbi definitivo (tres colas)
+Decisión del jugador: una única forma de tres colas, activación directa con T al 100%, 14 s, y un botón de sandbox. Se conserva el arte, Rasengan púrpura, ataques extensibles, daño múltiple y furia de v1.8. No añadir más transformaciones por ahora. Guardado v11. Smoke tests de lógica aprobados; render/audio reales y deploy pendientes.

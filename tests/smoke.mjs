@@ -12,7 +12,7 @@ const combat=new Function(strip(src['combat-data'])+'\nreturn {COMBAT,stepMotion
 const bossApi=new Function('directionToward',strip(src['boss-data'])+'\nreturn {ARENA,BOSSES,newBossProgress,validateBossProgress,nextBoss,makeBoss,bossContains,tickBoss,sandboxBoost};')(combat.directionToward);
 const campaignApi=new Function(strip(src['campaign-data'])+'\nreturn {CHAPTERS,FINALE,newCampaign,validateCampaign,chapterIndex,completeCampaign,campaignSummary};')();
 const saved=new Function('localStorage','validateRPG','migrateRPG','newWorld','validateWorld','newBossProgress','validateBossProgress','newCampaign','validateCampaign',strip(src.save)+'\nreturn {validateSave,packSave,readSave,writeSave,importSave,exportSave};')(localStorage,rpgApi.validateRPG,rpgApi.migrateRPG,worldApi.newWorld,worldApi.validateWorld,bossApi.newBossProgress,bossApi.validateBossProgress,campaignApi.newCampaign,campaignApi.validateCampaign);
-const hd=new Function(strip(src['hd-animation'])+'\nreturn {slashFrame,slashFacing,slashUV};')();
+const hd=new Function(strip(src['hd-animation'])+'\nreturn {slashFrame,slashFacing,slashUV,heroFrame,heroUV};')();
 const {COMBAT,stepMotion}=combat;
 const ai=new Function('directionToward',strip(src['enemy-ai'])+'\nreturn {prepareEnemy,roleFor,targetFor,damageModifier,tickEnemy,safeSubstitution};')(combat.directionToward);
 const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{style:{},textContent:'',disabled:false,click(){},dataset:{},value:''});return nodes.get(id)};
@@ -100,6 +100,15 @@ assert.equal(hd.slashFrame({...attackAnim,k:'j'}),null);
 assert.equal(hd.slashFacing(1,0),'right');assert.equal(hd.slashFacing(-1,0),'left');assert.equal(hd.slashFacing(0,1),null);
 const uv=hd.slashUV(3,1,true);assert.equal(uv.u,1);assert.equal(uv.sx,-.25);assert.equal(uv.v,0);
 game.start(false);p=game.state.p;p.dirX=1;p.dirZ=0;assert(game.attack('f'));assert.equal(p.anim.artFacing,'right');sim(.27);assert(game.state.projectiles.some(x=>x.kind==='wind'&&x.damage===34));
+// HD hero: every idle, walking, sprinting and attack state selects an illustrated pose.
+for(const [dx,dz,row,flip] of [[0,1,0,false],[1,0,1,false],[-1,0,1,true],[0,-1,2,false]]){
+ const actor={dirX:dx,dirZ:dz,motion:false};
+ const f=hd.heroFrame(actor,0);assert.equal(f.col,0);assert.equal(f.row,row);assert.equal(f.flip,flip);
+ assert.equal(hd.heroFrame({...actor,motion:true},0).col,1);
+ assert.equal(hd.heroFrame({...actor,motion:true},.13).col,2);
+ assert.equal(hd.heroFrame({...actor,anim:{k:'j',total:.32,left:.1,windup:.095}},0).col,1);
+}
+assert.equal(hd.heroUV(2,1,true).sx,-.25);
 // Independently test animation metadata and hit-stop decay.
 const art=new Function(strip(src['pixel-art'])+'\nreturn {ANIMS,ACTOR_COLS};')();
 const anim=new Function('ANIMS',strip(src['pixel-renderer'])+'\nreturn {frameFor};')(art.ANIMS);

@@ -125,8 +125,8 @@ game.start(false);p=game.state.p;assert(!game.attack('constructor'));p.hp=1;p.in
 feedback.reset();feedback.impact(undefined,NaN);assert(!feedback.frozen);assert.equal(feedback.offset().x,0);
 // Independently test animation metadata and hit-stop decay.
 const art=new Function(strip(src['pixel-art'])+'\nreturn {ANIMS,ACTOR_COLS,artFor,rasenganPose,rasenganHand};')();
-const anim=new Function('ANIMS','artFor','rasenganPose',strip(src['pixel-renderer'])+'\nreturn {frameFor,createRasenganPool,rasenganVisualKyubi};')(art.ANIMS,art.artFor,art.rasenganPose);
-assert.equal(art.ACTOR_COLS,44);assert.equal(anim.frameFor({anim:{k:'j',combo:2,left:.3,total:.34,windup:.1}},0).state,'kick');assert.equal(anim.frameFor({anim:{k:'j',combo:3,left:.2,total:.43,windup:.14}},0).state,'finish');
+const anim=new Function('ANIMS','artFor','rasenganPose',strip(src['pixel-renderer'])+'\nreturn {frameFor,advancePose,createRasenganPool,rasenganVisualKyubi};')(art.ANIMS,art.artFor,art.rasenganPose);
+assert.equal(art.ACTOR_COLS,64);assert.equal(anim.frameFor({anim:{k:'j',combo:2,left:.3,total:.34,windup:.1}},0).state,'kick');assert.equal(anim.frameFor({anim:{k:'j',combo:3,left:.2,total:.43,windup:.14}},0).state,'finish');
 for(const char of ['naruto','sasuke','sakura','kakashi'])for(const k of [' ','f','l','g']){const a={character:char,anim:{k,left:.6,total:.6,windup:.25}};const first=anim.frameFor(a,0);assert(first.col>=22);a.anim.left=.25;assert(anim.frameFor(a,0).col>first.col);a.anim.left=.01;assert.equal(anim.frameFor(a,0).col,first.col+(char==='naruto'&&k===' '?5:3));}
 for(let i=0;i<6;i++){const elapsed=i<3?(i+.5)*.26/3:.26+(i-3+.5)*.39/3;assert.equal(art.rasenganPose({total:.65,left:.65-elapsed,windup:.26}),i);}game.start(false);p=game.state.p;assert(game.attack(' '));sim(.65);const ref=game.state.effects.find(e=>e.reference);assert(ref&&ref.type==='rasengan'&&Number.isFinite(ref.dx)&&Number.isFinite(ref.dz));assert.equal(COMBAT.skills[' '].damage,60);assert.equal(COMBAT.skills[' '].cost,20);
 // v1.6b: hold/release, scaled travel and damage, collision, interruption, both techniques.

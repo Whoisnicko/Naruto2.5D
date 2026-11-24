@@ -1,7 +1,7 @@
 // Original, deterministic pixel sheets. All primitives rasterize on integer pixels;
 // no generated image or third-party character assets are needed.
-export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=44,DIRS=['down','left','right','up'];
-export const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12},thrust:{start:22,count:4,fps:12},release:{start:26,count:4,fps:12},seal:{start:30,count:4,fps:10},slam:{start:34,count:4,fps:12},rasengan:{start:38,count:6,fps:12}};
+export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=64,DIRS=['down','left','right','up'];
+export const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12},thrust:{start:22,count:4,fps:12},release:{start:26,count:4,fps:12},seal:{start:30,count:4,fps:10},slam:{start:34,count:4,fps:12},rasengan:{start:38,count:6,fps:12},guard:{start:44,count:4,fps:8},charge:{start:48,count:4,fps:8},dash:{start:52,count:4,fps:24},brake:{start:56,count:2,fps:18},guardBreak:{start:58,count:2,fps:8},dashStrike:{start:60,count:4,fps:16}};
 export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice','lightning','fire','heal','earth','focus','shockwave','sparks','slash','firetrail','dragon','wall','cracks','aura','storm','infernoOrb','infernoBurst','infernoEmber','infernoTrail','infernoGround'];
 export const FX_SIZE=32,FX_COLS=8;
 export const TECH_ART={
@@ -77,6 +77,7 @@ function whiteSerpentCell(dir,frame){
 function actorCell(kind,dir,frame,gear=null,kyubi=false){
  if(kind==='whiteSerpent')return whiteSerpentCell(dir,frame);
  if(kind==='shukaku')return shukakuCell(dir,frame);
+ const extra=frame>=44?frame-44:-1;if(extra>=0)frame=[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][extra];
  const ras=frame>=38?frame-38:-1;if(ras>=0)frame=[14,14,14,7,12,0][ras];
  const special=frame>=22?Math.floor((frame-22)/4):-1,stage=frame>=22?(frame-22)%4:0;if(special>=0)frame=[14,14,15,14][stage];
  const sage=kind==='jiraiyaSage';if(sage)kind='jiraiya';const sasukeForm=kind==='sasukeSharingan'?1:kind==='sasukeMarked'?2:kind==='sasukeCursed'?3:kind==='sasukeInjured'?4:0;if(sasukeForm)kind='sasuke';const kimiForm=kind==='kimiMarked'?1:kind==='kimiCursed'?2:0;if(kimiForm)kind='kimimaro';const role=kind;const p=sasukeForm===3?{hair:'#56516d',hairLight:'#8782a2',hairShade:'#363247',shirt:'#847d91',shade:'#534f69',light:'#b0a7bd',trim:'#ddd9d7',metal:'#c8c7df'}:kimiForm===2?{hair:'#d6d6ce',hairLight:'#eee9df',hairShade:'#8b878d',shirt:'#8e7c74',shade:'#645956',light:'#b5a091',trim:'#554653',metal:'#f2eada'}:PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
@@ -182,13 +183,42 @@ function actorCell(kind,dir,frame,gear=null,kyubi=false){
    if(ras===3||ras===4){limb(9,23,6,28,leg,4);limb(14,23,18,28,leg,4);rect(3,28,6,3,ink);rect(16,28,6,3,ink);rect(4,28,4,1,shoe);rect(17,28,4,1,shoe);}
   }
  }
+ // New, direction-aware defensive and movement poses. All coordinates stay on the original pixel grid.
+ if(extra>=0){
+  const sleeve=gear?.torso?.color||p.shirt,shade=gear?.offhand?.color||p.shade,leg=gear?.legs?.color||p.shirt,shoe=gear?.feet?.color||p.trim;
+  const arm=(x,y,xx,yy,col)=>{limb(x,y,xx,yy,col,3);rect(xx-1,yy-1,3,3,skin);rect(xx,yy-1,1,1,skinLight);};
+  const foot=(x,y,xx,yy,col)=>{limb(x,y,xx,yy,col,3);rect(xx-2,yy,5,3,ink);rect(xx-1,yy,3,1,shoe);};
+  if(extra<4){ // raise, brace, breathe and settle the forearm guard
+   const q=extra===0?1:extra===2?1:0;
+   if(side){arm(9,19,15,14+q,shade);arm(15,19,19,12+q,sleeve);foot(10,23,7,28,leg);foot(14,23,17,28,leg);}
+   else{arm(7,19,10,13+q,shade);arm(16,19,14,13+q,sleeve);foot(9,23,7,28,leg);foot(14,23,17,28,leg);}
+  }else if(extra<8){ // hand seal, focus, two breathing poses
+   const q=extra-4,spread=q===0?4:q===2?2:1,yy=17+(q===2?1:0);
+   arm(8,19,12-spread,yy,shade);arm(16,19,12+spread,yy,sleeve);
+   if(q>0){rect(11,yy-2,2,4,skinLight);rect(10,yy+1,4,1,skinShade);}
+   foot(9,23,7,28,leg);foot(14,23,17,28,leg);
+  }else if(extra<12){ // lean into dash, alternate stride, trailing arms
+   const q=extra-8,step=[-3,-1,3,1][q];
+   if(side){arm(11,19,4+q%2,22,shade);arm(15,19,8+q%2,23,sleeve);foot(10,23,5-step,27,leg);foot(14,23,17+step,27,leg);}
+   else{arm(7,19,4,23,shade);arm(16,19,20,23,sleeve);foot(9,23,7,27+(q%2),leg);foot(14,23,17,28-(q%2),leg);}
+  }else if(extra<14){ // brake without extending the collision body
+   const q=extra-12;if(side){arm(10,19,7,20,shade);arm(15,19,19-q*2,20,sleeve);foot(10,23,6,28,leg);foot(14,23,18-q*2,28,leg);}
+   else{arm(8,19,5+q,20,shade);arm(16,19,19-q,20,sleeve);foot(9,23,6,28,leg);foot(14,23,18,28,leg);}
+  }else if(extra<16){ // staggered guard break
+   const q=extra-14;arm(8,19,4+q,23,shade);arm(16,19,20-q,23,sleeve);foot(9,23,6,28,leg);foot(14,23,18,28,leg);
+  }else{ // dash strike: anticipation, contact, follow through, recovery
+   const q=extra-16;
+   if(side){arm(10,19,[5,8,7,9][q],[20,20,22,22][q],shade);arm(15,18,[10,21,20,16][q],[16,15,20,22][q],sleeve);foot(10,23,[4,3,7,8][q],28,leg);foot(14,23,[17,19,18,15][q],28,leg);}
+   else{arm(8,19,[6,5,5,8][q],[18,19,21,22][q],shade);arm(16,18,[14,20,18,16][q],[16,back?10:23,20,22][q],sleeve);foot(9,23,6,28,leg);foot(14,23,18,28,leg);}
+  }
+ }
  if(frame===13){rect(2,10,2,2,'#ffe4bc');rect(20,13,2,2,'#ffe4bc');}
  if(dir===1){const out=cell(24,32);out.ctx.translate(24,0);out.ctx.scale(-1,1);out.ctx.drawImage(s.c,0,0);return out.c;}
  return s.c;
 }
 export function makeActorSheet(kind,gear=null,kyubi=false){
  const c=canvas(ACTOR_W*ACTOR_COLS,ACTOR_H*4),ctx=c.getContext('2d');
- for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++)ctx.drawImage(actorCell(kind,d,f,gear,kyubi),f*ACTOR_W,d*ACTOR_H);
+ for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++){if(f>=44&&!['player','sasuke','sakura','npc'].includes(kind)){const src=[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][f-44];ctx.drawImage(c,src*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H,f*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H);}else ctx.drawImage(actorCell(kind,d,f,gear,kyubi),f*ACTOR_W,d*ACTOR_H);}
  return c;
 }
 // High-speed, deliberately stretched silhouettes. 32x32, three frames per direction.

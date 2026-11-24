@@ -115,32 +115,36 @@ export function tickHaku(b,p,dt,move,signal,random=Math.random){
  move(b,dir.x*dt*b.spec.speed*.78,dir.z*dt*b.spec.speed*.78);b.motion=Math.hypot(b.x-x,b.z-z)>.0001;if(b.motion)b.walk+=dt*8;else{b.orbitDir*=-1;b.orbitLeft=.6;}
 }
 
-export const WORLD_BOSSES={kabuto:{id:'kabuto',name:'Kabuto Yakushi',hp:1500,speed:4.4,arena:{x:36,z:-30,r:12,name:'Abandoned Medical Outpost'},xp:650,coins:420,reward:[['medicalGloves',1],['pill',3]],patterns:[
-{id:'scalpel',name:'Chakra Scalpel',shape:'line',radius:1.1,length:5,reach:5,windup:.55,damage:19,cooldown:3},
-{id:'disrupt',name:'Nervous System Disruption',shape:'target',radius:2.7,reach:11,windup:1,damage:12,cooldown:12},
-{id:'heal',name:'Medical Regeneration',shape:'circle',radius:2,reach:30,windup:2,damage:0,cooldown:20},
+export const WORLD_BOSSES={kabuto:{id:'kabuto',name:'Kabuto Yakushi',hp:1500,speed:4.9,arena:{x:36,z:-30,r:12,name:'Abandoned Medical Outpost'},xp:650,coins:420,reward:[['medicalGloves',1],['pill',3]],patterns:[
+{id:'scalpel',name:'Chakra Scalpel',shape:'line',radius:1.1,length:5,reach:5,windup:.55,damage:24,cooldown:3},
+{id:'disrupt',name:'Nervous System Disruption',shape:'target',radius:3.2,reach:11,windup:1,damage:16,cooldown:12},
+{id:'heal',name:'Medical Regeneration',shape:'circle',radius:2,reach:30,windup:2.8,damage:0,cooldown:20},
 {id:'evasion',name:'Evasive Step',shape:'circle',radius:1,reach:5,windup:.25,damage:0,cooldown:7},
-{id:'cross',name:'Surgical Cross',shape:'line',radius:1.2,length:10,reach:10,windup:.85,damage:23,cooldown:9,phase:2}
+{id:'extract',name:'Chakra Extraction',shape:'target',radius:3.3,reach:12,windup:1.15,damage:15,cooldown:14},
+ {id:'cross',name:'Surgical Cross',shape:'line',radius:1.2,length:10,reach:10,windup:.85,damage:27,cooldown:9,phase:2},
+ {id:'autopsy',name:'Autopsy Protocol',shape:'target',radius:2.5,reach:24,windup:.9,damage:14,cooldown:15,phase:2,pulses:3}
 ]}};
-export const KABUTO_RULES={healFraction:.06,healCap:.18,interruptDamage:35,disruptDuration:5,regenMultiplier:.6};
+export const KABUTO_RULES={healFraction:.30,healCap:.90,healThreshold:.70,interruptRecovery:2,disruptDuration:8,regenMultiplier:.35,extractChakra:28,phaseSpeed:1.25};
 Object.assign(MIST_SCENES,{
  kabutoIntro:{title:'THE MEDICAL PRODIGY',lines:[['Kabuto','Interesting. Your chakra leaves a very readable signature.'],['Naruto','Quit staring and fight!'],['Kabuto','Very well. Let us see how long you last without your precious chakra.']]},
  kabutoPhase:{title:'THE ANATOMY OF A SHINOBI',lines:[['Kabuto','I underestimated you. No matter. I know exactly where to cut.'],['Naruto','I will not let you decide what I can do!']]},
  kabutoEnd:{title:'THE FAILED EXPERIMENT',lines:[['Kabuto','So much for my calculations. We will meet again.'],['Naruto','Next time, try fighting without the cheap tricks.']]}
 });
 Object.assign(MIST_CAMERA,{kabutoIntro:[{zoom:1.8,yaw:.18},{zoom:1.55,yaw:-.16},{zoom:2.2,yaw:.24}],kabutoPhase:[{zoom:2.4,yaw:-.22},{zoom:1.8,yaw:.14}],kabutoEnd:[{zoom:1.9,yaw:.2},{zoom:1.55,yaw:-.12}]});
-export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4},healed:0,orbitDir:1,orbitLeft:2};}
+export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0,orbitDir:1,orbitLeft:2};}
 export function tickKabuto(b,p,clones,dt,move,hit,signal,random=Math.random){
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;b.attack=Math.max(0,b.attack-dt);
  for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
- if(b.hp<=b.maxHP/2&&b.phase===1){b.phase=2;if(b.intent)b.cooldowns[b.intent.id]=b.intent.cooldown;b.intent=null;b.anim=null;b.attack=1;signal('kabutoPhase',b);return;}
+ if(b.phase===1&&b.hp<=b.maxHP/2)b.phasePending=true;
+ if(b.phase===1&&b.phasePending&&b.intent?.id!=='heal'){b.phase=2;b.phasePending=false;if(b.intent)b.cooldowns[b.intent.id]=b.intent.cooldown;b.intent=null;b.anim=null;b.attack=1;signal('kabutoPhase',b);return;}
  if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.cooldowns[a.id]=a.cooldown;b.attack=.65;
   if(a.id==='heal'){const amount=Math.max(0,Math.min(b.maxHP*KABUTO_RULES.healFraction,b.maxHP*KABUTO_RULES.healCap-b.healed,b.maxHP-b.hp));b.hp+=amount;b.healed+=amount;signal('kabutoHeal',b,{...a,amount});}
   else if(a.id==='evasion'){const v=directionToward(p.x-b.x,p.z-b.z);move(b,-v.z*2.4*b.orbitDir,v.x*2.4*b.orbitDir);signal('kabutoEvade',b,a);}
-  else {for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&(bossContains(a,q)||a.id==='cross'&&bossContains({...a,dx:-a.dz,dz:a.dx},q))){const landed=q===p&&!(p.invuln>0)&&!(p.substitution>0);hit(q,a.damage,b);if(landed&&a.id==='disrupt')signal('kabutoDisrupt',b,a);}signal('strike',b,a);}
+  else {for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&(bossContains(a,q)||a.id==='cross'&&bossContains({...a,dx:-a.dz,dz:a.dx},q))){const landed=q===p&&!(p.invuln>0)&&!(p.substitution>0);hit(q,a.damage,b);if(landed&&a.id==='disrupt')signal('kabutoDisrupt',b,a);if(landed&&a.id==='extract')signal('kabutoExtract',b,a);}signal('strike',b,a);
+   if(a.id==='autopsy'&&(a.pulse||1)<a.pulses){b.cooldowns[a.id]=0;b.attack=0;b.intent={...a,x:p.x,z:p.z,left:a.windup,total:a.windup,pulse:(a.pulse||1)+1};b.anim={k:'j',left:a.windup+.25,total:a.windup+.25,windup:a.windup};signal('windup',b,b.intent);}}
  }return;}
  const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
- if(!b.attack){const ready=b.spec.patterns.filter(a=>(a.phase||1)<=b.phase&&b.cooldowns[a.id]<=1e-8&&d<=a.reach&&(a.id!=='heal'||b.hp<=b.maxHP*.88&&b.healed<b.maxHP*KABUTO_RULES.healCap));const heal=ready.find(a=>a.id==='heal');const varied=ready.filter(a=>a.id!==b.lastPattern);const opts=varied.length?varied:ready;const a=heal||opts[Math.floor(random()*opts.length)];if(a){const windup=a.windup;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:windup,total:windup};b.anim={k:a.id==='heal'?'l':'j',left:windup+.25,total:windup+.25,windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
- b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.3+random()*1.4;}const desired=b.cooldowns.scalpel<.5?2.5:5,radial=Math.max(-.75,Math.min(1,(d-desired)*.6)),tan=d>8?.15:.8,dir=directionToward(v.x*radial-v.z*tan*b.orbitDir,v.z*radial+v.x*tan*b.orbitDir),x=b.x,z=b.z;move(b,dir.x*dt*b.spec.speed*(b.phase===2?1.15:1),dir.z*dt*b.spec.speed*(b.phase===2?1.15:1));b.motion=Math.hypot(b.x-x,b.z-z)>.0001;if(b.motion)b.walk+=dt*10;else b.orbitDir*=-1;
+ if(!b.attack){const ready=b.spec.patterns.filter(a=>(a.phase||1)<=b.phase&&b.cooldowns[a.id]<=1e-8&&d<=a.reach&&(a.id!=='heal'||b.hp<=b.maxHP*KABUTO_RULES.healThreshold&&b.healed<b.maxHP*KABUTO_RULES.healCap));const heal=ready.find(a=>a.id==='heal');const varied=ready.filter(a=>a.id!==b.lastPattern);const opts=varied.length?varied:ready;const a=heal||opts[Math.floor(random()*opts.length)];if(a){const windup=a.windup;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:windup,total:windup};b.anim={k:a.id==='heal'?'l':'j',left:windup+.25,total:windup+.25,windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
+ b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.3+random()*1.4;}const desired=b.cooldowns.scalpel<.5?2.5:5,radial=Math.max(-.75,Math.min(1,(d-desired)*.6)),tan=d>8?.15:.8,dir=directionToward(v.x*radial-v.z*tan*b.orbitDir,v.z*radial+v.x*tan*b.orbitDir),x=b.x,z=b.z;move(b,dir.x*dt*b.spec.speed*(b.phase===2?KABUTO_RULES.phaseSpeed:1),dir.z*dt*b.spec.speed*(b.phase===2?KABUTO_RULES.phaseSpeed:1));b.motion=Math.hypot(b.x-x,b.z-z)>.0001;if(b.motion)b.walk+=dt*10;else b.orbitDir*=-1;
 }

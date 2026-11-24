@@ -22,7 +22,7 @@
 #combo:empty,#tactics:empty,#lootNotice:empty,#defenseStatus:empty{display:none}
 #quest{right:var(--hud-gap);top:var(--hud-gap);width:var(--quest-width);max-width:var(--quest-width);padding:10px;max-height:calc(100dvh - 220px);font-size:11px;overflow:auto}
 #quest>small{letter-spacing:.15em;font-weight:700;font-size:9px}#quest h3{font:700 16px/1.2 Georgia,serif;color:#f4d4a2;margin:6px 0}#qdesc,#bossQuest,#sideQuestLog{font-size:11px;line-height:1.4}#bossQuest{margin:6px 0;color:#d9bf94}#mapToggle{width:100%;margin-top:5px}
-#miniMap{width:min(148px,100%);height:auto;aspect-ratio:1;object-fit:contain;border:1px solid #777c69;background:#24382d}#mapPanel small{display:block;font-size:9px;color:#bdc7b8}#mapPanel small:last-child{display:none}#mapPanel:hover small:last-child,#mapPanel:focus-within small:last-child{display:block}
+#miniMap{width:min(148px,100%);height:auto;aspect-ratio:1;object-fit:contain;border:1px solid #777c69;background:#24382d}#mapPanel small{display:block;font-size:9px;color:#bdc7b8}#mapPanel .map-legend{margin-top:5px;color:#d4c29e;font-size:10px}#mapPanel .map-legend summary{cursor:pointer;padding:4px 0}#mapPanel .map-legend small{display:block}
 #bossHUD{top:var(--hud-gap);width:min(430px,calc(100vw - var(--hero-width) - var(--quest-width) - 68px));min-width:0;padding:8px;text-align:left;color:#f0d6b5;border-color:#c28b78}
 .boss-head{display:flex;align-items:center;gap:8px;min-width:0}.boss-portrait-frame{width:37px;height:32px;border-color:#ac8877}#bossPortrait{width:37px;height:30px}.boss-heading strong{display:block;font:700 14px/1.2 Georgia,serif;overflow-wrap:anywhere}#bossHPValue{font:10px monospace;white-space:nowrap;color:#f2c6ae}#bossPhasePips{display:flex;gap:4px;margin-top:4px}.phase-pip{width:14px;height:3px;background:#564943}.phase-pip.current{background:#f0c78f}.phase-pip.past{background:#b26e55}#bossHUD .bar{height:8px;margin:7px 0 4px;background:#351f24;border-radius:2px}#bossHP{background:linear-gradient(90deg,#9c3542,#e16c55)}#bossAttack{display:block;text-align:center;font:600 10px/1.35 system-ui;color:#f2cfa2;overflow-wrap:anywhere}#bossCast{width:100%;height:5px}
 #combatDock{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);padding:6px;max-width:calc(100vw - 24px);display:grid;gap:5px;pointer-events:auto}
@@ -53,7 +53,7 @@
 #inventoryGrid .inventory-slot,#equipmentGrid .equip-slot,#itemDetail,.skill-branch{background:#182821;border-color:#6f735b}#inventoryGrid .inventory-slot.selected{outline-color:#e7c685}
 #sandboxPanel{max-height:56dvh;overflow:auto}#sandboxPanel .practice-picker{background:#242c28;border-color:#9b8767}
 @media(max-width:1050px){:root{--hero-width:190px;--quest-width:174px;--hud-gap:8px}#top,#quest{padding:7px}#bottom .skill{width:54px}#rpgButtons{max-width:160px;gap:3px;left:8px}#consumableBar{left:8px;max-width:160px}#utilityDock{right:8px;flex-direction:column;align-items:stretch}#tools{bottom:0;right:100%;margin-right:5px}#notice{bottom:153px}}
-@media(max-width:760px),(pointer:coarse){
+@media(max-width:840px),(pointer:coarse){
  :root{--hero-width:clamp(126px,30vw,180px);--quest-width:clamp(110px,29vw,165px);--hud-gap:6px}
  #top{max-height:39dvh;font-size:10px;padding:5px}.hero-head{gap:4px;margin-bottom:5px;padding-bottom:4px}.portrait-frame{width:32px;height:30px}#heroPortrait{width:32px;height:26px}#top h3{font-size:13px}#stats,.eyebrow{font-size:8px}.resource{font-size:10px;margin:3px 0}.resource small{font-size:9px}.resource .bar{height:5px}#kyubiActivate{font-size:9px;min-height:23px}
  #quest{max-height:30dvh;padding:6px}#quest h3{font-size:13px}#quest #sideQuestLog,#quest #bossQuest{font-size:10px}
@@ -68,6 +68,12 @@
  #hud[data-arena=true] #bossHUD{width:calc(100vw - var(--hero-width) - 82px);left:calc(var(--hero-width) + 13px);transform:none}#hud[data-sandbox=true] #bossHUD{top:40px}
  #sandboxPanel{max-width:90vw;width:min(500px,90vw)}#examHUD{top:110px}#mistStatus{top:155px}
 }
-@media(max-width:760px) and (pointer:fine){#touch{display:grid}}
-@media(max-height:540px) and (min-width:761px){#top,#quest{max-height:45dvh}#combatDock{padding:3px}#notice{bottom:140px}#rpgButtons{max-width:160px}#consumableBar{bottom:112px}}
+@media(max-width:840px) and (pointer:fine){#touch{display:grid}}
+@media(max-height:540px) and (min-width:841px){#top,#quest{max-height:45dvh}#combatDock{padding:3px}#notice{bottom:140px}#rpgButtons{max-width:160px}#consumableBar{bottom:112px}}
 @media(prefers-reduced-motion:reduce){#hud *,#rpgWindow *,#releaseModal *{transition:none!important;animation:none!important}}
+
+#hudBuild{align-self:center;color:#e0ccaa;font:600 10px/1.15 monospace;max-width:90px;text-align:right;white-space:normal;pointer-events:none;text-shadow:1px 1px #0c1b18}
+@media(min-width:1051px) and (pointer:fine){#utilityDock{display:grid;grid-template-columns:repeat(3,auto);gap:4px}#hudBuild{grid-column:1/-1;justify-self:end;max-width:none}}
+@media(max-width:1050px){#hudBuild{max-width:85px;text-align:center;order:-1}}
+@media(max-width:840px),(pointer:coarse){#hudBuild{font-size:8px;max-width:62px}#hud[data-arena=true] #bossHUD{width:calc(100vw - var(--hero-width) - 90px)}#hud[data-sandbox=true] #sandboxDock{left:50%}#hud[data-sandbox=true] #sandboxPanel{top:40px}}
+@media(max-width:420px){#rpgButtons{grid-template-columns:1fr;bottom:132px;max-width:calc(38vw - 16px)}#rpgButtons button{min-height:23px}#consumableBar{bottom:292px}#top{max-height:36dvh}#quest{max-height:28dvh}#utilityDock{top:calc(30dvh + 6px)}#notice{max-width:61vw}}

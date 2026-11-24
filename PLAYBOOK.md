@@ -32,3 +32,6 @@ Producción v0.8: https://naruto2-5d.pages.dev/ — PR 6 fusionado, check Cloudf
 
 ## v0.10 beta
 Producción v0.9: https://naruto2-5d.pages.dev/ — PR 7 fusionado, check Cloudflare success. Rama `feature/v010-living-world`. Exportar JSON v3 antes del preview. E diálogo/cofre, M minimapa. Probar comercio, misiones, llave, persistencia y rendimiento; ejecutar `node tests/smoke.mjs`. No fusionar hasta validar.
+
+## v0.11 beta
+Producción v0.10: https://naruto2-5d.pages.dev/ — PR 8, deploy exitoso. Rama `feature/v011-boss-sandbox`. Exportar v4 antes de probar. Sandbox en menú o HUD: niveles, ryō, suministros, recuperación, jefes directos; salir restaura campaña. Normal: terminar misión, E en arena este del bosque. Ejecutar `node tests/smoke.mjs`. No fusionar antes de validar.

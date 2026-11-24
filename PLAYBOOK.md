@@ -82,3 +82,7 @@ QA: iniciar partida, inspeccionar menú y sprites, usar Cambiar hora, observar 1
 
 ## Producción — v1.10b (24/11/2026)
 PR #23 fusionado en main: b48bde7a91ca7b0c58b96df67e806d0c270b052f. Versión verificada en index.html de main. Publicación Cloudflare: sin confirmación independiente. URL https://naruto2-5d.pages.dev/. Revisión visual en curso; versión anterior recuperable desde el historial de GitHub.
+
+## v1.10c — Regeneración del Kyūbi
+Tres colas: regeneración continua de 10 puntos de HP por segundo de simulación (10% de vida máxima), solo mientras la transformación está activa, con límite de 100 HP. Se prorratea el último frame de transformación; no revive ni cura tras expirar. Duración 14 s y demás estadísticas intactas. Disponible en campaña y sandbox; indicador +10% HP/s. Pruebas de lógica: velocidad, límite, expiración exacta y aislamiento sandbox superadas, render/audio/UI simulados. Preview prevista: https://feature-v110c-kyubi-regen.naruto2-5d.pages.dev/ (Cloudflare sin confirmar). Producción v1.10b intacta.
+QA: bajar HP a 25, activar Kyūbi, observar +10 HP/s hasta 100, verificar fin de regeneración al expirar. `node tests/smoke.mjs`.

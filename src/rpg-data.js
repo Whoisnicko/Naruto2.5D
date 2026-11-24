@@ -20,6 +20,7 @@ export const ITEMS={
  mistBlade:{name:'Espada de la niebla',desc:'Trofeo de Zabuza. Aumenta el daño de ataques directos.',icon:'blade',type:'weapon',slot:'weapon',rarity:'epic',maxStack:1,value:180,stats:{attack:8,crit:.03},visual:{color:'#c8dce4',accent:'#466070'}},
  ruinCharm:{name:'Talismán del viento',desc:'Reliquia de las ruinas. Refuerza chakra y movilidad.',icon:'charm',type:'accessory',slot:'accessory',rarity:'epic',maxStack:1,value:180,stats:{chakra:3,speed:.06},visual:{color:'#b0d6be',accent:'#426c65'}},
  iceMask:{name:'Máscara de hielo',desc:'Trofeo de Haku. Mejora defensa y crítico.',icon:'headband',type:'armor',slot:'head',rarity:'epic',maxStack:1,value:150,stats:{defense:4,crit:.05},visual:{color:'#eff4f2',accent:'#a76876'}},
+ chuninVest:{name:'Chaleco Chūnin',desc:'Distinción de los exámenes. Protección y movilidad.',icon:'vest',type:'armor',slot:'torso',rarity:'epic',maxStack:1,value:220,stats:{defense:7,speed:.05,chakra:1},visual:{color:'#6c9272',accent:'#c0c79c'}},
  eliteVest:{name:'Chaleco de élite',desc:'Una prenda de entrenamiento avanzada.',icon:'vest',type:'armor',slot:'torso',rarity:'epic',maxStack:1,value:130,stats:{defense:6,chakra:1},visual:{color:'#566f91',accent:'#b5d8e4'}}
 };
 export const SKILLS={

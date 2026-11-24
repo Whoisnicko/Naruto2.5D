@@ -14,6 +14,9 @@ export function artFor(character,key){return TECH_ART[character]?.[key]||null;}
 export const TREE_W=40,TREE_H=48;
 const ink='#273044',skin='#f7c08a',skinShade='#bc795d',skinLight='#ffe0a8';
 const PALETTES={
+ lee:{hair:'#27372f',hairLight:'#4e6654',hairShade:'#1a2826',shirt:'#5b9b52',shade:'#35633d',light:'#a5c675',trim:'#d08041',metal:'#d9d9c8'},
+ neji:{hair:'#5f463f',hairLight:'#997466',hairShade:'#3c3031',shirt:'#e1d8bb',shade:'#9c9a86',light:'#f7ebcf',trim:'#63716b',metal:'#c7d4d8'},
+ gaara:{hair:'#aa4b42',hairLight:'#d47b62',hairShade:'#70383b',shirt:'#95624e',shade:'#65463e',light:'#c8a37b',trim:'#e1caa5',metal:'#c6c0ab'},
  sasuke:{hair:'#35384e',hairLight:'#777a9b',hairShade:'#23283b',shirt:'#465a8e',shade:'#303c67',light:'#8393bf',trim:'#e2dcca',metal:'#c3cbd7'},
  player:{hair:'#f4c848',hairLight:'#fff0a1',hairShade:'#bf8739',shirt:'#f58b36',shade:'#b94b30',light:'#ffb650',trim:'#26344c',metal:'#bacfd3'},
  npc:{hair:'#c4d3df',hairLight:'#f0f4f8',hairShade:'#8495ae',shirt:'#78935a',shade:'#475e46',light:'#a5ba76',trim:'#26344c',metal:'#c6d6dd'},
@@ -91,6 +94,9 @@ function actorCell(kind,dir,frame,gear=null){
  if(role==='zabuza'){rect(hx-5,hy+5,11,5,'#d6d9cf');rect(hx-4,hy+6,9,1,'#87999c');line(side?17:19,8,side?21:21,25,'#344051',4);line(side?17:19,8,side?21:21,22,'#b5ced5',3);rect(19,25,3,4,'#795c50');}if(role==='haku'){if(!back){rect(hx-4,hy+1,8,9,'#e7e8dc');rect(hx-3,hy+3,2,1,'#554253');rect(hx+1,hy+3,2,1,'#554253');rect(hx-1,hy+6,2,2,'#b06b78');}rect(hx-6,hy,2,11,p.hair);rect(hx+5,hy,2,11,p.hairShade);}
  if(role==='shikamaru'){rect(hx-2,hy-8,4,5,p.hair);rect(hx-3,hy-7,6,2,p.hairShade);rect(hx-1,hy-9,2,2,p.hairLight);rect(9,bodyY+5,6,2,p.shade);}
  if(role==='guard'){rect(6,17,12,3,p.metal);rect(5,19,3,5,p.shade);rect(16,19,3,5,p.shade);}if(role==='thrower'){rect(6,22,3,4,p.metal);rect(15,22,3,4,p.metal);}
+ if(role==='lee'){rect(hx-6,hy-5,12,6,p.hair);rect(hx-5,hy-4,10,1,p.hairLight);if(!back){rect(hx-4,hy+3,3,1,ink);rect(hx+2,hy+3,3,1,ink);}rect(7,25,3,3,p.trim);rect(14,25,3,3,p.trim);}
+ if(role==='neji'){rect(hx-6,hy,2,12,p.hair);rect(hx+5,hy,2,12,p.hairShade);if(!back){rect(hx-3,hy+4,2,1,'#e7e6ea');rect(hx+3,hy+4,2,1,'#e7e6ea');}}
+ if(role==='gaara'){rect(5,17,4,10,'#bd9c68');rect(4,19,5,6,'#d0b58a');rect(5,16,3,2,'#8d6348');if(!back)rect(hx+3,hy-1,2,2,'#a74646');}
  if(role==='sasuke'){if(!back){rect(hx-5,hy-2,3,5,p.hair);rect(hx+4,hy-2,2,6,p.hairShade);rect(hx+3,hy+4,1,1,'#bc6a72');}else{rect(10,bodyY+4,4,2,'#b65a55');rect(11,bodyY+6,2,2,'#e9dfd1');}rect(8,24,8,2,'#c7c7d6');}
  if(gear&&['player','sasuke','sakura','npc'].includes(role)){
  const {head,torso,legs,feet,weapon,offhand,accessory}=gear;
@@ -213,4 +219,4 @@ export function makeWorldPattern(){
  }
  return c;
 }
-export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}

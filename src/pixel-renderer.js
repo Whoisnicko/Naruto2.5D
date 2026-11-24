@@ -1,12 +1,13 @@
 import {characterFor} from './character-data.js';
 import * as THREE from 'three';
-import {makeActorSheet,makeSheets,ANIMS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SIZE,FX_COLS,TREE_W,TREE_H} from './pixel-art.js';
+import {makeActorSheet,makeSheets,ANIMS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SIZE,FX_COLS,TREE_W,TREE_H,artFor} from './pixel-art.js';
 const TILT=-Math.atan2(25,30),UP_Y=Math.cos(TILT),UP_Z=Math.sin(TILT);
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 export function direction(x=0,z=1){return Math.abs(x)>Math.abs(z)?(x<0?1:2):(z<0?3:0);}
 export function frameFor(actor,clock){
  const a=actor.anim;
  if(a&&a.left>0){
+  const special=actor.character&&artFor(actor.character,a.k);if(special){const v=ANIMS[special.pose],elapsed=Math.max(0,a.total-a.left),windup=a.windup||.001,recovery=Math.max(.001,a.total-windup);const phase=elapsed<windup?(elapsed<windup*.55?0:1):elapsed<windup+recovery*.65?2:3;return {col:v.start+phase,state:special.pose};}
   const state=(a.k==='l'||a.k===' '||a.k==='f'||a.k==='g')?'cast':a.combo===2?'kick':a.combo===3?'finish':'attack',v=ANIMS[state],progress=clamp(1-a.left/a.total,0,.999);
   const col=a.windup?(a.left>a.total-a.windup?v.start:v.start+Math.min(v.count-1,1+Math.floor((1-a.left/(a.total-a.windup))*(v.count-1)))):v.start+Math.min(v.count-1,Math.floor(progress*v.count));return {col,state};
  }
@@ -34,7 +35,7 @@ function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material)
 export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
- const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[],shikamaru:[]},trails=[],fxPool=[];
+ const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[]},trails=[],fxPool=[];
  let generation=0,hero=null,gearKey=null,gearCanvas=null;
  function gearSheet(gear,kind='player'){const key=kind+JSON.stringify(gear||{});if(key!==gearKey){gearKey=key;gearCanvas=makeActorSheet(kind,gear);}return gearCanvas;}
  function previewEquipment(gear,canvas,kind='player'){const c=gearSheet(gear,kind),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
@@ -73,10 +74,30 @@ export function createPixelSystem(scene){
    if(n>=limit)return;const f=getFX(n++),row=FX_ROWS.indexOf(type);if(row<0)return;
    setFrame(f,clamp(col,0,7),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=clamp(alpha,0,1);f.material.rotation=rotation;
   }
-  for(const e of list){const progress=clamp(1-e.life/e.max,0,.999),blue=e.col?.[2]>.75&&e.col?.[0]<.65;add(['ice','water','lightning','fire','heal','earth','focus','dash','substitute','clone','giant'].includes(e.type)?e.type:blue?'rasengan':'hit',e.x,blue?1.12:.85,e.z,e.type==='giant'?5:['ice','water','lightning','fire','heal','earth','focus'].includes(e.type)?Math.max(2.6,e.r*1.7):blue?3.1:e.type==='heavy'?2.6:1.9,Math.floor(progress*8),1-progress*.72);}
-  if((player?.pending?.k===' '||player?.pending?.k==='g')&&player.pending.s.mode!=='area'){const progress=1-player.pending.remaining/player.pending.s.windup;add(player.pending.s.fx||(player.pending.k==='g'?'giant':'rasengan'),player.x+player.dirX*.5,1.2,player.z+player.dirZ*.5,.75+progress*.8,Math.min(5,Math.floor(progress*6)),.9);}
+  // Priority: main effects and projectiles first, accents second. Shared pool remains capped.
+  const accents=[];
+  for(const e of list){
+   const q=clamp(1-e.life/e.max,0,.999),f=Math.floor(q*8),type=FX_ROWS.includes(e.type)?e.type:e.type==='heavy'?'slash':'hit';
+   const large=['giant','storm','earth','cracks','wall'].includes(type),size=large?Math.min(5.8,Math.max(2.6,e.r*1.12)):type==='rasengan'?2.9:type==='clone'?2.8:type==='hit'?1.6:2.7;
+   add(type,e.x,type==='cracks'||type==='earth'?.55:1.05,e.z,size,f,1-q*.72);
+   if(['rasengan','giant','lightning','storm','earth','cracks','hit','slash'].includes(type))accents.push(()=>{add('shockwave',e.x,.35,e.z,size*(.7+q*.7),f,.75*(1-q));add('sparks',e.x,1+q*.8,e.z,size*.9,f,.9*(1-q));});
+   else if(type==='heal'||type==='focus'||type==='wall')accents.push(()=>add('aura',e.x,1.2,e.z,size*1.12,f,.8*(1-q)));
+  }
+  if(player?.pending){
+   const s=player.pending.s,k=player.pending.k,q=clamp(1-player.pending.remaining/Math.max(.001,s.windup),0,.999),art=artFor(player.character,k);
+   if(art){const centered=['seal','slam'].includes(art.pose),x=player.x+(centered?0:player.dirX*.65),z=player.z+(centered?0:player.dirZ*.65);
+    add(art.fx,x,centered?.85:1.35,z,.65+q*1.1,Math.floor(q*5),.85);
+    if(quality>=.75)add('aura',player.x,1,player.z,1.35+q*.5,Math.floor(q*7),.55);
+   }
+  }
   for(const c of clones){if(c.life>4.58)add('clone',c.x,.95,c.z,2.8,Math.floor(clamp((5-c.life)/.42,0,.999)*8),.9);}
-  for(const a of projectiles)add(['fire','water','lightning','wind'].includes(a.kind)?a.kind:a.hostile?'kunai':'shuriken',a.x,.83,a.z,['fire','water','lightning','wind'].includes(a.kind)?1.9:.75,Math.floor(t*25)%8,1,a.hostile?Math.atan2(-a.dx,-a.dz*.64):0);
+  for(const a of projectiles){
+   const type=a.kind==='water'?'dragon':['fire','lightning','wind'].includes(a.kind)?a.kind:a.hostile?'kunai':'shuriken',elemental=['dragon','fire','lightning','wind'].includes(type),f=Math.floor(t*25)%8,angle=Math.atan2(-a.dz*.64,a.dx);
+   add(type,a.x,.83,a.z,elemental?(type==='dragon'?3.2:2.2):.75,f,1,elemental?angle:Math.atan2(-a.dx,-a.dz*.64));
+   if(elemental)accents.push(()=>{const tail=type==='fire'?'firetrail':type==='dragon'?'water':type;add(tail,a.x-a.dx*.85,.8,a.z-a.dz*.85,1.8,f,.6,angle);if(quality===1)add('sparks',a.x-a.dx*1.4,.8,a.z-a.dz*1.4,1.3,f,.45);});
+  }
+  if(quality>=.75)for(const draw of accents)draw();
+  if(player?.focus>0||player?.guardBuff>0)add(player.focus>0?'focus':'wall',player.x,player.focus>0?2.4:.8,player.z,player.focus>0?.68:2.2,Math.floor(t*10)%8,.55);
   if(hero?.actor.sprinting&&hero.actor.motion&&quality>=.75){const a=hero.actor;add('dash',a.x-(a.dirX||0)*.7,.58,a.z-(a.dirZ||0)*.7,1.75,Math.floor(t*18)%8,.48);}
   for(let i=n;i<fxPool.length;i++)fxPool[i].obj.visible=false;
  }

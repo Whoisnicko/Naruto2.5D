@@ -1,4 +1,5 @@
-import {ITEMS,SLOTS,SLOT_NAMES,RARITIES,STAT_NAMES,SKILLS,CAPACITY,itemFor,itemCount,statsFor,levelFor,rankFor,pointsFor,unlockReason} from './rpg-data.js';
+import {characterFor} from './character-data.js';
+import {ITEMS,SLOTS,SLOT_NAMES,RARITIES,STAT_NAMES,SKILLS,treeFor,learnedFor,CAPACITY,itemFor,itemCount,statsFor,levelFor,rankFor,pointsFor,unlockReason} from './rpg-data.js';
 const $=id=>document.getElementById(id);
 const statText=(k,v)=>['speed','crit','ninjutsu'].includes(k)?Math.round(v*100)+'%':String(v);
 export function itemIcon(id){
@@ -29,8 +30,8 @@ export function createRPGUI(api){
  function button(label,fn){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=fn;return b;}
  function text(tag,value,cls){const e=document.createElement(tag);e.textContent=value;if(cls)e.className=cls;return e;}
  function act(fn){const result=fn();if(result===true||result===null){api.changed();render();}else if(typeof result==='string')api.notice(result);else api.notice('No se pudo realizar esa acción.');}
- function open(which='inventory'){if(!api.canOpen())return;tab=which;if(!opened){opened=true;api.pause(true);}panel.hidden=false;render();}
- function close(){if(!opened)return;opened=false;panel.hidden=true;api.pause(false);}
+ function open(which='inventory'){if(!api.canOpen())return;tab=which;if(!opened){selected=-1;drag=-1;opened=true;api.pause(true);}panel.hidden=false;render();}
+ function close(){if(!opened)return;drag=-1;selected=-1;opened=false;panel.hidden=true;api.pause(false);}
  function toggle(which){if(opened&&tab===which)close();else open(which);}
  function hotbar(){
   const {rpg}=state(),key=rpg.hotbar.map(id=>id+':'+itemCount(rpg,id)).join('|');if(key===lastHot)return;lastHot=key;
@@ -49,9 +50,9 @@ export function createRPGUI(api){
   const discard=button('Descartar 1',()=>{if(discard.dataset.confirm!=='yes'){discard.dataset.confirm='yes';discard.textContent='Confirmar descarte';return;}act(()=>api.discard(selected));});if(i.type!=='key')detail.append(discard);else detail.append(text('small','Objeto de misión: no se puede descartar.'));
  }
  function render(){
-  if(!opened){hotbar();return;}const {rpg,p,quest,enemies}=state(),stats=statsFor(rpg);
-  $('rpgLevel').textContent=rankFor(p.xp)+' · Nivel '+levelFor(p.xp)+' · '+p.xp+' EXP · '+pointsFor(rpg,p.xp)+' puntos';
-  $('rpgStats').textContent='Ataque +'+stats.attack+' · Defensa '+stats.defense+' · Velocidad +'+Math.round(stats.speed*100)+'% · Crítico '+Math.round((.1+stats.crit)*100)+'% · Chakra/s '+(8+stats.chakra);
+  if(!opened){hotbar();return;}const {rpg,p,quest,enemies}=state(),stats=statsFor(rpg,p.character),spec=characterFor(p.character),skills=treeFor(p.character),learned=learnedFor(rpg,p.character);
+  $('rpgLevel').textContent=spec.name+' · '+rankFor(p.xp)+' · Nivel '+levelFor(p.xp)+' · '+p.xp+' EXP · '+pointsFor(rpg,p.xp,p.character)+' puntos propios';
+  $('rpgStats').textContent='Ataque +'+stats.attack+' · Defensa '+(stats.defense+spec.defense)+' · Velocidad '+Math.round(((1+stats.speed)*spec.speed-1)*100)+'% · Crítico '+Math.round((.1+stats.crit+spec.crit)*100)+'% · Chakra/s '+(8+stats.chakra+spec.regen);
   $('inventoryPage').hidden=tab!=='inventory';$('skillsPage').hidden=tab!=='skills';$('invTab').classList.toggle('active',tab==='inventory');$('skillsTab').classList.toggle('active',tab==='skills');
   $('trainingBtn').disabled=quest!==3||enemies.some(e=>e.hp>0)||!api.nearTrainer();$('trainingBtn').textContent='Entrenamiento '+(rpg.round+1)+' (junto a Kakashi)';
   $('overflowBtn').textContent='Recoger reserva ('+Object.values(rpg.overflow).reduce((n,x)=>n+x,0)+')';
@@ -60,7 +61,7 @@ export function createRPGUI(api){
    b.ondragover=ev=>ev.preventDefault();b.ondrop=ev=>{ev.preventDefault();const from=drag;drag=-1;if(from>=0){selected=index;act(()=>api.move(from,index));}};grid.append(b);});
   equipment.replaceChildren();for(const slot of SLOTS){const id=rpg.equipment[slot],b=button('',()=>{if(id)act(()=>api.unequip(slot));});b.className='equip-slot';b.title=id?'Quitar '+ITEMS[id].name:SLOT_NAMES[slot];b.append(itemIcon(id),text('small',SLOT_NAMES[slot]),text('span',itemFor(id)?.name||'Vacío'));b.disabled=!id;equipment.append(b);}
   const avatar=$('equipmentPreview');try{if(!api.preview?.(avatar)){const c=avatar.getContext('2d');c.clearRect(0,0,avatar.width,avatar.height);c.fillStyle='#e6be70';c.fillRect(32,16,32,32);c.fillStyle='#ed923f';c.fillRect(24,48,48,48);c.fillStyle='#334659';c.fillRect(28,96,16,24);c.fillRect(52,96,16,24);}}catch(e){console.warn('Equipment preview fallback',e);}showDetail();
-  tree.replaceChildren();for(const branch of ['Taijutsu','Ninjutsu','Clones']){const column=text('div','','skill-branch');column.append(text('h3',branch));for(const [id,s] of Object.entries(SKILLS).filter(([,s])=>s.branch===branch)){const reason=unlockReason(rpg,p.xp,id),b=button(s.name,()=>act(()=>api.unlock(id)));b.className='tree-node'+(rpg.skills.includes(id)?' learned':'');b.disabled=!!reason;b.append(text('small',s.desc),text('small',reason||'Aprender · 1 punto'));column.append(b);}tree.append(column);}
+  tree.replaceChildren();for(const branch of new Set(Object.values(skills).map(s=>s.branch))){const column=text('div','','skill-branch');column.append(text('h3',branch));for(const [id,s] of Object.entries(skills).filter(([,s])=>s.branch===branch)){const reason=unlockReason(rpg,p.xp,id,p.character),b=button(s.name,()=>act(()=>api.unlock(id)));b.className='tree-node'+(learned.includes(id)?' learned':'');b.disabled=!!reason;b.append(text('small',s.desc),text('small',reason||'Aprender · 1 punto'));column.append(b);}tree.append(column);}
   hotbar();
  }
  $('inventoryBtn').onclick=()=>toggle('inventory');$('skillTreeBtn').onclick=()=>toggle('skills');$('rpgClose').onclick=close;

@@ -1,12 +1,22 @@
 // Original, deterministic pixel sheets. All primitives rasterize on integer pixels;
 // no generated image or third-party character assets are needed.
-export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=22,DIRS=['down','left','right','up'];
-export const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12}};
-export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice','lightning','fire','heal','earth','focus'];
+export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=38,DIRS=['down','left','right','up'];
+export const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12},thrust:{start:22,count:4,fps:12},release:{start:26,count:4,fps:12},seal:{start:30,count:4,fps:10},slam:{start:34,count:4,fps:12}};
+export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice','lightning','fire','heal','earth','focus','shockwave','sparks','slash','firetrail','dragon','wall','cracks','aura','storm'];
 export const FX_SIZE=32,FX_COLS=8;
+export const TECH_ART={
+ naruto:{' ':{pose:'thrust',fx:'rasengan'},f:{pose:'release',fx:'wind'},l:{pose:'seal',fx:'clone'},g:{pose:'thrust',fx:'giant'}},
+ sasuke:{' ':{pose:'thrust',fx:'lightning'},f:{pose:'release',fx:'fire'},l:{pose:'seal',fx:'focus'},g:{pose:'slam',fx:'storm'}},
+ sakura:{' ':{pose:'slam',fx:'earth'},f:{pose:'slam',fx:'cracks'},l:{pose:'seal',fx:'heal'},g:{pose:'slam',fx:'cracks'}},
+ kakashi:{' ':{pose:'thrust',fx:'lightning'},f:{pose:'release',fx:'dragon'},l:{pose:'seal',fx:'wall'},g:{pose:'slam',fx:'storm'}}
+};
+export function artFor(character,key){return TECH_ART[character]?.[key]||null;}
 export const TREE_W=40,TREE_H=48;
 const ink='#273044',skin='#f7c08a',skinShade='#bc795d',skinLight='#ffe0a8';
 const PALETTES={
+ lee:{hair:'#27372f',hairLight:'#4e6654',hairShade:'#1a2826',shirt:'#5b9b52',shade:'#35633d',light:'#a5c675',trim:'#d08041',metal:'#d9d9c8'},
+ neji:{hair:'#5f463f',hairLight:'#997466',hairShade:'#3c3031',shirt:'#e1d8bb',shade:'#9c9a86',light:'#f7ebcf',trim:'#63716b',metal:'#c7d4d8'},
+ gaara:{hair:'#aa4b42',hairLight:'#d47b62',hairShade:'#70383b',shirt:'#95624e',shade:'#65463e',light:'#c8a37b',trim:'#e1caa5',metal:'#c6c0ab'},
  sasuke:{hair:'#35384e',hairLight:'#777a9b',hairShade:'#23283b',shirt:'#465a8e',shade:'#303c67',light:'#8393bf',trim:'#e2dcca',metal:'#c3cbd7'},
  player:{hair:'#f4c848',hairLight:'#fff0a1',hairShade:'#bf8739',shirt:'#f58b36',shade:'#b94b30',light:'#ffb650',trim:'#26344c',metal:'#bacfd3'},
  npc:{hair:'#c4d3df',hairLight:'#f0f4f8',hairShade:'#8495ae',shirt:'#78935a',shade:'#475e46',light:'#a5ba76',trim:'#26344c',metal:'#c6d6dd'},
@@ -32,6 +42,7 @@ function cell(w,h){
  return {c,ctx,rect,poly,ellipse,line};
 }
 function actorCell(kind,dir,frame,gear=null){
+ const special=frame>=22?Math.floor((frame-22)/4):-1,stage=frame>=22?(frame-22)%4:0;if(special>=0)frame=[14,14,15,14][stage];
  const role=kind;const p=PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
  const side=dir===1||dir===2,back=dir===3,run=frame>=6&&frame<=9,walk=frame>=2&&frame<=5,attack=frame>=10&&frame<=12||frame>=16,cast=frame===14||frame===15,kick=frame>=16&&frame<=18,finish=frame>=19;
  const f=walk?(frame-2):run?(frame-6):0,step=[-3,0,3,0][f],bob=(walk||run)&&f%2===1?1:frame===1?1:0;
@@ -83,6 +94,9 @@ function actorCell(kind,dir,frame,gear=null){
  if(role==='zabuza'){rect(hx-5,hy+5,11,5,'#d6d9cf');rect(hx-4,hy+6,9,1,'#87999c');line(side?17:19,8,side?21:21,25,'#344051',4);line(side?17:19,8,side?21:21,22,'#b5ced5',3);rect(19,25,3,4,'#795c50');}if(role==='haku'){if(!back){rect(hx-4,hy+1,8,9,'#e7e8dc');rect(hx-3,hy+3,2,1,'#554253');rect(hx+1,hy+3,2,1,'#554253');rect(hx-1,hy+6,2,2,'#b06b78');}rect(hx-6,hy,2,11,p.hair);rect(hx+5,hy,2,11,p.hairShade);}
  if(role==='shikamaru'){rect(hx-2,hy-8,4,5,p.hair);rect(hx-3,hy-7,6,2,p.hairShade);rect(hx-1,hy-9,2,2,p.hairLight);rect(9,bodyY+5,6,2,p.shade);}
  if(role==='guard'){rect(6,17,12,3,p.metal);rect(5,19,3,5,p.shade);rect(16,19,3,5,p.shade);}if(role==='thrower'){rect(6,22,3,4,p.metal);rect(15,22,3,4,p.metal);}
+ if(role==='lee'){rect(hx-6,hy-5,12,6,p.hair);rect(hx-5,hy-4,10,1,p.hairLight);if(!back){rect(hx-4,hy+3,3,1,ink);rect(hx+2,hy+3,3,1,ink);}rect(7,25,3,3,p.trim);rect(14,25,3,3,p.trim);}
+ if(role==='neji'){rect(hx-6,hy,2,12,p.hair);rect(hx+5,hy,2,12,p.hairShade);if(!back){rect(hx-3,hy+4,2,1,'#e7e6ea');rect(hx+3,hy+4,2,1,'#e7e6ea');}}
+ if(role==='gaara'){rect(5,17,4,10,'#bd9c68');rect(4,19,5,6,'#d0b58a');rect(5,16,3,2,'#8d6348');if(!back)rect(hx+3,hy-1,2,2,'#a74646');}
  if(role==='sasuke'){if(!back){rect(hx-5,hy-2,3,5,p.hair);rect(hx+4,hy-2,2,6,p.hairShade);rect(hx+3,hy+4,1,1,'#bc6a72');}else{rect(10,bodyY+4,4,2,'#b65a55');rect(11,bodyY+6,2,2,'#e9dfd1');}rect(8,24,8,2,'#c7c7d6');}
  if(gear&&['player','sasuke','sakura','npc'].includes(role)){
  const {head,torso,legs,feet,weapon,offhand,accessory}=gear;
@@ -93,6 +107,25 @@ function actorCell(kind,dir,frame,gear=null){
  if(weapon){const wx=side?(run?5:attack?[8,21,17][phase]:cast?17+phase:16+step):17,wy=side?(run?22:attack?[18,16,21][phase]:cast?18-phase:22):22;line(wx,wy,Math.min(23,wx+2),Math.max(1,wy-6),weapon.accent,3);line(wx,wy-1,Math.min(23,wx+2),Math.max(1,wy-6),weapon.color,1);}
  if(offhand){rect(side?8:5,bodyY+5,3,3,offhand.accent);rect(side?9:6,bodyY+5,2,2,offhand.color);}
  if(accessory){rect(11,bodyY+3,2,3,accessory.accent);rect(11,bodyY+4,2,2,accessory.color);}
+ }
+ // Four additional pose families. Paint arms over torso, keeping equipment and the pixel silhouette.
+ if(special>=0&&stage!==3){
+  const sleeve=gear?.torso?.color||p.shirt,accent=gear?.offhand?.color||p.shade;
+  if(special===0){ // wind-up, reach, follow-through
+   const tx=side?[12,21,20][stage]:[12,12,13][stage],ty=side?[19,15,19][stage]:back?[18,11,14][stage]:[19,24,22][stage];
+   limb(15,18,tx,ty,sleeve,3);rect(tx-1,ty-1,3,3,skin);rect(tx,ty-1,1,1,skinLight);limb(8,18,side?5:8,21,accent,2);
+   if(stage===1){rect(5,29,6,2,ink);rect(16,28,6,3,ink);}
+  }else if(special===1){ // throw / elemental release
+   const x=side?[9,21,19][stage]:[11,19,17][stage],y=[13,15,19][stage];
+   limb(15,18,x,y,sleeve,3);rect(x-1,y-1,3,3,skin);limb(8,18,side?7:5,stage===0?15:20,accent,2);
+  }else if(special===2){ // hand seals and opening palms
+   const spread=[2,4,7][stage],y=[19,16,15][stage];
+   limb(8,18,12-spread,y,accent,3);limb(16,18,12+spread,y,sleeve,3);rect(11-spread,y-1,3,3,skin);rect(11+spread,y-1,3,3,skin);
+  }else{ // raised fists, downward strike, braced recovery
+   const x=side?[16,22,19][stage]:[17,13,16][stage],y=[10,26,23][stage];
+   limb(15,18,x,y,sleeve,4);rect(x-1,y-1,3,4,skin);limb(8,18,stage===0?5:7,stage===0?11:23,accent,3);
+   if(stage===1){rect(5,28,6,3,ink);rect(16,28,6,3,ink);}
+  }
  }
  if(frame===13){rect(2,10,2,2,'#ffe4bc');rect(20,13,2,2,'#ffe4bc');}
  if(dir===1){const out=cell(24,32);out.ctx.translate(24,0);out.ctx.scale(-1,1);out.ctx.drawImage(s.c,0,0);return out.c;}
@@ -146,6 +179,15 @@ export function makeFXSheet(){
    else if(row===13){for(let k=0;k<8;k++){const a=k*.785+angle,r=5+f*1.4;rect(16+Math.cos(a)*r,16+Math.sin(a)*r,2,2,'#a4f8b9');}rect(14,7,4,18,'#60c795');rect(7,14,18,4,'#60c795');rect(15,8,2,16,'#e0ffe6');rect(8,15,16,2,'#e0ffe6');}
    else if(row===14){for(let k=0;k<9;k++){const a=k*.698+angle*.2,r=4+f*1.45,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r*.8;rect(x,y,4,3,'#755c4d');rect(x,y-1,3,2,'#d6b38b');}if(f<4)ellipse(16,16,5-f,3,'#fff0ba');}
    else if(row===15){ellipse(16,16,10+f*.3,10+f*.3,'#772d4c');ellipse(16,16,8,8,'#c14b61');ellipse(16,16,3,3,'#2e263e');for(let k=0;k<3;k++){const a=k*2.094+angle;ellipse(16+Math.cos(a)*6,16+Math.sin(a)*6,2,2,'#30273a');}}
+   else if(row===16){const r=3+f*1.65;for(let k=0;k<48;k++){const a=k*Math.PI/24,rr=r+(k%4===0?1:0);rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr*.55,2,f<3?2:1,k%3?'#e9f9ed':'#8eb7b9');}if(f<3)ellipse(16,16,4-f,2,'#fff8d9');}
+   else if(row===17){for(let k=0;k<9;k++){const a=k*2.4+f*.18,r=3+f*1.5+(k%3),x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;line(x,y,x+Math.cos(a)*3,y+Math.sin(a)*3,k%2?'#fff8ce':'#9be9f7',f<3?2:1);}}
+   else if(row===18){for(let k=0;k<30;k++){const a=-1.1+k*.074+f*.23,r=8+f*.55;rect(16+Math.cos(a)*r,16+Math.sin(a)*r,3,2,k%3?'#f3fff7':'#88c5d6');}if(f<4)line(10,24,26,7,'#fff2c5',2);}
+   else if(row===19){for(let k=0;k<7;k++){const x=3+k*4,y=16+Math.sin(k*2+angle)*(4+k*.3);poly([[x-3,y],[x+3,y-5],[x+5,y+3],[x,y+6]],'#a84b40');poly([[x-1,y],[x+3,y-3],[x+4,y+2]],k%2?'#f9b05b':'#ffde85');}}
+   else if(row===20){for(let k=0;k<13;k++){const x=3+k*2,y=18+Math.sin(k*.6-angle)*5;ellipse(x,y,3.2,3.2,'#275d85');ellipse(x,y-1,2.2,2.2,k%2?'#a2edeb':'#4fb9dd');}poly([[20,12],[25,8],[30,10],[31,15],[25,19],[21,17]],'#95e5ec');rect(27,12,2,2,'#eafff1');rect(28,12,1,1,'#28435d');line(25,15,31,15,'#23557b',2);}
+   else if(row===21){for(let j=0;j<3;j++)for(let i=0;i<4;i++){const x=2+i*7+(j%2)*2,y=25-j*7-Math.min(f,3)*2;rect(x,y,7,6,'#675b50');rect(x,y,6,5,'#ab9072');rect(x,y,6,1,'#dac39b');}for(let k=0;k<6;k++)rect(3+k*5,27-f,2,2,'#d8bc94');}
+   else if(row===22){for(let k=0;k<8;k++){const a=k*Math.PI/4+f*.04,r=4+f*1.4,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r*.62;line(16,16,x-3,y+2,'#594f49',2);line(x-3,y+2,x,y,'#d8ac77',2);rect(x,y-2-(f%3),3,3,'#b89b77');}if(f<3)ellipse(16,15,5-f,4-f,'#fff0be');}
+   else if(row===23){for(let k=0;k<12;k++){const a=k*Math.PI/6+angle,r=9+Math.sin(k+f)*2;line(16+Math.cos(a)*r,18+Math.sin(a)*r*.65,16+Math.cos(a)*r*.8,9+Math.sin(a)*r*.5,'#a5e8bc',k%3===0?2:1);}}
+   else if(row===24){for(let k=0;k<8;k++){const a=k*Math.PI/4+f*.12,r=5+f*1.35,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;line(16,16,x-3,y+2,'#48478e',3);line(x-3,y+2,x+2,y-2,'#83cfff',2);line(x+2,y-2,x,y,'#f7ffff',2);}if(f<5)ellipse(16,16,4,4,'#f1fbff');}
    else{
      for(let k=0;k<4;k++){const a=angle+k*Math.PI/2;poly([[16,16],[16+Math.cos(a)*13,16+Math.sin(a)*13],[16+Math.cos(a+.45)*5,16+Math.sin(a+.45)*5]],'#252e45');line(16+Math.cos(a)*4,16+Math.sin(a)*4,16+Math.cos(a)*11,16+Math.sin(a)*11,'#d4e4e9');}ellipse(16,16,3,3,'#8597a6');ellipse(16,16,1.5,1.5,'#273044');
    }
@@ -177,4 +219,4 @@ export function makeWorldPattern(){
  }
  return c;
 }
-export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}

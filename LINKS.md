@@ -59,3 +59,7 @@
 - Producción v1.6b: https://naruto2-5d.pages.dev/ (PR 20).
 - v1.7 beta: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v17-kyubi-awakening
 - Preview: consultar check Cloudflare del último commit.
+
+## v1.8 beta — Kyūbi Evolution
+- Rama: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v18-kyubi-evolution
+- Preview prevista: https://feature-v18-kyubi-evolution.naruto2-5d.pages.dev/ (confirmar check Cloudflare).

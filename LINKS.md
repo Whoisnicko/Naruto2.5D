@@ -31,3 +31,7 @@
 - Producción: https://naruto2-5d.pages.dev/
 - Rama v1.0 RC: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v1-release-candidate
 - Preview: https://feature-v1-release-candidate.naruto2-5d.pages.dev (consultar check del último commit).
+
+- RC original: https://feature-v1-release-candidate.naruto2-5d.pages.dev
+- v1.1: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v11-konoha-expansion
+- Preview v1.1: consultar check Cloudflare.

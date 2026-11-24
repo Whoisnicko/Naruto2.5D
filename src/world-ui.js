@@ -30,9 +30,9 @@ export function createWorldUI(api){
  function tick(){
   const {p,world,enemies,rpg,bossProgress,boss,quest,campaign}=api.state();$('worldClock').textContent=worldTime(world.clock);const night=(1-Math.cos((world.clock/DAY_SECONDS-.5)*Math.PI*2))*.5;$('nightTint').style.opacity=String(night*.36);
   const near=LANDMARKS.find(l=>Math.hypot(p.x-l.x,p.z-l.z)<l.r);$('worldRegion').textContent=near?.name||(p.x>10?'Bosque exterior':'Konoha');
-  const summary=Object.entries(SIDEQUESTS).filter(([id])=>world.quests[id]===1).map(([id,q])=>q.name+' · '+questProgress(world,rpg,id)).join('\n');if(summary!==shown){shown=summary;$('sideQuestLog').textContent=summary||'Hablá con Sakura o Iruka para nuevas misiones.';}
+  const summary=Object.entries(SIDEQUESTS).filter(([id])=>world.quests[id]===1).map(([id,q])=>q.name+' · '+questProgress(world,rpg,id)).join('\n');if(summary!==shown){shown=summary;$('sideQuestLog').textContent=summary||'Hablá con Sakura, Iruka o Shikamaru para nuevas misiones.';}
   if(!cx||!b||$('mapPanel').hidden)return;cx.clearRect(0,0,100,100);cx.drawImage(base,0,0);const mark=(x,z,col,size=2)=>{cx.fillStyle=col;cx.fillRect(Math.round(x+50-size/2),Math.round(z+50-size/2),size,size);};
-  for(const l of LANDMARKS)if(world.visited.includes(l.id))mark(l.x,l.z,'#a9c7bc',2);
+  for(const l of LANDMARKS)mark(l.x,l.z,world.visited.includes(l.id)?'#a9c7bc':'#738d82',2);
   for(const n of NPCS)mark(n.x,n.z,'#e8cb86',3);
   mark(-12,-2,'#e8cb86',3);
   for(const c of CHESTS)if(!world.opened.includes(c.id))mark(c.x,c.z,'#e5a25d',2);

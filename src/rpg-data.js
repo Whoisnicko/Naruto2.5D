@@ -29,7 +29,7 @@ export const SKILLS={
  focus:{name:'Chakra Control',branch:'Ninjutsu',cost:1,level:2,desc:'+2 chakra per second and +10% ninjutsu damage',stats:{chakra:2,ninjutsu:.10}},
  giant:{name:'Giant Rasengan',branch:'Ninjutsu',cost:1,level:3,requires:'focus',scroll:'scroll',desc:'Unlocks Giant Rasengan: 84 damage, 32 chakra, 6 s cooldown.'},
  bond:{name:'Shadow Bond',branch:'Clones',cost:1,level:2,desc:'+4 clone strike damage',stats:{clone:4}},
- endurance:{name:'Resilient Shadows',branch:'Clones',cost:1,level:3,requires:'bond',desc:'+10 health per clone',cloneHP:10}
+ endurance:{name:'Resilient Shadows',branch:'Clones',cost:1,level:3,requires:'bond',desc:'+2 seconds of clone duration',cloneDuration:2}
 };
 // Independent point budgets at the shared account level. Naruto's original IDs remain stable.
 export const CHARACTER_TREES={
@@ -118,10 +118,10 @@ export function unlockReason(r,xp,id,char='naruto'){
 }
 export function unlockSkill(r,xp,id,char='naruto'){const reason=unlockReason(r,xp,id,char);if(reason)return reason;const s=treeFor(char)[id];if(s.scroll)removeItem(r,s.scroll);learnedFor(r,char).push(id);return null;}
 export function statsFor(r,char='naruto'){
- const out={attack:0,defense:0,speed:0,crit:0,chakra:0,clone:0,ninjutsu:0,cloneHP:0};
+ const out={attack:0,defense:0,speed:0,crit:0,chakra:0,clone:0,ninjutsu:0,cloneDuration:0};
  function add(s){for(const [k,v] of Object.entries(s||{}))if(k in out)out[k]+=v;}
  for(const id of Object.values(r.equipment))add(itemFor(id)?.stats);
- for(const id of learnedFor(r,char)){const skill=treeFor(char)[id];add(skill.stats);out.cloneHP+=skill.cloneHP||0;}
+ for(const id of learnedFor(r,char)){const skill=treeFor(char)[id];add(skill.stats);out.cloneDuration+=skill.cloneDuration||0;}
  return out;
 }
 export function equipmentVisuals(r){return Object.fromEntries(SLOTS.map(s=>[s,itemFor(r.equipment[s])?.visual||null]));}

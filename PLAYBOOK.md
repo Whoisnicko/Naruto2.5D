@@ -41,3 +41,6 @@ Producción v0.11: https://naruto2-5d.pages.dev/ — PR 9, deploy exitoso. Rama 
 
 ## RC HD experimental
 Rama `feature/v1-hd-sprites` basada en RC. Probar F lateral en ambas direcciones, F vertical, Esc → Arte HD, Sprite Lab y rendimiento. Ejecutar `node tests/smoke.mjs`. No fusionar hasta validar visualmente.
+
+### HD2
+Abrir preview de la rama HD, recargar, verificar título v1.0 RC HD2 e indicador HD activo; iniciar/continuar, caminar en cuatro direcciones, correr, F lateral, Esc → Arte HD. Probar estadísticas, persistencia y FPS. No fusionar antes de playtest.

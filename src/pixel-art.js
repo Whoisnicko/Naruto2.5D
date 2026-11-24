@@ -25,20 +25,20 @@ function actorCell(kind,dir,frame){
  const p=PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;
  const side=dir===1||dir===2,back=dir===3,run=frame>=6&&frame<=9,walk=frame>=2&&frame<=5,attack=frame>=10&&frame<=12,cast=frame>=14;
  const f=walk?(frame-2):run?(frame-6):0,step=[-3,0,3,0][f],bob=(walk||run)&&f%2===1?1:frame===1?1:0;
- const lean=side&&run?2:side&&attack?1:0;const hx=12+lean,hy=8+bob,bodyY=16+bob;
+ const phase=attack?frame-10:cast?frame-14:0;const lean=side&&run?2:side&&attack?(phase===1?2:0):0;const hx=12+lean,hy=8+bob,bodyY=16+bob;
  // side frames are painted facing right, mirrored for left.
  function limb(x,y,xx,yy,c,w=4){line(x,y,xx,yy,ink,w+2);line(x,y,xx,yy,c,w);}
  if(side){
    limb(10,23,8-step,28,p.shade,3);rect(5-step,28,6,3,ink);rect(6-step,28,4,1,p.trim);
    limb(13,23,13+step,28,p.shirt,4);rect(11+step,28,6,3,ink);rect(12+step,28,4,1,'#657286');
-   const ax=run?4:attack?18:cast?16:8-step,ay=run?20:attack?17:cast?18:21;
+   const ax=run?4:attack?[6,18,14][phase]:cast?15+phase:8-step,ay=run?20:attack?[20,17,21][phase]:cast?18:21;
    limb(10,bodyY+2,ax,ay,p.shade,3);
  }else{
    limb(9,23,8,28+(step>0?-1:0),p.shade,4);rect(5,28+(step>0?-1:0),6,3,ink);
    limb(14,23,15,28+(step<0?-1:0),p.shirt,4);rect(13,28+(step<0?-1:0),6,3,ink);
    rect(6,28+(step>0?-1:0),4,1,'#657286');rect(14,28+(step<0?-1:0),4,1,'#657286');
-   limb(7,bodyY+2,run?5:attack?4:6,run?18:22+(step>0?1:0),p.shade,3);
-   limb(16,bodyY+2,run?19:attack?20:17,run?18:cast?18:22+(step<0?1:0),p.shirt,3);
+   limb(7,bodyY+2,run?5:attack?[8,4,6][phase]:6,run?18:22+(step>0?1:0),p.shade,3);
+   limb(16,bodyY+2,run?19:attack?[15,21,18][phase]:17,run?18:cast?18-phase:22+(step<0?1:0),p.shirt,3);
  }
  // jacket silhouette, shoulder panels, zipper and belt.
  poly([[7+lean,bodyY],[16+lean,bodyY],[18,bodyY+4],[16,25],[8,25],[6,bodyY+4]],ink);
@@ -48,7 +48,7 @@ function actorCell(kind,dir,frame){
  else if(!back){rect(side?15:11,bodyY+4,1,6,p.trim);rect(side?14:10,bodyY+4,1,1,p.light);}
  else{rect(10,bodyY+4,4,4,'#a33337');rect(11,bodyY+5,2,2,p.light);}
  rect(8,24,8,1,p.trim);
- if(side){const x=run?4:attack?21:cast?18:16+step,y=run?22:attack?16:cast?18:22;limb(14+lean,bodyY+2,x,y,p.shirt,3);rect(x-1,y-1,3,3,skin);rect(x-1,y+1,3,1,skinShade);}
+ if(side){const x=run?4:attack?[8,21,17][phase]:cast?17+phase:16+step,y=run?22:attack?[18,16,21][phase]:cast?18-phase:22;limb(14+lean,bodyY+2,x,y,p.shirt,3);rect(x-1,y-1,3,3,skin);rect(x-1,y+1,3,1,skinShade);}
  else if(cast){rect(9,18,3,3,skin);rect(12,18,3,3,skin);rect(11,17,2,1,skinLight);}
  // rounded anime head, outline, shade and a readable face at tiny scale.
  poly([[hx-6,hy-3],[hx+4,hy-4],[hx+7,hy],[hx+6,hy+6],[hx+3,hy+9],[hx-4,hy+9],[hx-6,hy+5]],ink);

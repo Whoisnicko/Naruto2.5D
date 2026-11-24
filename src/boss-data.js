@@ -43,7 +43,7 @@ export const MIST_CAMERA={opening:[{zoom:1.32,yaw:-.18},{zoom:1.7,yaw:.21},{zoom
 export const MIST_COMBAT={dragon:{life:3,speed:7.5,turn:5.5},clone:{hp:45,life:9,speed:4.7,count:3,max:4,reach:1.1},prison:{duration:4.5,presses:12,failDamage:22,immunity:2.5},mirror:{intervalMin:.85,intervalMax:1.65,needleSpeed:13,projectileCap:40}};
 
  // Independent cooldown groups: both sword variants share one timer.
-export const ZABUZA_TIMING={sword:3,dragon:7,clones:12,initial:{sword:0,dragon:2.5,clones:5},recovery:.24};
+export const ZABUZA_TIMING={sword:3,dragon:12,clones:20,initial:{sword:0,dragon:2.5,clones:5},recovery:.24};
 export function zabuzaGroup(pattern){return pattern.special==='dragon'?'dragon':pattern.special==='clones'?'clones':'sword';}
 export function tickZabuza(b,p,clones,dt,move,hit,signal,random=Math.random){
  b.cooldowns??={...ZABUZA_TIMING.initial};b.orbitDir??=1;b.orbitLeft??=1.8;

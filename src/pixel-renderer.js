@@ -64,14 +64,14 @@ export function createPixelSystem(scene){
  function getFX(i){if(!fxPool[i]){const f=sprite(maps.fx,FX_COLS,FX_ROWS.length,2,2,false);f.material.depthWrite=false;scene.add(f.obj);fxPool[i]=f;}return fxPool[i];}
  function effects(list,clones,projectiles,t,dt,quality,player){
   drawTrails(dt);let n=0,limit=quality===1?48:quality===.75?32:20;
-  function add(type,x,y,z,size,col,alpha=1){
+  function add(type,x,y,z,size,col,alpha=1,rotation=0){
    if(n>=limit)return;const f=getFX(n++),row=FX_ROWS.indexOf(type);if(row<0)return;
-   setFrame(f,clamp(col,0,7),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=clamp(alpha,0,1);
+   setFrame(f,clamp(col,0,7),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=clamp(alpha,0,1);f.material.rotation=rotation;
   }
   for(const e of list){const progress=clamp(1-e.life/e.max,0,.999),blue=e.col?.[2]>.75&&e.col?.[0]<.65;add(['dash','substitute','clone'].includes(e.type)?e.type:blue?'rasengan':'hit',e.x,blue?1.12:.85,e.z,blue?3.1:e.type==='heavy'?2.6:1.9,Math.floor(progress*8),1-progress*.72);}
   if(player?.pending?.k===' '){const progress=1-player.pending.remaining/player.pending.s.windup;add('rasengan',player.x+player.dirX*.5,1.2,player.z+player.dirZ*.5,.75+progress*.8,Math.min(5,Math.floor(progress*6)),.9);}
   for(const c of clones){if(c.life>4.58)add('clone',c.x,.95,c.z,2.8,Math.floor(clamp((5-c.life)/.42,0,.999)*8),.9);}
-  for(const a of projectiles)add(a.kind==='wind'?'wind':a.hostile?'kunai':'shuriken',a.x,.83,a.z,a.kind==='wind'?1.9:.75,Math.floor(t*25)%8,1);
+  for(const a of projectiles)add(a.kind==='wind'?'wind':a.hostile?'kunai':'shuriken',a.x,.83,a.z,a.kind==='wind'?1.9:.75,Math.floor(t*25)%8,1,a.hostile?Math.atan2(-a.dx,-a.dz*.64):0);
   if(hero?.actor.sprinting&&hero.actor.motion&&quality>=.75){const a=hero.actor;add('dash',a.x-(a.dirX||0)*.7,.58,a.z-(a.dirZ||0)*.7,1.75,Math.floor(t*18)%8,.48);}
   for(let i=n;i<fxPool.length;i++)fxPool[i].obj.visible=false;
  }

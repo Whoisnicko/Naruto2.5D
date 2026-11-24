@@ -22,7 +22,7 @@ export function tickBoss(b,p,clones,dt,move,hit,signal){
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
  if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;b.intent=null;b.anim=null;b.attack=.55;signal('phase',b);return;}
- if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=0){b.intent=null;b.attack=b.worldBoss?(b.enraged?.24:.36)+Math.random()*.32:b.enraged?.38:b.phase===2?.7:1.15;for(const target of [p,...clones])if(!a.special&&((target.hp??0)>0&&(target.life??1)>0&&bossContains(a,target)))hit(target,a.damage,b);signal('strike',b,a);}return;}
+ if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=0){b.intent=null;b.attack=b.worldBoss?(b.enraged?.24:.36)+Math.random()*.32:b.enraged?.38:b.phase===2?.7:1.15;for(const target of [p,...clones])if(!a.special&&((target.hp??0)>0&&(target.life??1)>0&&bossContains(a,target)))hit(target,a.damage,b,bossPhysical(a)?'physical':'special');signal('strike',b,a);}return;}
  b.attack=Math.max(0,b.attack-dt);const allies=clones.filter(a=>a.ally&&a.hp>0&&a.life>0);const target=b.scripted&&allies.length&&b.index%3!==2?allies[b.index%allies.length]:p;const v=directionToward(target.x-b.x,target.z-b.z);b.dirX=v.x;b.dirZ=v.z;
  const d=distance(b,target);let pattern=b.spec.patterns[b.index%(b.phase===2?3:2)];if(b.worldBoss){if(!b.choice){let options=b.spec.patterns.filter(a=>a.name!==b.lastPattern&&d<=a.reach);if(!options.length)options=b.spec.patterns.filter(a=>a.name!==b.lastPattern);if(!options.length)options=b.spec.patterns;b.choice=options[Math.floor(Math.random()*options.length)];}pattern=b.choice;}
  if(!b.attack&&d<=pattern.reach){const x=pattern.shape==='target'?target.x:b.x,z=pattern.shape==='target'?target.z:b.z;const windup=pattern.windup*(b.phase===2?.8:1);b.intent={...pattern,x,z,dx:v.x,dz:v.z,left:windup,total:windup};b.anim={k:'j',left:windup+.25,total:windup+.25,windup};b.index++;b.lastPattern=pattern.name;b.choice=null;signal('windup',b,b.intent);return;}
@@ -59,13 +59,13 @@ export function tickZabuza(b,p,clones,dt,move,hit,signal,random=Math.random){
  b.attack=Math.max(0,b.attack-dt);
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
  if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;if(b.intent){const group=zabuzaGroup(b.intent);b.cooldowns[group]=ZABUZA_TIMING[group];}b.intent=null;b.anim=null;b.attack=.55;signal('phase',b);return;}
- if(b.polishFollow){const a=b.polishFollow;a.left-=dt;if(a.left<=1e-8){b.polishFollow=null;b.attack=1.0;for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&bossContains(a,q))hit(q,a.damage,b);signal('polishImpact',b,a);}return;}
+ if(b.polishFollow){const a=b.polishFollow;a.left-=dt;if(a.left<=1e-8){b.polishFollow=null;b.attack=1.0;for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&bossContains(a,q))hit(q,a.damage,b,bossPhysical(a)?'physical':'special');signal('polishImpact',b,a);}return;}
  if(b.intent){
   const a=b.intent;a.left-=dt;
   if(a.special==='dragon'&&a.left>.35){const v=directionToward(p.x-b.x,p.z-b.z);b.dirX=a.dx=v.x;b.dirZ=a.dz=v.z;}
   if(a.left<=1e-8){b.intent=null;const group=zabuzaGroup(a);b.cooldowns[group]=ZABUZA_TIMING[group];b.attack=ZABUZA_TIMING.recovery;
    if(group==='sword'&&b.enraged){b.polishFollow={...a,name:'Executioner · Returning Sweep',x:b.x,z:b.z,radius:a.radius*.86,damage:Math.round(a.damage*.55),left:.48,total:.48,follow:true};b.attack=.48;b.anim={k:'j',left:.73,total:.73,windup:.48};signal('polishWarn',b,b.polishFollow);}
-   if(group==='sword')for(const target of [p,...clones])if((target.hp??0)>0&&(target.life??1)>0&&bossContains(a,target))hit(target,a.damage,b);
+   if(group==='sword')for(const target of [p,...clones])if((target.hp??0)>0&&(target.life??1)>0&&bossContains(a,target))hit(target,a.damage,b,bossPhysical(a)?'physical':'special');
    signal('strike',b,a);
   }return;
  }
@@ -203,7 +203,7 @@ export function tickKabuto(b,p,clones,dt,move,hit,signal,random=Math.random){
  if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.cooldowns[a.id]=a.cooldown;b.attack=.65;
   if(a.id==='heal'){const amount=Math.max(0,Math.min(b.maxHP*KABUTO_RULES.healFraction,b.maxHP*KABUTO_RULES.healCap-b.healed,b.maxHP-b.hp));b.hp+=amount;b.healed+=amount;signal('kabutoHeal',b,{...a,amount});}
   else if(a.id==='evasion'){const v=directionToward(p.x-b.x,p.z-b.z);move(b,-v.z*2.4*b.orbitDir,v.x*2.4*b.orbitDir);signal('kabutoEvade',b,a);}
-  else {for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&(bossContains(a,q)||a.id==='cross'&&bossContains({...a,dx:-a.dz,dz:a.dx},q))){const landed=q===p&&!(p.invuln>0)&&!(p.substitution>0);hit(q,a.damage,b);if(landed&&a.id==='disrupt')signal('kabutoDisrupt',b,a);if(landed&&a.id==='extract')signal('kabutoExtract',b,a);}signal('strike',b,a);
+  else {for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&(bossContains(a,q)||a.id==='cross'&&bossContains({...a,dx:-a.dz,dz:a.dx},q))){const landed=q===p&&!(p.invuln>0)&&!(p.substitution>0);hit(q,a.damage,b,bossPhysical(a)?'physical':'special');if(landed&&a.id==='disrupt')signal('kabutoDisrupt',b,a);if(landed&&a.id==='extract')signal('kabutoExtract',b,a);}signal('strike',b,a);
    if(a.id==='disrupt'&&b.phase===2&&b.cooldowns.extract<=1e-8){const next=b.spec.patterns.find(q=>q.id==='extract');b.intent={...next,x:p.x,z:p.z,dx:a.dx,dz:a.dz,left:BOSS_POLISH.kabutoLinkDelay,total:BOSS_POLISH.kabutoLinkDelay};b.anim={k:'l',left:1.4,total:1.4,windup:1.15};b.lastPattern=next.id;signal('windup',b,b.intent);return;}
    if(a.id==='autopsy'&&(a.pulse||1)<a.pulses){b.cooldowns[a.id]=0;b.attack=0;b.intent={...a,x:p.x,z:p.z,left:a.windup,total:a.windup,pulse:(a.pulse||1)+1};b.anim={k:'j',left:a.windup+.25,total:a.windup+.25,windup:a.windup};signal('windup',b,b.intent);}}
  }return;}
@@ -237,7 +237,7 @@ export function tickGaara(b,p,clones,dt,move,hit,signal,random=Math.random){
  if(b.hp<=b.maxHP*cfg.finalThreshold+1e-8&&b.phase<3){b.phase=3;b.sandShield=0;b.sandShieldLeft=0;b.zones=[];b.intent=null;b.anim=null;b.attack=1.3;b.lastPattern=null;b.cooldowns.sandDetonation=0;b.cooldowns.sandShuriken=2;b.cooldowns.tailRend=3.5;b.cooldowns.sandEruption=5;signal('gaaraFinal',b);return;}
  if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;if(b.intent)b.cooldowns[b.intent.id]=b.intent.cooldown;b.intent=null;b.anim=null;b.attack=1.2;signal('gaaraPhase',b);return;}
  if(b.phase<3&&b.shieldAt<=1e-8&&b.attack<=0&&!b.intent){b.sandShield=cfg.shieldHP;b.sandShieldLeft=cfg.shieldDuration;b.shieldAt=cfg.shieldCooldown;signal('sandShield',b);}
- if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.cooldowns[a.id]=a.cooldown;b.attack=b.phase===3?.5:.65;if(!a.projectile)for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&bossContains(a,q))hit(q,a.damage,b);
+ if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.cooldowns[a.id]=a.cooldown;b.attack=b.phase===3?.5:.65;if(!a.projectile)for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&bossContains(a,q))hit(q,a.damage,b,bossPhysical(a)?'physical':'special');
   if(a.zone||a.id==='sandDetonation'){b.zones.push({x:a.x,z:a.z,radius:a.id==='sandDetonation'?a.radius*.86:a.radius,left:a.id==='sandDetonation'?BOSS_POLISH.gaaraDustLife:cfg.zoneDuration});b.zones=b.zones.slice(-BOSS_POLISH.gaaraDustCap);}signal('strike',b,a);if(a.pulses&&(a.pulse||1)<a.pulses){const n=(a.pulse||1)+1,v=directionToward(p.x-b.x,p.z-b.z),angle=(random()-.5)*.7,dx=v.x*Math.cos(angle)-v.z*Math.sin(angle),dz=v.x*Math.sin(angle)+v.z*Math.cos(angle),delay=a.id==='sandDetonation'?.65+random()*.3:a.id==='sandShuriken'?.55+random()*.2:.7+random()*.2;b.cooldowns[a.id]=0;b.attack=0;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx,dz,pulse:n,left:delay,total:delay};b.dirX=dx;b.dirZ=dz;b.anim={k:a.id==='tailRend'?'j':'l',left:delay+.25,total:delay+.25,windup:delay};signal('windup',b,b.intent);}}return;}
  const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
  if(!b.attack){const ready=b.spec.patterns.filter(a=>(b.phase===3?a.phase===3:(a.phase||1)<=b.phase)&&b.cooldowns[a.id]<=1e-8&&d<=a.reach),varied=ready.filter(a=>a.id!==b.lastPattern),options=varied.length?varied:ready;const a=variedBossAttack(b,options,random,options.find(a=>a.id==='sandTsunami')||options.find(a=>a.id==='sandDetonation'&&!b.attackUses?.sandDetonation));
@@ -270,14 +270,14 @@ export function tickOrochimaru(b,p,clones,dt,move,hit,signal,random=Math.random)
  if(b.phase===2&&b.shedUsed&&!b.husk&&b.hp<=b.maxHP*c.finalThreshold+1e-8){b.phase=3;b.intent=null;b.anim=null;b.attack=1.3;b.snakes=[];b.clouds=[];b.lastPattern=null;b.cooldowns.trueFang=0;b.cooldowns.trueMiasma=2;b.cooldowns.trueEruption=3;b.cooldowns.trueCoil=1;signal('orochimaruFinal',b);return;}
  b.clouds=b.clouds.filter(q=>(q.life-=dt)>1e-8);for(const q of b.clouds)if(!q.applied&&distance(q,p)<=q.radius&&p.hp>0&&!(p.invuln>0)&&!(p.substitution>0)&&!(p.dashGuard>0)&&!(p.dashTime>0)){q.applied=true;signal('oroVenom',b,q);}
  for(const s of b.snakes){s.life-=dt;s.flash=Math.max(0,s.flash-dt);s.attack=Math.max(0,s.attack-dt);if(!alive(s))continue;
-  if(s.intent){s.intent.left-=dt;if(s.intent.left<=1e-8){const a=s.intent;s.intent=null;s.attack=c.biteCooldown;for(const q of [p,...clones])if(alive(q)&&distance(q,a)<=c.biteRange)hit(q,c.biteDamage,s);signal('oroBite',b,{target:s,x:a.x,z:a.z,radius:c.biteRange});}continue;}
+  if(s.intent){s.intent.left-=dt;if(s.intent.left<=1e-8){const a=s.intent;s.intent=null;s.attack=c.biteCooldown;for(const q of [p,...clones])if(alive(q)&&distance(q,a)<=c.biteRange)hit(q,c.biteDamage,s,'physical');signal('oroBite',b,{target:s,x:a.x,z:a.z,radius:c.biteRange});}continue;}
   const target=[p,...clones].filter(alive).sort((a,d)=>distance(s,a)-distance(s,d))[0];if(!target)continue;const v=directionToward(target.x-s.x,target.z-s.z);s.dirX=v.x;s.dirZ=v.z;
   if(distance(s,target)<=c.biteRange){if(s.attack<=0)s.intent={x:target.x,z:target.z,left:c.biteWindup,total:c.biteWindup};}else move(s,v.x*c.snakeSpeed*dt,v.z*c.snakeSpeed*dt);
  }
  b.snakes=b.snakes.filter(alive);
  if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.cooldowns[a.id]=a.cooldown;b.attack=b.phase===3?.65:.7;
   if(a.summon){for(let i=b.snakes.length;i<c.snakeCap;i++){const th=i*2*Math.PI/3;const q={id:'oro-snake-'+(++b.serial),oroSnake:true,x:b.x,z:b.z,hp:c.snakeHP,maxHP:c.snakeHP,life:c.snakeLife,attack:1+i*.55,flash:0,dirX:1,dirZ:0};move(q,Math.cos(th)*2.3,Math.sin(th)*2.3);b.snakes.push(q);}signal('oroSummon',b,a);}
-  else{let applied=false;for(const q of [p,...clones])if(alive(q)&&bossContains(a,q)){const landed=q===p&&!(p.invuln>0)&&!(p.substitution>0)&&!(p.dashGuard>0)&&!(p.dashTime>0);hit(q,a.damage,b);if(a.venom&&landed){applied=true;signal('oroVenom',b,a);}}signal('strike',b,a);if(a.cloud){b.clouds.push({x:a.x,z:a.z,radius:a.radius,life:c.cloudLife,applied});b.clouds=b.clouds.slice(-c.cloudCap);}if(a.lunge){const x=b.x,z=b.z;move(b,a.dx*a.lunge,a.dz*a.lunge);if(a.id==='trueFang'){b.clouds.push({x:(x+b.x)/2,z:(z+b.z)/2,radius:2.0,life:BOSS_POLISH.oroVenomTrailLife,applied:false});b.clouds=b.clouds.slice(-c.cloudCap);}}}
+  else{let applied=false;for(const q of [p,...clones])if(alive(q)&&bossContains(a,q)){const landed=q===p&&!(p.invuln>0)&&!(p.substitution>0)&&!(p.dashGuard>0)&&!(p.dashTime>0);hit(q,a.damage,b,bossPhysical(a)?'physical':'special');if(a.venom&&landed){applied=true;signal('oroVenom',b,a);}}signal('strike',b,a);if(a.cloud){b.clouds.push({x:a.x,z:a.z,radius:a.radius,life:c.cloudLife,applied});b.clouds=b.clouds.slice(-c.cloudCap);}if(a.lunge){const x=b.x,z=b.z;move(b,a.dx*a.lunge,a.dz*a.lunge);if(a.id==='trueFang'){b.clouds.push({x:(x+b.x)/2,z:(z+b.z)/2,radius:2.0,life:BOSS_POLISH.oroVenomTrailLife,applied:false});b.clouds=b.clouds.slice(-c.cloudCap);}}}
   if(a.pulses&&(a.pulse||1)<a.pulses){const v=directionToward(p.x-b.x,p.z-b.z);b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:.85,total:.85,pulse:(a.pulse||1)+1};b.cooldowns[a.id]=0;b.attack=0;signal('windup',b,b.intent);}
  }return;}
  const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
@@ -301,7 +301,7 @@ export function tickKimimaro(b,p,clones,dt,move,hit,signal,random=Math.random){
  const next=b.hp<=b.maxHP*c.stageTwo+1e-8?3:b.hp<=b.maxHP*c.stageOne+1e-8?2:1;
  if(next>b.phase){b.phase=next;b.intent=null;b.anim=null;b.attack=1.2;b.lastPattern=null;if(next===3){b.zones=[];b.cooldowns.seedlingFern=2;b.cooldowns.cursedDrill=0;b.cooldowns.cursedVolley=4;b.cooldowns.cursedTail=3;}signal(next===3?'kimimaroFinal':'kimimaroPhase',b);return;}
  if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.cooldowns[a.id]=a.cooldown;b.attack=a.forest&&(a.pulse||1)===a.pulses?1.2:b.phase===3?.7:.6;
-  if(!a.projectile)for(const q of [p,...clones])if(alive(q)&&bossContains(a,q))hit(q,a.damage,b);
+  if(!a.projectile)for(const q of [p,...clones])if(alive(q)&&bossContains(a,q))hit(q,a.damage,b,bossPhysical(a)?'physical':'special');
   if(a.forest){b.zones.push({x:a.x,z:a.z,radius:a.radius,left:c.forestLife});b.zones=b.zones.slice(-c.forestCap);}
   signal('strike',b,a);if(a.lunge)move(b,a.dx*a.lunge,a.dz*a.lunge);
   if(a.pulses&&(a.pulse||1)<a.pulses){const v=directionToward(p.x-b.x,p.z-b.z),delay=a.forest?.85:.65;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,pulse:(a.pulse||1)+1,left:delay,total:delay};b.cooldowns[a.id]=0;b.attack=0;b.dirX=v.x;b.dirZ=v.z;signal('windup',b,b.intent);}
@@ -333,7 +333,7 @@ export function tickValleySasuke(b,p,clones,dt,move,hit,signal,random=Math.rando
  if(b.rush){const r=b.rush,step=Math.min(r.remaining,(r.speed||c.rushSpeed)*dt),n=Math.max(1,Math.ceil(step/.18));b.motion=b.sprinting=true;for(let j=0;j<n;j++){if(!r.hit){const v=directionToward(p.x-b.x,p.z-b.z,r.dx,r.dz);r.dx=v.x;r.dz=v.z;}b.dirX=r.dx;b.dirZ=r.dz;const x=b.x,z=b.z;move(b,r.dx*step/n,r.dz*step/n);if(b.phase===4)appendValleyTrail(b,r,x,z,b.x,b.z);if(!r.hit&&alive(p)&&distance(b,p)<=r.radius){r.hit=true;signal('valleyRushHit',b,r);if(!b.rush)return;}if(r.hit&&Math.hypot(b.x-x,b.z-z)<.001){r.remaining=0;break;}}r.remaining-=step;b.walk+=dt*32;if(r.remaining<=1e-8){b.rush=null;if(b.chain){b.cooldowns.chidoriChain=c.chainCooldown||21;b.chain=null;}b.attack=c.rushRecovery;b.motion=b.sprinting=false;signal('valleyRushEnd',b,r);}return;}
  if(b.intent){const a=b.intent;a.left-=dt;if(a.rush&&a.left>c.rushLock){const v=directionToward(p.x-b.x,p.z-b.z);a.dx=v.x;a.dz=v.z;b.dirX=v.x;b.dirZ=v.z;}b.air=a.dive?Math.sin(Math.PI*Math.max(0,1-a.left/a.total))*1.15:0;if(a.left<=1e-8){b.intent=null;b.air=0;b.cooldowns[a.id]=a.cooldown;b.attack=(a.clash?1.05:.65)*c.recovery[b.phase-1];
   if(a.rush){b.rush={...a,remaining:c.rushTravel,hit:false};b.attack=0;b.anim=null;signal('valleyRushStart',b,a);return;}
-  if(!a.projectile)for(const q of [p,...clones])if(alive(q)&&bossContains(a,q))hit(q,a.damage,b);
+  if(!a.projectile)for(const q of [p,...clones])if(alive(q)&&bossContains(a,q))hit(q,a.damage,b,bossPhysical(a)?'physical':'special');
   signal('strike',b,a);if(a.lunge){const x=b.x,z=b.z;move(b,a.dx*a.lunge,a.dz*a.lunge);if(b.phase===4&&a.clash)appendValleyTrail(b,a,x,z,b.x,b.z);}else if(a.dive&&a.shape==='target'){const v=directionToward(a.x-b.x,a.z-b.z),d=Math.min(8,distance(b,a));move(b,v.x*d,v.z*d);}
   if(a.pulses&&(a.pulse||1)<a.pulses){const v=directionToward(p.x-b.x,p.z-b.z),delay=a.id==='predatorRush'?.60:a.id==='curseFlurry'?.50:.48;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,pulse:(a.pulse||1)+1,left:delay,total:delay};b.cooldowns[a.id]=0;b.attack=0;b.dirX=v.x;b.dirZ=v.z;signal('windup',b,b.intent);}
  }return;}
@@ -403,7 +403,7 @@ export function tickJiraiya(b,p,clones,dt,move,hit,signal,random=Math.random){co
  if(b.intent){const a=b.intent;a.left-=dt;b.air=a.stomp?Math.sin(Math.PI*Math.max(0,1-a.left/a.total))*.9:0;if(a.left>1e-8)return;b.intent=null;b.air=0;b.cooldowns[a.id]=a.cooldown;b.attack=.65;
  if(a.oil){b.oil.push({x:a.x,z:a.z,r:c.oilRadius,life:c.oilLife,burning:false});if(b.oil.length>c.oilCap)b.oil.shift();}
  if(a.ignite)for(const q of b.oil)if(bossContains({...a,radius:a.radius+q.r},q)){q.burning=true;q.life=c.burnLife;}
- for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&bossContains(a,q)){hit(q,a.damage,b);if(b.lesson||p.hp<=0)return;}
+ for(const q of [p,...clones])if(q.hp>0&&(q.life??1)>0&&bossContains(a,q)){hit(q,a.damage,b,bossPhysical(a)?'physical':'special');if(b.lesson||p.hp<=0)return;}
  signal('jiraiyaStrike',b,a);if(a.lunge)move(b,a.dx*a.lunge,a.dz*a.lunge);
  if(a.id==='oilShot'&&b.phase===2&&b.cooldowns.flameSweep<=1e-8){const f=b.spec.patterns.find(x=>x.id==='flameSweep'),v=directionToward(a.x-b.x,a.z-b.z);b.intent={...f,x:b.x,z:b.z,dx:v.x,dz:v.z,left:1.1,total:1.1};b.dirX=v.x;b.dirZ=v.z;b.anim={k:'l',left:1.35,total:1.35,windup:1.1};b.lastPattern=f.id;b.uses[f.id]=(b.uses[f.id]||0)+1;signal('jiraiyaWindup',b,b.intent);return;}
  if(a.pulses&&(a.pulse||1)<a.pulses){const delay=a.stomp?.66:.85;b.intent={...a,x:a.quake?b.spec.arena.x:p.x,z:a.quake?b.spec.arena.z:p.z,shape:a.quake?(a.pulse===2?'annulus':'circle'):a.shape,inner:a.quake?(a.pulse===2?8.5:0):a.inner,radius:a.quake?(a.pulse===2?15:5.8):a.radius,pulse:(a.pulse||1)+1,left:delay,total:delay};b.cooldowns[a.id]=0;b.attack=0;signal('jiraiyaWindup',b,b.intent);}return;}
@@ -419,3 +419,5 @@ Object.assign(MIST_SCENES,{
  jiraiyaRetry:{title:'A LESSON IN HUMILITY',lines:[['Jiraiya','That is enough for now. Catch your breath and try again.'],['Naruto','I am not done yet!']]}
 });
 for(const id of ['jiraiyaIntro','jiraiyaPhase','jiraiyaSage','jiraiyaEnd','jiraiyaRetry'])MIST_CAMERA[id]=MIST_SCENES[id].lines.map((_,i)=>({zoom:i%2?1.65:1.85,yaw:i%2?-.15:.17,lookY:1.2}));
+
+export function bossPhysical(a){return ['Sword Slash','Furious Cleave','Mist Whirlwind','Demon’s Whirlwind','Returning Sweep'].includes(a?.name)||['kusanagiSweep','willowDance','camelliaDance','lionCombo','sharinganCounter','curseFlurry','cursedTail','trueCoil','shukakuClaw','tailRend'].includes(a?.id);}

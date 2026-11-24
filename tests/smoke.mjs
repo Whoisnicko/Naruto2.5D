@@ -8,15 +8,15 @@ for(const source of Object.values(src))new AsyncFunction(strip(source));
 const store=new Map(),localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v)};
 const rpgApi=new Function(strip(src['rpg-data'])+'\nreturn {newRPG,statsFor,equipmentVisuals,levelFor,rankFor,LOOT,QUEST_LOOT,TRAINING_LOOT,rewardItems,itemFor,moveSlot,sortInventory,discardSlot,equipSlot,unequipSlot,assignHotbar,useItem,unlockSkill,collectOverflow,validateRPG,migrateRPG,itemCount,addItem,removeItem,pointsFor,unlockReason,treeFor,learnedFor,advancedUnlocked,skillModifiers};')();
 const worldApi=new Function('Math',...Object.keys(rpgApi),strip(src['world-data'])+'\nreturn {NPCS,CHESTS,LANDMARKS,SIDEQUESTS,SHOPS,DIALOGUES,EAST,REGIONAL_ENEMIES,inEast,regionalGate,DAY_SECONDS,DAY_RATE,dayPhase,newWorld,validateWorld,discover,nearestWorld,openChest,questProgress,acceptQuest,finishQuest,choicesFor,buyPrice,sellPrice,buyItem,sellItem,healPlayer,worldTime,npcDestination,INTERIORS,WEATHER,WEATHER_TIMING,newWeather,advanceWeather,weatherDuration,lightingFor,WORLD_EVENTS};')(Object.assign(Object.create(Math),{random:()=>.5}),...Object.values(rpgApi));
-const combat=new Function(strip(src['combat-data'])+'\nreturn {COMBAT,stepMotion,directionToward};')();
+const combat=new Function(strip(src['combat-data'])+'\nreturn {COMBAT,stepMotion,directionToward,chooseAttackTarget};')();
 const performanceApi=new Function(strip(src['performance-core'])+'\nreturn {PERFORMANCE_PRESETS,normalizePerformance,createPerformanceController};')();
-const bossApi=new Function('directionToward',strip(src['boss-data'])+'\nreturn {ARENA,BOSSES,newBossProgress,validateBossProgress,nextBoss,makeBoss,bossContains,tickBoss,sandboxBoost,MIST_SCENES,mistBoss,mistAlly,MIST_CAMERA,MIST_COMBAT,ZABUZA_TIMING,zabuzaGroup,tickZabuza,HAKU_TIMING,tickHaku,WORLD_BOSSES,KABUTO_RULES,GAARA_RULES,absorbGaaraDamage,sandSlow,ORO_RULES,orochimaruTargets,hurtOroMinion,makeWorldBoss,tickKabuto,tickGaara,tickOrochimaru,KIMI_RULES,boneSlow,tickKimimaro,VALLEY_RULES,valleyEligible,valleyDamageFloor,valleyClashOutcome,tickValleySasuke,newValleyUltimate,advanceValleyCharge,steerValleyFire,addValleyBurn,tickValleyBurn,valleyElectricSlow,tickValleyElectric,valleyTrailDistance,appendValleyTrail,PRACTICE_BOSSES,practiceStage,applyPracticeStage,JIRAIYA_RULES,jiraiyaEligible,worldBossEligible,jiraiyaFloor,jiraiyaSlow,tickJiraiya,BOSS_POLISH};')(combat.directionToward);
+const bossApi=new Function('directionToward',strip(src['boss-data'])+'\nreturn {bossPhysical,ARENA,BOSSES,newBossProgress,validateBossProgress,nextBoss,makeBoss,bossContains,tickBoss,sandboxBoost,MIST_SCENES,mistBoss,mistAlly,MIST_CAMERA,MIST_COMBAT,ZABUZA_TIMING,zabuzaGroup,tickZabuza,HAKU_TIMING,tickHaku,WORLD_BOSSES,KABUTO_RULES,GAARA_RULES,absorbGaaraDamage,sandSlow,ORO_RULES,orochimaruTargets,hurtOroMinion,makeWorldBoss,tickKabuto,tickGaara,tickOrochimaru,KIMI_RULES,boneSlow,tickKimimaro,VALLEY_RULES,valleyEligible,valleyDamageFloor,valleyClashOutcome,tickValleySasuke,newValleyUltimate,advanceValleyCharge,steerValleyFire,addValleyBurn,tickValleyBurn,valleyElectricSlow,tickValleyElectric,valleyTrailDistance,appendValleyTrail,PRACTICE_BOSSES,practiceStage,applyPracticeStage,JIRAIYA_RULES,jiraiyaEligible,worldBossEligible,jiraiyaFloor,jiraiyaSlow,tickJiraiya,BOSS_POLISH};')(combat.directionToward);
 const campaignApi=new Function('ARENA',strip(src['campaign-data'])+'\nreturn {CHAPTERS,FINALE,newCampaign,validateCampaign,chapterIndex,completeCampaign,campaignSummary};')(bossApi.ARENA);
 const characterApi=new Function(strip(src['character-data'])+'\nreturn {CHARACTERS,characterFor,characterSkill,validateCharacter,canSelectCharacter,skillLabel};')();
 const examApi=new Function(strip(src['exam-data'])+'\nreturn {EXAM_DESK,EXAM_FOREST,EXAM_RING,EXAM_TIME,QUESTIONS,FOREST_RIVALS,EXAM_RIVALS,EXAM_REWARD,newExam,validateExam,examStage,examScore,examEligible,examTitle};')();
 const saved=new Function('newExam','validateExam','validateCharacter','localStorage','validateRPG','migrateRPG','newWorld','validateWorld','newBossProgress','validateBossProgress','newCampaign','validateCampaign',strip(src.save)+'\nreturn {validateSave,packSave,readSave,readRecovery,writeSave,importSave,exportSave};')(examApi.newExam,examApi.validateExam,characterApi.validateCharacter,localStorage,rpgApi.validateRPG,rpgApi.migrateRPG,worldApi.newWorld,worldApi.validateWorld,bossApi.newBossProgress,bossApi.validateBossProgress,campaignApi.newCampaign,campaignApi.validateCampaign);
 const {COMBAT,stepMotion}=combat;
-const ai=new Function('directionToward',strip(src['enemy-ai'])+'\nreturn {prepareEnemy,roleFor,targetFor,damageModifier,tickEnemy,safeSubstitution,PATROL_SPAWNS,RESPAWN_SECONDS,isRanged,isDefensive};')(combat.directionToward);
+const ai=new Function('directionToward','COMBAT',strip(src['enemy-ai'])+'\nreturn {prepareEnemy,roleFor,targetFor,damageModifier,tickEnemy,safeSubstitution,PATROL_SPAWNS,RESPAWN_SECONDS,isRanged,isDefensive};')(combat.directionToward,combat.COMBAT);
 const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{style:{},textContent:'',disabled:false,click(){},setAttribute(k,v){this[k]=v;},dataset:{},value:''});return nodes.get(id)};
 const document={getElementById:node,querySelectorAll:()=>[]};
 const view={scene:{},solid:{},lastShot:null,addStatic:()=>({visible:true}),resize(){},frame(x,z,shot){this.lastShot={x,z,...shot};},drawActors(){},drawEffects(){}};
@@ -363,3 +363,44 @@ console.log('PASS v1.15b: performance defaults, bounded adaptation, recovery, di
  const full=renderApi.arrays(6),fast=renderApi.dynamicArrays(6);renderApi.fill(full,raw);renderApi.fillDynamic(fast,raw);assert.equal(JSON.stringify([...full.pos]),JSON.stringify([...fast.pos]));assert.equal(JSON.stringify([...full.col]),JSON.stringify([...fast.col]));assert(!fast.norm&&!fast.uv);
 }
 console.log('PASS v1.15b: 60 FPS cap at simulated 144 Hz, independent simulation, dynamic vertex buffer equivalence.');
+
+// v1.15c: actual dispatch, dash strike, bounded directional assistance and safe links.
+{
+ const press=key=>handlers.keydown({key,repeat:false,preventDefault(){}});
+ const release=key=>handlers.keyup({key});
+ const tap=k=>{press(k);release(k);};
+ const assist=value=>node('perfAssist').onchange({target:{checked:value}});
+ function setup(x=18,z=-2,ex=20.3,ez=-2){game.start(false);const p=game.state.p,e=game.state.enemies[0];p.x=x;p.z=z;p.dirX=1;p.dirZ=0;e.x=ex;e.z=ez;e.attack=100;e.stagger=100;for(const o of game.state.enemies.slice(1))o.hp=0;for(const o of game.state.patrols)o.hp=0;return {p,e};}
+ const a={x:0,z:0},front={x:2,z:.3,hp:10},rear={x:-.4,z:0,hp:10},side={x:.2,z:1,hp:10};
+ assert.equal(combat.chooseAttackTarget(a,[rear,side,front],{x:1,z:0},3),front);assert.equal(combat.chooseAttackTarget(a,[front],{x:1,z:0},3,.7,()=>false),null);
+ assist(true);
+ {const {p,e}=setup(17,-2,20.3,-2);tap('q');assert(p.dashTime>0);tap('j');assert(p.pending.s.dashStrike);assert.equal(p.pending.s.damage,21);assert(p.dashStrikeUsed);assert.equal(game.cd.j,.35);sim(.12);assert.equal(e.hp,49);tap('j');sim(.10);assert.equal(e.hp,49);assert.equal(p.dashTime,0);assert(Math.abs(p.x-20.23)<.001,'dash distance unchanged');assert(Math.abs(p.z+2)<.001);}
+ {const {p,e}=setup(18,-2,20,-1.1);tap('j');assert(p.dirZ>0);assert(p.x>18);sim(.12);assert.equal(e.hp,45);}
+ assist(false);
+ {const {p,e}=setup(18,-2,20,-1.1);tap('j');assert(p.dirZ>0);assert(p.x>18);sim(.12);assert.equal(e.hp,45);assert(node('perfAssist').checked);}
+ {const {e}=setup(18,-2,17,-2);tap('j');sim(.12);assert.equal(e.hp,70,'no hit behind player');}
+ {const {p}=setup();tap('j');sim(.25);tap('k');assert.equal(p.pending.k,'k');assert(game.cd.j>0);assert(game.cd.k>0);}
+ {const {p,e}=setup(17,-2,20.3,-2);tap('q');tap('j');handlers.blur();assert(!p.pending);sim(.3);assert.equal(e.hp,70);}
+ {const {p}=setup();game.cd.j=.3;tap('q');tap('j');assert(!p.pending);assert(!p.dashStrikeUsed);}
+ assist(true);
+}
+console.log('PASS v1.15c: dash strike damage/cooldowns/distance/once per dash, always-on assist, no rear strike, recovery links and focus cancellation.');
+
+{
+ const press=key=>handlers.keydown({key,repeat:false,preventDefault(){}});
+ const release=key=>handlers.keyup({key});
+ game.start(false);let p=game.state.p;p.dirX=1;p.dirZ=0;press('b');sim(.1);assert(p.guarding);const stamina=p.stamina,hp=p.hp;
+ game.playerHurt(20,{x:p.x+1,z:p.z},'physical');assert.equal(p.hp,hp);assert(p.stamina<stamina);
+ release('b');sim(1);assert(p.stamina>stamina-31);
+ press('b');sim(.1);game.playerHurt(10,{x:p.x-1,z:p.z},'physical');assert(p.hp<hp);release('b');
+ game.start(false);p=game.state.p;press('b');sim(.1);game.playerHurt(12,{x:p.x+1,z:p.z},'special');assert(p.hp<100);release('b');
+ game.start(false);p=game.state.p;p.stamina=10;press('b');sim(.1);game.playerHurt(20,{x:p.x+1,z:p.z},'physical');assert.equal(p.stamina,0);assert(p.guardBreak>0);assert(p.hp<100);assert(!p.guarding);release('b');
+ game.start(false);p=game.state.p;p.chakra=0;press('v');sim(1);assert(p.charging);assert(p.chakra>20);game.playerHurt(10,{x:p.x+1,z:p.z});assert(!p.charging);assert(!game.keys.has('v'));
+ game.start(false);p=game.state.p;p.chakra=0;press('v');sim(.35);handlers.blur();assert(!p.charging);assert(!game.keys.has('v'));
+ const e=ai.prepareEnemy({id:0,x:0,z:0,hp:70,attack:0}),target={x:1,z:0,hp:100};let hits=0;const noop=()=>{};ai.tickEnemy(e,target,[],.01,noop,noop,noop);target.x=-1;ai.tickEnemy(e,target,[],.05,noop,noop,noop);assert(e.dirX<0);ai.tickEnemy(e,target,[],.35,noop,noop,(a,d,s,k)=>{assert.equal(k,'physical');hits++;});assert.equal(hits,1);
+ assert(performanceApi.normalizePerformance({targetAssist:false}).targetAssist);assert(bossApi.bossPhysical({id:'lionCombo'}));assert(!bossApi.bossPhysical({id:'darkChidori'}));
+}
+console.log('PASS v1.15d: front guard, stamina drain/recovery/break, rear and special hits, active charge and interruption, enemy reorientation, always-on assistance.');
+
+{game.start(false);const p=game.state.p;p.stamina=42;assert(game.enterSandbox());game.state.p.stamina=10;assert(game.exitSandbox());assert.equal(game.state.p.stamina,42);game.state.p.guardBreak=.5;assert(!game.dash());assert(!game.substitution());const old=game.normalizeBindings(null);delete old.b;delete old.v;old.j='b';const migrated=game.normalizeBindings(old);assert.equal(migrated.j,'b');assert(migrated.b!=='b');assert.equal(new Set(Object.values(migrated)).size,Object.keys(migrated).length);}
+console.log('PASS v1.15d: sandbox stamina isolation, guard-break locks and legacy keybinding migration.');

@@ -4,6 +4,7 @@ const CUES={
  swing:[['triangle',280,95,.08,.10]],hit:[['square',115,48,.075,.11],['triangle',310,90,.07,.055]],
  heavy:[['sawtooth',105,36,.15,.10],['triangle',430,72,.18,.08]],
  shuriken:[['triangle',920,310,.11,.075]],clone:[['sine',190,520,.18,.09]],
+ kyubi:[['sawtooth',88,35,.65,.12],['triangle',52,34,.8,.15],['square',155,48,.38,.035]],kyubiHit:[['sawtooth',145,42,.25,.12],['triangle',240,55,.28,.085]],
  charge:[['sine',160,550,.25,.08],['triangle',330,680,.22,.04]],
  rasengan:[['sawtooth',490,65,.23,.09],['sine',850,120,.22,.12]],
  hurt:[['square',200,75,.1,.075]],reward:[['sine',440,660,.15,.09],['triangle',660,880,.23,.05]]

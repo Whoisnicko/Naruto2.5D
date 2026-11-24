@@ -28,7 +28,7 @@ export function createWorldUI(api){
   }
  }
  function tick(){
-  const {p,world,enemies,rpg,bossProgress,boss,quest,campaign}=api.state();$('worldClock').textContent=worldTime(world.clock);const night=(1-Math.cos((world.clock/DAY_SECONDS-.5)*Math.PI*2))*.5;$('nightTint').style.opacity=String(night*.36);
+  const {p,world,enemies,rpg,bossProgress,boss,quest,campaign,exam,examRun}=api.state();$('worldClock').textContent=worldTime(world.clock);const night=(1-Math.cos((world.clock/DAY_SECONDS-.5)*Math.PI*2))*.5;$('nightTint').style.opacity=String(night*.36);
   const east=inEast(p);const near=LANDMARKS.find(l=>Math.hypot(p.x-l.x,p.z-l.z)<l.r);$('worldRegion').textContent=near?.name||(east?'Frontera del viento':p.x>10?'Bosque exterior':'Konoha');
   const summary=Object.entries(SIDEQUESTS).filter(([id])=>world.quests[id]===1).map(([id,q])=>q.name+' · '+questProgress(world,rpg,id)).join('\n');if(summary!==shown){shown=summary;$('sideQuestLog').textContent=summary||'Hablá con Sakura, Iruka o Shikamaru para nuevas misiones.';}
   if(!cx||!b||$('mapPanel').hidden)return;cx.clearRect(0,0,100,100);if(east){cx.fillStyle='#526f58';cx.fillRect(0,0,100,100);cx.fillStyle='#b5a681';cx.fillRect(0,43,100,14);cx.fillStyle='#878d80';cx.fillRect(67,0,33,100);cx.fillStyle='#444f52';cx.fillRect(66,0,3,43);cx.fillRect(66,57,3,43);cx.fillStyle='#e8c67d';cx.fillRect(1,44,4,6);}else{cx.drawImage(base,0,0);cx.fillStyle='#e8c67d';cx.fillRect(96,46,4,4);}const mark=(x,z,col,size=2)=>{if(east?(x<50||x>110):(x>=50))return;cx.fillStyle=col;cx.fillRect(Math.round((east?(x-50)/60*100:x+50)-size/2),Math.round((east?(z+20)/40*100:z+50)-size/2),size,size);};
@@ -37,7 +37,7 @@ export function createWorldUI(api){
   mark(-12,-2,'#e8cb86',3);
   for(const c of CHESTS)if(!world.opened.includes(c.id))mark(c.x,c.z,'#e5a25d',2);
   for(const e of enemies)if(e.hp>0&&Math.hypot(e.x-p.x,e.z-p.z)<18)mark(e.x,e.z,'#dd756c',2);
-  if(quest===3&&bossProgress?.defeated.length<2)mark(32,-2,'#e7a6dc',4);else if(quest===3&&bossProgress?.defeated.length===2&&!campaign?.completed)mark(-12,-2,'#e7a6dc',4);if(boss)mark(boss.x,boss.z,'#f17685',4);mark(p.x,p.z,'#ffffff',3);
+  if(quest===3&&bossProgress?.defeated.length<2)mark(32,-2,'#e7a6dc',4);else if(quest===3&&bossProgress?.defeated.length===2&&!campaign?.completed)mark(-12,-2,'#e7a6dc',4);if(quest===3&&exam?.wins!==3)mark(-13,-14.5,'#e7a6dc',4);if(examRun?.scroll)mark(examRun.scroll.x,examRun.scroll.z,'#f8d893',4);if(boss)mark(boss.x,boss.z,'#f17685',4);mark(p.x,p.z,'#ffffff',3);
  }
  $('worldClose').onclick=close;$('worldBody').onclick=stopText;
  $('mapToggle').onclick=()=>{$('mapPanel').hidden=!$('mapPanel').hidden;};

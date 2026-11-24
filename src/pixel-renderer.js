@@ -1,12 +1,13 @@
 import {characterFor} from './character-data.js';
 import * as THREE from 'three';
-import {makeActorSheet,makeSheets,ANIMS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SIZE,FX_COLS,TREE_W,TREE_H,artFor} from './pixel-art.js';
+import {makeActorSheet,makeSheets,ANIMS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SIZE,FX_COLS,TREE_W,TREE_H,artFor,makeRasenganSheet,RAS_COLS,RAS_ROWS,rasenganPose,rasenganHand} from './pixel-art.js';
 const TILT=-Math.atan2(25,30),UP_Y=Math.cos(TILT),UP_Z=Math.sin(TILT);
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 export function direction(x=0,z=1){return Math.abs(x)>Math.abs(z)?(x<0?1:2):(z<0?3:0);}
 export function frameFor(actor,clock){
  const a=actor.anim;
  if(a&&a.left>0){
+  if(actor.character==='naruto'&&a.k===' ')return {col:38+rasenganPose(a),state:'rasengan'};
   const special=actor.character&&artFor(actor.character,a.k);if(special){const v=ANIMS[special.pose],elapsed=Math.max(0,a.total-a.left),windup=a.windup||.001,recovery=Math.max(.001,a.total-windup);const phase=elapsed<windup?(elapsed<windup*.55?0:1):elapsed<windup+recovery*.65?2:3;return {col:v.start+phase,state:special.pose};}
   const state=(a.k==='l'||a.k===' '||a.k==='f'||a.k==='g')?'cast':a.combo===2?'kick':a.combo===3?'finish':'attack',v=ANIMS[state],progress=clamp(1-a.left/a.total,0,.999);
   const col=a.windup?(a.left>a.total-a.windup?v.start:v.start+Math.min(v.count-1,1+Math.floor((1-a.left/(a.total-a.windup))*(v.count-1)))):v.start+Math.min(v.count-1,Math.floor(progress*v.count));return {col,state};
@@ -36,7 +37,7 @@ export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
  const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[]},trails=[],fxPool=[];
- let generation=0,hero=null,gearKey=null,gearCanvas=null;
+ let generation=0,hero=null,gearKey=null,gearCanvas=null;const rasPool=[];let rasMap=null;try{rasMap=texture(makeRasenganSheet());}catch(e){console.warn('Rasengan art fallback',e);}
  function gearSheet(gear,kind='player'){const key=kind+JSON.stringify(gear||{});if(key!==gearKey){gearKey=key;gearCanvas=makeActorSheet(kind,gear);}return gearCanvas;}
  function previewEquipment(gear,canvas,kind='player'){const c=gearSheet(gear,kind),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
  function portrait(kind,canvas){const c=sheets[kind]||sheets.npc,ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(c,0,0,24,19,0,0,canvas.width,canvas.height);}
@@ -54,7 +55,7 @@ export function createPixelSystem(scene){
   setFrame(item,anim.col,row);
   item.obj.position.set(a.x,.035,a.z);item.shadow.position.set(a.x,.024,a.z);
   item.material.opacity=kind==='clone'?.84:1;item.material.color.setHex(a.flash>0?0xffe8cb:a.guard?0xffd98b:a.substitution>0?0xc9f1e4:a.hit>0&&!a.anim?0xffc1a3:0xffffff);item.material.opacity=a.invuln>0&&kind==='player'?.75:item.material.opacity;
-  if(kind==='player'){hero={actor:a,row,item};if(characterFor(a.character).art==='player'&&a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>(a.dashTime>0?.035:.085)){item.trailAt=item.clock;spawnTrail(a,row);}if(characterFor(a.character).art==='player'&&a.anim&&a.anim!==item.lastAnim&&(a.anim.k==='j'||a.anim.k===' '))spawnTrail(a,row);item.lastAnim=a.anim||null;}
+  if(kind==='player'){hero={actor:a,row,item};if(characterFor(a.character).art==='player'&&a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>(a.dashTime>0?.035:.085)){item.trailAt=item.clock;spawnTrail(a,row);}if(characterFor(a.character).art==='player'&&a.anim&&a.anim!==item.lastAnim&&a.anim.k==='j')spawnTrail(a,row);item.lastAnim=a.anim||null;}
   return true;
  }
  function end(){for(const [a,item] of active)if(item.seen!==generation){item.obj.visible=item.shadow.visible=false;active.delete(a);free[item.kind].push(item);}}
@@ -69,14 +70,23 @@ export function createPixelSystem(scene){
  }
  function getFX(i){if(!fxPool[i]){const f=sprite(maps.fx,FX_COLS,FX_ROWS.length,2,2,false);f.material.depthWrite=false;scene.add(f.obj);fxPool[i]=f;}return fxPool[i];}
  function effects(list,clones,projectiles,t,dt,quality,player){
-  drawTrails(dt);let n=0,limit=quality===1?48:quality===.75?32:20;
+  drawTrails(dt);let rn=0,n=0,limit=quality===1?48:quality===.75?32:20;
   function add(type,x,y,z,size,col,alpha=1,rotation=0){
    if(n>=limit)return;const f=getFX(n++),row=FX_ROWS.indexOf(type);if(row<0)return;
    setFrame(f,clamp(col,0,7),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=clamp(alpha,0,1);f.material.rotation=rotation;
   }
+  function ras(row,col,x,y,z,size,alpha=1,rotation=0){
+   if(!rasMap||rn>=4)return false;let f=rasPool[rn];if(!f){f=sprite(rasMap,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);rasPool[rn]=f;}rn++;setFrame(f,clamp(col,0,11),row);f.obj.position.set(x,y,z);f.obj.scale.set(size,size,1);f.obj.visible=true;f.material.opacity=alpha;f.material.rotation=rotation;return true;
+  }
+  // The same simulation event drives the reference FX. No new hitboxes.
+  if(rasMap&&player?.character==='naruto'&&player.pending?.k===' '&&player.anim){
+   const q=clamp(1-player.pending.remaining/Math.max(.001,player.pending.s.windup),0,.999),hand=rasenganHand(direction(player.dirX,player.dirZ),rasenganPose(player.anim));
+   ras(0,Math.floor(q*12),player.x+hand.x,hand.y,player.z+hand.z,1.45+q*.25,1);
+  }
   // Priority: main effects and projectiles first, accents second. Shared pool remains capped.
   const accents=[];
   for(const e of list){
+   if(e.type==='rasengan'&&e.reference&&rasMap){const q=clamp(1-e.life/e.max,0,.999),f=Math.floor(q*12),angle=Math.atan2(-e.dz*.64,e.dx);if(ras(1,f,e.x,1.15,e.z,3.7,1-q*.55,angle)){if(quality>=.75)ras(2,f,e.x,.20,e.z,3.3,.85*(1-q));continue;}}
    const q=clamp(1-e.life/e.max,0,.999),f=Math.floor(q*8),type=FX_ROWS.includes(e.type)?e.type:e.type==='heavy'?'slash':'hit';
    const large=['giant','storm','earth','cracks','wall'].includes(type),size=large?Math.min(5.8,Math.max(2.6,e.r*1.12)):type==='rasengan'?2.9:type==='clone'?2.8:type==='hit'?1.6:2.7;
    add(type,e.x,type==='cracks'||type==='earth'?.55:1.05,e.z,size,f,1-q*.72);
@@ -85,7 +95,7 @@ export function createPixelSystem(scene){
   }
   if(player?.pending){
    const s=player.pending.s,k=player.pending.k,q=clamp(1-player.pending.remaining/Math.max(.001,s.windup),0,.999),art=artFor(player.character,k);
-   if(art){const centered=['seal','slam'].includes(art.pose),x=player.x+(centered?0:player.dirX*.65),z=player.z+(centered?0:player.dirZ*.65);
+   if(art&&!(rasMap&&player.character==='naruto'&&k===' ')){const centered=['seal','slam'].includes(art.pose),x=player.x+(centered?0:player.dirX*.65),z=player.z+(centered?0:player.dirZ*.65);
     add(art.fx,x,centered?.85:1.35,z,.65+q*1.1,Math.floor(q*5),.85);
     if(quality>=.75)add('aura',player.x,1,player.z,1.35+q*.5,Math.floor(q*7),.55);
    }
@@ -99,7 +109,7 @@ export function createPixelSystem(scene){
   if(quality>=.75)for(const draw of accents)draw();
   if(player?.focus>0||player?.guardBuff>0)add(player.focus>0?'focus':'wall',player.x,player.focus>0?2.4:.8,player.z,player.focus>0?.68:2.2,Math.floor(t*10)%8,.55);
   if(hero?.actor.sprinting&&hero.actor.motion&&quality>=.75){const a=hero.actor;add('dash',a.x-(a.dirX||0)*.7,.58,a.z-(a.dirZ||0)*.7,1.75,Math.floor(t*18)%8,.48);}
-  for(let i=n;i<fxPool.length;i++)fxPool[i].obj.visible=false;
+  for(let i=n;i<fxPool.length;i++)fxPool[i].obj.visible=false;for(let i=rn;i<rasPool.length;i++)rasPool[i].obj.visible=false;
  }
  function addTrees(placements){
   const groups=new Map(),created=[];

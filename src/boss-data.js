@@ -17,6 +17,7 @@ export function tickBoss(b,p,clones,dt,move,hit,signal){
  if(b.id==='gaara'&&b.independent)return tickGaara(b,p,clones,dt,move,hit,signal);
  if(b.id==='orochimaru'&&b.independent)return tickOrochimaru(b,p,clones,dt,move,hit,signal);
  if(b.id==='kimimaro'&&b.independent)return tickKimimaro(b,p,clones,dt,move,hit,signal);
+ if(b.id==='sasuke'&&b.independent)return tickValleySasuke(b,p,clones,dt,move,hit,signal);
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
  if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;b.intent=null;b.anim=null;b.attack=.55;signal('phase',b);return;}
@@ -156,7 +157,22 @@ export const WORLD_BOSSES={kabuto:{id:'kabuto',name:'Kabuto Yakushi',hp:1500,spe
  {id:'cursedVolley',name:'Cursed Bone Volley',shape:'line',radius:2,length:19,reach:28,windup:.65,damage:12,cooldown:8,phase:3,projectile:true,pulses:2},
  {id:'seedlingFern',name:'Dance of the Seedling Fern',shape:'target',radius:3.2,reach:30,windup:1.15,damage:25,cooldown:15,phase:3,pulses:4,forest:true},
  {id:'cursedTail',name:'Cursed Tail Sweep',shape:'circle',radius:5.2,reach:6,windup:.9,damage:35,cooldown:9,phase:3}
+ ]},sasuke:{id:'sasuke',name:'Sasuke Uchiha',hp:2600,speed:5.5,arena:{x:-9,z:39,r:16,name:'Valley of the End'},marker:'#a8b3ff',xp:1800,coins:0,reward:[['valleyMemory',1]],patterns:[
+ {id:'lionCombo',name:'Lion Combo',shape:'circle',radius:2.7,reach:3.1,windup:.48,damage:18,cooldown:4,pulses:2,phase:1},
+ {id:'valleyFire',name:'Fireball Jutsu',shape:'line',radius:1.2,length:18,reach:23,windup:.85,damage:27,cooldown:8,projectile:'fire',phase:1},
+ {id:'valleyWire',name:'Shuriken Wire',shape:'line',radius:1.6,length:16,reach:22,windup:.55,damage:9,cooldown:6,projectile:'wire',phase:1},
+ {id:'valleyChidori',name:'Chidori Dash',shape:'line',radius:1.45,length:12,reach:13,windup:1,damage:34,cooldown:10,lunge:7,clash:true,phase:1},
+ {id:'sharinganChidori',name:'Sharingan Chidori',shape:'line',radius:1.7,length:14,reach:15,windup:.85,damage:36,cooldown:8,lunge:8,clash:true,phase:2},
+ {id:'sharinganCounter',name:'Counter Step',shape:'target',radius:2.6,reach:6,windup:.65,damage:24,cooldown:7,phase:2,flank:true},
+ {id:'curseFlurry',name:'Curse Flurry',shape:'target',radius:2.5,reach:9,windup:.65,damage:18,cooldown:7,pulses:3,phase:3},
+ {id:'darkChidori',name:'Dark Chidori Burst',shape:'line',radius:2.1,length:15,reach:16,windup:1,damage:41,cooldown:8,lunge:9,clash:true,phase:3},
+ {id:'curseDive',name:'Aerial Dive',shape:'target',radius:3.5,reach:22,windup:1,damage:33,cooldown:10,dive:true,phase:3},
+ {id:'wingChidori',name:'Wing Dive Chidori',shape:'line',radius:2.4,length:17,reach:18,windup:1.1,damage:46,cooldown:8,lunge:10,clash:true,dive:true,phase:4},
+ {id:'wingNeedles',name:'Wing Shuriken Barrage',shape:'line',radius:2.2,length:20,reach:30,windup:.65,damage:11,cooldown:7,projectile:'wing',pulses:2,phase:4},
+ {id:'wingShockwave',name:'Dark Shockwave',shape:'target',radius:4.3,reach:22,windup:1.15,damage:39,cooldown:11,dive:true,phase:4},
+ {id:'predatorRush',name:'Predator Rush',shape:'target',radius:2.8,reach:25,windup:.8,damage:22,cooldown:12,pulses:3,dive:true,phase:4}
  ]}};
+export const VALLEY_RULES={thresholds:[.70,.45,.24,.05],speed:[1,1.12,1.23,1.34],counterCooldown:8,clashRecovery:2,clashDistance:3.3,projectileCap:28};
 export const KIMI_RULES={stageOne:.65,stageTwo:.30,phaseSpeed:1.12,finalSpeed:1.28,forestLife:5,forestCap:4,forestSlow:.65,bulletCount:10,bulletSpeed:18,bulletCap:30};
 export const ORO_RULES={snakeHP:85,snakeCap:3,snakeLife:24,snakeSpeed:5.2,biteDamage:13,biteCooldown:3.2,biteWindup:.55,biteRange:1.7,phaseSpeed:1.2,shedThreshold:.30,huskHP:160,huskLife:3.5,shedHeal:360,venomLife:5,venomInterval:1,venomDamage:4,finalThreshold:.25,finalSpeed:1.36,cloudLife:4,cloudCap:2};
 export const GAARA_RULES={shieldHP:240,shieldDuration:4,shieldCooldown:18,shieldFirst:5,breakRecovery:1.5,zoneDuration:6,zoneSlow:.55,phaseSpeed:1.22,finalThreshold:.35,finalSpeed:1.38,finalScale:1.85,shurikenSpeed:15,shurikenCount:7,shurikenCap:28};
@@ -167,7 +183,7 @@ Object.assign(MIST_SCENES,{
  kabutoEnd:{title:'THE FAILED EXPERIMENT',lines:[['Kabuto','So much for my calculations. We will meet again.'],['Naruto','Next time, try fighting without the cheap tricks.']]}
 });
 Object.assign(MIST_CAMERA,{kabutoIntro:[{zoom:1.8,yaw:.18},{zoom:1.55,yaw:-.16},{zoom:2.2,yaw:.24}],kabutoPhase:[{zoom:2.4,yaw:-.22},{zoom:1.8,yaw:.14}],kabutoEnd:[{zoom:1.9,yaw:.2},{zoom:1.55,yaw:-.12}]});
-export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,...(id==='kimimaro'?{cooldowns:Object.fromEntries(spec.patterns.map((a,i)=>[a.id,i%3*2])),zones:[],lastPattern:null}:id==='orochimaru'?{cooldowns:{kusanagiSweep:0,snakeStrike:4,snakeSummon:7,venomBurst:3,serpentRush:6,trueFang:0,trueMiasma:0,trueEruption:0,trueCoil:0},clouds:[],snakes:[],husk:null,shedUsed:false,serial:0}:id==='gaara'?{cooldowns:{sandWave:0,sandCoffin:3,sandBurst:0,shukakuClaw:3,sandTsunami:7,sandDetonation:0,sandShuriken:0,tailRend:0,sandEruption:0},sandShield:0,sandShieldLeft:0,shieldAt:GAARA_RULES.shieldFirst,zones:[]}:{cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0}),orbitDir:1,orbitLeft:2};}
+export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,...(id==='sasuke'?{cooldowns:Object.fromEntries(spec.patterns.map((a,i)=>[a.id,i%3*2])),lastPattern:null,counterAt:0,clashes:0,air:0}:id==='kimimaro'?{cooldowns:Object.fromEntries(spec.patterns.map((a,i)=>[a.id,i%3*2])),zones:[],lastPattern:null}:id==='orochimaru'?{cooldowns:{kusanagiSweep:0,snakeStrike:4,snakeSummon:7,venomBurst:3,serpentRush:6,trueFang:0,trueMiasma:0,trueEruption:0,trueCoil:0},clouds:[],snakes:[],husk:null,shedUsed:false,serial:0}:id==='gaara'?{cooldowns:{sandWave:0,sandCoffin:3,sandBurst:0,shukakuClaw:3,sandTsunami:7,sandDetonation:0,sandShuriken:0,tailRend:0,sandEruption:0},sandShield:0,sandShieldLeft:0,shieldAt:GAARA_RULES.shieldFirst,zones:[]}:{cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0}),orbitDir:1,orbitLeft:2};}
 export function tickKabuto(b,p,clones,dt,move,hit,signal,random=Math.random){
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;b.attack=Math.max(0,b.attack-dt);
  for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
@@ -282,4 +298,32 @@ export function tickKimimaro(b,p,clones,dt,move,hit,signal,random=Math.random){
  const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
  if(!b.attack){const ready=b.spec.patterns.filter(a=>(b.phase===3?a.phase===3:(a.phase||1)<=b.phase)&&b.cooldowns[a.id]<=1e-8&&d<=a.reach),varied=ready.filter(a=>a.id!==b.lastPattern),opts=varied.length?varied:ready,a=opts.find(a=>a.forest)||opts[Math.floor(random()*opts.length)];if(a){b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:a.windup,total:a.windup};b.anim={k:a.forest||a.projectile?'l':'j',left:a.windup+.3,total:a.windup+.3,windup:a.windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
  b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.2+random();}const radial=Math.max(-1,Math.min(1,(d-2.8)*.7)),dir=directionToward(v.x*radial-v.z*.32*b.orbitDir,v.z*radial+v.x*.32*b.orbitDir),speed=b.spec.speed*(b.phase===3?c.finalSpeed:b.phase===2?c.phaseSpeed:1),x=b.x,z=b.z;move(b,dir.x*speed*dt,dir.z*speed*dt);b.motion=distance(b,{x,z})>.0001;if(b.motion)b.walk+=dt*speed*2.5;
+}
+
+export function valleyEligible(progress){return progress?.mistStage===4&&['kabuto','gaara','orochimaru','kimimaro'].every(id=>progress.worldDefeated?.includes(id));}
+export function valleyDamageFloor(b){return b.maxHP*VALLEY_RULES.thresholds[Math.min(3,b.phase-1)];}
+export function valleyClashOutcome(charge,kyubi,phase){const power=Math.max(0,Math.min(1,charge||0))*.8+(kyubi?.55:0),need=[.30,.45,.65,.85][Math.min(3,Math.max(0,phase-1))];return power>=need+.12?'win':power>=need-.12?'draw':'loss';}
+Object.assign(MIST_SCENES,{
+ sasukeIntro:{title:'VALLEY OF THE END',lines:[['Naruto','Sasuke! I promised I would bring you home.'],['Sasuke','I have chosen my own path. Stop following me.'],['Naruto','Then I will stop you right here!']]},
+ sasukeSharingan:{title:'SHARINGAN · THE RIVAL AWAKENS',lines:[['Sasuke','I can see your movements now.'],['Naruto','I will never give up on you!']]},
+ sasukeCurse:{title:'CURSE MARK · STAGE ONE',lines:[['Sasuke','This is the power I need.'],['Naruto','Orochimaru is using you!']]},
+ sasukeFinal:{title:'CURSE MARK · STAGE TWO',lines:[['Sasuke','I will cut every bond that holds me back.'],['Naruto','You are my friend! I will not let you disappear!']]},
+ sasukeEnd:{title:'THE LAST CLASH',lines:[['Naruto','RASENGAN!'],['Sasuke','CHIDORI!'],['Sasuke','...I will find my own way to become stronger.'],['Naruto','Sasuke... I still could not bring you home.']]}
+});
+Object.assign(MIST_CAMERA,{sasukeIntro:[{zoom:1.55,yaw:-.15},{zoom:1.8,yaw:.2},{zoom:1.55,yaw:-.2}],sasukeSharingan:[{zoom:2.05,yaw:.25},{zoom:1.7,yaw:-.2}],sasukeCurse:[{zoom:2,yaw:.2},{zoom:1.7,yaw:-.2}],sasukeFinal:[{zoom:1.45,yaw:.18,lookY:1.8},{zoom:1.45,yaw:-.18}],sasukeEnd:[{zoom:1.2,yaw:-.22},{zoom:1.2,yaw:.22},{zoom:1.5,yaw:.12},{zoom:1.9,yaw:-.18}]});
+export function tickValleySasuke(b,p,clones,dt,move,hit,signal,random=Math.random){
+ const c=VALLEY_RULES,alive=q=>q.hp>0&&(q.life??1)>0;
+ b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.attack=Math.max(0,b.attack-dt);b.counterAt=Math.max(0,b.counterAt-dt);b.motion=false;
+ for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
+ if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
+ if(b.phase<4&&b.hp<=valleyDamageFloor(b)+1e-8){b.phase++;b.intent=null;b.anim=null;b.air=0;b.attack=1.3;b.lastPattern=null;signal(['','', 'sasukeSharingan','sasukeCurse','sasukeFinal'][b.phase],b);return;}
+ if(b.phase===4&&b.hp<=valleyDamageFloor(b)+1e-8){signal('sasukeEnd',b);return;}
+ if(b.intent){const a=b.intent;a.left-=dt;b.air=a.dive?Math.sin(Math.PI*Math.max(0,1-a.left/a.total))*1.15:0;if(a.left<=1e-8){b.intent=null;b.air=0;b.cooldowns[a.id]=a.cooldown;b.attack=a.clash?1.05:.65;
+  if(!a.projectile)for(const q of [p,...clones])if(alive(q)&&bossContains(a,q))hit(q,a.damage,b);
+  signal('strike',b,a);if(a.lunge)move(b,a.dx*a.lunge,a.dz*a.lunge);
+  if(a.pulses&&(a.pulse||1)<a.pulses){const v=directionToward(p.x-b.x,p.z-b.z),delay=a.id==='predatorRush'?.72:a.id==='curseFlurry'?.6:.55;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,pulse:(a.pulse||1)+1,left:delay,total:delay};b.cooldowns[a.id]=0;b.attack=0;b.dirX=v.x;b.dirZ=v.z;signal('windup',b,b.intent);}
+ }return;}
+ const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
+ if(!b.attack){const ready=b.spec.patterns.filter(a=>(b.phase===4?a.phase===4:b.phase===3?a.phase>=2&&a.phase<=3:b.phase===2?a.phase<=2&&a.id!=='valleyChidori':a.phase===1)&&b.cooldowns[a.id]<=1e-8&&d<=a.reach),varied=ready.filter(a=>a.id!==b.lastPattern),opts=varied.length?varied:ready,a=opts.find(a=>a.clash)||opts[Math.floor(random()*opts.length)];if(a){if(a.flank){move(b,-v.z*2*b.orbitDir,v.x*2*b.orbitDir);}const aim=directionToward(p.x-b.x,p.z-b.z);b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:aim.x,dz:aim.z,left:a.windup,total:a.windup};b.anim={k:a.clash||a.projectile?'l':'j',left:a.windup+.3,total:a.windup+.3,windup:a.windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
+ b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=.9+random()*.9;}const radial=Math.max(-1,Math.min(1,(d-(b.phase===4?4:3.2))*.65)),dir=directionToward(v.x*radial-v.z*.57*b.orbitDir,v.z*radial+v.x*.57*b.orbitDir),speed=b.spec.speed*c.speed[b.phase-1],x=b.x,z=b.z;move(b,dir.x*speed*dt,dir.z*speed*dt);b.motion=distance(b,{x,z})>.0001;if(b.motion)b.walk+=dt*speed*2.5;
 }

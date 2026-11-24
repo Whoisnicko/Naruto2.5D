@@ -71,3 +71,6 @@ Decisión del jugador: una única forma de tres colas, activación directa con T
 
 ## v1.9 beta — Shinobi Combat Intelligence
 Probar patrullas en bosque/frontera, marcar bajas, esperar 60 s de juego, botón Reaparecer enemigos, médico/asesino/invocador/élite y aislamiento de misiones. `node tests/smoke.mjs`. Preview prevista: https://feature-v19-shinobi-ai.naruto2-5d.pages.dev/ (confirmar Cloudflare).
+
+## v1.10 beta — Living World
+v1.9 fusionada a main (PR #22). Probar E en puertas turquesa, caminar y salir, guardar dentro y recargar fuera, rutinas NPC, clima y ambos eventos vía sandbox en bosque/frontera. Ejecutar `node tests/smoke.mjs`. Preview prevista: https://feature-v110-living-world.naruto2-5d.pages.dev/ (confirmar Cloudflare).

@@ -34,9 +34,9 @@ export function createRPGUI(api){
  function close(){if(!opened)return;drag=-1;selected=-1;opened=false;panel.hidden=true;api.pause(false);}
  function toggle(which){if(opened&&tab===which)close();else open(which);}
  function hotbar(){
-  const {rpg}=state(),key=rpg.hotbar.map(id=>id+':'+itemCount(rpg,id)).join('|');if(key===lastHot)return;lastHot=key;
+  const {rpg}=state(),labels=[1,2,3].map(n=>api.keyLabel?.(String(n))||String(n)),key=rpg.hotbar.map((id,i)=>id+':'+itemCount(rpg,id)+':'+labels[i]).join('|');if(key===lastHot)return;lastHot=key;
   const bar=$('consumableBar');bar.replaceChildren();
-  rpg.hotbar.forEach((id,i)=>{const b=button('',()=>api.quick(i));b.className='quick-item';b.title=(itemFor(id)?.name||'Empty')+' · '+(i+1);b.append(text('small',String(i+1)),itemIcon(id),text('b',String(itemCount(rpg,id))));b.disabled=!id||!itemCount(rpg,id);bar.append(b);});
+  rpg.hotbar.forEach((id,i)=>{const b=button('',()=>api.quick(i));b.className='quick-item';b.title=(itemFor(id)?.name||'Empty')+' · '+labels[i];b.append(text('small',labels[i]),itemIcon(id),text('b',String(itemCount(rpg,id))));b.disabled=!id||!itemCount(rpg,id);bar.append(b);});
  }
  function showDetail(){
   detail.replaceChildren();const {rpg}=state(),s=rpg.inventory[selected],i=itemFor(s?.id);

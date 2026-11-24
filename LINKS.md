@@ -161,3 +161,7 @@ Final transformation at 600 HP (25%) after body shedding resolves, 2x directiona
 
 ## v1.12g — Kimimaro / The Last Kaguya
 Independent 2800 HP boss, Valley of Bones (-30,32), Curse Mark I at 65%, II at 30%, three directional sprites, bone projectile volleys, four retargeted Seedling Fern eruptions with 5s slowing fields, unique Kaguya Bone Mantle. Focused 90s logic and syntax passed; full regression, browser visuals and deployment pending. Production unchanged. Next phase: Jiraiya sparring, authored loss, persistent Part I completion and Shippuden teaser (not implemented). Preview https://feature-v112-world-bosses.naruto2-5d.pages.dev/ ; source https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v112-world-bosses. See docs/V112-WORLD-BOSSES.md.
+
+
+## v1.12h — Valley of the End
+Sasuke (2600 HP), four forms at 70%, 45%, 24%, scripted last clash at 5% or Naruto defeat in phase 4. Waterfall, water floor and twin stylized statues, Sharingan counter, curse mark sprites/wings, Chidori vs charged Rasengan with deterministic results, narrative exit and unique Memory of the Valley. Gate: Mist Saga + four independent villains. Focused 90s simulation and mocked-game integration (phase floors, reward, save/reload, clash win/loss, Immortal) passed; full regression, real browser visuals and deployment unverified. Production unchanged. Jiraiya training and Part I finale remain next phase. Preview https://feature-v112-world-bosses.naruto2-5d.pages.dev/ ; source https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v112-world-bosses. See docs/V112-WORLD-BOSSES.md.

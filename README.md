@@ -46,3 +46,6 @@ v0.9 aprobada en main (PR 7), Cloudflare check exitoso. Nueva rama con NPC, diá
 
 ## v0.11 beta — Boss Encounters & Sandbox
 v0.10 aprobada y publicada (PR 8, check Cloudflare exitoso). Zabuza/Haku en dos fases, recompensas, FX y sandbox temporal aislado. [Documentación y pruebas](docs/V011-BOSS-SANDBOX.md). Guardado v5 lee v2/v3/v4; pruebas simuladas aprobadas.
+
+## v1.0 RC — Primera campaña
+v0.11 aprobada y fusionada a main (PR 9), Cloudflare check exitoso. Seis capítulos, epílogo, diario U, pausa Esc, música procedural y guardado v6 compatible al cargar v2–v5. [Detalles y QA](docs/V1-RELEASE-CANDIDATE.md). Candidata pendiente de playtest.

@@ -38,3 +38,6 @@ Producción v0.10: https://naruto2-5d.pages.dev/ — PR 8, deploy exitoso. Rama 
 
 ## v1.0 RC
 Producción v0.11: https://naruto2-5d.pages.dev/ — PR 9, deploy exitoso. Rama `feature/v1-release-candidate`. Exportar JSON v5 antes de importar a beta. U diario, Esc pausa; completar misión inicial, Zabuza, Haku y regresar con Kakashi. Probar recompensa única, guardar/volver al menú, música y sandbox. Ejecutar `node tests/smoke.mjs`. No fusionar hasta aprobación.
+
+## RC HD experimental
+Rama `feature/v1-hd-sprites` basada en RC. Probar F lateral en ambas direcciones, F vertical, Esc → Arte HD, Sprite Lab y rendimiento. Ejecutar `node tests/smoke.mjs`. No fusionar hasta validar visualmente.

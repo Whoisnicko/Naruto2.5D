@@ -148,7 +148,7 @@ p=rasSetup();assert(game.enterSandbox());p=game.state.p;assert(game.boost('kyubi
 assert(game.attack('j'));sim(.12);assert.equal(far.hp,35);assert(p.anim.clawRange>3.5);sim(.4);assert.equal(far.hp,35);
 p.x=12;p.z=-2;p.dirX=1;p.dirZ=0;p.hp=100;p.invuln=0;game.playerHurt(10,{x:11,z:-2});assert.equal(p.hp,92);sim(.4);
 p.x=12;p.z=-2;p.dirX=1;p.dirZ=0;far.hp=0;p.chakra=100;assert(game.attack(' '));assert(p.pending.s.kyubi);assert.equal(p.pending.s.damage,75);sim(.7);assert(game.state.effects.some(e=>e.reference&&e.kyubi));
-sim(.6);assert(game.boost('kyubi'));assert.equal(p.kyubiLeft,15);assert(game.exitSandbox());assert(!(game.state.p.kyubiLeft>0));assert.equal(JSON.parse(saved.packSave(game.snapshot())).version,11);
+sim(.6);assert(game.boost('kyubi'));assert.equal(p.kyubiLeft,15);assert(!rpgApi.advancedUnlocked(game.state.rpg,'naruto'));p.chakra=100;assert(game.attack('g'));assert.equal(p.pending.s.damage,105);assert(p.pending.s.kyubi);sim(1);assert(game.state.effects.some(e=>e.giant&&e.kyubi));assert(game.exitSandbox());assert(!(game.state.p.kyubiLeft>0));assert.equal(JSON.parse(saved.packSave(game.snapshot())).version,11);
 p=rasSetup();p.kyubiRage=100;assert(game.activateKyubi());assert.equal(p.kyubiRage,0);p.kyubiLeft=.02;sim(.05);assert.equal(p.kyubiLeft,0);
 p=rasSetup();p.kyubiRage=100;assert(game.activateKyubi());p.hp=1;p.invuln=0;game.playerHurt(99,{x:p.x-1,z:p.z});assert.equal(p.kyubiLeft,0);assert.equal(p.kyubiRage,0);
 feedback.impact(.1,.07);assert(feedback.frozen);feedback.tick(.08);assert(!feedback.frozen);game.render(.016);

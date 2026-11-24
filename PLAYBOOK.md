@@ -35,3 +35,15 @@ Producción v0.9: https://naruto2-5d.pages.dev/ — PR 7 fusionado, check Cloudf
 
 ## v0.11 beta
 Producción v0.10: https://naruto2-5d.pages.dev/ — PR 8, deploy exitoso. Rama `feature/v011-boss-sandbox`. Exportar v4 antes de probar. Sandbox en menú o HUD: niveles, ryō, suministros, recuperación, jefes directos; salir restaura campaña. Normal: terminar misión, E en arena este del bosque. Ejecutar `node tests/smoke.mjs`. No fusionar antes de validar.
+
+## v1.0 RC
+Producción v0.11: https://naruto2-5d.pages.dev/ — PR 9, deploy exitoso. Rama `feature/v1-release-candidate`. Exportar JSON v5 antes de importar a beta. U diario, Esc pausa; completar misión inicial, Zabuza, Haku y regresar con Kakashi. Probar recompensa única, guardar/volver al menú, música y sandbox. Ejecutar `node tests/smoke.mjs`. No fusionar hasta aprobación.
+
+## v1.1 beta
+Rama `feature/v11-konoha-expansion`, parte de RC original. Probar Shikamaru, jardín, mercado, mirador, cofre, equipo visible, guardado y FPS. Exportar respaldo v6 antes del preview. `node tests/smoke.mjs`. Main intacta; no fusionar antes de aprobar.
+
+## v1.2 beta
+Base v1.1 aprobada. Rama `feature/v12-world-expansion`. Exportar v7 antes del preview. Caminar hacia este por el camino del bosque, vencer tres renegados, cruzar puerta, vencer guardián, abrir relicario, regresar y guardar. `node tests/smoke.mjs`. No fusionar antes de validar.
+
+## v1.3 beta
+Rama `feature/v13-playable-characters`. Exportar v8 antes de probar. C cerca de Kakashi después de misión inicial o sandbox en zona segura. Probar Espacio/F/L/G, equipo visible, guardado y FPS. `node tests/smoke.mjs`. No fusionar antes de validar.

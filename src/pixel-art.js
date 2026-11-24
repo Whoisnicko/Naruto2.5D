@@ -42,7 +42,23 @@ function cell(w,h){
  function line(x,y,xx,yy,col,w=1){const n=Math.max(1,Math.ceil(Math.max(Math.abs(xx-x),Math.abs(yy-y))));for(let i=0;i<=n;i++)rect(Math.round(x+(xx-x)*i/n)-Math.floor(w/2),Math.round(y+(yy-y)*i/n)-Math.floor(w/2),w,w,col);}
  return {c,ctx,rect,poly,ellipse,line};
 }
+// Dedicated Shukaku chakra avatar; original procedural directional atlas.
+function shukakuCell(dir,frame){
+ const s=cell(24,32),{rect,poly,line,ellipse}=s,outline='#493e41',shade='#9a7048',sand='#d6b076',light='#f3d69b',mark='#4b485d',eye='#ffe76b',back=dir===3,side=dir===1||dir===2;
+ const step=frame>=2&&frame<=9?[-1,0,1,0][(frame-2)%4]:0,cast=frame===14||frame===15||frame>=22,attack=frame>=10&&frame<=12||frame>=16&&frame<=21;
+ poly([[5,21],[10,21],[10,28+step],[8,31],[2,31],[3,27]],outline);poly([[6,22],[9,23],[8,28+step],[3,29],[4,26]],sand);
+ poly([[13,21],[18,21],[21,29-step],[21,31],[14,31],[12,27]],outline);poly([[14,22],[17,23],[19,28-step],[15,29]],sand);
+ ellipse(12,18,8,10,outline);ellipse(12,18,7,9,sand);ellipse(11,16,5,6,light);
+ const ay=cast?11:attack?16:23+step,by=cast?10:attack?14:23-step;
+ line(7,14,3,ay,outline,7);line(7,14,3,ay,sand,5);line(17,14,20,by,outline,7);line(17,14,20,by,sand,5);
+ for(let j=0;j<3;j++){rect(1+j*2,ay+2,1,2,light);rect(18+j*2,by+2,1,2,light);}
+ poly([[4,12],[4,2],[9,6],[15,6],[20,2],[20,12],[17,16],[7,16]],outline);poly([[5,10],[5,4],[9,7],[15,7],[19,4],[19,11],[16,15],[8,15]],sand);poly([[6,5],[8,8],[6,9]],shade);poly([[18,5],[16,8],[18,9]],shade);
+ if(!back){if(side){rect(dir===1?5:15,9,5,3,mark);rect(dir===1?6:16,10,3,1,eye);}else{rect(6,9,5,3,mark);rect(13,9,5,3,mark);rect(7,10,3,1,eye);rect(14,10,3,1,eye);}rect(10,12,4,2,outline);rect(8,14,8,1,mark);rect(10,14,1,1,light);rect(14,14,1,1,light);}else{line(8,9,16,9,mark,2);line(12,7,12,12,mark,1);}
+ line(10,17,7,20,mark,2);line(7,20,11,23,mark,2);line(14,17,17,20,mark,2);line(17,20,13,23,mark,2);rect(11,24,3,2,mark);
+ return s.c;
+}
 function actorCell(kind,dir,frame,gear=null,kyubi=false){
+ if(kind==='shukaku')return shukakuCell(dir,frame);
  const ras=frame>=38?frame-38:-1;if(ras>=0)frame=[14,14,14,7,12,0][ras];
  const special=frame>=22?Math.floor((frame-22)/4):-1,stage=frame>=22?(frame-22)%4:0;if(special>=0)frame=[14,14,15,14][stage];
  const role=kind;const p=PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
@@ -275,4 +291,4 @@ export function makeWorldPattern(){
  }
  return c;
 }
-export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),kabuto:makeActorSheet('kabuto'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),shukaku:makeActorSheet('shukaku'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),kabuto:makeActorSheet('kabuto'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}

@@ -82,3 +82,9 @@ Decisión del jugador: una única forma de tres colas, activación directa con T
 
 ## v1.9 beta — Shinobi Combat Intelligence
 15 patrullas, siete arquetipos, respawn 60 s, minimapa y botón de sandbox. [Detalles](docs/V19-SHINOBI-AI.md). Guardado v11.
+
+## v1.10 beta — Living World
+v1.9 aprobada y fusionada a producción (PR #22). Living World agrega rutas NPC, tres interiores, clima y dos eventos dinámicos. [Detalles](docs/V110-LIVING-WORLD.md). Guardado v11.
+
+## v1.10b — Living World presentation
+A pedido del jugador: día, atardecer y noche duran 120 s de simulación cada uno (6 min por ciclo). Reloj de guardado v11 conserva rango 0..240; avanza a 2/3 de unidad por segundo, nuevas partidas empiezan a las 06:00. NPC siguen presentes y accesibles. Iluminación cálida al atardecer y azul oscuro por la noche, transición 2 s, contador visible y botón Cambiar hora en sandbox. Rasengan normal con bordes azul oscuro, centro celeste y ráfagas blancas; tamaño visual 0.74 vs 1.20 Kyūbi a igual carga, sin cambiar daño/colisiones/viaje. Eventos se activan tras 15 s en zona hostil incluso antes de misión inicial; 35 s de enfriamiento al completar, 25 s al expirar; reintento si el terreno no permite aparición. Aviso central 4.5 s, sonido, contador persistente, objetivo, mensaje de éxito/expiración. Menú RPG renovado con sprites reales del Equipo 7, paisaje vectorial original, protector, pergamino, kunai y shuriken; diseño responsive y sin imágenes externas. Suite smoke de lógica superada; validación visual, FPS, sonido y despliegue pendientes. Producción v1.9 intacta.

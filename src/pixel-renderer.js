@@ -110,15 +110,15 @@ export function createPixelSystem(scene){
   // Charge is a continuously rotating sphere; carry keeps it ahead of the hand.
   const pending=player?.pending;
   if(player?.character==='naruto'&&pending?.ras&&player.anim){
-   const carrying=pending.phase==='carry',spec=COMBAT.rasengan[pending.k],q=pending.q||0,dir=direction(player.dirX,player.dirZ),hand=rasenganHand(dir,player.anim.rasPose||0),size=spec.size*(pending.scale||1)*(carrying?1:Math.min(1,.38+.62*pending.held/pending.s.windup)),f=Math.floor(t*(carrying?30:24))%12,ang=Math.atan2(-player.dirZ*.64,player.dirX);
+   const carrying=pending.phase==='carry',spec=COMBAT.rasengan[pending.k],q=pending.q||0,dir=direction(player.dirX,player.dirZ),hand=rasenganHand(dir,player.anim.rasPose||0),size=spec.size*(pending.s.kyubi?1.2:.74)*(pending.scale||1)*(carrying?1:Math.min(1,.38+.62*pending.held/pending.s.windup)),f=Math.floor(t*(carrying?30:24))%12,ang=Math.atan2(-player.dirZ*.64,player.dirX);
    const x=player.x+(carrying?player.dirX*.85:hand.x),z=player.z+(carrying?player.dirZ*.85:hand.z),y=hand.y;
-   if(rasMap){const purple=!!pending.s.kyubi;ras(0,f,x,y,z,size,1,0,purple);if(quality>=.75){ras(3,f,x,y,z,size*1.34,.9,0,purple);ras(4,(f+4)%12,x,y,z,size*1.1,.8,0,purple);}if(carrying)ras(5,f,x-player.dirX*1.2,y,z-player.dirZ*1.2,size*1.5,.8,ang,purple);else if(quality===1)ras(2,f,player.x,.15,player.z,size*1.15,.6,0,purple);}
+   if(rasMap){const purple=!!pending.s.kyubi;ras(0,f,x,y,z,size,1,0,purple);ras(3,f,x,y,z,size*1.34,.94,0,purple);if(quality>=.75){ras(4,(f+4)%12,x,y,z,size*1.1,.8,0,purple);}if(carrying)ras(5,f,x-player.dirX*1.2,y,z-player.dirZ*1.2,size*1.5,.8,ang,purple);else if(quality===1)ras(2,f,player.x,.15,player.z,size*1.15,.6,0,purple);}
    else add(pending.k==='g'?'giant':'rasengan',x,y,z,size,Math.floor(t*24)%8,1);
   }
   // Priority: main effects and projectiles first, accents second. Shared pool remains capped.
   const accents=[];
   for(const e of list){
-   if(e.reference&&rasMap&&(e.type==='rasengan'||e.type==='giant')){const q=clamp(1-e.life/e.max,0,.999),angle=Math.atan2(-e.dz*.64,e.dx),size=(e.giant?5.0:3.5)*(e.scale||1),contact=e.contact&&q<.18,f=Math.floor(clamp((q-.18)/.82,0,.999)*12);if(ras(contact?0:1,contact?Math.floor(t*32)%12:f,e.x,1.15,e.z,contact?size*.68:size,1-q*.55,contact?0:angle,!!e.kyubi)){if(quality>=.75){ras(contact?3:2,contact?Math.floor(t*32)%12:f,e.x,contact?1.15:.20,e.z,size*.95,.9*(1-q),0,!!e.kyubi);if(!contact)ras(4,f,e.x,1.15,e.z,size*1.15,.85*(1-q),0,!!e.kyubi);}continue;}}
+   if(e.reference&&rasMap&&(e.type==='rasengan'||e.type==='giant')){const q=clamp(1-e.life/e.max,0,.999),angle=Math.atan2(-e.dz*.64,e.dx),size=(e.giant?5.0:3.5)*(e.kyubi?1.2:.74)*(e.scale||1),contact=e.contact&&q<.18,f=Math.floor(clamp((q-.18)/.82,0,.999)*12);if(ras(contact?0:1,contact?Math.floor(t*32)%12:f,e.x,1.15,e.z,contact?size*.68:size,1-q*.55,contact?0:angle,!!e.kyubi)){if(quality>=.75){ras(contact?3:2,contact?Math.floor(t*32)%12:f,e.x,contact?1.15:.20,e.z,size*.95,.9*(1-q),0,!!e.kyubi);if(!contact)ras(4,f,e.x,1.15,e.z,size*1.15,.85*(1-q),0,!!e.kyubi);}continue;}}
    const q=clamp(1-e.life/e.max,0,.999),f=Math.floor(q*8),type=FX_ROWS.includes(e.type)?e.type:e.type==='heavy'?'slash':'hit';
    const large=['giant','storm','earth','cracks','wall'].includes(type),size=large?Math.min(5.8,Math.max(2.6,e.r*1.12)):type==='rasengan'?2.9:type==='clone'?2.8:type==='hit'?1.6:2.7;
    add(type,e.x,type==='cracks'||type==='earth'?.55:1.05,e.z,size,f,1-q*.72,0,!!e.kyubi);

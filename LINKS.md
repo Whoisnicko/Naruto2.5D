@@ -67,3 +67,11 @@
 ## v1.9 beta — Shinobi Combat Intelligence
 Rama: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v19-shinobi-ai
 Preview prevista: https://feature-v19-shinobi-ai.naruto2-5d.pages.dev/ (despliegue sin confirmar).
+
+## v1.10 beta — Living World
+Producción v1.9: https://naruto2-5d.pages.dev/ — PR #22 fusionado, deploy no confirmado.
+Rama: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v110-living-world
+Preview prevista: https://feature-v110-living-world.naruto2-5d.pages.dev/ (despliegue sin confirmar).
+
+## v1.10b
+Misma rama y preview prevista: https://feature-v110-living-world.naruto2-5d.pages.dev/ (despliegue sin confirmar). Producción v1.9 intacta.

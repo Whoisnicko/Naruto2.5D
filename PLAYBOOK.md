@@ -71,3 +71,11 @@ Decisión del jugador: una única forma de tres colas, activación directa con T
 
 ## v1.9 beta — Shinobi Combat Intelligence
 Probar patrullas en bosque/frontera, marcar bajas, esperar 60 s de juego, botón Reaparecer enemigos, médico/asesino/invocador/élite y aislamiento de misiones. `node tests/smoke.mjs`. Preview prevista: https://feature-v19-shinobi-ai.naruto2-5d.pages.dev/ (confirmar Cloudflare).
+
+## v1.10 beta — Living World
+v1.9 fusionada a main (PR #22). Probar E en puertas turquesa, caminar y salir, guardar dentro y recargar fuera, rutinas NPC, clima y ambos eventos vía sandbox en bosque/frontera. Ejecutar `node tests/smoke.mjs`. Preview prevista: https://feature-v110-living-world.naruto2-5d.pages.dev/ (confirmar Cloudflare).
+
+## v1.10b — Living World presentation
+A pedido del jugador: día, atardecer y noche duran 120 s de simulación cada uno (6 min por ciclo). Reloj de guardado v11 conserva rango 0..240; avanza a 2/3 de unidad por segundo, nuevas partidas empiezan a las 06:00. NPC siguen presentes y accesibles. Iluminación cálida al atardecer y azul oscuro por la noche, transición 2 s, contador visible y botón Cambiar hora en sandbox. Rasengan normal con bordes azul oscuro, centro celeste y ráfagas blancas; tamaño visual 0.74 vs 1.20 Kyūbi a igual carga, sin cambiar daño/colisiones/viaje. Eventos se activan tras 15 s en zona hostil incluso antes de misión inicial; 35 s de enfriamiento al completar, 25 s al expirar; reintento si el terreno no permite aparición. Aviso central 4.5 s, sonido, contador persistente, objetivo, mensaje de éxito/expiración. Menú RPG renovado con sprites reales del Equipo 7, paisaje vectorial original, protector, pergamino, kunai y shuriken; diseño responsive y sin imágenes externas. Suite smoke de lógica superada; validación visual, FPS, sonido y despliegue pendientes. Producción v1.9 intacta.
+
+QA: iniciar partida, inspeccionar menú y sprites, usar Cambiar hora, observar 120 s por fase, comparar Rasengan normal/Kyūbi a carga igual, permanecer 15 s en bosque antes de misión, probar ambos eventos, verificar contador y FPS. `node tests/smoke.mjs`.

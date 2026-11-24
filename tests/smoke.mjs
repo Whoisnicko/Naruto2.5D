@@ -436,3 +436,18 @@ console.log('PASS v1.16a: animation atlas dimensions, all new pose ranges, dash 
  game.start(false);p=game.state.p;p.dirX=1;p.dirZ=0;game.keys.add('b');sim(.1);const health=p.hp;game.playerHurt(20,{x:p.x+1,z:p.z},'physical');assert.equal(p.hp,health);assert(feedback.bursts.some(b=>b.kind==='block'&&b.life>0));game.keys.clear();
 }
 console.log('PASS v1.16b: bounded contact effects, shake/zoom controls, decay, dodge throttling, unchanged physical damage and blocked hits.');
+
+{
+ // Test real audio engine with simulated Web Audio nodes (no acoustic playback).
+ const create=new Function('window','localStorage',strip(src.feedback)+'\nreturn createAudio;');
+ function fixture(stereo){
+  const oscillators=[],panners=[],gains=[],param=()=>({value:0,setValueAtTime(){},exponentialRampToValueAtTime(){}});
+  const link=()=>({connections:[],disconnected:false,connect(x){this.connections.push(x);},disconnect(){this.disconnected=true;this.connections.length=0;}});
+  class Context{constructor(){this.state='running';this.destination={};this.currentTime=0;if(stereo)this.createStereoPanner=()=>{const p={...link(),pan:param()};panners.push(p);return p;};}createGain(){const g={...link(),gain:param()};gains.push(g);return g;}createOscillator(){const o={...link(),frequency:param(),start(){},stop(){}};oscillators.push(o);return o;}}
+  const storage={getItem(){return null;},setItem(){}},engine=create({AudioContext:Context},storage)();engine.unlock();return {engine,oscillators,panners,gains};
+ }
+ const a=fixture(true);a.engine.play('guardHit',2);assert.equal(a.oscillators.length,2);assert.equal(a.panners.length,2);assert.equal(a.panners[0].pan.value,.8);
+ for(let i=0;i<50;i++)a.engine.play('criticalHit',-.5);assert.equal(a.oscillators.length,14);for(const o of a.oscillators)o.onended();assert(a.panners.every(p=>p.disconnected));a.engine.play('evade',-.3);assert.equal(a.oscillators.length,15);a.engine.setEnabled(false);a.engine.play('hit');assert.equal(a.oscillators.length,15);
+ const b=fixture(false);b.engine.play('chakraImpact',-.7);assert.equal(b.oscillators.length,2);assert.equal(b.panners.length,0);assert(b.gains[1].connections.includes(b.gains[0]));
+}
+console.log('PASS v1.16b: Web Audio mock stereo clamp, voice cap, cleanup, mute and mono fallback.');

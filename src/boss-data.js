@@ -353,8 +353,8 @@ function tickValleyChain(b,p,clones,dt,move,hit,signal){const q=b.chain,c=VALLEY
 
 // Sandbox entry points are intentionally separate from campaign progression.
 export const PRACTICE_BOSSES={
- zabuza:{name:'Zabuza',stages:[{label:'1 · Sword and Water Jutsu',hp:1},{label:'2 · Enraged',hp:.5}]},
- haku:{name:'Haku',stages:[{label:'1 · Ice Needles',hp:1},{label:'2 · Ice Mirrors',hp:.5}]},
+ zabuza:{name:'Zabuza',stages:[{label:'1 · Sword and Water Jutsu',hp:1},{label:'2 · Faster Sword and Water Jutsu',hp:.5}]},
+ haku:{name:'Haku',stages:[{label:'1 · Ice Needles',hp:1},{label:'2 · Ice Needles / Second Phase',hp:.5}]},
  kabuto:{name:'Kabuto',stages:[{label:'1 · Medical Prodigy',hp:1},{label:'2 · Autopsy Protocol',hp:.5}]},
  gaara:{name:'Gaara',stages:[{label:'1 · Sand Defence',hp:1},{label:'2 · Shukaku Awakening',hp:.5},{label:'3 · One-Tail',hp:GAARA_RULES.finalThreshold}]},
  orochimaru:{name:'Orochimaru',stages:[{label:'1 · Serpent Master',hp:1},{label:'2 · White Serpent / Body Shedding',hp:.5},{label:'3 · True White Serpent',hp:ORO_RULES.finalThreshold}]},
@@ -362,7 +362,7 @@ export const PRACTICE_BOSSES={
  sasuke:{name:'Sasuke',stages:[{label:'1 · Base',hp:1},{label:'2 · Sharingan',hp:VALLEY_RULES.thresholds[0]},{label:'3 · Curse Mark I',hp:VALLEY_RULES.curseRecoveryHP},{label:'4 · Curse Mark II / Black Hunt',hp:VALLEY_RULES.thresholds[2]},{label:'5 · Mega Clash',hp:VALLEY_RULES.thresholds[3],ultimate:true}]},
  mistSaga:{name:'Mist Saga',stages:[{label:'1 · Zabuza opening'},{label:'2 · Haku arrival'},{label:'3 · Kyūbi awakening'},{label:'4 · Zabuza wrath'}]}
 };
-export function practiceStage(id,phase){return Number.isInteger(phase)&&phase>=1?PRACTICE_BOSSES[id]?.stages[phase-1]||null:null;}
+export function practiceStage(id,phase){return Number.isInteger(phase)&&phase>=1&&Object.hasOwn(PRACTICE_BOSSES,id)?PRACTICE_BOSSES[id].stages[phase-1]||null:null;}
 export function applyPracticeStage(b,phase){const entry=practiceStage(b.id,phase);if(!entry||b.id==='mistSaga')return false;b.phase=entry.ultimate?4:phase;b.hp=Math.round(b.maxHP*entry.hp);b.attack=.65;b.introLeft=0;b.intent=null;b.anim=null;
  if(b.id==='sasuke'){b.curseRecovered=phase>=3;b.curseHeal=0;}
  if(b.id==='orochimaru'&&phase===3){b.shedUsed=true;b.husk=null;b.cooldowns.trueFang=0;b.cooldowns.trueMiasma=2;b.cooldowns.trueEruption=3;b.cooldowns.trueCoil=1;}

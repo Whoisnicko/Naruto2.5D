@@ -25,7 +25,7 @@ export function tickEnemy(e,p,clones,dt,move,fire,hit,blocked=()=>false){
   e.guard=false;e.ai='windup';e.intent.left-=dt;e.pendingAttack=Math.max(0,e.intent.left);
   if(e.intent.left<=0){const intent=e.intent;e.intent=null;e.ai='recover';e.attack=r.cooldown;
    if(e.role==='thrower')fire(e,intent,r);
-   else for(const target of [p,...clones])if(target.life!==0&&(target.hp??100)>0&&dist(target,e)<=r.radius)hit(target,r.damage,e);
+   else for(const target of [p,...clones])if((target.life??1)>0&&(target.hp??100)>0&&dist(target,e)<=r.radius)hit(target,r.damage,e);
   }return;
  }
  const target=targetFor(e,p,clones),d=dist(e,target),v=directionToward(target.x-e.x,target.z-e.z);

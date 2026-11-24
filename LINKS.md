@@ -149,3 +149,7 @@ Experimental branch: 1900 HP, destructible 240 HP sand armor (4s / 18s cooldown)
 
 ## v1.12d — Shukaku Unleashed
 Gaara phase 3 at 665 HP (35%), dedicated directional pixel avatar 1.85x, one animated tail, orbiting sand chakra, new exclusive detonation, shuriken volleys, irregular tail strikes and eruption. Focused 75s simulation and syntax checks passed; full regression and actual browser/Cloudflare unverified. Production v1.11i unchanged. Preview https://feature-v112-world-bosses.naruto2-5d.pages.dev/ ; source https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v112-world-bosses. See docs/V112-WORLD-BOSSES.md.
+
+
+## v1.12e — Orochimaru: The Immortal Serpent
+Independent 2400 HP boss, Forbidden Underground Laboratory (40,12), 3 targetable serpents, venom, phase 2 at 50%, one-use body shedding at 30% (160 HP husk, 3.5s, +360 HP if not destroyed), epic Kusanagi. Focused 70s logic and syntax passed; full regression, actual browser appearance and deployment pending. Production unchanged. Preview https://feature-v112-world-bosses.naruto2-5d.pages.dev/ ; source https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v112-world-bosses. See docs/V112-WORLD-BOSSES.md.

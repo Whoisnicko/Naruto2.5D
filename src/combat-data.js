@@ -6,6 +6,7 @@ export const COMBAT={
  defense:{max:100,holdDrain:6,regen:22,regenDelay:.65,blockBase:8,blockDamage:1.15,frontDot:.2,breakTime:.85,moveSpeed:.55,chargeWindup:.25,chargeBonus:24,enemyAimLock:.14},
  hades:{assistDot:.70710678,meleeDot:.42,assistReach:.45,meleeStep:.38,chainTail:.09,dashWindup:.055,dashRecovery:.24,dashDamage:.85},
  kyubi:{name:'Three Tails',duration:14,regenPerSecond:3,melee:1.95,technique:1.65,speed:1.3,damageTaken:.65,reach:[5.7,6.1,6.6],targets:[1,2,3],width:1.55,dealt:.55,received:1.8,threshold:100,lossInterval:2.8,lossRadius:5.8},
+ kyubiRasenganBlast:{fullCharge:.999,radius:6.5,giantRadius:8.5,inner:.70,edge:.40,knockScale:.45,life:.82},
  rasengan:{' ':{maxCharge:.9,minDistance:5.5,maxDistance:9,speed:22,extraCost:10,bonusDamage:.30,size:2.1,maxScale:1.75,contact:1.15,splash:2.0,recovery:.39,impact:.85},g:{maxCharge:1.25,minDistance:8,maxDistance:13,speed:24,extraCost:14,bonusDamage:.35,size:3.35,maxScale:1.65,contact:1.65,splash:3.0,recovery:.46,impact:1.1}},
  substitution:{cost:18,cd:7,duration:1.8,invulnerable:.38},
  skills:{

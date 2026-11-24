@@ -1,0 +1,64 @@
+/* v1.20b approved artwork, real data over art. Every group is enabled only after its assets load. */
+#hud[data-art~="orb"] .kyubi-meter{position:relative;width:108px;max-width:100%;overflow:visible;aspect-ratio:1}
+#hud[data-art~="orb"] #kyubiHUD{grid-template-columns:108px minmax(0,1fr);align-items:center;background:linear-gradient(100deg,#171525,#2c2029);padding:3px 2px}
+.seal-art{display:none;position:absolute;inset:0;pointer-events:none}
+#hud[data-art~="orb"] .seal-art{display:block}
+#hud[data-art~="orb"] .kyubi-orb{visibility:hidden}
+.seal-art>span:not(.seal-art-lock){position:absolute;inset:0;background-size:contain;background-repeat:no-repeat;background-position:center}
+.seal-art-dark{background-image:url('./hud-art/kyubi-seal-dormant.webp')}
+.seal-art-liquid{background-image:url('./hud-art/kyubi-seal-liquid.webp');clip-path:inset(var(--seal-clip,100%) 0 0);opacity:var(--seal-opacity,0)}
+.seal-art-full{background-image:url('./hud-art/kyubi-seal-full.webp');opacity:0}
+.kyubi-meter[data-full=true] .seal-art-full{opacity:1}
+.seal-art-lock{display:none;position:absolute;bottom:28%;left:50%;transform:translateX(-50%);font:bold 8px/1.1 monospace;color:#ead0ab;background:#23151cd9;border:1px solid #d1a15c;padding:3px;border-radius:2px;white-space:nowrap}
+#kyubiHUD[data-state=locked] .seal-art-lock{display:block}
+#hud[data-art~="orb"] #kyubiHUD[data-state=ready] .seal-art{filter:drop-shadow(0 0 5px #ff7a28) drop-shadow(0 0 2px #ffdd87)}
+#hud[data-art~="orb"] #kyubiHUD[data-state=active] .seal-art{filter:drop-shadow(0 0 4px #f3506a)}
+@media(prefers-reduced-motion:no-preference){.seal-art-liquid{transition:clip-path 130ms linear,opacity 90ms linear}}
+/* Naruto portrait is the exact cropped illustration; other characters retain real sprite portraits. */
+#hud[data-art~="portrait"][data-character=naruto] #top .portrait-frame{width:77px;height:71px;background:transparent url('./hud-art/naruto-portrait.webp') center/contain no-repeat;border:0;box-shadow:none;padding:0}
+#hud[data-art~="portrait"][data-character=naruto] #heroPortrait,#hud[data-art~="portrait"][data-character=naruto] .headband-plate{visibility:hidden}
+#hud[data-art~="portrait"][data-character=naruto][data-form=kyubi] #top .portrait-frame{filter:drop-shadow(0 0 3px #fe6b3b)}
+#hud[data-character=naruto] #top{border-color:#d88b35;border-left-color:#f08c35;background:linear-gradient(110deg,#243d68,#15233b 82%);box-shadow:0 3px 9px #0007,inset 0 0 0 2px #d8993f30}
+#hud[data-character=naruto][data-form=kyubi] #top{background:linear-gradient(110deg,#531c33,#25162b);border-color:#d94e35}
+#hud[data-art~="mission"] #quest{background:transparent url('./hud-art/mission-scroll.webp') center/100% 100% no-repeat;border:0;box-shadow:none;padding:50px 29px 34px;overflow:hidden;max-height:calc(100dvh - 170px)}
+#hud[data-art~="mission"] .mission-scroll-content{max-height:calc(100dvh - 254px);overflow:auto;scrollbar-width:thin;scrollbar-color:#ab794b #e7cba0;min-width:0}
+#hud[data-art~="mission"] #quest h3{font-size:14px}
+#hud[data-art~="mission"] .scroll-heading{border-bottom-color:#a57d55}
+#hud[data-art~="map"] .map-art-frame{position:relative;width:min(100%,170px);aspect-ratio:256/264;margin:4px auto;display:grid;place-items:center;isolation:isolate}
+#hud[data-art~="map"] .map-art-frame:before{content:"";position:absolute;inset:20% 12% 10%;background:#182c32;border-radius:50%;z-index:-2}
+#hud[data-art~="map"] .map-art-frame:after{content:"";position:absolute;inset:0;background:url('./hud-art/map-frame-live.webp') center/100% 100% no-repeat;pointer-events:none;z-index:1}
+#hud[data-art~="map"] #miniMap{width:54%;height:auto;aspect-ratio:1;margin-top:8%;border:1px solid #a08158;z-index:0;background:#24382d}
+#hud[data-art~="toolkit"] #combatDock{background:#24263a url('./hud-art/leaf-banner.webp') center/100% 100% no-repeat;border:1px solid #c88f4d;border-top:3px solid #3d5c92;padding:8px 14px 7px;box-shadow:0 3px 8px #0008}
+#hud[data-art~="toolkit"] .toolkit-heading{color:#5c3525;text-shadow:0 1px #ffe3bb}
+#hud[data-art~="toolkit"] #bottom .skill{background:#e7c991 url('./hud-art/paper-tag.webp') center/100% 100% no-repeat;border:1px solid #987344;border-bottom:2px solid #374e80;border-radius:5px;padding:5px 3px 3px}
+#hud[data-art~="toolkit"] #bottom .skill[data-state=low]{background-image:linear-gradient(#9f252544,#9f252544),url('./hud-art/paper-tag.webp')}
+#hud[data-art~="toolkit"] #bottom .skill[data-state=cooldown]{background-image:linear-gradient(#13131935,#13131935),url('./hud-art/paper-tag.webp')}
+#hud[data-art~="toolkit"] #bottom .skill:hover,#hud[data-art~="toolkit"] #bottom .skill:focus-visible{border-color:#ffb74d;box-shadow:0 0 4px #e9a649}
+#hud[data-art~="icons"] .skill[data-s="k"] .skill-orb{background:#212737 url('./hud-art/shuriken-icon.webp') center/contain no-repeat}
+#hud[data-art~="icons"] .skill[data-s="f"] .skill-orb{background:#212737 url('./hud-art/kunai-icon.webp') center/contain no-repeat}
+#hud[data-art~="icons"][data-character=naruto] .skill[data-s=" "] .skill-orb,#hud[data-art~="icons"][data-character=naruto] .skill[data-s="g"] .skill-orb{background:#212737 url('./hud-art/rasengan-icon.webp') center/cover no-repeat}
+#hud[data-art~="icons"][data-character=naruto] .skill[data-s="l"] .skill-orb{background:#212737 url('./hud-art/clone-icon.webp') center/cover no-repeat}
+#hud[data-art~="icons"][data-character=sasuke] .skill[data-s="l"] .skill-orb{background:#212737 url('./hud-art/sharingan-icon.webp') center/cover no-repeat}
+#hud[data-art~="icons"] .skill[data-s="k"] .skill-icon,#hud[data-art~="icons"] .skill[data-s="f"] .skill-icon,#hud[data-art~="icons"][data-character=naruto] .skill[data-s=" "] .skill-icon,#hud[data-art~="icons"][data-character=naruto] .skill[data-s="g"] .skill-icon,#hud[data-art~="icons"][data-character=naruto] .skill[data-s="l"] .skill-icon,#hud[data-art~="icons"][data-character=sasuke] .skill[data-s="l"] .skill-icon{visibility:hidden}
+/* F is character-specific: the illustrated kunai is Naruto's generic weapon art only. */
+#hud[data-art~="icons"]:not([data-character=naruto]) .skill[data-s="f"] .skill-orb{background:radial-gradient(circle at 35% 25%,#526078,#1e2539 65%)}
+#hud[data-art~="icons"]:not([data-character=naruto]) .skill[data-s="f"] .skill-icon{visibility:visible}
+#hud[data-art~="icons"][data-form=kyubi] .skill[data-s=" "] .skill-orb,#hud[data-art~="icons"][data-form=kyubi] .skill[data-s="g"] .skill-orb{filter:hue-rotate(65deg)}
+#hud[data-art~="scroll"] #notice{background:#edd0a1 url('./hud-art/scroll-heading.webp') center/100% 100% no-repeat;border:0;padding:15px 27px;color:#342521;box-shadow:none}
+#notice{bottom:177px}
+@media(min-width:1100px) and (pointer:fine){
+ #hud[data-art~="boss"] .boss-banner-live{position:relative;aspect-ratio:620/144;background:url('./hud-art/boss-banner.webp') center/100% 100% no-repeat;min-height:90px}
+ #hud[data-art~="boss"] #bossHUD{border:0;background:#231a22dd;box-shadow:none;padding:5px}
+ #hud[data-art~="boss"] .boss-head{display:contents}
+ #hud[data-art~="boss"] .boss-portrait-frame{position:absolute;left:3.6%;top:23%;width:15.6%;height:60%;border:0;border-radius:50%;background:#211d24}
+ #hud[data-art~="boss"] #bossPortrait{width:100%;height:auto}
+ #hud[data-art~="boss"] .boss-heading{position:absolute;left:24%;right:16%;top:9%;text-align:left;background:#241820e8;border-radius:3px;padding:2px 3px}
+ #hud[data-art~="boss"] .boss-heading .eyebrow{display:none}
+ #hud[data-art~="boss"] .boss-heading strong{font-size:12px;line-height:1.05}
+ #hud[data-art~="boss"] #bossPhasePips{margin-top:2px}
+ #hud[data-art~="boss"] #bossHUD .boss-life{position:absolute;left:22.5%;top:47%;width:65%;height:20%;margin:0;background:#341922;border:1px solid #6e3940;overflow:hidden;box-shadow:inset 0 1px 4px #0008;transform:skewX(-9deg)}
+ #hud[data-art~="boss"] #bossHPValue{position:absolute;top:50%;left:24%;right:13%;z-index:2;text-align:center;text-shadow:1px 1px #000;color:#fff2da}
+}
+@media(max-width:1050px){#hud[data-art~="orb"] #kyubiHUD{grid-template-columns:74px minmax(0,1fr)}#hud[data-art~="orb"] .kyubi-meter{width:74px}#hud[data-art~="portrait"][data-character=naruto] #top .portrait-frame{width:57px;height:52px}#hud[data-art~="mission"] #quest{padding:37px 22px 26px}#hud[data-art~="mission"] .mission-scroll-content{max-height:calc(100dvh - 248px)}#notice{bottom:174px}}
+@media(max-width:840px),(pointer:coarse){#hud[data-art~="orb"] #kyubiHUD{grid-template-columns:49px minmax(0,1fr)}#hud[data-art~="orb"] .kyubi-meter{width:49px}#hud[data-art~="portrait"][data-character=naruto] #top .portrait-frame{width:36px;height:34px}#hud[data-art~="mission"] #quest{padding:21px 12px 16px;max-height:30dvh}#hud[data-art~="mission"] .mission-scroll-content{max-height:calc(30dvh - 37px)}#hud[data-art~="mission"] #quest h3{font-size:12px}#hud[data-art~="map"] .map-art-frame{width:100%}#hud[data-art~="toolkit"] #combatDock{padding:4px}#hud[data-art~="toolkit"] #bottom .skill{padding:2px 1px}#hud[data-art~="scroll"] #notice{padding:10px 19px}#notice{bottom:220px}}
+@media(prefers-reduced-motion:reduce){.seal-art-liquid{transition:none!important}}

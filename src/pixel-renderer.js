@@ -53,6 +53,7 @@ export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
  const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[]},trails=[],fxPool=[];
+ const worldMeshes=[];let warmIndex=0;const warmKinds=['zabuza','haku','npc','sasuke'];
  let generation=0,hero=null,gearKey=null,gearCanvas=null,redGearKey=null,redGearCanvas=null;const rasPool=createRasenganPool(base=>{const f=sprite(base,RAS_COLS,RAS_ROWS,2,2,false);f.material.depthWrite=false;f.obj.renderOrder=6;scene.add(f.obj);return f;});let rasMap=null;try{rasMap=texture(makeRasenganSheet());}catch(e){console.warn('Rasengan art fallback',e);}
  // Load exact approved art into canvas textures; keep visible procedural fallback if decoding fails.
  function pixelLayer(name,w,h,paint){
@@ -175,7 +176,7 @@ export function createPixelSystem(scene){
      dummy.rotation.set(-Math.PI/2,0,0);dummy.scale.set(2.9*p.s,2.1*p.s,1);dummy.position.set(p.x+.4*p.s,.027,p.z);dummy.updateMatrix();shadows.setMatrixAt(i,dummy.matrix);
     }
     inst.instanceMatrix.needsUpdate=shadows.instanceMatrix.needsUpdate=true;inst.computeBoundingSphere();shadows.computeBoundingSphere();
-    scene.add(inst,shadows);created.push(inst,shadows);
+    scene.add(inst,shadows);created.push(inst,shadows);worldMeshes.push(inst,shadows);
    }
    return true;
   }catch(e){for(const o of created)scene.remove(o);console.warn('Pixel tree fallback',e);return false;}
@@ -184,7 +185,9 @@ export function createPixelSystem(scene){
  if(!buildings.length)return;
  const obj=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),shadowMat,buildings.length),d=new THREE.Object3D();
  for(let i=0;i<buildings.length;i++){const p=buildings[i];d.position.set(p.x+.5,.02,p.z+.35);d.rotation.set(-Math.PI/2,0,0);d.scale.set(p.w+1.8,p.d+1.5,1);d.updateMatrix();obj.setMatrixAt(i,d.matrix);}
- obj.instanceMatrix.needsUpdate=true;obj.computeBoundingSphere();scene.add(obj);
+ obj.instanceMatrix.needsUpdate=true;obj.computeBoundingSphere();scene.add(obj);worldMeshes.push(obj);
 }
-return {begin,show,end,effects,addTrees,addBuildingShadows,previewEquipment,portrait,maps,sheets};
+function setWorldVisible(visible){for(const o of worldMeshes)o.visible=visible;}
+function warmNext(renderer){if(warmIndex>=warmKinds.length)return false;const kind=warmKinds[warmIndex++];try{const item=makeActor(kind);item.obj.visible=item.shadow.visible=false;free[kind].push(item);renderer?.initTexture?.(item.map);}catch(e){console.warn('Optional encounter warmup',e);}return true;}
+return {begin,show,end,effects,addTrees,addBuildingShadows,previewEquipment,portrait,maps,sheets,setWorldVisible,warmNext};
 }

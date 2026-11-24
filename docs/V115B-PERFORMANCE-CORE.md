@@ -1,0 +1,13 @@
+# Project Hades — v1.15b Performance Core
+
+
+## v1.15b beta — Project Hades / Performance Core
+Production remains v1.14a (ae3680e73292bc0d95c4fca68b901bc03a8b0e82). Includes approved v1.15a. User-selected initial profile: Ultra, unlimited browser-synchronized render FPS, 125% CSS render resolution, 100% existing effect density, 35% screen shake intensity (legacy on/off still applies), dynamic resolution enabled, target assistance preference enabled for next phase (not yet applied to combat). Settings persisted separately from save v11 on change. Graphics & Controls accessible from title or pause. Dynamic scale responds to sustained frame pressure in 2-second windows, with 65% floor unless chosen ceiling is lower, gradual recovery and no particle or telegraph reductions. Target is to protect 60 FPS when possible, not a guaranteed rate. Renderer reuses raw actor/effect lists and uploads only position/color for basic dynamic materials (6 instead of 11 floats per vertex); static terrain shader unchanged. HUD shows rendered FPS, rolling p95/max frame interval, CPU update/render submission time (not GPU time), current scale and draw calls when available. Render cap skips only presentation; original variable-step simulation and hit-stop retained. Fixed timestep/interpolation deferred to separate measured change. Full existing and new simulated regression suite passed, including 60 FPS cap on mocked 144 Hz with unchanged chakra regeneration, resolution pressure/recovery/disable, UI options, save independence and vertex position/color equivalence. Real GPU, visual QA, audio/touch and Cloudflare preview not verified. No claim of measured FPS gains. Preview expected https://feature-v115-performance-core.naruto2-5d.pages.dev/ ; production https://naruto2-5d.pages.dev/ ; source https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v115-performance-core ; code commit 79b6b8d70f6efd3040de4e699fc8e08875c3cef9. Next: v1.15c dash strike and soft target assist, then animation/game feel and HUD. Do not merge until approved.
+
+## Manual QA
+- Confirm both version labels show v1.15b.
+- Open Options or pause > Control Settings; check Ultra defaults and setting persistence on refresh.
+- Compare Unlimited/60 FPS under identical boss encounter and confirm cooldowns behave identically.
+- Fight Sasuke phase 4 with dynamic resolution on/off, note p95, max, CPU, FPS, effective scale and draw calls.
+- Confirm boss telegraphs remain visible, sprites crisp, screen shake reduced, no graphical defects, sandbox/save isolation preserved.
+- Approval gate before promotion; actual aim assist, dash strike, fixed timestep and interpolation are not part of this beta.

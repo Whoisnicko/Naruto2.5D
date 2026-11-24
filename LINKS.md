@@ -34,3 +34,5 @@
 
 - Rama RC HD: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v1-hd-sprites
 - Preview: consultar estado de Cloudflare del último commit.
+
+- Preview HD2: consultar el check Cloudflare de la rama feature/v1-hd-sprites. Producción estable sin cambios.

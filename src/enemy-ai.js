@@ -51,8 +51,8 @@ export function tickEnemy(e,p,clones,dt,move,fire,hit,blocked=()=>false,team={})
  }
  const target=targetFor(e,p,clones),d=dist(e,target),v=directionToward(target.x-e.x,target.z-e.z);
  const advanced=e.id>=200;const allies=advanced?(team.allies||[]).filter(a=>a!==e&&a.hp>0&&dist(a,e)<10):[];
- if(advanced&&d<13&&e.attack<=0){const wounded=allies.filter(a=>a.hp<a.maxHP*.72&&dist(a,e)<7).sort((a,b)=>a.hp/a.maxHP-b.hp/b.maxHP)[0];let mode=e.role==='medic'&&wounded?'heal':e.role==='summoner'&&team.canSummon?.(e)?'summon':null;if(mode){e.guard=false;e.ai='windup';e.intent={mode,targetId:wounded?.id,left:r.windup,total:r.windup,x:wounded?.x??e.x,z:wounded?.z??e.z,dx:v.x,dz:v.z};e.pendingAttack=r.windup;e.anim={k:'l',left:r.windup+.18,total:r.windup+.18,windup:r.windup};return;}}
- if(advanced&&e.role==='assassin'&&d<5&&d>1.3&&e.attack>0){e.ai='flank';const sign=e.id%2?1:-1;move(e,(v.x*.35-v.z*sign)*r.speed*dt,(v.z*.35+v.x*sign)*r.speed*dt);e.dirX=v.x;e.dirZ=v.z;e.motion=true;e.walk=(e.walk||0)+dt*10;return;}
+ if(advanced&&d<13&&e.attack<=0){const wounded=allies.filter(a=>a.hp<(a.maxHP||70)*.72&&dist(a,e)<7).sort((a,b)=>a.hp/(a.maxHP||70)-b.hp/(b.maxHP||70))[0];let mode=e.role==='medic'&&wounded?'heal':e.role==='summoner'&&team.canSummon?.(e)?'summon':null;if(mode){e.guard=false;e.ai='windup';e.intent={mode,targetId:wounded?.id,left:r.windup,total:r.windup,x:wounded?.x??e.x,z:wounded?.z??e.z,dx:v.x,dz:v.z};e.pendingAttack=r.windup;e.anim={k:'l',left:r.windup+.18,total:r.windup+.18,windup:r.windup};return;}}
+ if(advanced&&e.role==='assassin'&&d<5&&d>1.3&&(e.attack>0||p.pending&&target===p)){e.ai='flank';const sign=e.id%2?1:-1;move(e,(v.x*.35-v.z*sign)*r.speed*dt,(v.z*.35+v.x*sign)*r.speed*dt);e.dirX=v.x;e.dirZ=v.z;e.motion=true;e.walk=(e.walk||0)+dt*10;return;}
  if(d>13||(advanced&&Math.hypot(e.x-e.homeX,e.z-e.homeZ)>17)){
   e.guard=false;e.ai='patrol';e.patrolClock=(e.patrolClock||0)+dt*.45;
   const x=e.homeX+Math.cos(e.patrolClock)*1.4,z=e.homeZ+Math.sin(e.patrolClock)*1.4,dir=directionToward(x-e.x,z-e.z);
@@ -60,7 +60,7 @@ export function tickEnemy(e,p,clones,dt,move,fire,hit,blocked=()=>false,team={})
  }
  e.dirX=v.x;e.dirZ=v.z;e.guard=isDefensive(e)&&e.attack>0;e.ai=e.guard?'guard':'chase';
  if(isRanged(e)&&d<3.5&&e.attack>0){e.ai='retreat';e.motion=true;move(e,-v.x*r.speed*dt,-v.z*r.speed*dt);e.walk=(e.walk||0)+dt*8;return;}
- if(d<=r.reach&&e.attack<=0&&(!advanced||!isRanged(e)||!Array.from({length:8},(_,i)=>i+1).some(i=>blocked(e.x+(target.x-e.x)*i/9,e.z+(target.z-e.z)*i/9,.1)))&&(!advanced||allies.filter(a=>a.intent&&a.intent.mode==='melee').length<2||isRanged(e))){
+ if(d<=r.reach&&e.attack<=0&&(!advanced||!isRanged(e)||!Array.from({length:8},(_,i)=>i+1).some(i=>blocked(e.x+(target.x-e.x)*i/9,e.z+(target.z-e.z)*i/9,.1)))&&(!advanced||allies.filter(a=>a.intent&&a.intent.mode==='melee').length<2||(isRanged(e)&&!(e.role==='elite'&&d<2.6)))){
   e.guard=false;e.ai='windup';const ranged=isRanged(e)&&!(e.role==='elite'&&d<2.6);e.intent={mode:ranged?'ranged':'melee',left:r.windup,total:r.windup,x:target.x,z:target.z,dx:v.x,dz:v.z};e.pendingAttack=r.windup;
   e.anim={k:ranged?'k':'j',left:r.windup+.18,total:r.windup+.18,windup:r.windup};return;
  }

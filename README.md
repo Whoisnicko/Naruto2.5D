@@ -52,3 +52,6 @@ v0.11 aprobada y fusionada a main (PR 9), Cloudflare check exitoso. Seis capítu
 
 ## v1.1 beta — Konoha
 Base RC original sin HD. Tres lugares, Shikamaru, misión, cofre y decoración estática. [Detalles](docs/V11-KONOHA-EXPANSION.md). Guardado v7 lee v2–v6. Pruebas simuladas aprobadas.
+
+## v1.2 beta — Frontera del viento
+Región conectada al este, santuario y ruinas, cuatro enemigos, dos cofres, talismán épico. Guardado v8. [Detalles y QA](docs/V12-WORLD-EXPANSION.md).

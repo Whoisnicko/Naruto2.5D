@@ -5,3 +5,6 @@
 
 - Rama v0.6: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v06-pixel-anime
 - Vista de prueba Cloudflare v0.6: pendiente de verificar en Deployments.
+
+- Rama v0.7: https://github.com/Whoisnicko/Naruto2.5D/tree/feature/v07-game-feel
+- Preview Cloudflare: pendiente de verificar en Deployments.

@@ -17,3 +17,6 @@ Mantener main estable; desarrollar cambios grandes en ramas separadas y probar a
 
 ## v0.4 beta
 Trabajar en `feature/v04-threejs`. Ejecutar `node tests/smoke.mjs`; el adaptador gráfico está simulado. Usar el preview de Cloudflare para verificar GPU y FPS antes de fusionar. La URL principal sigue en main. Ver [migración](docs/V04-MIGRATION.md).
+
+## v0.5 beta
+Use preview branch `feature/v05-art-pass`; validate GLB status in HUD, forest, water, particles, walk/sprint/attacks and save compatibility. Export JSON from v0.4 before opening the distinct preview origin. Run `node tests/smoke.mjs`. Do not merge until user validates visual quality and FPS.

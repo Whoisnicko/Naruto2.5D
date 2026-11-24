@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 
+import { makeArtAtlas, styleWorldMaterial, classifySurface, makeWater, makeChakra } from './art.js';
+
 const lin = v => v <= .04045 ? v / 12.92 : ((v+.055)/1.055)**2.4;
 function arrays(capacity) {
   return { pos:new Float32Array(capacity*3), col:new Float32Array(capacity*3), norm:new Float32Array(capacity*3), uv:new Float32Array(capacity*2) };
@@ -58,12 +60,14 @@ export function createRenderer(canvas){
   Object.assign(sun.shadow.camera,{left:-23,right:23,top:23,bottom:-23,near:.5,far:100});
   sun.shadow.camera.updateProjectionMatrix();sun.shadow.bias=-.00015;sun.shadow.normalBias=.035;
   scene.add(sun,sun.target);
-  const solid=toon(),ground=toon();ground.map=terrainTexture();
+  const solid=toon(),atlas=makeArtAtlas(),ground=styleWorldMaterial(toon(),atlas),worldMat=styleWorldMaterial(toon(),atlas);
+  const water=makeWater(scene),chakra=makeChakra(scene);
   const fxmat=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide});
   let quality=1;
   function addStatic(raw,terrain=false){
     const a=arrays(raw.length/6);fill(a,raw);const g=geometry(a);g.computeBoundingSphere();
-    const obj=new THREE.Mesh(g,terrain?ground:solid);
+    const surface=new Float32Array(raw.length/6);for(let i=0;i<raw.length;i+=18){const v=classifySurface(raw[i+3],raw[i+4],raw[i+5],terrain);surface.fill(v,i/6,i/6+3);}g.setAttribute('artSurface',new THREE.BufferAttribute(surface,1));
+    const obj=new THREE.Mesh(g,terrain?ground:worldMat);
     obj.receiveShadow=true;obj.castShadow=!terrain;scene.add(obj);return obj;
   }
   function batch(material,cast){
@@ -97,7 +101,7 @@ export function createRenderer(canvas){
     sun.position.set(x+14,32,z+18);sun.target.position.set(x,0,z);sun.target.updateMatrixWorld();
     renderer.render(scene,camera);
   }
-  return {scene,renderer,camera,addStatic,drawActors,drawEffects,resize,frame,solid,get quality(){return quality}};
+  return {scene,renderer,camera,addStatic,drawActors,drawEffects,resize,frame,solid,artFrame(t,effects,clones){water(t);chakra(effects,clones,t,quality,renderer.getPixelRatio());},get quality(){return quality}};
 }
 
 // Optional GLB actors. Missing or invalid assets never replace the working procedural actor.
@@ -196,25 +200,35 @@ export function createProceduralActors(scene,material,rawByKind){
     const obj=new THREE.SkinnedMesh(templates.get(kind),material);
     obj.add(bones[0]);obj.bind(new THREE.Skeleton(bones));obj.frustumCulled=false;
     obj.castShadow=true;obj.receiveShadow=true;scene.add(obj);
-    return {obj,bones,seen:generation};
+    return {obj,bones,seen:generation,angle:null,blend:0,clock:0};
   }
-  function show(a,kind){
+  function show(a,kind,dt=0){
     if(!templates.has(kind))return false;
     let item=active.get(a);
     if(!item){try{item=make(kind);active.set(a,item);}catch(e){console.warn('Rig fallback',kind,e);return false;}}
     item.seen=generation;
-    const {obj,bones:b}=item,w=Math.sin(a.walk||0),act=a.anim&&a.anim.left>0?Math.sin(Math.PI*(1-a.anim.left/a.anim.total)):0;
-    obj.position.set(a.x,Math.abs(w)*.035,a.z);
-    obj.rotation.y=Math.atan2(a.dirX||0,a.dirZ??1);
-    b[1].rotation.set(-.045*Math.abs(w)-act*.12,act*.16,w*.025);
-    b[2].rotation.set(0,-act*.09,0);
-    b[3].rotation.set(w*.44-act*.25,0,-act*.08);
-    b[4].rotation.x=-.12-act*.22;
-    b[5].rotation.set(-w*.44-act*1.14,0,act*.12);
-    b[6].rotation.x=-.12-act*.55;
-    b[7].rotation.x=-w*.43;b[8].rotation.x=Math.max(0,w)*.4;
-    b[9].rotation.x=w*.43;b[10].rotation.x=Math.max(0,-w)*.4;
-    if(a.anim?.k==='l'){b[3].rotation.x=-act*.9;b[5].rotation.x=-act*.9;b[4].rotation.x=-act*.65;b[6].rotation.x=-act*.65;}
+    const {obj,bones:b}=item;
+    const k=1-Math.exp(-Math.max(0,dt)*13),moving=a.motion??Boolean(a.walk);
+    item.blend+=(Number(moving)-item.blend)*k;item.clock+=dt;
+    const w=Math.sin(a.walk||0)*item.blend,act=a.anim&&a.anim.left>0?Math.sin(Math.PI*(1-a.anim.left/a.anim.total)):0;
+    const run=a.sprinting?1:0,breath=Math.sin(item.clock*2.6)*.017*(1-item.blend);
+    obj.position.set(a.x,Math.abs(w)*.035+breath,a.z);
+    const target=Math.atan2(a.dirX||0,a.dirZ??1);
+    if(item.angle===null)item.angle=target;
+    item.angle+=Math.atan2(Math.sin(target-item.angle),Math.cos(target-item.angle))*k;
+    obj.rotation.y=item.angle;
+    const pose=(i,x,y,z)=>{b[i].rotation.x+=(x-b[i].rotation.x)*k;b[i].rotation.y+=(y-b[i].rotation.y)*k;b[i].rotation.z+=(z-b[i].rotation.z)*k;};
+    pose(1,-.045*Math.abs(w)-run*.22*item.blend-act*.12,act*.16,w*.025);
+    pose(2,-breath*.4,-act*.09,0);
+    const back=run*.70*item.blend;
+    pose(3,w*.44-act*.25+back,0,-act*.08);
+    pose(4,-.12-act*.22-back*.22,0,0);
+    pose(5,-w*.44-act*1.14+back,0,act*.12);
+    pose(6,-.12-act*.55-back*.22,0,0);
+    pose(7,-w*(.43+run*.19),0,0);pose(8,Math.max(0,w)*(.4+run*.16),0,0);
+    pose(9,w*(.43+run*.19),0,0);pose(10,Math.max(0,-w)*(.4+run*.16),0,0);
+    if(a.anim?.k==='l'){pose(3,-act*.9,0,-.12*act);pose(5,-act*.9,0,.12*act);pose(4,-act*.65,0,0);pose(6,-act*.65,0,0);}
+    if(a.anim?.k===' '){pose(3,-act*.62,0,-act*.22);pose(5,-act*1.5,0,.15*act);pose(6,-act*.75,0,0);}
     return true;
   }
   function end(){for(const [actor,item] of active){if(item.seen!==generation){scene.remove(item.obj);item.obj.skeleton.dispose();active.delete(actor);}}}

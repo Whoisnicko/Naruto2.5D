@@ -28,3 +28,6 @@ https://naruto2-5d.pages.dev/ (URL de producción informada por el propietario; 
 
 ## v0.4 beta — Three.js
 Ver [migración, arquitectura y pruebas](docs/V04-MIGRATION.md). Rama de evaluación: Three.js, esqueletos procedurales, luces/sombras, GLB opcional y guardado portable. No incluye modelos externos profesionales aún. Validación WebGL real y FPS pendientes. La versión anterior está en `legacy-v03.html`.
+
+## v0.5 beta — Konoha Art Pass
+See [art pass notes](docs/V05-ART-PASS.md). Based on user-validated v0.4 (~90 FPS, shadows and save confirmed). Local CC0 tree/bush GLB, texture atlas, river, chakra glow, animation transitions, model details. No professional Naruto/Kakashi asset yet. Visual/GPU validation pending; do not merge until confirmed.

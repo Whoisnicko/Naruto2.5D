@@ -2,11 +2,12 @@
 // no generated image or third-party character assets are needed.
 export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=22,DIRS=['down','left','right','up'];
 export const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12}};
-export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice'];
+export const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice','lightning','fire','heal','earth','focus'];
 export const FX_SIZE=32,FX_COLS=8;
 export const TREE_W=40,TREE_H=48;
 const ink='#273044',skin='#f7c08a',skinShade='#bc795d',skinLight='#ffe0a8';
 const PALETTES={
+ sasuke:{hair:'#35384e',hairLight:'#777a9b',hairShade:'#23283b',shirt:'#465a8e',shade:'#303c67',light:'#8393bf',trim:'#e2dcca',metal:'#c3cbd7'},
  player:{hair:'#f4c848',hairLight:'#fff0a1',hairShade:'#bf8739',shirt:'#f58b36',shade:'#b94b30',light:'#ffb650',trim:'#26344c',metal:'#bacfd3'},
  npc:{hair:'#c4d3df',hairLight:'#f0f4f8',hairShade:'#8495ae',shirt:'#78935a',shade:'#475e46',light:'#a5ba76',trim:'#26344c',metal:'#c6d6dd'},
  enemy:{hair:'#34364d',hairLight:'#69627e',hairShade:'#262839',shirt:'#665272',shade:'#3d354f',light:'#93748a',trim:'#29283c',metal:'#b8b6c6'},
@@ -82,7 +83,8 @@ function actorCell(kind,dir,frame,gear=null){
  if(role==='zabuza'){rect(hx-5,hy+5,11,5,'#d6d9cf');rect(hx-4,hy+6,9,1,'#87999c');line(side?17:19,8,side?21:21,25,'#344051',4);line(side?17:19,8,side?21:21,22,'#b5ced5',3);rect(19,25,3,4,'#795c50');}if(role==='haku'){if(!back){rect(hx-4,hy+1,8,9,'#e7e8dc');rect(hx-3,hy+3,2,1,'#554253');rect(hx+1,hy+3,2,1,'#554253');rect(hx-1,hy+6,2,2,'#b06b78');}rect(hx-6,hy,2,11,p.hair);rect(hx+5,hy,2,11,p.hairShade);}
  if(role==='shikamaru'){rect(hx-2,hy-8,4,5,p.hair);rect(hx-3,hy-7,6,2,p.hairShade);rect(hx-1,hy-9,2,2,p.hairLight);rect(9,bodyY+5,6,2,p.shade);}
  if(role==='guard'){rect(6,17,12,3,p.metal);rect(5,19,3,5,p.shade);rect(16,19,3,5,p.shade);}if(role==='thrower'){rect(6,22,3,4,p.metal);rect(15,22,3,4,p.metal);}
- if(gear&&role==='player'){
+ if(role==='sasuke'){if(!back){rect(hx-5,hy-2,3,5,p.hair);rect(hx+4,hy-2,2,6,p.hairShade);rect(hx+3,hy+4,1,1,'#bc6a72');}else{rect(10,bodyY+4,4,2,'#b65a55');rect(11,bodyY+6,2,2,'#e9dfd1');}rect(8,24,8,2,'#c7c7d6');}
+ if(gear&&['player','sasuke','sakura','npc'].includes(role)){
  const {head,torso,legs,feet,weapon,offhand,accessory}=gear;
  if(head){rect(hx-5,hy+1,11,3,head.accent);rect(side?hx+1:hx-3,hy+1,side?5:7,2,head.color);rect(hx+1,hy+1,1,1,'#ecf6eb');}
  if(torso){poly([[8+lean,bodyY+2],[15+lean,bodyY+2],[16,bodyY+5],[15,24],[9,24],[7,bodyY+5]],torso.color);rect(9,bodyY+5,3,3,torso.accent);rect(13,bodyY+5,2,3,torso.accent);rect(12,bodyY+3,1,5,ink);}
@@ -139,6 +141,11 @@ export function makeFXSheet(){
    else if(row===8){const r=5+Math.sin(Math.PI*t)*9;ellipse(16,16,r,r,'#1d5eae');ellipse(16,16,r*.83,r*.83,'#3cbae7');ellipse(16,16,r*.55,r*.55,'#b9fbff');ellipse(16,16,r*.25,r*.25,'#ffffff');for(let k=0;k<4;k++)for(let j=0;j<14;j++){const a=angle+k*Math.PI/2+j*.13,rr=r*.67+j*.32;rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr,2,2,j%2?'#d7ffff':'#76c6f8');}for(let k=0;k<8;k++){const a=k*Math.PI/4+angle;line(16+Math.cos(a)*r,16+Math.sin(a)*r,16+Math.cos(a)*15,16+Math.sin(a)*15,'#e4ffff');}}
    else if(row===9){const radius=5+f*1.25;for(let k=0;k<4;k++)for(let j=0;j<12;j++){const a=angle*.55+k*Math.PI/2+j*.13,rr=radius+j*.23;const x=16+Math.cos(a)*rr,y=16+Math.sin(a)*rr*.76;rect(x,y,3,3,'#285b83');rect(x,y,2,2,j%3?'#5cc7e1':'#e4fbf6');}for(let k=0;k<6;k++){const a=k*1.05+angle;rect(16+Math.cos(a)*(radius+3),16+Math.sin(a)*(radius+3),2,2,'#b7e7e9');}}
    else if(row===10){for(let k=0;k<6;k++){const a=k*Math.PI/3+angle*.12,r=4+f*1.55,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;poly([[x,y-6],[x+3,y-1],[x+1,y+5],[x-3,y+1]],'#4f92b5');poly([[x,y-5],[x+2,y-1],[x,y+3],[x-1,y-1]],'#e1f7ff');rect(x,y-3,1,2,'#ffffff');}ellipse(16,16,Math.max(1,5-f*.4),Math.max(1,5-f*.4),'#b7f3ff');}
+   else if(row===11){for(let k=0;k<7;k++){const a=k*Math.PI*2/7+angle,r=5+f*1.2,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;line(16,16,x-3,y+2,'#5967d8',3);line(x-3,y+2,x+2,y-3,'#82caff',2);line(x+2,y-3,x+3,y,'#edffff');}ellipse(16,16,4,4,'#e6fbff');}
+   else if(row===12){const r=5+f*.9;ellipse(16,18,r,r*.7,'#a44339');ellipse(16,17,r*.8,r*.65,'#ee793e');for(let k=0;k<5;k++){const x=7+k*4,y=10+Math.sin(k+f)*3;poly([[x-3,20],[x,y-4],[x+3,20]],'#ffc15c');}ellipse(16,18,r*.4,r*.35,'#fff4bd');}
+   else if(row===13){for(let k=0;k<8;k++){const a=k*.785+angle,r=5+f*1.4;rect(16+Math.cos(a)*r,16+Math.sin(a)*r,2,2,'#a4f8b9');}rect(14,7,4,18,'#60c795');rect(7,14,18,4,'#60c795');rect(15,8,2,16,'#e0ffe6');rect(8,15,16,2,'#e0ffe6');}
+   else if(row===14){for(let k=0;k<9;k++){const a=k*.698+angle*.2,r=4+f*1.45,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r*.8;rect(x,y,4,3,'#755c4d');rect(x,y-1,3,2,'#d6b38b');}if(f<4)ellipse(16,16,5-f,3,'#fff0ba');}
+   else if(row===15){ellipse(16,16,10+f*.3,10+f*.3,'#772d4c');ellipse(16,16,8,8,'#c14b61');ellipse(16,16,3,3,'#2e263e');for(let k=0;k<3;k++){const a=k*2.094+angle;ellipse(16+Math.cos(a)*6,16+Math.sin(a)*6,2,2,'#30273a');}}
    else{
      for(let k=0;k<4;k++){const a=angle+k*Math.PI/2;poly([[16,16],[16+Math.cos(a)*13,16+Math.sin(a)*13],[16+Math.cos(a+.45)*5,16+Math.sin(a+.45)*5]],'#252e45');line(16+Math.cos(a)*4,16+Math.sin(a)*4,16+Math.cos(a)*11,16+Math.sin(a)*11,'#d4e4e9');}ellipse(16,16,3,3,'#8597a6');ellipse(16,16,1.5,1.5,'#273044');
    }
@@ -170,4 +177,4 @@ export function makeWorldPattern(){
  }
  return c;
 }
-export function makeSheets(){return {player:makeActorSheet('player'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+export function makeSheets(){return {player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}

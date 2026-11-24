@@ -55,3 +55,6 @@ Base RC original sin HD. Tres lugares, Shikamaru, misión, cofre y decoración e
 
 ## v1.2 beta — Frontera del viento
 Región conectada al este, santuario y ruinas, cuatro enemigos, dos cofres, talismán épico. Guardado v8. [Detalles y QA](docs/V12-WORLD-EXPANSION.md).
+
+## v1.3 beta — Equipo 7
+Sasuke, Sakura y Kakashi jugables, técnicas propias y progreso compartido. [Detalles](docs/V13-PLAYABLE-CHARACTERS.md). Guardado v9, pruebas simuladas aprobadas.

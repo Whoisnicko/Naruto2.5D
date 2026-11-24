@@ -44,3 +44,6 @@ Rama `feature/v11-konoha-expansion`, parte de RC original. Probar Shikamaru, jar
 
 ## v1.2 beta
 Base v1.1 aprobada. Rama `feature/v12-world-expansion`. Exportar v7 antes del preview. Caminar hacia este por el camino del bosque, vencer tres renegados, cruzar puerta, vencer guardián, abrir relicario, regresar y guardar. `node tests/smoke.mjs`. No fusionar antes de validar.
+
+## v1.3 beta
+Rama `feature/v13-playable-characters`. Exportar v8 antes de probar. C cerca de Kakashi después de misión inicial o sandbox en zona segura. Probar Espacio/F/L/G, equipo visible, guardado y FPS. `node tests/smoke.mjs`. No fusionar antes de validar.

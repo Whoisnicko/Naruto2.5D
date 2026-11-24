@@ -1,0 +1,112 @@
+/* v1.20b.3 — compact HUD / artwork from the approved reference. Loaded last. */
+#hud[data-finished-hud=true] #top .resource small{display:none}
+#hud[data-finished-hud=true] #top #xpFill{background:linear-gradient(#c3ff87,#4bdd4b 50%,#158142);box-shadow:0 0 4px #75ff64}
+#hud[data-finished-hud=true] #top .xp-resource .bar{height:6px;background:#182922;border-color:#876b44}
+#hud[data-finished-hud=true] #livingFury{display:none!important}
+.finished-fury{display:none;font:800 11px/1.15 system-ui;color:#ffcf80;background:#201b1bdd;padding:2px 5px;border:1px solid #bb823f;border-radius:8px;text-shadow:0 1px #000;white-space:nowrap;pointer-events:none;z-index:4}
+#hud[data-finished-hud=true][data-character=naruto] #finishedFuryFallback{display:block;align-self:center;margin-left:auto}
+#hud[data-finished-hud=true][data-character=naruto][data-living-art=ready]:not([data-living-fallback=true]) #finishedFuryFallback{display:none}
+#hud[data-finished-hud=true][data-character=naruto][data-living-art=ready]:not([data-living-fallback=true]) #finishedFury{display:block;position:absolute;left:33%;top:14%;transform:translateX(-50%)}
+.finished-fury[data-state=ready]{color:#fff0c4;border-color:#ffc963;box-shadow:0 0 5px #ff9e38}.finished-fury[data-state=active]{color:#ffb29c;border-color:#fd593f}
+#hud[data-finished-hud=true][data-character=naruto][data-living-art=ready]:not([data-living-fallback=true]) #top .resource{display:none!important}
+#hud[data-finished-hud=true][data-character=naruto][data-living-art=ready]:not([data-living-fallback=true]) #top .hero-head{padding:0 4%;margin-top:-1px}
+#hud[data-finished-hud=true][data-character=naruto][data-living-art=ready]:not([data-living-fallback=true]) #top .hero-heading{background:none;border:0;border-radius:0;box-shadow:none;justify-content:center;padding:0 2px;gap:3px 7px;text-shadow:0 1px 2px #000,0 1px 4px #000,1px 0 #000,-1px 0 #000}
+#hud[data-finished-hud=true] #top .hero-heading h3{white-space:nowrap}
+#hud[data-finished-hud=true][data-character=naruto][data-living-art=ready]:not([data-living-fallback=true]) #top .hero-heading #stats{color:#fff0d0}
+/* Mission scroll now lives in Journal; no duplicate mission tracker on the world. */
+#journalWindow #missionSheet{color:#39271c;background:#f2d4a1;border:2px solid #a56e3e;border-radius:6px;padding:14px;margin:12px 0;line-height:1.4;white-space:normal}
+#journalWindow #missionSheet h3,#journalWindow #missionSheet #qtitle{color:#512b18;margin:6px 0;font:700 18px/1.25 Georgia,serif}
+#journalWindow #missionSheet small,#journalWindow #missionSheet #qdesc,#journalWindow #missionSheet #sideQuestLog,#journalWindow #missionSheet #bossQuest{color:#412c20;text-shadow:none;font-size:13px;line-height:1.4;overflow-wrap:anywhere}
+#journalWindow #missionSheet .scroll-heading{display:flex;align-items:center;gap:7px;border-bottom:1px solid #b88a50;padding-bottom:4px}
+#journalWindow #missionSheet .scroll-mark{width:25px;height:20px}
+#journalWindow #missionSheet #sideQuestLog,#journalWindow #missionSheet #bossQuest{white-space:pre-line;margin-top:7px}
+#journalWindow #missionSheet #sideQuestLog:empty,#journalWindow #missionSheet #bossQuest:empty{display:none}
+body:has(#hud[data-art~="mission"]:not([data-living-fallback=true])) #journalWindow #missionSheet{border:solid transparent;border-width:47px 30px 35px;border-image:url('./hud-art/mission-scroll.webp') 120 68 88 68 fill / 1 stretch;padding:0 6px;background:transparent}
+/* Floating live map and metadata. The real canvas is never replaced with a painted map. */
+#hud[data-finished-hud=true] #quest{width:min(var(--quest-width),205px);max-width:min(var(--quest-width),205px);background:none!important;border:0!important;box-shadow:none!important;padding:0!important;gap:2px;overflow:visible;max-height:none;text-align:center}
+#hud[data-finished-hud=true] #quest #mapPanel{display:flex;flex-direction:column;align-items:center;gap:1px;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0;color:#fff;order:0}
+#hud[data-finished-hud=true] #quest #mapHeader{justify-content:center;gap:5px;order:0;font-size:12px;color:#fff3d0;text-shadow:0 1px 2px #000,0 0 4px #000;line-height:1.15;margin:1px 0}
+#hud[data-finished-hud=true] #quest #mapPanel small,#hud[data-finished-hud=true] #quest .map-legend{font-size:10px;line-height:1.25;color:#fff2d7;text-shadow:0 1px 2px #000,0 0 3px #000;border:0;max-width:100%;overflow-wrap:anywhere}
+#hud[data-finished-hud=true] #quest .map-legend{margin:0;padding:0;pointer-events:auto}
+#hud[data-finished-hud=true] #quest .map-legend[open]{background:#131c25e8;border-radius:4px;padding:3px 5px}
+#hud[data-finished-hud=true] #quest .map-art-frame{order:-1;position:relative;margin:0 auto 2px;width:min(100%,184px);aspect-ratio:324/329;display:grid;place-items:center;isolation:isolate}
+#hud[data-finished-hud=true] #quest #mapToggle{order:1;justify-self:center;width:max-content;min-height:19px;padding:2px 5px;font-size:10px;border:0;background:none;color:#fff3d0;box-shadow:none;text-shadow:0 1px 2px #000,0 0 3px #000;pointer-events:auto}
+#hud[data-finished-hud=true] #quest #mapToggle:hover{text-decoration:underline}
+#hud[data-finished-hud=true][data-finish-art~="map"]:not([data-living-fallback=true]) #quest .map-art-frame::before{content:'';position:absolute;left:50%;top:54%;width:74%;height:73%;transform:translate(-50%,-50%);background:#293c31;border-radius:50%;z-index:-1;inset:auto;left:50%;top:54%}
+#hud[data-finished-hud=true][data-finish-art~="map"]:not([data-living-fallback=true]) #quest .map-art-frame::after{content:'';position:absolute;inset:0;background:url('./hud-art/finished/minimap-frame.webp') center/100% 100% no-repeat;pointer-events:none;z-index:2}
+#hud[data-finished-hud=true][data-finish-art~="map"]:not([data-living-fallback=true]) #quest #miniMap{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);width:74%;height:auto;aspect-ratio:1;margin:0;border:0;clip-path:circle(49.8%);z-index:1;image-rendering:pixelated}
+/* Reference artwork: each menu label, hotbar quantity and skill binding is live. */
+#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #rpgButtons button{--menu-y:0%;background:transparent url('./hud-art/finished/menu-buttons.webp') 0 var(--menu-y)/100% 600% no-repeat!important;border:0!important;border-radius:0!important;box-shadow:none!important;color:#281c10!important;text-shadow:none;padding:3px 5px 3px 30%;font-weight:800;font-size:11px;line-height:1.08;min-height:32px;white-space:normal;overflow-wrap:anywhere;filter:drop-shadow(0 1px 1px #0009)}
+#hud #rpgButtons #skillTreeBtn{--menu-y:20%}#hud #rpgButtons #characterBtn{--menu-y:40%}#hud #rpgButtons #examBtn{--menu-y:60%}#hud #rpgButtons #journalBtn{--menu-y:80%}#hud #rpgButtons #sandboxEnter{--menu-y:100%}
+#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #rpgButtons button:hover,#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #rpgButtons button:focus-visible{filter:brightness(1.16) drop-shadow(0 0 3px #e9ac4b)}
+#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar{gap:4px}
+#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar .quick-item{position:relative;width:48px;min-width:0;height:64px;padding:4px 5px;display:grid;grid-template-columns:1fr;grid-template-rows:11px minmax(0,1fr) 14px;gap:0;justify-items:center;align-items:center;background:transparent url('./hud-art/finished/quick-frame.webp') center/100% 100% no-repeat;border:0;border-radius:0;box-shadow:none;color:#fff0ce;filter:drop-shadow(0 2px 1px #0008)}
+#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar .quick-item small{justify-self:start;color:#ffe5a4;font-size:10px}
+#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar .quick-item .item-icon{width:26px;height:26px;grid-row:2;grid-column:1;image-rendering:pixelated}
+#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar .quick-item b{grid-column:1;grid-row:3;font-size:13px;color:#fff0cf}
+#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar .quick-item:disabled{opacity:.45}
+/* Icon atlas cut from the exact attachment. Non-Naruto jutsus keep their own glyph. */
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill:before{display:none}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill{--icon-x:100%;background:linear-gradient(#141922,#1a2432)!important;border:1px solid #76522e;border-bottom:1px solid #476484;border-radius:6px;box-shadow:inset 0 0 4px #0009;min-width:0}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill .skill-orb{border:0;border-radius:3px;box-shadow:none;background:transparent url('./hud-art/finished/skill-icons.webp') var(--icon-x) center/800% 100% no-repeat!important;aspect-ratio:56/46;height:auto;width: min(100%,54px);isolation:isolate}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill .cooldown-ring{inset:3px;border-radius:4px}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill .skill-icon{visibility:visible!important}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill[data-s="j"]{--icon-x:0%}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill[data-s="k"]{--icon-x:14.285714%}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true])[data-character=naruto] #bottom .skill[data-s="f"]{--icon-x:28.571428%}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true])[data-character=naruto] #bottom .skill[data-s="l"]{--icon-x:42.857143%}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true])[data-character=naruto] #bottom .skill[data-s=" "],#hud[data-finish-art~="dock"]:not([data-living-fallback=true])[data-character=naruto] #bottom .skill[data-s="g"]{--icon-x:57.142857%}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill[data-s="q"]{--icon-x:71.428571%}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill[data-s="r"]{--icon-x:85.714286%}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill:is([data-s="j"],[data-s="k"],[data-s="q"],[data-s="r"]) .skill-icon,#hud[data-finish-art~="dock"]:not([data-living-fallback=true])[data-character=naruto] #bottom .skill:is([data-s="f"],[data-s="l"],[data-s=" "],[data-s="g"]) .skill-icon{visibility:hidden!important}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill[data-state=low]{background:linear-gradient(#3c2026,#251b2b)!important;border-color:#d56c58!important}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill[data-state=cooldown]{filter:saturate(.75)}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill:hover,#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill:focus-visible{border-color:#ffb750;box-shadow:0 0 5px #ffac45}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill b{background:#12151e;color:#fff1d8;border-color:#ce9845;font-weight:800}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill em{color:#fff3df;text-shadow:0 1px #000;font-weight:750}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #defenseActions button,#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #combatDock #notice{background:transparent url('./hud-art/finished/defense-button.webp') center/100% 100% no-repeat!important;border:0;box-shadow:none;color:#291c11;text-shadow:none;font-weight:800}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #defenseActions button[data-active=true]{filter:brightness(1.18) drop-shadow(0 0 5px #ffd976)}
+/* Full reference scroll silhouette on desktop; flexible portrait/touch layout below. */
+@media(min-width:901px) and (pointer:fine){
+ #hud{--finished-side:234px}
+ #hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar{bottom:calc(var(--edge) + 119px)}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #combatDock{--finished-dock-w:min(680px,calc(100vw - 2 * (var(--edge) + var(--finished-side) + 6px)));width:var(--finished-dock-w);height:calc(var(--finished-dock-w)*.349315);max-width:none;padding:0;gap:0;background:transparent url('./hud-art/finished/dock-frame.webp') center/100% 100% no-repeat!important;border:0;box-shadow:none;border-radius:0;filter:drop-shadow(0 2px 2px #0009)}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #combatDock .toolkit-heading{position:absolute;left:32%;top:2%;width:37%;height:18%;margin:0;opacity:0;pointer-events:none}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom{position:absolute;left:9.8%;right:9.2%;top:22%;bottom:26%;width:auto;max-width:none;transform:none;display:flex;flex-wrap:nowrap;gap:2px;align-items:stretch}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill{flex:1 1 0;width:auto;min-width:0;min-height:0;grid-template-rows:minmax(0,1fr) 14px minmax(19px,auto) 13px;gap:2px;padding:3px 2px}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill .skill-orb{width:min(100%,calc(var(--finished-dock-w)*.084));max-height:100%}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #defenseActions{position:absolute;left:11%;right:11%;top:75.5%;bottom:10.5%;gap:18%;display:flex;align-items:stretch}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #defenseActions button{min-height:0;min-width:0;font-size:12px;padding:3px 5px}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #combatDock #notice{bottom:calc(100% + 3px);padding:8px 19px;max-width:80%;min-width:120px}
+}
+@media(max-width:1500px){#hud{--finished-side:196px}}
+@media(max-width:1120px){#hud{--finished-side:156px}#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #rpgButtons button{font-size:10px;min-height:29px}#hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar .quick-item{width:42px;height:56px}}
+@media(max-width:900px),(pointer:coarse){
+ #hud[data-finished-hud=true] #quest .map-art-frame{width:min(100%,119px)}
+ #hud[data-finished-hud=true] #quest #mapHeader,#hud[data-finished-hud=true] #quest #mapToggle{font-size:9px}
+ #hud[data-finished-hud=true] #quest #mapPanel small,#hud[data-finished-hud=true] #quest .map-legend{font-size:9px}
+ #hud[data-finished-hud=true] #quest .map-legend:not([open]){font-size:8px}
+ #hud[data-finished-hud=true] #top .hero-heading{font-size:9px}.finished-fury{font-size:8px;padding:1px 3px}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #combatDock{border:1px solid #d6a04c;background:linear-gradient(#26374c,#171c27)!important;border-radius:6px;box-shadow:inset 0 0 0 2px #553c27;gap:3px;padding:5px}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill .skill-orb{width: min(100%,34px)}
+ #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #defenseActions button{font-size:10px;min-height:28px}
+ #hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #rpgButtons button{font-size:9px;min-height:24px;padding-left:29%}
+ #hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar .quick-item{width: min(31%,36px);height:47px;grid-template-rows:9px minmax(0,1fr) 12px;padding:3px}
+ #hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar .quick-item .item-icon{width:20px;height:20px}
+ #hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar .quick-item b{font-size:10px}
+}
+@media(max-height:500px) and (min-width:441px) and (max-width:900px),(max-height:500px) and (pointer:coarse){#hud[data-finished-hud=true] #quest .map-art-frame{width:min(100%,90px)}#hud[data-finished-hud=true] #quest .map-legend{display:none}#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill .skill-orb{width:min(100%,29px)}}
+/* Maintain full one-line labels at PC sizes, and reserve room for all three live hotbar slots on touch. */
+@media(min-width:1121px) and (pointer:fine){
+ #hud{--finished-side:240px}
+ #hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #rpgButtons{width:234px;max-width:234px}
+ #hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #rpgButtons button{padding-left:27%;padding-right:4px;white-space:nowrap;font-size:10.5px}
+}
+@media(max-width:900px),(pointer:coarse){
+ #hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar{width:min(118px,calc(36vw - 12px));max-width:none;flex-wrap:nowrap;gap:3px}
+ #hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar .quick-item{flex:0 1 36px;width:calc((100% - 6px)/3);min-width:0}
+}
+@media(max-height:500px) and (min-width:441px) and (max-width:900px),(max-height:500px) and (pointer:coarse){
+ #hud[data-finish-art~="menu"]:not([data-living-fallback=true]) #consumableBar{bottom:180px}
+}
+@media(max-width:440px){#hud[data-finished-hud=true][data-sandbox=true] #quest{top:calc(var(--edge) + 36px)}}

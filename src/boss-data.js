@@ -172,7 +172,7 @@ export const WORLD_BOSSES={kabuto:{id:'kabuto',name:'Kabuto Yakushi',hp:1500,spe
  {id:'wingShockwave',name:'Dark Shockwave',shape:'target',radius:4.3,reach:22,windup:1.15,damage:39,cooldown:11,dive:true,phase:4},
  {id:'predatorRush',name:'Predator Rush',shape:'target',radius:2.8,reach:25,windup:.8,damage:22,cooldown:12,pulses:3,dive:true,phase:4}
  ]}};
-export const VALLEY_RULES={thresholds:[.70,.45,.24,.05],speed:[1,1.12,1.23,1.34],counterCooldown:8,clashRecovery:2,clashDistance:3.3,projectileCap:28};
+export const VALLEY_RULES={thresholds:[.70,.45,.24,.05],speed:[1,1.12,1.23,1.34],counterCooldown:8,clashRecovery:2,clashDistance:3.3,projectileCap:28,ultimateTime:4,ultimateCharge:1.25,ultimateRush:.9,ultimateImpact:2.15,ultimateRise:3.55,ultimateExit:5.65};
 export const KIMI_RULES={stageOne:.65,stageTwo:.30,phaseSpeed:1.12,finalSpeed:1.28,forestLife:5,forestCap:4,forestSlow:.65,bulletCount:10,bulletSpeed:18,bulletCap:30};
 export const ORO_RULES={snakeHP:85,snakeCap:3,snakeLife:24,snakeSpeed:5.2,biteDamage:13,biteCooldown:3.2,biteWindup:.55,biteRange:1.7,phaseSpeed:1.2,shedThreshold:.30,huskHP:160,huskLife:3.5,shedHeal:360,venomLife:5,venomInterval:1,venomDamage:4,finalThreshold:.25,finalSpeed:1.36,cloudLife:4,cloudCap:2};
 export const GAARA_RULES={shieldHP:240,shieldDuration:4,shieldCooldown:18,shieldFirst:5,breakRecovery:1.5,zoneDuration:6,zoneSlow:.55,phaseSpeed:1.22,finalThreshold:.35,finalSpeed:1.38,finalScale:1.85,shurikenSpeed:15,shurikenCount:7,shurikenCap:28};
@@ -308,16 +308,16 @@ Object.assign(MIST_SCENES,{
  sasukeSharingan:{title:'SHARINGAN · THE RIVAL AWAKENS',lines:[['Sasuke','I can see your movements now.'],['Naruto','I will never give up on you!']]},
  sasukeCurse:{title:'CURSE MARK · STAGE ONE',lines:[['Sasuke','This is the power I need.'],['Naruto','Orochimaru is using you!']]},
  sasukeFinal:{title:'CURSE MARK · STAGE TWO',lines:[['Sasuke','I will cut every bond that holds me back.'],['Naruto','You are my friend! I will not let you disappear!']]},
- sasukeEnd:{title:'THE LAST CLASH',lines:[['Naruto','RASENGAN!'],['Sasuke','CHIDORI!'],['Sasuke','...I will find my own way to become stronger.'],['Naruto','Sasuke... I still could not bring you home.']]}
+ sasukeEnd:{title:'A BOND THAT REMAINS',lines:[['Sasuke','...I will find my own way to become stronger.'],['Naruto','Sasuke... I still could not bring you home.']]}
 });
-Object.assign(MIST_CAMERA,{sasukeIntro:[{zoom:1.55,yaw:-.15},{zoom:1.8,yaw:.2},{zoom:1.55,yaw:-.2}],sasukeSharingan:[{zoom:2.05,yaw:.25},{zoom:1.7,yaw:-.2}],sasukeCurse:[{zoom:2,yaw:.2},{zoom:1.7,yaw:-.2}],sasukeFinal:[{zoom:1.45,yaw:.18,lookY:1.8},{zoom:1.45,yaw:-.18}],sasukeEnd:[{zoom:1.2,yaw:-.22},{zoom:1.2,yaw:.22},{zoom:1.5,yaw:.12},{zoom:1.9,yaw:-.18}]});
+Object.assign(MIST_CAMERA,{sasukeIntro:[{zoom:1.55,yaw:-.15},{zoom:1.8,yaw:.2},{zoom:1.55,yaw:-.2}],sasukeSharingan:[{zoom:2.05,yaw:.25},{zoom:1.7,yaw:-.2}],sasukeCurse:[{zoom:2,yaw:.2},{zoom:1.7,yaw:-.2}],sasukeFinal:[{zoom:1.45,yaw:.18,lookY:1.8},{zoom:1.45,yaw:-.18}],sasukeEnd:[{zoom:1.25,yaw:.12},{zoom:1.8,yaw:-.18}]});
 export function tickValleySasuke(b,p,clones,dt,move,hit,signal,random=Math.random){
  const c=VALLEY_RULES,alive=q=>q.hp>0&&(q.life??1)>0;
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.attack=Math.max(0,b.attack-dt);b.counterAt=Math.max(0,b.counterAt-dt);b.motion=false;
  for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
  if(b.phase<4&&b.hp<=valleyDamageFloor(b)+1e-8){b.phase++;b.intent=null;b.anim=null;b.air=0;b.attack=1.3;b.lastPattern=null;signal(['','', 'sasukeSharingan','sasukeCurse','sasukeFinal'][b.phase],b);return;}
- if(b.phase===4&&b.hp<=valleyDamageFloor(b)+1e-8){signal('sasukeEnd',b);return;}
+ if(b.phase===4&&b.hp<=valleyDamageFloor(b)+1e-8){if(!b.finalDuel)signal('sasukeUltimate',b);return;}
  if(b.intent){const a=b.intent;a.left-=dt;b.air=a.dive?Math.sin(Math.PI*Math.max(0,1-a.left/a.total))*1.15:0;if(a.left<=1e-8){b.intent=null;b.air=0;b.cooldowns[a.id]=a.cooldown;b.attack=a.clash?1.05:.65;
   if(!a.projectile)for(const q of [p,...clones])if(alive(q)&&bossContains(a,q))hit(q,a.damage,b);
   signal('strike',b,a);if(a.lunge)move(b,a.dx*a.lunge,a.dz*a.lunge);else if(a.dive&&a.shape==='target'){const v=directionToward(a.x-b.x,a.z-b.z),d=Math.min(8,distance(b,a));move(b,v.x*d,v.z*d);}
@@ -327,3 +327,7 @@ export function tickValleySasuke(b,p,clones,dt,move,hit,signal,random=Math.rando
  if(!b.attack){const ready=b.spec.patterns.filter(a=>(b.phase===4?a.phase===4:b.phase===3?a.phase>=2&&a.phase<=3:b.phase===2?a.phase<=2&&a.id!=='valleyChidori':a.phase===1)&&b.cooldowns[a.id]<=1e-8&&d<=a.reach),varied=ready.filter(a=>a.id!==b.lastPattern),opts=varied.length?varied:ready,a=opts.find(a=>a.clash&&a.phase===b.phase)||opts[Math.floor(random()*opts.length)];if(a){if(a.flank){move(b,-v.z*2*b.orbitDir,v.x*2*b.orbitDir);}const aim=directionToward(p.x-b.x,p.z-b.z);b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:aim.x,dz:aim.z,left:a.windup,total:a.windup};b.anim={k:a.clash||a.projectile?'l':'j',left:a.windup+.3,total:a.windup+.3,windup:a.windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
  b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=.9+random()*.9;}const radial=Math.max(-1,Math.min(1,(d-(b.phase===4?4:3.2))*.65)),dir=directionToward(v.x*radial-v.z*.57*b.orbitDir,v.z*radial+v.x*.57*b.orbitDir),speed=b.spec.speed*c.speed[b.phase-1],x=b.x,z=b.z;move(b,dir.x*speed*dt,dir.z*speed*dt);b.motion=distance(b,{x,z})>.0001;if(b.motion)b.walk+=dt*speed*2.5;
 }
+
+export function newValleyUltimate(){return {stage:'charge',left:VALLEY_RULES.ultimateTime,held:0,key:null,elapsed:0,impactPlayed:false};}
+// Resolve charge before timeout on a shared simulation tick; a late start cannot borrow time.
+export function advanceValleyCharge(q,dt,holding){if(q.stage!=='charge')return q.stage;const step=Math.min(Math.max(0,dt),Math.max(0,q.left));q.held=holding?Math.min(VALLEY_RULES.ultimateCharge,q.held+step):0;q.left=Math.max(0,q.left-step);if(q.held>=VALLEY_RULES.ultimateCharge-1e-8){q.held=VALLEY_RULES.ultimateCharge;q.stage='cinematic';q.elapsed=0;}else if(q.left<=1e-8)q.stage='failed';return q.stage;}

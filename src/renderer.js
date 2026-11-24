@@ -1,0 +1,158 @@
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
+
+const lin = v => v <= .04045 ? v / 12.92 : ((v+.055)/1.055)**2.4;
+function arrays(capacity) {
+  return { pos:new Float32Array(capacity*3), col:new Float32Array(capacity*3), norm:new Float32Array(capacity*3), uv:new Float32Array(capacity*2) };
+}
+function fill(a, raw) {
+  for(let i=0,j=0,k=0;i<raw.length;i+=18,j+=9,k+=6){
+    const ux=raw[i+6]-raw[i],uy=raw[i+7]-raw[i+1],uz=raw[i+8]-raw[i+2];
+    const vx=raw[i+12]-raw[i],vy=raw[i+13]-raw[i+1],vz=raw[i+14]-raw[i+2];
+    let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;
+    const len=Math.hypot(nx,ny,nz)||1;nx/=len;ny/=len;nz/=len;
+    for(let v=0;v<3;v++){
+      const s=i+v*6,d=j+v*3;
+      a.pos[d]=raw[s];a.pos[d+1]=raw[s+1];a.pos[d+2]=raw[s+2];
+      a.col[d]=lin(raw[s+3]);a.col[d+1]=lin(raw[s+4]);a.col[d+2]=lin(raw[s+5]);
+      a.norm[d]=nx;a.norm[d+1]=ny;a.norm[d+2]=nz;
+      a.uv[k+v*2]=raw[s]/4;a.uv[k+v*2+1]=raw[s+2]/4;
+    }
+  }
+}
+function geometry(a,dynamic=false){
+  const g=new THREE.BufferGeometry();
+  for(const [name,data,size] of [['position',a.pos,3],['color',a.col,3],['normal',a.norm,3],['uv',a.uv,2]]){
+    const attr=new THREE.BufferAttribute(data,size);
+    if(dynamic)attr.setUsage(THREE.DynamicDrawUsage);
+    g.setAttribute(name,attr);
+  }
+  return g;
+}
+function terrainTexture(){
+  const data=new Uint8Array(64*64*4);let seed=19;
+  for(let i=0;i<64*64;i++){
+    seed=(seed*1664525+1013904223)>>>0;
+    const v=224+Math.floor(seed/4294967296*32);
+    data.set([v,v,v,255],i*4);
+  }
+  const t=new THREE.DataTexture(data,64,64);
+  t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;
+  t.magFilter=THREE.LinearFilter;t.minFilter=THREE.LinearMipmapLinearFilter;t.generateMipmaps=true;t.needsUpdate=true;
+  return t;
+}
+const gradient=new THREE.DataTexture(new Uint8Array([95,155,218,255]),4,1,THREE.RedFormat);
+gradient.minFilter=gradient.magFilter=THREE.NearestFilter;gradient.generateMipmaps=false;gradient.needsUpdate=true;
+const toon=()=>new THREE.MeshToonMaterial({vertexColors:true,side:THREE.DoubleSide,gradientMap:gradient});
+
+export function createRenderer(canvas){
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0xb5d5cc);scene.fog=new THREE.Fog(0xb5d5cc,58,130);
+  const camera=new THREE.OrthographicCamera(-12,12,12,-12,.1,180);
+  scene.add(new THREE.HemisphereLight(0xfff2d4,0x829bb0,1.2));
+  const sun=new THREE.DirectionalLight(0xffe2ad,2.1);
+  sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
+  Object.assign(sun.shadow.camera,{left:-23,right:23,top:23,bottom:-23,near:.5,far:100});
+  sun.shadow.camera.updateProjectionMatrix();sun.shadow.bias=-.00015;sun.shadow.normalBias=.035;
+  scene.add(sun,sun.target);
+  const solid=toon(),ground=toon();ground.map=terrainTexture();
+  const fxmat=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide});
+  let quality=1;
+  function addStatic(raw,terrain=false){
+    const a=arrays(raw.length/6);fill(a,raw);const g=geometry(a);g.computeBoundingSphere();
+    const obj=new THREE.Mesh(g,terrain?ground:solid);
+    obj.receiveShadow=true;obj.castShadow=!terrain;scene.add(obj);return obj;
+  }
+  function batch(material,cast){
+    let cap=0,a=null;
+    const obj=new THREE.Mesh(new THREE.BufferGeometry(),material);obj.frustumCulled=false;
+    obj.castShadow=cast;obj.receiveShadow=cast;scene.add(obj);
+    return raw=>{
+      const n=raw.length/6;
+      if(!n){obj.visible=false;return;}
+      obj.visible=true;
+      if(n>cap){cap=Math.max(512,2**Math.ceil(Math.log2(n)));a=arrays(cap);obj.geometry.dispose();obj.geometry=geometry(a,true);}
+      fill(a,raw);
+      for(const name of ['position','color','normal','uv']){
+        const attr=obj.geometry.getAttribute(name);attr.clearUpdateRanges();attr.addUpdateRange(0,n*attr.itemSize);attr.needsUpdate=true;
+      }
+      obj.geometry.setDrawRange(0,n);
+    };
+  }
+  const drawActors=batch(solid,true),drawEffects=batch(fxmat,false);
+  function resize(q){
+    quality=q;renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5)*q);
+    renderer.setSize(Math.max(1,innerWidth),Math.max(1,innerHeight),false);
+    const aspect=innerWidth/Math.max(1,innerHeight);
+    camera.left=-12*aspect;camera.right=12*aspect;camera.updateProjectionMatrix();
+    renderer.shadowMap.enabled=q>=.75;sun.castShadow=q>=.75;
+    const size=q===1?1024:512;
+    if(sun.shadow.mapSize.x!==size){sun.shadow.mapSize.set(size,size);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}}
+  }
+  function frame(x,z){
+    camera.position.set(x,25,z+30);camera.lookAt(x,0,z);
+    sun.position.set(x+14,32,z+18);sun.target.position.set(x,0,z);sun.target.updateMatrixWorld();
+    renderer.render(scene,camera);
+  }
+  return {scene,renderer,camera,addStatic,drawActors,drawEffects,resize,frame,solid,get quality(){return quality}};
+}
+
+// Optional GLB actors. Missing or invalid assets never replace the working procedural actor.
+export async function createAssetActors(scene, report=()=>{}){
+  const templates=new Map(),active=new Map(),loader=new GLTFLoader();
+  let generation=0;
+  async function load(){
+    try{
+      const response=await fetch(new URL('../assets/manifest.json',import.meta.url));
+      if(!response.ok)throw Error('manifest unavailable');
+      const manifest=await response.json();
+      await Promise.all(Object.entries(manifest.characters||{}).map(async ([kind,config])=>{
+        if(!config?.url)return;
+        try{
+          const gltf=await loader.loadAsync(new URL(config.url,new URL('../assets/manifest.json',import.meta.url)).href);
+          templates.set(kind,{gltf,config});report(kind+' GLB listo');
+        }catch(e){console.warn('GLB fallback',kind,e);report(kind+': modelo de respaldo');}
+      }));
+    }catch(e){console.warn('Manifest fallback',e);}
+  }
+  void load();
+  function begin(){generation++;}
+  function show(actor,kind,dt){
+    const template=templates.get(kind==='clone'?'player':kind);
+    if(!template)return false;
+    let item=active.get(actor);
+    if(!item){
+      try{
+        const {gltf,config}=template,model=cloneSkeleton(gltf.scene);
+        const bounds=new THREE.Box3().setFromObject(model),height=bounds.max.y-bounds.min.y;
+        if(!Number.isFinite(height)||height<.00001)return false;
+        const scale=(config.height||1.85)/height;
+        model.scale.multiplyScalar(scale);
+        model.position.set(-(bounds.min.x+bounds.max.x)*scale/2,-bounds.min.y*scale,-(bounds.min.z+bounds.max.z)*scale/2);
+        model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+        const root=new THREE.Group();root.add(model);
+        const mixer=new THREE.AnimationMixer(model),actions={};
+        for(const name of ['idle','walk','run','attack','shuriken','clone','rasengan']){
+          const requested=config.animations?.[name];
+          const clip=gltf.animations.find(c=>requested?c.name===requested:c.name.toLowerCase().includes(name));
+          if(clip)actions[name]=mixer.clipAction(clip);
+        }
+        scene.add(root);item={root,mixer,actions,current:null,config,seen:generation};active.set(actor,item);
+      }catch(e){console.warn('Actor fallback',e);return false;}
+    }
+    item.seen=generation;item.root.visible=true;
+    item.root.position.set(actor.x,0,actor.z);
+    item.root.rotation.y=Math.atan2(actor.dirX||0,actor.dirZ??1)+(item.config.rotationY||0);
+    const skill=actor.anim?.k;
+    const state=skill?({'j':'attack','k':'shuriken','l':'clone',' ':'rasengan'}[skill]||'attack'):(actor.walk?'walk':'idle');
+    const next=item.actions[state]||item.actions.attack&&skill&&item.actions.attack||item.actions.idle||Object.values(item.actions)[0];
+    if(next&&next!==item.current){item.current?.fadeOut(.12);next.reset().fadeIn(.12).play();item.current=next;}
+    if(dt>0)item.mixer.update(dt);
+    return true;
+  }
+  function end(){for(const [actor,item] of active){if(item.seen!==generation){scene.remove(item.root);item.mixer.stopAllAction();item.mixer.uncacheRoot(item.root.children[0]);active.delete(actor);}}}
+  return {begin,show,end};
+}

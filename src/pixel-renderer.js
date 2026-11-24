@@ -33,10 +33,11 @@ function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material)
 export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
- const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[]},trails=[],fxPool=[];
+ const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[]},trails=[],fxPool=[];
  let generation=0,hero=null,gearKey=null,gearCanvas=null;
  function gearSheet(gear){const key=JSON.stringify(gear||{});if(key!==gearKey){gearKey=key;gearCanvas=makeActorSheet('player',gear);}return gearCanvas;}
  function previewEquipment(gear,canvas){const c=gearSheet(gear),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
+ function portrait(kind,canvas){const c=sheets[kind]||sheets.npc,ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(c,0,0,24,19,0,0,canvas.width,canvas.height);}
  function makeActor(kind){
   const s=sprite(maps[kind],ACTOR_COLS,4,1.80,2.40,true);s.kind=kind;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
   scene.add(s.obj,s.shadow);return s;
@@ -109,5 +110,5 @@ export function createPixelSystem(scene){
  for(let i=0;i<buildings.length;i++){const p=buildings[i];d.position.set(p.x+.5,.02,p.z+.35);d.rotation.set(-Math.PI/2,0,0);d.scale.set(p.w+1.8,p.d+1.5,1);d.updateMatrix();obj.setMatrixAt(i,d.matrix);}
  obj.instanceMatrix.needsUpdate=true;obj.computeBoundingSphere();scene.add(obj);
 }
-return {begin,show,end,effects,addTrees,addBuildingShadows,previewEquipment,maps,sheets};
+return {begin,show,end,effects,addTrees,addBuildingShadows,previewEquipment,portrait,maps,sheets};
 }

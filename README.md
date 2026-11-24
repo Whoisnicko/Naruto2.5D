@@ -25,3 +25,15 @@ v0.3 aprobada por el jugador en perspectiva y rendimiento; guardado pendiente de
 
 ## Jugar
 https://naruto2-5d.pages.dev/ (URL de producción informada por el propietario; prueba de acceso externa pendiente).
+
+## v0.4 beta — Three.js
+Ver [migración, arquitectura y pruebas](docs/V04-MIGRATION.md). Rama de evaluación: Three.js, esqueletos procedurales, luces/sombras, GLB opcional y guardado portable. No incluye modelos externos profesionales aún. Validación WebGL real y FPS pendientes. La versión anterior está en `legacy-v03.html`.
+
+## v0.6 beta — HD-2D Pixel Anime
+Ver [decisiones y pruebas](docs/V06-PIXEL-ANIME.md) y [Sprite Lab](assets/sprite-lab.html). Base v0.4; sprites originales, FX 32×32, árboles pixelados, materiales simples, blob shadows. Sin GLB ni mapas de sombras. Pruebas simuladas aprobadas; validar WebGL y FPS reales.
+
+## v0.7 beta — Game Feel
+Base v0.6 validada a 144 FPS. Combos, dash, anticipación, impacto, audio y Sprite Lab 2.0. [Detalles y pruebas](docs/V07-GAME-FEEL.md). [Sprite Lab](assets/sprite-lab.html). Pruebas simuladas aprobadas; render y audio reales pendientes.
+
+## v0.8 beta — Advanced Combat
+Base v0.7 aprobada. Tres roles de enemigos, avisos, guardia, Kawarimi (R), Fūma (F), clones con vida y sinergia de Rasengan. [Documentación y pruebas](docs/V08-ADVANCED-COMBAT.md). Pruebas simuladas aprobadas; GPU/FPS y balance pendientes.

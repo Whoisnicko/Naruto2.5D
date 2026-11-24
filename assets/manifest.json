@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "characters": {
+    "player": {
+      "url": null,
+      "height": 1.85,
+      "rotationY": 0,
+      "animations": {}
+    },
+    "npc": {
+      "url": null,
+      "height": 1.85,
+      "rotationY": 0,
+      "animations": {}
+    },
+    "enemy": {
+      "url": null,
+      "height": 1.85,
+      "rotationY": 0,
+      "animations": {}
+    }
+  }
+}

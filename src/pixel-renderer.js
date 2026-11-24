@@ -6,8 +6,8 @@ export function direction(x=0,z=1){return Math.abs(x)>Math.abs(z)?(x<0?1:2):(z<0
 export function frameFor(actor,clock){
  const a=actor.anim;
  if(a&&a.left>0){
-  const state=(a.k==='l'||a.k===' ')?'cast':'attack',v=ANIMS[state],progress=clamp(1-a.left/a.total,0,.999);
-  const col=a.windup&&a.left>a.total-a.windup?v.start:v.start+Math.min(v.count-1,1+Math.floor(progress*(v.count-1)));return {col,state};
+  const state=(a.k==='l'||a.k===' ')?'cast':a.combo===2?'kick':a.combo===3?'finish':'attack',v=ANIMS[state],progress=clamp(1-a.left/a.total,0,.999);
+  const col=a.windup?(a.left>a.total-a.windup?v.start:v.start+Math.min(v.count-1,1+Math.floor((1-a.left/(a.total-a.windup))*(v.count-1)))):v.start+Math.min(v.count-1,Math.floor(progress*v.count));return {col,state};
  }
  if(actor.hit>0&&!actor.anim)return {col:13,state:'hit'};
  const moving=actor.motion??Boolean(actor.walk),state=moving?(actor.sprinting?'run':'walk'):'idle',v=ANIMS[state];

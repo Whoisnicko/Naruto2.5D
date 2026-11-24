@@ -62,7 +62,7 @@ function instanceModel(scene,model,placements,targetHeight){
   if(!count)throw Error('no instanced meshes');
   scene.add(group);return group;
 }
-export function installNature(scene,foliage,fallbacks){
+export function installNature(scene,foliage,fallbacks,report=()=>{}){
   const trees=foliage.map((p,i)=>({...p,angle:i*2.399963}));
   const bushes=[];
   for(let i=0;i<trees.length;i+=2){const p=trees[i];bushes.push({x:p.x+.9*p.s,z:p.z+.5*p.s,s:p.s*.85,angle:i*1.7});}
@@ -72,8 +72,8 @@ export function installNature(scene,foliage,fallbacks){
     try{for(const ps of chunks.values())groups.push(instanceModel(scene,gltf.scene,ps,height));}
     catch(e){for(const group of groups)scene.remove(group);throw e;}
   }
-  void install('tree1',trees,4.5).then(()=>{for(const f of fallbacks){f.replaced=true;f.obj.visible=false;}}).catch(e=>console.warn('Tree fallback retained',e));
-  if(bushes.length)void install('bush',bushes,.85).catch(e=>console.warn('Optional bushes unavailable',e));
+  void install('tree1',trees,4.5).then(()=>{for(const f of fallbacks){f.replaced=true;f.obj.visible=false;}report('tree','ok');}).catch(e=>{report('tree','fallback');console.warn('Tree fallback retained',e);});
+  if(bushes.length)void install('bush',bushes,.85).then(()=>report('bush','ok')).catch(e=>{report('bush','fallback');console.warn('Optional bushes unavailable',e);});
 }
 export function makeWater(scene){
   const time={value:0};

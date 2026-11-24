@@ -2,20 +2,22 @@
 export const COMBAT={
  dash:{cost:12,cooldown:.85,duration:.17,speed:19,invulnerable:.19},
  comboWindow:.72,
+ substitution:{cost:18,cd:7,duration:1.8,invulnerable:.38},
  skills:{
   j:{cost:0,cd:.35,range:2,damage:25,windup:.095,duration:.32,knock:2.4,freeze:.035,shake:.045},
   k:{cost:8,cd:.45,range:10,damage:24,windup:.11,duration:.32,knock:1.8,freeze:.025,shake:.025},
   l:{cost:25,cd:5,range:8,damage:32,windup:.23,duration:.55,knock:1.2,freeze:.025,shake:.025},
-  ' ':{cost:20,cd:1.6,range:3.5,damage:60,windup:.26,duration:.65,knock:7,freeze:.075,shake:.18}
+  f:{cost:22,cd:3.2,range:12,damage:34,windup:.25,duration:.55,knock:3.4,freeze:.05,shake:.08,breakGuard:true},
+  ' ':{cost:20,cd:1.6,range:3.5,damage:60,windup:.26,duration:.65,knock:7,freeze:.075,shake:.18,breakGuard:true}
  },
  combos:[
   {name:'Puño',damage:25,range:2,windup:.095,duration:.32,knock:2.4,freeze:.035,shake:.045},
   {name:'Patada',damage:28,range:2.15,windup:.10,duration:.34,knock:3.2,freeze:.045,shake:.065},
-  {name:'Remate',damage:38,range:2.35,windup:.14,duration:.43,knock:5,freeze:.065,shake:.12}
+  {name:'Remate',damage:38,breakGuard:true,range:2.35,windup:.14,duration:.43,knock:5,freeze:.065,shake:.12}
  ],
  criticalChance:.10,criticalMultiplier:1.5,
  enemy:{windup:.24,damage:9,range:1.5,cooldown:1.1},
- clone:{damage:18,knock:1.4}
+ clone:{damage:18,knock:1.4,hp:22,markDuration:2.5,synergy:1.25}
 };
 export function stepMotion(actor,dx,dz,blocked){
  const steps=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.12));

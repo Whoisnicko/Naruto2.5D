@@ -384,7 +384,7 @@ console.log('PASS v1.15b: 60 FPS cap at simulated 144 Hz, independent simulation
  {const {p}=setup();game.cd.j=.3;tap('q');tap('j');assert(!p.pending);assert(!p.dashStrikeUsed);}
  assist(true);
 }
-console.log('PASS v1.15c: dash strike damage/cooldowns/distance/once per dash, assist toggle, no rear strike, recovery links and focus cancellation.');
+console.log('PASS v1.15c: dash strike damage/cooldowns/distance/once per dash, always-on assist, no rear strike, recovery links and focus cancellation.');
 
 {
  const press=key=>handlers.keydown({key,repeat:false,preventDefault(){}});
@@ -401,3 +401,6 @@ console.log('PASS v1.15c: dash strike damage/cooldowns/distance/once per dash, a
  assert(performanceApi.normalizePerformance({targetAssist:false}).targetAssist);assert(bossApi.bossPhysical({id:'lionCombo'}));assert(!bossApi.bossPhysical({id:'darkChidori'}));
 }
 console.log('PASS v1.15d: front guard, stamina drain/recovery/break, rear and special hits, active charge and interruption, enemy reorientation, always-on assistance.');
+
+{game.start(false);const p=game.state.p;p.stamina=42;assert(game.enterSandbox());game.state.p.stamina=10;assert(game.exitSandbox());assert.equal(game.state.p.stamina,42);game.state.p.guardBreak=.5;assert(!game.dash());assert(!game.substitution());const old=game.normalizeBindings(null);delete old.b;delete old.v;old.j='b';const migrated=game.normalizeBindings(old);assert.equal(migrated.j,'b');assert(migrated.b!=='b');assert.equal(new Set(Object.values(migrated)).size,Object.keys(migrated).length);}
+console.log('PASS v1.15d: sandbox stamina isolation, guard-break locks and legacy keybinding migration.');

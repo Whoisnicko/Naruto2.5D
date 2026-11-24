@@ -20,10 +20,13 @@ function fill(a, raw) {
     }
   }
 }
+// Basic dynamic materials only read position and color; static terrain retains normals/UV.
+function dynamicArrays(capacity){return {pos:new Float32Array(capacity*3),col:new Float32Array(capacity*3)};}
+function fillDynamic(a,raw){for(let i=0,j=0;i<raw.length;i+=6,j+=3){a.pos[j]=raw[i];a.pos[j+1]=raw[i+1];a.pos[j+2]=raw[i+2];if(i%18===0||raw[i+3]!==raw[i-3]||raw[i+4]!==raw[i-2]||raw[i+5]!==raw[i-1]){a.col[j]=lin(raw[i+3]);a.col[j+1]=lin(raw[i+4]);a.col[j+2]=lin(raw[i+5]);}else{a.col[j]=a.col[j-3];a.col[j+1]=a.col[j-2];a.col[j+2]=a.col[j-1];}}}
 function geometry(a,dynamic=false){
   const g=new THREE.BufferGeometry();
   for(const [name,data,size] of [['position',a.pos,3],['color',a.col,3],['normal',a.norm,3],['uv',a.uv,2]]){
-    const attr=new THREE.BufferAttribute(data,size);
+    if(!data)continue;const attr=new THREE.BufferAttribute(data,size);
     if(dynamic)attr.setUsage(THREE.DynamicDrawUsage);
     g.setAttribute(name,attr);
   }
@@ -75,18 +78,23 @@ export function createRenderer(canvas){
       const n=raw.length/6;
       if(!n){obj.visible=false;return;}
       obj.visible=true;
-      if(n>cap){cap=Math.max(512,2**Math.ceil(Math.log2(n)));a=arrays(cap);obj.geometry.dispose();obj.geometry=geometry(a,true);}
-      fill(a,raw);
-      for(const name of ['position','color','normal','uv']){
+      if(n>cap){cap=Math.max(512,2**Math.ceil(Math.log2(n)));a=dynamicArrays(cap);obj.geometry.dispose();obj.geometry=geometry(a,true);}
+      fillDynamic(a,raw);
+      for(const name of ['position','color']){
         const attr=obj.geometry.getAttribute(name);attr.clearUpdateRanges();attr.addUpdateRange(0,n*attr.itemSize);attr.needsUpdate=true;
       }
       obj.geometry.setDrawRange(0,n);
     };
   }
   const drawActors=batch(solid,true),drawEffects=batch(fxmat,false);
+  let lastW=0,lastH=0,lastRatio=0;
   function resize(q){
-    quality=q;renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1)*q);
-    renderer.setSize(Math.max(1,innerWidth),Math.max(1,innerHeight),false);
+    const w=Math.max(1,innerWidth),h=Math.max(1,innerHeight),limit=renderer.capabilities.maxTextureSize||4096;
+    quality=Math.min(q,limit/w,limit/h);
+    if(w===lastW&&h===lastH&&quality===lastRatio)return;
+    if(quality!==lastRatio)renderer.setPixelRatio(quality);
+    if(w!==lastW||h!==lastH)renderer.setSize(w,h,false);
+    lastW=w;lastH=h;lastRatio=quality;
     const aspect=innerWidth/Math.max(1,innerHeight);
     camera.left=-12*aspect;camera.right=12*aspect;camera.updateProjectionMatrix();
 

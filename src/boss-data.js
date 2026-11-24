@@ -1,7 +1,7 @@
 import {directionToward} from './combat-data.js';
 export const ARENA={x:32,z:-2,r:12};
 export const BOSSES=[
- {id:'zabuza',name:'Zabuza Momochi',hp:1440,speed:3.6,reward:[['mistBlade',1],['pill',3]],xp:250,coins:180,intro:'The mist is my territory. Show me what you have learned, shinobi.',patterns:[{name:'Sword Slash',shape:'circle',radius:2.8,windup:.36,damage:24,reach:3.1},{name:'Water Dragon',shape:'line',radius:1.15,length:10,windup:.45,damage:30,reach:12,special:'dragon'},{name:'Mist Whirlwind',shape:'circle',radius:4.2,windup:.42,damage:34,reach:4.5},{name:'Water Clone Jutsu',shape:'circle',radius:2.5,windup:.4,damage:0,reach:24,special:'clones'}]},
+ {id:'zabuza',name:'Zabuza Momochi',hp:1440,speed:3.6,reward:[['mistBlade',1],['pill',3]],xp:250,coins:180,intro:'The mist is my territory. Show me what you have learned, shinobi.',patterns:[{name:'Sword Slash',shape:'circle',radius:4.2,windup:.48,damage:24,reach:4.2},{name:'Water Dragon',shape:'line',radius:1.15,length:10,windup:2,damage:30,reach:12,special:'dragon'},{name:'Mist Whirlwind',shape:'circle',radius:5.2,windup:.55,damage:34,reach:5.2},{name:'Water Clone Jutsu',shape:'circle',radius:2.5,windup:.4,damage:0,reach:24,special:'clones'}]},
  {id:'haku',name:'Haku',hp:1200,speed:5.0,reward:[['iceMask',1],['scroll',1]],xp:300,coins:220,intro:'I do not want to hurt you. But I will not abandon my purpose.',patterns:[{name:'Ice Needles',shape:'line',radius:.8,length:12,windup:.30,damage:9,reach:24,special:'needles',count:5},{name:'Ice Mirrors',shape:'target',radius:2.3,windup:.40,damage:11,reach:24,special:'needles',count:7},{name:'Needle Dance',shape:'target',radius:3.1,windup:.34,damage:10,reach:24,special:'needles',count:9}]}
 ];
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -11,6 +11,7 @@ export function nextBoss(progress){return BOSSES[progress.defeated.length]||null
 export function makeBoss(spec){return {id:spec.id,kind:spec.id,spec,x:ARENA.x,z:ARENA.z,hp:spec.hp,maxHP:spec.hp,dirX:-1,dirZ:0,phase:1,index:0,attack:1.4,hit:0,flash:0,mark:0,intent:null,motion:false,walk:0};}
 export function bossContains(intent,target){const dx=target.x-intent.x,dz=target.z-intent.z;if(intent.shape!=='line')return Math.hypot(dx,dz)<=intent.radius;const along=dx*intent.dx+dz*intent.dz,side=Math.abs(dx*intent.dz-dz*intent.dx);return along>=0&&along<=intent.length&&side<=intent.radius;}
 export function tickBoss(b,p,clones,dt,move,hit,signal){
+ if(b.id==='zabuza'&&b.worldBoss)return tickZabuza(b,p,clones,dt,move,hit,signal);
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
  if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;b.intent=null;b.anim=null;b.attack=.55;signal('phase',b);return;}
@@ -31,7 +32,7 @@ export const MIST_SCENES={
  ending:{title:'THE END OF THE MIST',lines:[['Zabuza','Haku... forgive me.'],['Kakashi','A shinobi is more than a weapon. Remember that.'],['Sasuke','Not bad, Naruto.'],['Naruto','I will find my own ninja way.']]}
 };
 export const MIST_ALLIES={kakashi:{name:'Kakashi',kind:'npc',character:'kakashi',hp:135,speed:4.6,reach:2.6,damage:10,cooldown:1.8,orbit:3.8,techniques:[{name:'Water Dragon',key:'k',kind:'water',reach:9,damage:16,cooldown:6,windup:.48},{name:'Raikiri',key:' ',kind:'lightning',reach:4.6,damage:19,cooldown:7,windup:.34}]},sasuke:{name:'Sasuke',kind:'sasuke',character:'sasuke',hp:95,speed:5.2,reach:2.4,damage:8,cooldown:1.65,orbit:4.5,techniques:[{name:'Fireball Jutsu',key:'f',kind:'fire',reach:9,damage:15,cooldown:5.5,windup:.45},{name:'Chidori',key:' ',kind:'lightning',reach:4.6,damage:18,cooldown:7,windup:.36}]}};
-export const MIST_RAGE={...BOSSES[0],name:'Zabuza · Wrath',speed:BOSSES[0].speed*1.45,patterns:[{name:'Furious Cleave',shape:'circle',radius:3.8,windup:.29,damage:36,reach:4},{name:'Raging Water Dragon',shape:'line',radius:1.45,length:12,windup:.36,damage:45,reach:24,special:'dragon'},{name:'Demon’s Whirlwind',shape:'circle',radius:5.6,windup:.36,damage:48,reach:5.8},{name:'Water Clone Ambush',shape:'circle',radius:2.5,windup:.28,damage:0,reach:24,special:'clones'}]};
+export const MIST_RAGE={...BOSSES[0],name:'Zabuza · Wrath',speed:BOSSES[0].speed*1.45,patterns:[{name:'Furious Cleave',shape:'circle',radius:4.8,windup:.40,damage:36,reach:4.8},{name:'Raging Water Dragon',shape:'line',radius:1.45,length:12,windup:2,damage:45,reach:24,special:'dragon'},{name:'Demon’s Whirlwind',shape:'circle',radius:6.2,windup:.48,damage:48,reach:6.2},{name:'Water Clone Ambush',shape:'circle',radius:2.5,windup:.28,damage:0,reach:24,special:'clones'}]};
 export function mistBoss(stage){const b=makeBoss(stage===3?MIST_RAGE:stage===1||stage===2?BOSSES[1]:BOSSES[0]);b.scripted=true;b.worldBoss=true;if(stage===2||stage===3){b.hp=b.maxHP*.5;b.phase=2;}if(stage===3)b.enraged=true;return b;}
 export function mistAlly(id,x,z){const spec=MIST_ALLIES[id];return {id:'ally-'+id,ally:true,spec,kind:spec.kind,x,z,hp:spec.hp,maxHP:spec.hp,life:1,character:spec.character,dirX:1,dirZ:0,walk:0,attack:1,techAt:1.6,techIndex:0,cast:null,orbitDir:id==='kakashi'?1:-1,hit:0,flash:0,motion:false};}
 
@@ -40,3 +41,43 @@ export const MIST_CAMERA={opening:[{zoom:1.32,yaw:-.18},{zoom:1.7,yaw:.21},{zoom
 
 // Encounter combat constants, shared by the game and tests.
 export const MIST_COMBAT={dragon:{life:3,speed:7.5,turn:5.5},clone:{hp:45,life:9,speed:4.7,count:3,max:4,reach:1.1},prison:{duration:4.5,presses:12,failDamage:22,immunity:2.5},mirror:{intervalMin:.85,intervalMax:1.65,needleSpeed:13,projectileCap:40}};
+
+ // Independent cooldown groups: both sword variants share one timer.
+export const ZABUZA_TIMING={sword:3,dragon:7,clones:12,initial:{sword:0,dragon:2.5,clones:5},recovery:.24};
+export function zabuzaGroup(pattern){return pattern.special==='dragon'?'dragon':pattern.special==='clones'?'clones':'sword';}
+export function tickZabuza(b,p,clones,dt,move,hit,signal,random=Math.random){
+ b.cooldowns??={...ZABUZA_TIMING.initial};b.orbitDir??=1;b.orbitLeft??=1.8;
+ b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;
+ for(const k of ['sword','dragon','clones'])b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
+ b.attack=Math.max(0,b.attack-dt);
+ if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
+ if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;if(b.intent){const group=zabuzaGroup(b.intent);b.cooldowns[group]=ZABUZA_TIMING[group];}b.intent=null;b.anim=null;b.attack=.55;signal('phase',b);return;}
+ if(b.intent){
+  const a=b.intent;a.left-=dt;
+  if(a.special==='dragon'){const v=directionToward(p.x-b.x,p.z-b.z);b.dirX=a.dx=v.x;b.dirZ=a.dz=v.z;}
+  if(a.left<=1e-8){b.intent=null;const group=zabuzaGroup(a);b.cooldowns[group]=ZABUZA_TIMING[group];b.attack=ZABUZA_TIMING.recovery;
+   if(group==='sword')for(const target of [p,...clones])if((target.hp??0)>0&&(target.life??1)>0&&bossContains(a,target))hit(target,a.damage,b);
+   signal('strike',b,a);
+  }return;
+ }
+ const allies=clones.filter(a=>a.ally&&a.hp>0&&a.life>0);
+ const target=b.scripted&&allies.length&&b.index%3!==2?allies[b.index%allies.length]:p;
+ const d=distance(b,target),v=directionToward(target.x-b.x,target.z-b.z);b.dirX=v.x;b.dirZ=v.z;
+ if(!b.attack){
+  const ready=b.spec.patterns.filter(a=>b.cooldowns[zabuzaGroup(a)]<=1e-8&&distance(b,a.special==='dragon'?p:target)<=a.reach);
+  const varied=ready.filter(a=>a.name!==b.lastPattern),options=varied.length?varied:ready;
+  if(options.length){
+   const pattern=options[Math.floor(random()*options.length)],windup=pattern.windup;
+   const aim=pattern.special==='dragon'?directionToward(p.x-b.x,p.z-b.z):v;
+   b.dirX=aim.x;b.dirZ=aim.z;b.intent={...pattern,x:b.x,z:b.z,dx:aim.x,dz:aim.z,left:windup,total:windup};
+   b.anim={k:pattern.special==='dragon'||pattern.special==='clones'?'l':'j',left:windup+.25,total:windup+.25,windup};
+   b.index++;b.lastPattern=pattern.name;signal('windup',b,b.intent);return;
+  }
+ }
+ // Pursue from range; flank and reposition while waiting. No movement during a cast.
+ b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.6+random()*1.3;}
+ const desired=b.cooldowns.sword<=.45?3:4.6,radial=Math.max(-.9,Math.min(1,(d-desired)*.55)),tangent=d>desired+3?.18:.83;
+ const dir=directionToward(v.x*radial-v.z*tangent*b.orbitDir,v.z*radial+v.x*tangent*b.orbitDir);
+ const x=b.x,z=b.z,speed=b.spec.speed*(b.phase===2?1.12:1);move(b,dir.x*dt*speed,dir.z*dt*speed);
+ b.motion=Math.hypot(b.x-x,b.z-z)>.0001;if(b.motion)b.walk+=dt*speed*2.5;else{b.orbitDir*=-1;b.orbitLeft=.65;}
+}

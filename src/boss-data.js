@@ -1,12 +1,12 @@
 import {directionToward} from './combat-data.js';
 export const ARENA={x:32,z:-2,r:12};
 export const BOSSES=[
- {id:'zabuza',name:'Zabuza Momochi',hp:360,speed:2.4,reward:[['mistBlade',1],['pill',3]],xp:250,coins:180,intro:'La niebla es mi territorio. Demostrame qué aprendiste, shinobi.',patterns:[{name:'Corte de espada',shape:'circle',radius:2.8,windup:.65,damage:24,reach:3.1},{name:'Dragón de agua',shape:'line',radius:1.15,length:10,windup:.9,damage:30,reach:10},{name:'Torbellino de niebla',shape:'circle',radius:4.2,windup:.8,damage:34,reach:4.5}]},
- {id:'haku',name:'Haku',hp:300,speed:3.5,reward:[['iceMask',1],['scroll',1]],xp:300,coins:220,intro:'No quiero lastimarte. Pero no voy a abandonar mi propósito.',patterns:[{name:'Agujas de hielo',shape:'line',radius:.8,length:12,windup:.55,damage:20,reach:12},{name:'Espejos de hielo',shape:'target',radius:2.3,windup:.85,damage:30,reach:10},{name:'Danza de agujas',shape:'target',radius:3.1,windup:.65,damage:32,reach:12}]}
+ {id:'zabuza',name:'Zabuza Momochi',hp:360,speed:2.4,reward:[['mistBlade',1],['pill',3]],xp:250,coins:180,intro:'The mist is my domain. Show me what you have learned, shinobi.',patterns:[{name:'Sword slash',shape:'circle',radius:2.8,windup:.65,damage:24,reach:3.1},{name:'Water dragon',shape:'line',radius:1.15,length:10,windup:.9,damage:30,reach:10},{name:'Mist whirlwind',shape:'circle',radius:4.2,windup:.8,damage:34,reach:4.5}]},
+ {id:'haku',name:'Haku',hp:300,speed:3.5,reward:[['iceMask',1],['scroll',1]],xp:300,coins:220,intro:'I do not want to hurt you. But I will not abandon my purpose.',patterns:[{name:'Ice needles',shape:'line',radius:.8,length:12,windup:.55,damage:20,reach:12},{name:'Ice mirrors',shape:'target',radius:2.3,windup:.85,damage:30,reach:10},{name:'Needle dance',shape:'target',radius:3.1,windup:.65,damage:32,reach:12}]}
 ];
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 export function newBossProgress(){return {defeated:[]};}
-export function validateBossProgress(raw){if(!raw||!Array.isArray(raw.defeated)||raw.defeated.length>BOSSES.length||raw.defeated.some((id,i)=>id!==BOSSES[i].id))throw Error('Progreso de jefes inválido.');return {defeated:[...raw.defeated]};}
+export function validateBossProgress(raw){if(!raw||!Array.isArray(raw.defeated)||raw.defeated.length>BOSSES.length||raw.defeated.some((id,i)=>id!==BOSSES[i].id))throw Error('Invalid boss progress.');return {defeated:[...raw.defeated]};}
 export function nextBoss(progress){return BOSSES[progress.defeated.length]||null;}
 export function makeBoss(spec){return {id:spec.id,kind:spec.id,spec,x:ARENA.x,z:ARENA.z,hp:spec.hp,maxHP:spec.hp,dirX:-1,dirZ:0,phase:1,index:0,attack:1.4,hit:0,flash:0,mark:0,intent:null,motion:false,walk:0};}
 export function bossContains(intent,target){const dx=target.x-intent.x,dz=target.z-intent.z;if(intent.shape!=='line')return Math.hypot(dx,dz)<=intent.radius;const along=dx*intent.dx+dz*intent.dz,side=Math.abs(dx*intent.dz-dz*intent.dx);return along>=0&&along<=intent.length&&side<=intent.radius;}

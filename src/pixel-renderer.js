@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {SLASH_URL,SLASH_ATLAS} from '../assets/chakra-slash-data.js';
-import {slashFrame,slashFacing,slashUV} from './hd-animation.js';
+import {slashFrame,slashFacing,slashUV,heroFrame,heroUV} from './hd-animation.js';
+import {HERO_URL,HERO_ATLAS} from '../assets/hero-hd-data.js';
 import {makeActorSheet,makeSheets,ANIMS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SIZE,FX_COLS,TREE_W,TREE_H} from './pixel-art.js';
 const TILT=-Math.atan2(25,30),UP_Y=Math.cos(TILT),UP_Z=Math.sin(TILT);
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -36,23 +37,38 @@ export function createPixelSystem(scene){
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
  const active=new Map(),free={player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],zabuza:[],haku:[]},trails=[],fxPool=[];
- let generation=0,hero=null,gearKey=null,gearCanvas=null,hdSlash=null,hdEnabled=true;
- try{hdEnabled=localStorage.getItem('shinobi-hd-slash')!=='off';}catch{}
- // Load independently: existing procedural actor rendering stays available if decoding fails.
- try{new THREE.TextureLoader().load(SLASH_URL,tex=>{
-  try{tex.colorSpace=THREE.SRGBColorSpace;tex.magFilter=tex.minFilter=THREE.NearestFilter;tex.generateMipmaps=false;
-   const {cellWidth,cellHeight,bodyHeight,groundY}=SLASH_ATLAS;
-   const material=new THREE.SpriteMaterial({map:tex,transparent:true,alphaTest:.08,depthTest:true,depthWrite:true});
-   const obj=new THREE.Sprite(material);obj.scale.set(cellWidth/bodyHeight*2.4,cellHeight/bodyHeight*2.4,1);obj.center.set(.5,1-groundY/cellHeight);obj.visible=false;scene.add(obj);hdSlash={obj,material,tex};
-  }catch(err){console.warn('HD slash fallback',err);}
- },undefined,err=>console.warn('HD slash unavailable; using original art',err));}catch(err){console.warn('HD slash fallback',err);}
- function setHDSlash(v){hdEnabled=Boolean(v);try{localStorage.setItem('shinobi-hd-slash',hdEnabled?'on':'off');}catch{}if(hdSlash&&!hdEnabled)hdSlash.obj.visible=false;}
- function drawHDSlash(a,item){
-  if(!hdEnabled||!hdSlash)return false;
+ let generation=0,hero=null,gearKey=null,gearCanvas=null,hdSlash=null,hdHero=null,hdEnabled=true,hdLoad='loading';
+ // New preference key: the previous toggle only controlled the slash, not the hero.
+ try{hdEnabled=localStorage.getItem('shinobi-hd-hero-v2')!=='off';}catch{}
+ function loadArt(url,atlas,onReady,onFail){
+  try{new THREE.TextureLoader().load(url,tex=>{
+   try{
+    tex.colorSpace=THREE.SRGBColorSpace;tex.magFilter=tex.minFilter=THREE.NearestFilter;tex.generateMipmaps=false;
+    const {cellWidth,cellHeight,bodyHeight,groundY,width,height}=atlas;
+    if(tex.image?.width!==width||tex.image?.height!==height)throw Error('Unexpected atlas dimensions');
+    const material=new THREE.SpriteMaterial({map:tex,transparent:true,alphaTest:.08,depthTest:true,depthWrite:true});
+    const obj=new THREE.Sprite(material);obj.scale.set(cellWidth/bodyHeight*2.4,cellHeight/bodyHeight*2.4,1);
+    obj.center.set(.5,1-groundY/cellHeight);obj.visible=false;scene.add(obj);onReady({obj,material,tex});
+   }catch(err){onFail(err);}
+  },undefined,onFail);}catch(err){onFail(err);}
+ }
+ loadArt(HERO_URL,HERO_ATLAS,art=>{hdHero=art;hdLoad='ready';},err=>{hdLoad='fallback';console.warn('HD hero unavailable; using original art',err);});
+ loadArt(SLASH_URL,SLASH_ATLAS,art=>{hdSlash=art;},err=>console.warn('HD slash unavailable; using locomotion or original art',err));
+ function setHDSlash(v){hdEnabled=Boolean(v);try{localStorage.setItem('shinobi-hd-hero-v2',hdEnabled?'on':'off');}catch{}if(!hdEnabled){if(hdSlash)hdSlash.obj.visible=false;if(hdHero)hdHero.obj.visible=false;}}
+ function showHD(art,uv,a,item){
+  art.tex.offset.set(uv.u,uv.v);art.tex.repeat.set(uv.sx,uv.sy);
+  art.obj.position.set(a.x,.035,a.z);art.material.opacity=item.material.opacity;
+  art.material.color.setHex(a.flash>0?0xffe8cb:a.substitution>0?0xc9f1e4:a.hit>0&&!a.anim?0xffc1a3:0xffffff);
+  art.obj.visible=true;item.obj.visible=false;
+ }
+ function drawHDHero(a,item){
+  if(!hdEnabled)return false;
   const f=slashFrame(a.anim),facing=a.anim?.artFacing||slashFacing(a.dirX||0,a.dirZ??1);
-  if(!f||!facing||facing==='vertical')return false;
-  const uv=slashUV(f.col,f.row,facing==='left');hdSlash.tex.offset.set(uv.u,uv.v);hdSlash.tex.repeat.set(uv.sx,uv.sy);
-  hdSlash.obj.position.set(a.x,.035,a.z);hdSlash.material.opacity=item.material.opacity;hdSlash.material.color.setHex(a.flash>0?0xffe8cb:0xffffff);hdSlash.obj.visible=true;item.obj.visible=false;return true;
+  if(hdSlash&&f&&facing&&facing!=='vertical'){
+   showHD(hdSlash,slashUV(f.col,f.row,facing==='left'),a,item);return true;
+  }
+  if(!hdHero)return false;
+  const v=heroFrame(a,item.clock);showHD(hdHero,heroUV(v.col,v.row,v.flip),a,item);return true;
  }
  function gearSheet(gear){const key=JSON.stringify(gear||{});if(key!==gearKey){gearKey=key;gearCanvas=makeActorSheet('player',gear);}return gearCanvas;}
  function previewEquipment(gear,canvas){const c=gearSheet(gear),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
@@ -61,7 +77,7 @@ export function createPixelSystem(scene){
   const scale=kind==='zabuza'?1.3:1;const s=sprite(maps[kind],ACTOR_COLS,4,1.80*scale,2.40*scale,true);s.kind=kind;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
   scene.add(s.obj,s.shadow);return s;
  }
- function begin(){generation++;hero=null;if(hdSlash)hdSlash.obj.visible=false;}
+ function begin(){generation++;hero=null;if(hdSlash)hdSlash.obj.visible=false;if(hdHero)hdHero.obj.visible=false;}
  function show(a,kind,dt=0){
   let item=active.get(a);
   if(!item){item=free[kind].pop()||makeActor(kind);item.clock=0;item.trailAt=-99;item.lastAnim=null;active.set(a,item);}
@@ -71,7 +87,7 @@ export function createPixelSystem(scene){
   setFrame(item,anim.col,row);
   item.obj.position.set(a.x,.035,a.z);item.shadow.position.set(a.x,.024,a.z);
   item.material.opacity=kind==='clone'?.84:1;item.material.color.setHex(a.flash>0?0xffe8cb:a.guard?0xffd98b:a.substitution>0?0xc9f1e4:a.hit>0&&!a.anim?0xffc1a3:0xffffff);item.material.opacity=a.invuln>0&&kind==='player'?.75:item.material.opacity;
-  if(kind==='player'){const usingHD=drawHDSlash(a,item);hero={actor:a,row,item,usingHD};if(a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>(a.dashTime>0?.035:.085)){item.trailAt=item.clock;spawnTrail(a,row);}if(a.anim&&a.anim!==item.lastAnim&&(a.anim.k==='j'||a.anim.k===' '))spawnTrail(a,row);item.lastAnim=a.anim||null;}
+  if(kind==='player'){const usingHD=drawHDHero(a,item);hero={actor:a,row,item,usingHD};if(!usingHD&&a.sprinting&&a.motion&&dt>0&&item.clock-item.trailAt>(a.dashTime>0?.035:.085)){item.trailAt=item.clock;spawnTrail(a,row);}if(!usingHD&&a.anim&&a.anim!==item.lastAnim&&(a.anim.k==='j'||a.anim.k===' '))spawnTrail(a,row);item.lastAnim=a.anim||null;}
   return true;
  }
  function end(){for(const [a,item] of active)if(item.seen!==generation){item.obj.visible=item.shadow.visible=false;active.delete(a);free[item.kind].push(item);}}
@@ -129,5 +145,5 @@ export function createPixelSystem(scene){
  for(let i=0;i<buildings.length;i++){const p=buildings[i];d.position.set(p.x+.5,.02,p.z+.35);d.rotation.set(-Math.PI/2,0,0);d.scale.set(p.w+1.8,p.d+1.5,1);d.updateMatrix();obj.setMatrixAt(i,d.matrix);}
  obj.instanceMatrix.needsUpdate=true;obj.computeBoundingSphere();scene.add(obj);
 }
-return {begin,show,end,effects,addTrees,addBuildingShadows,previewEquipment,portrait,setHDSlash,get hdEnabled(){return hdEnabled},maps,sheets};
+return {begin,show,end,effects,addTrees,addBuildingShadows,previewEquipment,portrait,setHDSlash,get hdEnabled(){return hdEnabled},get hdStatus(){return hdEnabled?hdLoad:'off'},maps,sheets};
 }

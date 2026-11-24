@@ -41,7 +41,7 @@ function cell(w,h){
  function line(x,y,xx,yy,col,w=1){const n=Math.max(1,Math.ceil(Math.max(Math.abs(xx-x),Math.abs(yy-y))));for(let i=0;i<=n;i++)rect(Math.round(x+(xx-x)*i/n)-Math.floor(w/2),Math.round(y+(yy-y)*i/n)-Math.floor(w/2),w,w,col);}
  return {c,ctx,rect,poly,ellipse,line};
 }
-function actorCell(kind,dir,frame,gear=null){
+function actorCell(kind,dir,frame,gear=null,kyubi=false){
  const ras=frame>=38?frame-38:-1;if(ras>=0)frame=[14,14,14,7,12,0][ras];
  const special=frame>=22?Math.floor((frame-22)/4):-1,stage=frame>=22?(frame-22)%4:0;if(special>=0)frame=[14,14,15,14][stage];
  const role=kind;const p=PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
@@ -86,8 +86,8 @@ function actorCell(kind,dir,frame,gear=null){
  if(back){rect(hx-5,hy+2,10,3,p.trim);rect(hx-1,hy+4,2,3,p.trim);rect(hx+1,hy+5,3,2,p.trim);rect(hx-4,hy+1,2,1,p.hairShade);}
  else{
    rect(hx-5,hy+1,11,3,p.trim);rect(side?hx+1:hx-3,hy+1,side?5:7,2,p.metal);rect(side?hx+3:hx,hy+1,1,1,'#536b79');
-   if(side){rect(hx+2,hy+4,3,2,ink);rect(hx+3,hy+4,1,1,kind==='player'||kind==='clone'?'#61b8d7':'#d6d8ce');}
-   else{rect(hx-4,hy+4,3,2,ink);rect(hx+2,hy+4,3,2,ink);rect(hx-3,hy+4,1,1,kind==='player'||kind==='clone'?'#61b8d7':'#d6d8ce');rect(hx+3,hy+4,1,1,kind==='player'||kind==='clone'?'#61b8d7':'#d6d8ce');}
+   if(side){rect(hx+2,hy+4,3,2,ink);rect(hx+3,hy+4,1,1,kind==='player'||kind==='clone'?(kyubi?'#ed3d43':'#61b8d7'):'#d6d8ce');}
+   else{rect(hx-4,hy+4,3,2,ink);rect(hx+2,hy+4,3,2,ink);rect(hx-3,hy+4,1,1,kind==='player'||kind==='clone'?(kyubi?'#ed3d43':'#61b8d7'):'#d6d8ce');rect(hx+3,hy+4,1,1,kind==='player'||kind==='clone'?(kyubi?'#ed3d43':'#61b8d7'):'#d6d8ce');}
    if(kind==='npc'||kind==='enemy'){rect(hx-4,hy+6,9,3,p.trim);if(kind==='npc')rect(hx-4,hy+3,4,3,p.trim);}
    else{rect(hx-4,hy+6,2,1,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx,hy+7,2,1,'#9d574e');}
  }
@@ -147,9 +147,9 @@ function actorCell(kind,dir,frame,gear=null){
  if(dir===1){const out=cell(24,32);out.ctx.translate(24,0);out.ctx.scale(-1,1);out.ctx.drawImage(s.c,0,0);return out.c;}
  return s.c;
 }
-export function makeActorSheet(kind,gear=null){
+export function makeActorSheet(kind,gear=null,kyubi=false){
  const c=canvas(ACTOR_W*ACTOR_COLS,ACTOR_H*4),ctx=c.getContext('2d');
- for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++)ctx.drawImage(actorCell(kind,d,f,gear),f*ACTOR_W,d*ACTOR_H);
+ for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++)ctx.drawImage(actorCell(kind,d,f,gear,kyubi),f*ACTOR_W,d*ACTOR_H);
  return c;
 }
 // High-speed, deliberately stretched silhouettes. 32x32, three frames per direction.
@@ -157,9 +157,9 @@ export function makeActorSheet(kind,gear=null){
 export const RAS_SIZE=48,RAS_COLS=12,RAS_ROWS=6;
 export function rasenganPose(anim){const e=Math.max(0,anim.total-anim.left),w=anim.windup||.26;return e<w?Math.min(2,Math.floor(e/w*3)):3+Math.min(2,Math.floor((e-w)/Math.max(.001,anim.total-w)*3));}
 export function rasenganHand(dir,pose){const d=dir===1?-1:dir===2?1:0;return {x:d*[0,-.22,.12,.66,.74,.38][pose],y:[.96,1.08,1.22,1.27,1.13,.86][pose],z:dir===0?[.22,.3,.39,.7,.75,.32][pose]:dir===3?-[.2,.32,.44,.72,.65,.3][pose]:0};}
-export function makeRasenganSheet(){
+export function makeRasenganSheet(purple=false){
  const atlas=canvas(RAS_SIZE*RAS_COLS,RAS_SIZE*RAS_ROWS),ctx=atlas.getContext('2d');ctx.imageSmoothingEnabled=false;
- const palette=['#163c79','#285ba1','#369dcc','#64d8ee','#b5fbff','#f7ffff'];
+ const palette=purple?['#30134f','#5a258f','#9144d8','#c17aff','#ffffff','#ffffff']:['#163c79','#285ba1','#369dcc','#64d8ee','#b5fbff','#f7ffff'];
  const ribbon=[[0,-13],[5,-12],[10,-9],[13,-4],[12,2],[8,7],[3,8],[-2,5],[-3,1],[0,-2],[4,-1]];
  const arc=[[0,-14],[6,-13],[11,-9],[14,-3],[14,3],[10,9],[4,13],[-3,14],[-10,10],[-14,3],[-13,-4],[-9,-10],[-4,-13]];
  for(let row=0;row<RAS_ROWS;row++)for(let f=0;f<12;f++){

@@ -70,3 +70,15 @@ Base v1.4 aprobada. Respaldo local rotativo, recuperación, controles y HUD revi
 
 ## v1.6a beta — Rasengan de referencia
 Producción v1.5 aprobada. Seis poses por dirección y 36 cuadros FX específicos para Rasengan normal. [Detalles y QA](docs/V16A-RASENGAN.md). Guardado y balance intactos.
+
+## v1.7 beta — Kyūbi Awakening
+Modo de una cola, ataques físicos extensibles, Rasengan púrpura y sandbox. [Detalles y pruebas](docs/V17-KYUBI-AWAKENING.md). Producción v1.6b intacta.
+
+## v1.8 beta — Kyūbi Evolution
+Tres formas progresivas, furia, ataques múltiples, colas animadas y FX. [Detalles](docs/V18-KYUBI-EVOLUTION.md). Guardado v11.
+
+## v1.8b — Kyūbi definitivo (tres colas)
+Decisión del jugador: una única forma de tres colas, activación directa con T al 100%, 14 s, y un botón de sandbox. Se conserva el arte, Rasengan púrpura, ataques extensibles, daño múltiple y furia de v1.8. No añadir más transformaciones por ahora. Guardado v11. Smoke tests de lógica aprobados; render/audio reales y deploy pendientes.
+
+## v1.9 beta — Shinobi Combat Intelligence
+15 patrullas, siete arquetipos, respawn 60 s, minimapa y botón de sandbox. [Detalles](docs/V19-SHINOBI-AI.md). Guardado v11.

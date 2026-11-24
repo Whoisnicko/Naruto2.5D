@@ -106,7 +106,18 @@ export const INTERIORS=[
 export const WEATHER={
  clear:{name:'Clear',rain:0,fog:0},rain:{name:'Rain',rain:.65,fog:.12},fog:{name:'Fog',rain:0,fog:.55},storm:{name:'Storm',rain:1,fog:.22}
 };
-export function weatherAt(clock){return clock>=105&&clock<145?'rain':clock>=145&&clock<185?'fog':clock>=185&&clock<215?'storm':'clear';}
+// A weather clock independent from the day/night clock. Durations are simulation seconds.
+export const WEATHER_TIMING={clear:[35,85],rain:[25,55],storm:[20,40],fog:[25,50]};
+export function weatherDuration(kind,random=Math.random){const [min,max]=WEATHER_TIMING[kind]||WEATHER_TIMING.clear;return min+(max-min)*random();}
+export function newWeather(now=0,random=Math.random){return {kind:'clear',until:now+weatherDuration('clear',random)};}
+export function advanceWeather(state,now,random=Math.random){
+ if(now<state.until)return state;
+ const kind=state.kind==='clear'?(random()<.82?'rain':'storm'):'clear';
+ return {kind,until:now+weatherDuration(kind,random)};
+}
+// CSS grades the actual world canvas, not the HUD, with an independent weather layer.
+export const LIGHTING={day:{filter:'brightness(1) saturate(1)',tint:0},sunset:{filter:'sepia(.42) saturate(1.35) brightness(.86)',tint:.22},night:{filter:'brightness(.53) saturate(.72) contrast(1.08)',tint:.30},interior:{filter:'brightness(1) saturate(1)',tint:0}};
+export function lightingFor(clock,interior=false){return LIGHTING[interior?'interior':dayPhase(clock).id];}
 export const WORLD_EVENTS={
  ambush:{name:'Shinobi Ambush',banner:'SHINOBI AMBUSH',objective:'Defeat the three rogue ninja',duration:45,reward:45,xp:50,roles:['striker','caster','assassin']},
  cache:{name:'Lost Supplies',banner:'LOST SUPPLIES',objective:'Find the supplies and interact',duration:55,reward:30,xp:25,loot:[['ramen',1],['pill',1]]}

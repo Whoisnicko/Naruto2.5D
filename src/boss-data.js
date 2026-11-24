@@ -16,6 +16,7 @@ export function tickBoss(b,p,clones,dt,move,hit,signal){
  if(b.id==='kabuto'&&b.independent)return tickKabuto(b,p,clones,dt,move,hit,signal);
  if(b.id==='gaara'&&b.independent)return tickGaara(b,p,clones,dt,move,hit,signal);
  if(b.id==='orochimaru'&&b.independent)return tickOrochimaru(b,p,clones,dt,move,hit,signal);
+ if(b.id==='kimimaro'&&b.independent)return tickKimimaro(b,p,clones,dt,move,hit,signal);
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;
  if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
  if(b.hp<=b.maxHP*.5&&b.phase===1){b.phase=2;b.intent=null;b.anim=null;b.attack=.55;signal('phase',b);return;}
@@ -145,7 +146,18 @@ export const WORLD_BOSSES={kabuto:{id:'kabuto',name:'Kabuto Yakushi',hp:1500,spe
  {id:'trueMiasma',name:'Venom Miasma',shape:'target',radius:3.8,reach:26,windup:1.1,damage:18,cooldown:11,phase:3,venom:true,cloud:true},
  {id:'trueEruption',name:'Serpent Eruption',shape:'target',radius:2.8,reach:26,windup:.85,damage:23,cooldown:9,phase:3,pulses:3},
  {id:'trueCoil',name:'Coil Crush',shape:'circle',radius:5.4,reach:6,windup:1.05,damage:38,cooldown:8,phase:3}
+ ]},kimimaro:{id:'kimimaro',name:'Kimimaro',hp:2800,speed:5.1,arena:{x:-30,z:32,r:15,name:'Valley of Bones'},marker:'#e4e1ce',xp:1500,coins:1000,reward:[['boneMantle',1],['pill',4]],patterns:[
+ {id:'willowDance',name:'Dance of the Willow',shape:'line',radius:1.55,length:6,reach:6,windup:.45,damage:26,cooldown:3.5},
+ {id:'camelliaDance',name:'Dance of the Camellia',shape:'line',radius:1.8,length:10,reach:11,windup:.7,damage:30,cooldown:8,lunge:4},
+ {id:'boneBullets',name:'Ten-Finger Drilling Bullets',shape:'line',radius:2,length:18,reach:25,windup:.65,damage:10,cooldown:7,projectile:true},
+ {id:'larchDance',name:'Dance of the Larch',shape:'circle',radius:4.2,reach:5,windup:.8,damage:34,cooldown:9,phase:2},
+ {id:'clematisDance',name:'Dance of the Clematis',shape:'line',radius:2,length:13,reach:14,windup:1,damage:37,cooldown:12,phase:2},
+ {id:'cursedDrill',name:'Cursed Bone Drill',shape:'line',radius:2.6,length:15,reach:16,windup:.85,damage:42,cooldown:7,phase:3,lunge:5},
+ {id:'cursedVolley',name:'Cursed Bone Volley',shape:'line',radius:2,length:19,reach:28,windup:.65,damage:12,cooldown:8,phase:3,projectile:true,pulses:2},
+ {id:'seedlingFern',name:'Dance of the Seedling Fern',shape:'target',radius:3.2,reach:30,windup:1.15,damage:25,cooldown:15,phase:3,pulses:4,forest:true},
+ {id:'cursedTail',name:'Cursed Tail Sweep',shape:'circle',radius:5.2,reach:6,windup:.9,damage:35,cooldown:9,phase:3}
  ]}};
+export const KIMI_RULES={stageOne:.65,stageTwo:.30,phaseSpeed:1.12,finalSpeed:1.28,forestLife:5,forestCap:4,forestSlow:.65,bulletCount:10,bulletSpeed:18,bulletCap:30};
 export const ORO_RULES={snakeHP:85,snakeCap:3,snakeLife:24,snakeSpeed:5.2,biteDamage:13,biteCooldown:3.2,biteWindup:.55,biteRange:1.7,phaseSpeed:1.2,shedThreshold:.30,huskHP:160,huskLife:3.5,shedHeal:360,venomLife:5,venomInterval:1,venomDamage:4,finalThreshold:.25,finalSpeed:1.36,cloudLife:4,cloudCap:2};
 export const GAARA_RULES={shieldHP:240,shieldDuration:4,shieldCooldown:18,shieldFirst:5,breakRecovery:1.5,zoneDuration:6,zoneSlow:.55,phaseSpeed:1.22,finalThreshold:.35,finalSpeed:1.38,finalScale:1.85,shurikenSpeed:15,shurikenCount:7,shurikenCap:28};
 export const KABUTO_RULES={healFraction:.30,healCap:.90,healThreshold:.70,interruptRecovery:2,disruptDuration:8,regenMultiplier:.35,extractChakra:28,phaseSpeed:1.25};
@@ -155,7 +167,7 @@ Object.assign(MIST_SCENES,{
  kabutoEnd:{title:'THE FAILED EXPERIMENT',lines:[['Kabuto','So much for my calculations. We will meet again.'],['Naruto','Next time, try fighting without the cheap tricks.']]}
 });
 Object.assign(MIST_CAMERA,{kabutoIntro:[{zoom:1.8,yaw:.18},{zoom:1.55,yaw:-.16},{zoom:2.2,yaw:.24}],kabutoPhase:[{zoom:2.4,yaw:-.22},{zoom:1.8,yaw:.14}],kabutoEnd:[{zoom:1.9,yaw:.2},{zoom:1.55,yaw:-.12}]});
-export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,...(id==='orochimaru'?{cooldowns:{kusanagiSweep:0,snakeStrike:4,snakeSummon:7,venomBurst:3,serpentRush:6,trueFang:0,trueMiasma:0,trueEruption:0,trueCoil:0},clouds:[],snakes:[],husk:null,shedUsed:false,serial:0}:id==='gaara'?{cooldowns:{sandWave:0,sandCoffin:3,sandBurst:0,shukakuClaw:3,sandTsunami:7,sandDetonation:0,sandShuriken:0,tailRend:0,sandEruption:0},sandShield:0,sandShieldLeft:0,shieldAt:GAARA_RULES.shieldFirst,zones:[]}:{cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0}),orbitDir:1,orbitLeft:2};}
+export function makeWorldBoss(id){const spec=WORLD_BOSSES[id];if(!spec)return null;return {...makeBoss(spec),x:spec.arena.x,z:spec.arena.z,independent:true,worldBoss:true,...(id==='kimimaro'?{cooldowns:Object.fromEntries(spec.patterns.map((a,i)=>[a.id,i%3*2])),zones:[],lastPattern:null}:id==='orochimaru'?{cooldowns:{kusanagiSweep:0,snakeStrike:4,snakeSummon:7,venomBurst:3,serpentRush:6,trueFang:0,trueMiasma:0,trueEruption:0,trueCoil:0},clouds:[],snakes:[],husk:null,shedUsed:false,serial:0}:id==='gaara'?{cooldowns:{sandWave:0,sandCoffin:3,sandBurst:0,shukakuClaw:3,sandTsunami:7,sandDetonation:0,sandShuriken:0,tailRend:0,sandEruption:0},sandShield:0,sandShieldLeft:0,shieldAt:GAARA_RULES.shieldFirst,zones:[]}:{cooldowns:{scalpel:0,disrupt:5,heal:8,evasion:3,cross:4,extract:9,autopsy:8},healed:0}),orbitDir:1,orbitLeft:2};}
 export function tickKabuto(b,p,clones,dt,move,hit,signal,random=Math.random){
  b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.motion=false;b.attack=Math.max(0,b.attack-dt);
  for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
@@ -244,4 +256,30 @@ export function tickOrochimaru(b,p,clones,dt,move,hit,signal,random=Math.random)
  const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
  if(!b.attack){const ready=b.spec.patterns.filter(a=>(b.phase===3?a.phase===3:(a.phase||1)<=b.phase)&&b.cooldowns[a.id]<=1e-8&&d<=a.reach&&(!a.summon||b.snakes.length<c.snakeCap)),varied=ready.filter(a=>a.id!==b.lastPattern),options=varied.length?varied:ready,a=options.find(a=>a.summon)||options[Math.floor(random()*options.length)];if(a){b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:a.windup,total:a.windup};b.anim={k:a.summon||a.venom?'l':'j',left:a.windup+.25,total:a.windup+.25,windup:a.windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
  b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.5+random();}const radial=Math.max(-1,Math.min(1,(d-(b.phase===3?3.8:4.5))*.6)),dir=directionToward(v.x*radial-v.z*.65*b.orbitDir,v.z*radial+v.x*.65*b.orbitDir),speed=b.spec.speed*(b.phase===3?c.finalSpeed:b.phase===2?c.phaseSpeed:1),x=b.x,z=b.z;move(b,dir.x*speed*dt,dir.z*speed*dt);b.motion=distance(b,{x,z})>.0001;if(b.motion)b.walk+=dt*speed*2.5;
+}
+
+Object.assign(MIST_SCENES,{
+ kimimaroIntro:{title:'THE LAST KAGUYA',lines:[['Kimimaro','My body belongs to Lord Orochimaru. I will not let you pass.'],['Naruto','You can decide your own future!'],['Kimimaro','Then show me your resolve.']]},
+ kimimaroPhase:{title:'CURSE MARK · STAGE ONE',lines:[['Kimimaro','I have not yet shown you everything.'],['Naruto','Those markings...!']]},
+ kimimaroFinal:{title:'CURSE MARK · STAGE TWO',lines:[['Kimimaro','Even if my body fails, my purpose remains.'],['Naruto','I will end this fight!']]},
+ kimimaroEnd:{title:'THE LAST DANCE',lines:[['Kimimaro','So... this is as far as I can go.'],['Naruto','You were more than just a weapon.'],['Naruto','I need to become stronger. There is still so much to learn.']]}
+});
+Object.assign(MIST_CAMERA,{kimimaroIntro:[{zoom:1.9,yaw:.2},{zoom:1.6,yaw:-.16},{zoom:2,yaw:.1}],kimimaroPhase:[{zoom:2,yaw:-.2},{zoom:1.7,yaw:.15}],kimimaroFinal:[{zoom:1.35,yaw:.2,lookY:1.8},{zoom:1.5,yaw:-.15}],kimimaroEnd:[{zoom:1.8,yaw:.2},{zoom:1.6,yaw:-.1},{zoom:1.7,yaw:.1}]});
+export function boneSlow(b,p){return b?.id==='kimimaro'&&b.independent&&b.zones.some(z=>z.left>0&&distance(z,p)<=z.radius)?KIMI_RULES.forestSlow:1;}
+export function tickKimimaro(b,p,clones,dt,move,hit,signal,random=Math.random){
+ const c=KIMI_RULES,alive=q=>q.hp>0&&(q.life??1)>0;
+ b.hit=Math.max(0,b.hit-dt);b.flash=Math.max(0,b.flash-dt);b.mark=Math.max(0,b.mark-dt);b.attack=Math.max(0,b.attack-dt);b.motion=false;
+ for(const k of Object.keys(b.cooldowns))b.cooldowns[k]=Math.max(0,b.cooldowns[k]-dt);
+ b.zones=b.zones.filter(q=>(q.left-=dt)>1e-8);if(b.anim){b.anim.left-=dt;if(b.anim.left<=0)b.anim=null;}
+ const next=b.hp<=b.maxHP*c.stageTwo+1e-8?3:b.hp<=b.maxHP*c.stageOne+1e-8?2:1;
+ if(next>b.phase){b.phase=next;b.intent=null;b.anim=null;b.attack=1.2;b.lastPattern=null;if(next===3){b.zones=[];b.cooldowns.seedlingFern=2;b.cooldowns.cursedDrill=0;b.cooldowns.cursedVolley=4;b.cooldowns.cursedTail=3;}signal(next===3?'kimimaroFinal':'kimimaroPhase',b);return;}
+ if(b.intent){const a=b.intent;a.left-=dt;if(a.left<=1e-8){b.intent=null;b.cooldowns[a.id]=a.cooldown;b.attack=b.phase===3?.7:.6;
+  if(!a.projectile)for(const q of [p,...clones])if(alive(q)&&bossContains(a,q))hit(q,a.damage,b);
+  if(a.forest){b.zones.push({x:a.x,z:a.z,radius:a.radius,left:c.forestLife});b.zones=b.zones.slice(-c.forestCap);}
+  signal('strike',b,a);if(a.lunge)move(b,a.dx*a.lunge,a.dz*a.lunge);
+  if(a.pulses&&(a.pulse||1)<a.pulses){const v=directionToward(p.x-b.x,p.z-b.z),delay=a.forest?.85:.65;b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,pulse:(a.pulse||1)+1,left:delay,total:delay};b.cooldowns[a.id]=0;b.attack=0;b.dirX=v.x;b.dirZ=v.z;signal('windup',b,b.intent);}
+ }return;}
+ const v=directionToward(p.x-b.x,p.z-b.z),d=distance(b,p);b.dirX=v.x;b.dirZ=v.z;
+ if(!b.attack){const ready=b.spec.patterns.filter(a=>(b.phase===3?a.phase===3:(a.phase||1)<=b.phase)&&b.cooldowns[a.id]<=1e-8&&d<=a.reach),varied=ready.filter(a=>a.id!==b.lastPattern),opts=varied.length?varied:ready,a=opts.find(a=>a.forest)||opts[Math.floor(random()*opts.length)];if(a){b.intent={...a,x:a.shape==='target'?p.x:b.x,z:a.shape==='target'?p.z:b.z,dx:v.x,dz:v.z,left:a.windup,total:a.windup};b.anim={k:a.forest||a.projectile?'l':'j',left:a.windup+.3,total:a.windup+.3,windup:a.windup};b.lastPattern=a.id;signal('windup',b,b.intent);return;}}
+ b.orbitLeft-=dt;if(b.orbitLeft<=0){b.orbitDir*=-1;b.orbitLeft=1.2+random();}const radial=Math.max(-1,Math.min(1,(d-2.8)*.7)),dir=directionToward(v.x*radial-v.z*.32*b.orbitDir,v.z*radial+v.x*.32*b.orbitDir),speed=b.spec.speed*(b.phase===3?c.finalSpeed:b.phase===2?c.phaseSpeed:1),x=b.x,z=b.z;move(b,dir.x*speed*dt,dir.z*speed*dt);b.motion=distance(b,{x,z})>.0001;if(b.motion)b.walk+=dt*speed*2.5;
 }

@@ -1,0 +1,33 @@
+{
+  "checks": [
+    "original clock starts 06:00",
+    "full day 360 sim seconds",
+    "time dawn",
+    "manual time hold dawn",
+    "time day",
+    "manual time hold day",
+    "time sunset",
+    "manual time hold sunset",
+    "time night",
+    "manual time hold night",
+    "resume clock",
+    "auto clock advances",
+    "weather clear",
+    "weather finite clear",
+    "weather rain",
+    "weather finite rain",
+    "weather fog",
+    "weather finite fog",
+    "weather storm",
+    "weather finite storm",
+    "storm rain intensity",
+    "weather auto",
+    "invalid options rejected",
+    "smooth cycle seam",
+    "night lights/rain drawn",
+    "forest no lamps",
+    "outpost lamps"
+  ],
+  "passed": 27,
+  "method": "logic and simulated canvas; combined app syntax"
+}

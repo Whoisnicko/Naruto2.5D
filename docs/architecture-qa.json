@@ -1,0 +1,39 @@
+{
+  "browser": [
+    {
+      "resolution": [
+        1366,
+        768
+      ],
+      "loaded": 14,
+      "nineBelowMinimumCorrectlyFlagged": true,
+      "movement": true,
+      "noHorizontalOverflow": true,
+      "errors": []
+    },
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "loaded": 14,
+      "nineBelowMinimumCorrectlyFlagged": true,
+      "movement": true,
+      "noHorizontalOverflow": true,
+      "errors": []
+    },
+    {
+      "resolution": [
+        390,
+        844
+      ],
+      "loaded": 14,
+      "nineBelowMinimumCorrectlyFlagged": true,
+      "movement": true,
+      "noHorizontalOverflow": true,
+      "errors": []
+    }
+  ],
+  "nineMissingAssetsFallback": true,
+  "mode": "Canvas 2D standalone, not Three.js or campaign"
+}

@@ -1,0 +1,42 @@
+{
+  "browser": [
+    {
+      "resolution": [
+        1366,
+        768
+      ],
+      "loaded": 11,
+      "towerMinimumPassed": true,
+      "mountainMinimumPassed": true,
+      "movement": true,
+      "noHorizontalOverflow": true,
+      "errors": []
+    },
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "loaded": 11,
+      "towerMinimumPassed": true,
+      "mountainMinimumPassed": true,
+      "movement": true,
+      "noHorizontalOverflow": true,
+      "errors": []
+    },
+    {
+      "resolution": [
+        390,
+        844
+      ],
+      "loaded": 11,
+      "towerMinimumPassed": true,
+      "mountainMinimumPassed": true,
+      "movement": true,
+      "noHorizontalOverflow": true,
+      "errors": []
+    }
+  ],
+  "twoMissingAssetsFallback": true,
+  "mode": "Canvas 2D standalone browser lab, not Three.js or campaign"
+}

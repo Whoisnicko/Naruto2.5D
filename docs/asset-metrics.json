@@ -1,0 +1,232 @@
+{
+  "mountain": {
+    "filePixels": [
+      2172,
+      724
+    ],
+    "visiblePixels": [
+      2159,
+      700
+    ],
+    "density": 17.41,
+    "targetDensity": 24,
+    "alpha": 0.3295,
+    "ratio": 0.3242,
+    "bytes": 561552,
+    "minimumPassed": true
+  },
+  "tower": {
+    "filePixels": [
+      1536,
+      1024
+    ],
+    "visiblePixels": [
+      1229,
+      998
+    ],
+    "density": 49.0,
+    "targetDensity": 64,
+    "alpha": 0.4782,
+    "ratio": 0.812,
+    "bytes": 320788,
+    "minimumPassed": true
+  },
+  "academy": {
+    "filePixels": [
+      486,
+      393
+    ],
+    "visiblePixels": [
+      470,
+      377
+    ],
+    "density": 29.45,
+    "targetDensity": 64,
+    "alpha": 0.3858,
+    "ratio": 0.8021,
+    "bytes": 62282,
+    "checks": {
+      "size": false,
+      "density": false,
+      "aspect": true,
+      "alpha": true
+    },
+    "minimumPassed": false
+  },
+  "hospital": {
+    "filePixels": [
+      465,
+      386
+    ],
+    "visiblePixels": [
+      449,
+      370
+    ],
+    "density": 24.62,
+    "targetDensity": 64,
+    "alpha": 0.3827,
+    "ratio": 0.8241,
+    "bytes": 55224,
+    "checks": {
+      "size": false,
+      "density": false,
+      "aspect": true,
+      "alpha": true
+    },
+    "minimumPassed": false
+  },
+  "ramen": {
+    "filePixels": [
+      419,
+      363
+    ],
+    "visiblePixels": [
+      403,
+      347
+    ],
+    "density": 35.35,
+    "targetDensity": 64,
+    "alpha": 0.3711,
+    "ratio": 0.861,
+    "bytes": 50252,
+    "checks": {
+      "size": false,
+      "density": true,
+      "aspect": true,
+      "alpha": true
+    },
+    "minimumPassed": false
+  },
+  "house-tile": {
+    "filePixels": [
+      387,
+      327
+    ],
+    "visiblePixels": [
+      371,
+      311
+    ],
+    "density": 32.54,
+    "targetDensity": 64,
+    "alpha": 0.3221,
+    "ratio": 0.8383,
+    "bytes": 43184,
+    "checks": {
+      "size": false,
+      "density": true,
+      "aspect": true,
+      "alpha": true
+    },
+    "minimumPassed": false
+  },
+  "house-round": {
+    "filePixels": [
+      386,
+      335
+    ],
+    "visiblePixels": [
+      370,
+      319
+    ],
+    "density": 32.46,
+    "targetDensity": 64,
+    "alpha": 0.3365,
+    "ratio": 0.8622,
+    "bytes": 42610,
+    "checks": {
+      "size": false,
+      "density": true,
+      "aspect": true,
+      "alpha": true
+    },
+    "minimumPassed": false
+  },
+  "house-terrace": {
+    "filePixels": [
+      379,
+      333
+    ],
+    "visiblePixels": [
+      363,
+      317
+    ],
+    "density": 31.84,
+    "targetDensity": 64,
+    "alpha": 0.3289,
+    "ratio": 0.8733,
+    "bytes": 45116,
+    "checks": {
+      "size": false,
+      "density": false,
+      "aspect": true,
+      "alpha": true
+    },
+    "minimumPassed": false
+  },
+  "house-blue": {
+    "filePixels": [
+      426,
+      339
+    ],
+    "visiblePixels": [
+      410,
+      323
+    ],
+    "density": 35.96,
+    "targetDensity": 64,
+    "alpha": 0.2819,
+    "ratio": 0.7878,
+    "bytes": 52642,
+    "checks": {
+      "size": false,
+      "density": true,
+      "aspect": true,
+      "alpha": true
+    },
+    "minimumPassed": false
+  },
+  "house-orange": {
+    "filePixels": [
+      410,
+      351
+    ],
+    "visiblePixels": [
+      394,
+      335
+    ],
+    "density": 34.56,
+    "targetDensity": 64,
+    "alpha": 0.3249,
+    "ratio": 0.8503,
+    "bytes": 47722,
+    "checks": {
+      "size": false,
+      "density": true,
+      "aspect": true,
+      "alpha": true
+    },
+    "minimumPassed": false
+  },
+  "house-courtyard": {
+    "filePixels": [
+      460,
+      336
+    ],
+    "visiblePixels": [
+      444,
+      320
+    ],
+    "density": 38.95,
+    "targetDensity": 64,
+    "alpha": 0.3157,
+    "ratio": 0.7207,
+    "bytes": 54198,
+    "checks": {
+      "size": false,
+      "density": true,
+      "aspect": true,
+      "alpha": true
+    },
+    "minimumPassed": false
+  }
+}

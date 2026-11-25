@@ -1,0 +1,1080 @@
+{
+  "mountain": {
+    "file": "mountain.webp",
+    "pixels": [
+      2172,
+      724
+    ],
+    "visiblePixels": [
+      2159,
+      700
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      2048,
+      640
+    ],
+    "minimumPassed": true,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 561552,
+    "sha256": "f49ab270823c7c952dcccfb08c53f47d6d6e021934e2004724fede35ae9ebd57"
+  },
+  "tower": {
+    "file": "tower.webp",
+    "pixels": [
+      1536,
+      1024
+    ],
+    "visiblePixels": [
+      1229,
+      998
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      1024,
+      640
+    ],
+    "minimumPassed": true,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 320788,
+    "sha256": "c15739cee7e4ef90a9ea861cca36e66ba301a6dd63400c3b339e8c293fd433ae"
+  },
+  "academy": {
+    "file": "academy.webp",
+    "pixels": [
+      486,
+      393
+    ],
+    "visiblePixels": [
+      470,
+      377
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      512,
+      256
+    ],
+    "minimumPassed": false,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 62282,
+    "sha256": "c9a7075bd605dc4dcdf1fe864b03336dfc52a791494b41ebb31b2e9789dd089c"
+  },
+  "hospital": {
+    "file": "hospital.webp",
+    "pixels": [
+      465,
+      386
+    ],
+    "visiblePixels": [
+      449,
+      370
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      512,
+      256
+    ],
+    "minimumPassed": false,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 55224,
+    "sha256": "5699aeadf32d339f00f75156014e18df07b3a08de33004411dfb08eeae466a3f"
+  },
+  "ramen": {
+    "file": "ramen.webp",
+    "pixels": [
+      419,
+      363
+    ],
+    "visiblePixels": [
+      403,
+      347
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      512,
+      256
+    ],
+    "minimumPassed": false,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 50252,
+    "sha256": "7f5b64c890bb5ad2240cc941d654218ab6905e02d89c941844e7cb29b0602ac5"
+  },
+  "house-round": {
+    "file": "house-round.webp",
+    "pixels": [
+      386,
+      335
+    ],
+    "visiblePixels": [
+      370,
+      319
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      512,
+      320
+    ],
+    "minimumPassed": false,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 42610,
+    "sha256": "811a61c14b706b171f3d85593f1344a4479e8fe6f1d0273333f64379c3f0cbc5"
+  },
+  "house-tile": {
+    "file": "house-tile.webp",
+    "pixels": [
+      387,
+      327
+    ],
+    "visiblePixels": [
+      371,
+      311
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      512,
+      320
+    ],
+    "minimumPassed": false,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 43184,
+    "sha256": "6f907d7f1dab97065c55ae867d7e12fadcb07b8734281b702b9e5d860e77c1df"
+  },
+  "house-blue": {
+    "file": "house-blue.webp",
+    "pixels": [
+      426,
+      339
+    ],
+    "visiblePixels": [
+      410,
+      323
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      512,
+      320
+    ],
+    "minimumPassed": false,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 52642,
+    "sha256": "aa5551603dfb9ec29c1cc9399f9bb47033efb948aa654e26978bd9a1fef411c8"
+  },
+  "house-terrace": {
+    "file": "house-terrace.webp",
+    "pixels": [
+      379,
+      333
+    ],
+    "visiblePixels": [
+      363,
+      317
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      512,
+      320
+    ],
+    "minimumPassed": false,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 45116,
+    "sha256": "3a3f0df5a29a4d5d29115672af5208354358fe0c185f2ad388946677f5632b01"
+  },
+  "house-orange": {
+    "file": "house-orange.webp",
+    "pixels": [
+      410,
+      351
+    ],
+    "visiblePixels": [
+      394,
+      335
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      512,
+      320
+    ],
+    "minimumPassed": false,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 47722,
+    "sha256": "8b51ef91de4e60a63ca9245fc5b870b22245978a6ce45ee02454d7f9506ebc48"
+  },
+  "house-courtyard": {
+    "file": "house-courtyard.webp",
+    "pixels": [
+      460,
+      336
+    ],
+    "visiblePixels": [
+      444,
+      320
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "source": "Previously approved architecture release 17c4fb1",
+    "minPixels": [
+      512,
+      320
+    ],
+    "minimumPassed": false,
+    "review": "visual-approved; prior technical metrics retained",
+    "bytes": 54198,
+    "sha256": "c3da07f999d356bfb07f8fd2d72ae026497042bc5696fa58e2816b1376601977"
+  },
+  "tree-oak": {
+    "file": "tree-oak.webp",
+    "source": "konoha_tree_asset_collection.png",
+    "sourceBox": [
+      27,
+      9,
+      699,
+      515
+    ],
+    "pixels": [
+      715,
+      531
+    ],
+    "visiblePixels": [
+      699,
+      515
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.4204,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 165366,
+    "sha256": "d46765121cf78f10e9d518980f08578fbc912189a87bdbc30226b05edfb28acc",
+    "widthScreeningOnly": true
+  },
+  "tree-pine": {
+    "file": "tree-pine.webp",
+    "source": "konoha_tree_asset_collection.png",
+    "sourceBox": [
+      775,
+      10,
+      633,
+      518
+    ],
+    "pixels": [
+      649,
+      534
+    ],
+    "visiblePixels": [
+      633,
+      518
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.5095,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 158904,
+    "sha256": "cb72a9404e3c95c71a1789ae862bba051b6b00b43b633971416f96695c4b7678",
+    "widthScreeningOnly": true
+  },
+  "tree-willow": {
+    "file": "tree-willow.webp",
+    "source": "konoha_tree_asset_collection.png",
+    "sourceBox": [
+      26,
+      548,
+      650,
+      519
+    ],
+    "pixels": [
+      666,
+      535
+    ],
+    "visiblePixels": [
+      650,
+      519
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.4038,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 170896,
+    "sha256": "66435f8b12f4f71d34add9b038160eb5dc1bbd2837661bf0d1ddb68b8388b1b2",
+    "widthScreeningOnly": true
+  },
+  "cherry-wide": {
+    "file": "cherry-wide.webp",
+    "source": "konoha_tree_asset_collection.png",
+    "sourceBox": [
+      718,
+      552,
+      714,
+      515
+    ],
+    "pixels": [
+      730,
+      531
+    ],
+    "visiblePixels": [
+      714,
+      515
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.4825,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 193812,
+    "sha256": "e69321e0dc58a7c2aad16a304e850a6995fe95b9dbd16461ef7dd276f8bb22b9",
+    "widthScreeningOnly": true
+  },
+  "cherry-curved": {
+    "file": "cherry-curved.webp",
+    "source": "anime_vegetation_atlas_sheet.png",
+    "sourceBox": [
+      48,
+      9,
+      801,
+      559
+    ],
+    "pixels": [
+      817,
+      575
+    ],
+    "visiblePixels": [
+      801,
+      559
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.5829,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 201042,
+    "sha256": "792e201bc07100525a3c227789ab14709934eac7a65448620a05985a1c4c5db6",
+    "widthScreeningOnly": true
+  },
+  "bush-medium": {
+    "file": "bush-medium.webp",
+    "source": "anime_vegetation_atlas_sheet.png",
+    "sourceBox": [
+      716,
+      325,
+      312,
+      223
+    ],
+    "pixels": [
+      328,
+      239
+    ],
+    "visiblePixels": [
+      312,
+      223
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.3745,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 47370,
+    "sha256": "43bdb3d00ff12a9a8291caa23a0f38f2f7304f3e5ed2136f87daac5ce2aabb37",
+    "widthScreeningOnly": true
+  },
+  "flowers-pink": {
+    "file": "flowers-pink.webp",
+    "source": "anime_vegetation_atlas_sheet.png",
+    "sourceBox": [
+      387,
+      617,
+      325,
+      169
+    ],
+    "pixels": [
+      341,
+      185
+    ],
+    "visiblePixels": [
+      325,
+      169
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.4259,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 46124,
+    "sha256": "75041490e851e2c57dd0cb57d638b4704e9a592935ce982f8a4a01d4d20ab43e",
+    "widthScreeningOnly": true
+  },
+  "rocks-flat": {
+    "file": "rocks-flat.webp",
+    "source": "anime_vegetation_atlas_sheet.png",
+    "sourceBox": [
+      358,
+      864,
+      337,
+      170
+    ],
+    "pixels": [
+      353,
+      186
+    ],
+    "visiblePixels": [
+      337,
+      170
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.4401,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 42168,
+    "sha256": "38639a09685c0e017d02680dc0d74f75a53f685068580a9ac79502908ccaabce",
+    "widthScreeningOnly": true
+  },
+  "grass-natural": {
+    "file": "grass-natural.webp",
+    "source": "a_clean_high_resolution_digital_illustration_text.png",
+    "sourceBox": [
+      2,
+      2,
+      380,
+      337
+    ],
+    "pixels": [
+      380,
+      337
+    ],
+    "visiblePixels": [
+      380,
+      337
+    ],
+    "anchor": [
+      0,
+      0
+    ],
+    "minVisibleWidth": 512,
+    "edgeMeanAbsoluteRGB": [
+      20.95,
+      23.77
+    ],
+    "tileable": "not verified; medallion and transitions are not generic repeat tiles",
+    "review": "visual-approved; technical pending",
+    "bytes": 63198,
+    "sha256": "7e44b50261efbcf150cb02c35fce7e07b5fb97a4ff7db847d6796188320e2744",
+    "widthScreeningOnly": false
+  },
+  "grass-wildflowers": {
+    "file": "grass-wildflowers.webp",
+    "source": "a_clean_high_resolution_digital_illustration_text.png",
+    "sourceBox": [
+      386,
+      2,
+      380,
+      337
+    ],
+    "pixels": [
+      380,
+      337
+    ],
+    "visiblePixels": [
+      380,
+      337
+    ],
+    "anchor": [
+      0,
+      0
+    ],
+    "minVisibleWidth": 512,
+    "edgeMeanAbsoluteRGB": [
+      23.36,
+      31.14
+    ],
+    "tileable": "not verified; medallion and transitions are not generic repeat tiles",
+    "review": "visual-approved; technical pending",
+    "bytes": 71436,
+    "sha256": "9763ecfb0a957208a29bba90ac2e614fa593cf3865d975cec6a15ed1303924a2",
+    "widthScreeningOnly": false
+  },
+  "dirt-compact": {
+    "file": "dirt-compact.webp",
+    "source": "a_clean_high_resolution_digital_illustration_text.png",
+    "sourceBox": [
+      2,
+      343,
+      380,
+      338
+    ],
+    "pixels": [
+      380,
+      338
+    ],
+    "visiblePixels": [
+      380,
+      338
+    ],
+    "anchor": [
+      0,
+      0
+    ],
+    "minVisibleWidth": 512,
+    "edgeMeanAbsoluteRGB": [
+      19.84,
+      19.64
+    ],
+    "tileable": "not verified; medallion and transitions are not generic repeat tiles",
+    "review": "visual-approved; technical pending",
+    "bytes": 50644,
+    "sha256": "a1cb9a0f8d6570df9990e89b4e92d3acc5fd3edd4099c9208745fb4b6c737870",
+    "widthScreeningOnly": false
+  },
+  "cobbles-irregular": {
+    "file": "cobbles-irregular.webp",
+    "source": "a_clean_high_resolution_digital_illustration_text.png",
+    "sourceBox": [
+      2,
+      685,
+      380,
+      337
+    ],
+    "pixels": [
+      380,
+      337
+    ],
+    "visiblePixels": [
+      380,
+      337
+    ],
+    "anchor": [
+      0,
+      0
+    ],
+    "minVisibleWidth": 512,
+    "edgeMeanAbsoluteRGB": [
+      32.11,
+      19.09
+    ],
+    "tileable": "not verified; medallion and transitions are not generic repeat tiles",
+    "review": "visual-approved; technical pending",
+    "bytes": 58256,
+    "sha256": "6cc7665d9244d15916e5da101c1d210cb348d5cb2d5002736e448885241cbbdc",
+    "widthScreeningOnly": false
+  },
+  "plaza-tiles": {
+    "file": "plaza-tiles.webp",
+    "source": "a_clean_high_resolution_digital_illustration_text.png",
+    "sourceBox": [
+      770,
+      685,
+      380,
+      337
+    ],
+    "pixels": [
+      380,
+      337
+    ],
+    "visiblePixels": [
+      380,
+      337
+    ],
+    "anchor": [
+      0,
+      0
+    ],
+    "minVisibleWidth": 512,
+    "edgeMeanAbsoluteRGB": [
+      14.82,
+      18.94
+    ],
+    "tileable": "not verified; medallion and transitions are not generic repeat tiles",
+    "review": "visual-approved; technical pending",
+    "bytes": 47078,
+    "sha256": "903e8a58530ef822af71ad7272913794d4fa85ade6809d905ef3da7b361f1a76",
+    "widthScreeningOnly": false
+  },
+  "plaza-medallion": {
+    "file": "plaza-medallion.webp",
+    "source": "a_clean_high_resolution_digital_illustration_text.png",
+    "sourceBox": [
+      1154,
+      685,
+      380,
+      337
+    ],
+    "pixels": [
+      380,
+      337
+    ],
+    "visiblePixels": [
+      380,
+      337
+    ],
+    "anchor": [
+      0,
+      0
+    ],
+    "minVisibleWidth": 512,
+    "edgeMeanAbsoluteRGB": [
+      23.93,
+      21.41
+    ],
+    "tileable": "not verified; medallion and transitions are not generic repeat tiles",
+    "review": "visual-approved; technical pending",
+    "bytes": 53432,
+    "sha256": "aea718e33bfc1e9d698b978afabb8ca654841a0556fa370029a876d109cc6266",
+    "widthScreeningOnly": false
+  },
+  "water-clear": {
+    "file": "water-clear.webp",
+    "source": "konoha_waterways_asset_atlas.png",
+    "sourceBox": [
+      978,
+      870,
+      205,
+      203
+    ],
+    "pixels": [
+      221,
+      219
+    ],
+    "visiblePixels": [
+      205,
+      203
+    ],
+    "anchor": [
+      0,
+      0
+    ],
+    "minVisibleWidth": 128,
+    "alpha": 0.1442,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 19282,
+    "sha256": "1526b0234135038e6ccf80fef905cabfdc79d0a1a1dae93964609e436a6e1193",
+    "tileable": "not verified",
+    "minPixels": [
+      256,
+      256
+    ],
+    "minimumPassed": false,
+    "widthScreeningOnly": true
+  },
+  "bridge-wood": {
+    "file": "bridge-wood.webp",
+    "source": "konoha_waterways_asset_atlas.png",
+    "sourceBox": [
+      57,
+      52,
+      604,
+      195
+    ],
+    "pixels": [
+      620,
+      211
+    ],
+    "visiblePixels": [
+      604,
+      195
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 512,
+    "alpha": 0.501,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 66666,
+    "sha256": "be6f00b6d8c3716cc4e2d4a0f1983236166c8fda9be587819b3c90ae6db1bf58",
+    "widthScreeningOnly": true
+  },
+  "bridge-stone-flat": {
+    "file": "bridge-stone-flat.webp",
+    "source": "konoha_waterways_asset_atlas.png",
+    "sourceBox": [
+      731,
+      289,
+      657,
+      208
+    ],
+    "pixels": [
+      673,
+      224
+    ],
+    "visiblePixels": [
+      657,
+      208
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 512,
+    "alpha": 0.3362,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 68540,
+    "sha256": "071fc28c480c7c59427a6715798e19b40dc1cc87b447e0821ee3501562ed3e65",
+    "widthScreeningOnly": true
+  },
+  "bridge-wood-large": {
+    "file": "bridge-wood-large.webp",
+    "source": "konoha_waterways_asset_atlas.png",
+    "sourceBox": [
+      711,
+      15,
+      703,
+      258
+    ],
+    "pixels": [
+      719,
+      274
+    ],
+    "visiblePixels": [
+      703,
+      258
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 512,
+    "alpha": 0.3754,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 99000,
+    "sha256": "2e0a1bde8301d0a9ca5924825f732a3370c88d6cac9dd26bbe73524e46f796bd",
+    "widthScreeningOnly": true
+  },
+  "main-gate": {
+    "file": "main-gate.webp",
+    "source": "a_high_detail_hand_painted_anime_isometric_game_a.png",
+    "sourceBox": [
+      6,
+      11,
+      937,
+      493
+    ],
+    "pixels": [
+      951,
+      509
+    ],
+    "visiblePixels": [
+      937,
+      493
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 512,
+    "alpha": 0.264,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 206376,
+    "sha256": "52e08cc1c9d05155215ffa190e930036bd82cc75ac8653c71247f9d5d4832624",
+    "widthScreeningOnly": true
+  },
+  "wall-long": {
+    "file": "wall-long.webp",
+    "source": "a_high_detail_hand_painted_anime_isometric_game_a.png",
+    "sourceBox": [
+      10,
+      529,
+      472,
+      224
+    ],
+    "pixels": [
+      488,
+      240
+    ],
+    "visiblePixels": [
+      472,
+      224
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.19,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 56254,
+    "sha256": "94d42dcd815abe31a2c49da01a2d2945e62cc66381fd48ee3858e14b23ae70c5",
+    "widthScreeningOnly": true
+  },
+  "watchtower": {
+    "file": "watchtower.webp",
+    "source": "a_high_detail_hand_painted_anime_isometric_game_a.png",
+    "sourceBox": [
+      948,
+      6,
+      284,
+      497
+    ],
+    "pixels": [
+      300,
+      511
+    ],
+    "visiblePixels": [
+      284,
+      497
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.3712,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 68504,
+    "sha256": "547fa8201e9e859a8d18b432f1d6a3dcbe8fcae1777e496e95b1a4fedc5b8118",
+    "widthScreeningOnly": true
+  },
+  "market-stall": {
+    "file": "market-stall.webp",
+    "source": "konoha_village_street_prop_atlas.png",
+    "sourceBox": [
+      24,
+      325,
+      417,
+      274
+    ],
+    "pixels": [
+      433,
+      290
+    ],
+    "visiblePixels": [
+      417,
+      274
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.2893,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 64654,
+    "sha256": "92dccfc6649f30189baab41914ae5f62f0d08e45fc593283ab8cd2dbb25741e6",
+    "widthScreeningOnly": true
+  },
+  "food-stall": {
+    "file": "food-stall.webp",
+    "source": "konoha_village_street_prop_atlas.png",
+    "sourceBox": [
+      472,
+      327,
+      350,
+      273
+    ],
+    "pixels": [
+      366,
+      289
+    ],
+    "visiblePixels": [
+      350,
+      273
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 256,
+    "alpha": 0.2672,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 50382,
+    "sha256": "6c7bbc654d4022af70cb057fa86754449ab338de1d687a760e84e21278933fc0",
+    "widthScreeningOnly": true
+  },
+  "lamp-post": {
+    "file": "lamp-post.webp",
+    "source": "konoha_village_street_prop_atlas.png",
+    "sourceBox": [
+      69,
+      10,
+      141,
+      302
+    ],
+    "pixels": [
+      157,
+      318
+    ],
+    "visiblePixels": [
+      141,
+      302
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 128,
+    "alpha": 0.6056,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 21212,
+    "sha256": "c263625bcb44ebdfb3ce1d6e0f310446ddb63db5572b185a70bc2961453be974",
+    "widthScreeningOnly": true
+  },
+  "bench-back": {
+    "file": "bench-back.webp",
+    "source": "konoha_village_street_prop_atlas.png",
+    "sourceBox": [
+      882,
+      335,
+      265,
+      142
+    ],
+    "pixels": [
+      281,
+      158
+    ],
+    "visiblePixels": [
+      265,
+      142
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 128,
+    "alpha": 0.4475,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 24138,
+    "sha256": "107578033192578fa5b3919e6af5926820f46546e8e8c793658778e838c4c592",
+    "widthScreeningOnly": true
+  },
+  "notice-board": {
+    "file": "notice-board.webp",
+    "source": "konoha_village_street_prop_atlas.png",
+    "sourceBox": [
+      43,
+      785,
+      400,
+      274
+    ],
+    "pixels": [
+      416,
+      290
+    ],
+    "visiblePixels": [
+      400,
+      274
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 128,
+    "alpha": 0.355,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 53092,
+    "sha256": "519aeb046798a607a0f89ee05cf8094c69cb6e49bca86bbe605b3d5df8589829",
+    "widthScreeningOnly": true
+  },
+  "training-post": {
+    "file": "training-post.webp",
+    "source": "konoha_village_street_prop_atlas.png",
+    "sourceBox": [
+      869,
+      767,
+      174,
+      291
+    ],
+    "pixels": [
+      190,
+      307
+    ],
+    "visiblePixels": [
+      174,
+      291
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 128,
+    "alpha": 0.5409,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 28800,
+    "sha256": "de6bffa4e75d590ba65ceea3d303ece2b03cbf4a7e79c664353d42d00c10c5a9",
+    "widthScreeningOnly": true
+  },
+  "barrel-large": {
+    "file": "barrel-large.webp",
+    "source": "konoha_village_street_prop_atlas.png",
+    "sourceBox": [
+      67,
+      610,
+      125,
+      151
+    ],
+    "pixels": [
+      141,
+      167
+    ],
+    "visiblePixels": [
+      125,
+      151
+    ],
+    "anchor": [
+      0.5,
+      1
+    ],
+    "minVisibleWidth": 128,
+    "alpha": 0.2915,
+    "review": "visual-approved; extraction needs visual review",
+    "bytes": 14486,
+    "sha256": "0416e6689bc36fb6448185c3df5f7471fb397333aa06c5e1fc69178a192a551d",
+    "widthScreeningOnly": false
+  }
+}

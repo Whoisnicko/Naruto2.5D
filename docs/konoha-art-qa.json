@@ -1,0 +1,46 @@
+{
+  "browser": [
+    {
+      "resolution": [
+        1366,
+        768
+      ],
+      "assets": 11,
+      "movement": true,
+      "reset": true,
+      "errors": []
+    },
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "assets": 11,
+      "movement": true,
+      "reset": true,
+      "errors": []
+    },
+    {
+      "resolution": [
+        1280,
+        720
+      ],
+      "assets": 11,
+      "movement": true,
+      "reset": true,
+      "errors": []
+    },
+    {
+      "resolution": [
+        390,
+        844
+      ],
+      "assets": 11,
+      "movement": true,
+      "reset": true,
+      "errors": []
+    }
+  ],
+  "forcedFallback": true,
+  "testMode": "standalone inlined HTML, not Three.js campaign"
+}

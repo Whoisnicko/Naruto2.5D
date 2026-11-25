@@ -1,0 +1,54 @@
+{
+  "browser": [
+    {
+      "resolution": [
+        1366,
+        768
+      ],
+      "validImport": true,
+      "webpExport": true,
+      "restore": true,
+      "opaqueRejected": true,
+      "undersizedRejected": true,
+      "corruptRejected": true,
+      "movement": true,
+      "errors": []
+    },
+    {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "validImport": true,
+      "webpExport": true,
+      "restore": true,
+      "opaqueRejected": true,
+      "undersizedRejected": true,
+      "corruptRejected": true,
+      "movement": true,
+      "errors": []
+    },
+    {
+      "resolution": [
+        390,
+        844
+      ],
+      "validImport": true,
+      "webpExport": true,
+      "restore": true,
+      "opaqueRejected": true,
+      "undersizedRejected": true,
+      "corruptRejected": true,
+      "movement": true,
+      "errors": []
+    }
+  ],
+  "fixture": "Synthetic image for technical tests only. No newly generated artwork.",
+  "mode": "standalone HTML with real previous assets; no WebGL or Cloudflare validation",
+  "scale": {
+    "equalVisibleArtDifferentPadding": true,
+    "sameDrawCoordinatesAndSize": true,
+    "aspectMismatchBlocked": true,
+    "fixture": "synthetic, not art"
+  }
+}

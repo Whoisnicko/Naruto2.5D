@@ -1,0 +1,177 @@
+{
+  "layout": [
+    {
+      "resolution": "1366x768",
+      "screen": "bingo",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1366x768",
+      "screen": "journal",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1366x768",
+      "screen": "npc",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1366x768",
+      "screen": "scene",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1920x1080",
+      "screen": "bingo",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1920x1080",
+      "screen": "journal",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1920x1080",
+      "screen": "npc",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1920x1080",
+      "screen": "scene",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1280x720",
+      "screen": "bingo",
+      "horizontalOverflow": 0,
+      "verticalScroll": 47
+    },
+    {
+      "resolution": "1280x720",
+      "screen": "journal",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1280x720",
+      "screen": "npc",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1280x720",
+      "screen": "scene",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1024x768",
+      "screen": "bingo",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1024x768",
+      "screen": "journal",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1024x768",
+      "screen": "npc",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "1024x768",
+      "screen": "scene",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "768x1024",
+      "screen": "bingo",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "768x1024",
+      "screen": "journal",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "768x1024",
+      "screen": "npc",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "768x1024",
+      "screen": "scene",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "390x844",
+      "screen": "bingo",
+      "horizontalOverflow": 0,
+      "verticalScroll": 160
+    },
+    {
+      "resolution": "390x844",
+      "screen": "journal",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "390x844",
+      "screen": "npc",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "390x844",
+      "screen": "scene",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "320x568",
+      "screen": "bingo",
+      "horizontalOverflow": 0,
+      "verticalScroll": 616
+    },
+    {
+      "resolution": "320x568",
+      "screen": "journal",
+      "horizontalOverflow": 0,
+      "verticalScroll": 159
+    },
+    {
+      "resolution": "320x568",
+      "screen": "npc",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    },
+    {
+      "resolution": "320x568",
+      "screen": "scene",
+      "horizontalOverflow": 0,
+      "verticalScroll": 0
+    }
+  ],
+  "functional": "8 cards, cleared rewards, locked spoiler protection, 3 filters, NPC pause/close, quest acceptance, shop purchase/back, scene reveal/next",
+  "pageErrors": [],
+  "progressionAssertions": 8,
+  "syntaxChecks": 4,
+  "scope": "Chromium fixture with actual UI modules, real game data, original pixel portraits and local textures; no full campaign or deployed build tested."
+}

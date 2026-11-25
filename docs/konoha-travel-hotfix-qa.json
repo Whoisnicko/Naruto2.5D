@@ -1,0 +1,26 @@
+{
+  "checks": [
+    "safe portal konoha-east",
+    "return konoha-east",
+    "safe portal forest-west",
+    "return forest-west",
+    "safe portal konoha-south",
+    "return konoha-south",
+    "safe portal forest-south",
+    "return forest-south",
+    "safe portal forest-east",
+    "return forest-east",
+    "safe portal outpost-west",
+    "return outpost-west",
+    "all preview destinations enabled",
+    "campaign discovery still locked",
+    "direct forest-camp",
+    "direct outpost-plaza",
+    "direct plaza",
+    "south entrance reachable",
+    "south goes to forest",
+    "south return available"
+  ],
+  "syntax": true,
+  "visual": "not tested"
+}

@@ -1,0 +1,90 @@
+{
+  "layout": {
+    "reachable": [
+      {
+        "id": "gate",
+        "reachable": true
+      },
+      {
+        "id": "avenue",
+        "reachable": true
+      },
+      {
+        "id": "plaza",
+        "reachable": true
+      },
+      {
+        "id": "tower",
+        "reachable": true
+      },
+      {
+        "id": "academy",
+        "reachable": true
+      },
+      {
+        "id": "hospital",
+        "reachable": true
+      },
+      {
+        "id": "training",
+        "reachable": true
+      },
+      {
+        "id": "market",
+        "reachable": true
+      },
+      {
+        "id": "ichiraku",
+        "reachable": true
+      },
+      {
+        "id": "west",
+        "reachable": true
+      },
+      {
+        "id": "east",
+        "reachable": true
+      },
+      {
+        "id": "forest",
+        "reachable": true
+      }
+    ],
+    "walkableGridPoints": 7631,
+    "solidBuildingFootprints": 23,
+    "bridgeCrossings": 3,
+    "riverBarrier": true,
+    "mountainBarrier": true,
+    "towerCollision": true,
+    "bridgeMovement": true
+  },
+  "browser": {
+    "browserResolutions": [
+      [
+        1920,
+        1080
+      ],
+      [
+        1366,
+        768
+      ],
+      [
+        1280,
+        720
+      ],
+      [
+        1024,
+        768
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "pageErrors": [],
+    "keyboardMovement": true,
+    "reset": true,
+    "zoneSelect": true,
+    "zoneCount": 13
+  }
+}

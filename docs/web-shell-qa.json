@@ -44,5 +44,12 @@
   ],
   "rejectedImportShowsRetry": true,
   "iframeFullscreenEnterExit": true,
-  "deniedFullscreenFeedback": true
+  "deniedFullscreenFeedback": true,
+  "fullscreenFocusRegression": {
+    "pointerEnterSpaceReachesInput": true,
+    "pointerExitSpaceReachesInput": true,
+    "keyboardActivationStillWorks": true,
+    "deniedFullscreenSpaceReachesInput": true,
+    "scope": "Synthetic input listener, not actual combat"
+  }
 }

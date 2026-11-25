@@ -13,7 +13,7 @@ export const VILLAGE_NPCS=[{id:'kakashi',name:CHARACTERS.kakashi.name,kind:CHARA
 export const VILLAGE_REACH=2.7;
 export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearMotion,onSelect}){
  const $=id=>document.getElementById(id),sheets=new Map(),actors=[];
- let hero='naruto',nearest=null,openedNPC=null,mode='dialog',position=null,activeNow=false;
+ let hero='naruto',nearest=null,openedNPC=null,mode='dialog',position=null,activeNow=false,currentRegion='konoha';
  const services=createVillageServices();
  const getSheet=kind=>{if(!sheets.has(kind)){let sheet=null;try{sheet=makeActorSheet(kind)}catch{}sheets.set(kind,sheet)}return sheets.get(kind)};
  const select=document.createElement('select');select.id='villageHero';select.setAttribute('aria-label','Personaje de exploración');
@@ -32,7 +32,7 @@ export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearM
   const visual={name:data.id,x,z:y,w:1.5,h:2,m,depth:y,offset:.1,kind:'villageActor'};billboards.push(visual);
   const a={...data,x,y,route,target:1,wait:2+actors.length*.7,dir:0,motion:false,frame:'',ctx:c.getContext('2d'),tex,visual,shade:shadow(x,y,1.15,.7),time:0};actors.push(a);paint(a,0);
  }
- function available(a){return a.id!==hero}
+ function available(a){return currentRegion==='konoha'&&a.id!==hero}
  function close(){if(dialog.open)dialog.close()}
  dialog.addEventListener('close',()=>{openedNPC=null;mode='dialog';clearMotion();hint.blur();journal.blur()});
  $('villageClose').onclick=close;
@@ -44,8 +44,8 @@ export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearM
   const state=services.state(),p=state.player,actions=$('villageActions');actions.replaceChildren();
   $('villageWallet').textContent=p.coins+' ryō · '+p.xp+' EXP · HP '+p.hp+'/100 · Chakra '+p.chakra+'/100';
   if(mode==='journal'){
-   $('villageName').textContent='Diario y mochila';$('villageRole').textContent='KONOHA · EXPLORACIÓN';$('villagePortrait').hidden=true;$('villageLine').textContent='Misiones existentes, adaptadas a este mapa. El jardín y la salida al bosque son ubicaciones provisionales. Cambiá de héroe si un NPC está oculto.';
-   for(const q of services.quests()){const row=el('div','','village-row');row.append(el('strong',q.name+' · '+['Disponible','Activa','Completada'][q.status]),el('small',q.desc+' · '+q.progress+' · '+q.xp+' EXP / '+q.coins+' ryō'));for(const loc of q.locations)row.append(el('small',(loc.visited?'✓ ':'○ ')+loc.name+' · '+loc.at.join(', ')));actions.append(row)}
+   $('villageName').textContent='Diario y mochila';$('villageRole').textContent='KONOHA · EXPLORACIÓN';$('villagePortrait').hidden=true;$('villageLine').textContent='Misiones existentes, adaptadas a este mapa. El Jardín Nara sigue siendo provisional; el bosque se visita cruzando el mapa. Cambiá de héroe si un NPC está oculto.';
+   for(const q of services.quests()){const row=el('div','','village-row');row.append(el('strong',q.name+' · '+['Disponible','Activa','Completada'][q.status]),el('small',q.desc+' · '+q.progress+' · '+q.xp+' EXP / '+q.coins+' ryō'));for(const loc of q.locations)row.append(el('small',(loc.visited?'✓ ':'○ ')+loc.name+' · '+(loc.region==='forest'?'Bosque · ':'Konoha · ')+loc.at.join(', ')));actions.append(row)}
    actions.append(el('h3','Mochila'));for(const i of services.inventory()){const row=el('div','','village-row');row.append(el('strong',i.name+' ×'+i.count),el('small',i.desc));if(i.type==='consumable')row.append(button('Usar',()=>action(()=>services.use(i.id))));actions.append(row)}
    const extra=services.overflow();if(Object.keys(extra).length)actions.append(button('Recuperar recompensas pendientes',()=>{feedback('Recuperados: '+services.recover());render()}));
    return;
@@ -65,12 +65,12 @@ export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearM
  }
  function openJournal(){if(dialog.open||!activeNow)return false;clearMotion();openedNPC=null;mode='journal';feedback('');render();dialog.showModal();return true}
  journal.onclick=openJournal;
- function talk(){if(dialog.open||!activeNow)return false;if(!nearest){if(position&&services.nearSupply(position)){const err=services.collect(position);hint.textContent=err||'Provisiones obtenidas: Rogue Cloth ×3';return !err}return false}if(!available(nearest))return false;openedNPC=nearest;mode='dialog';clearMotion();feedback('');const a=nearest;const line=DIALOGUES[a.id]?.text||'Naruto, keep training. A shinobi must know the village before setting out.';
+ function talk(){if(dialog.open||!activeNow)return false;if(!nearest){if(currentRegion==='konoha'&&position&&services.nearSupply(position)){const err=services.collect(position);hint.textContent=err||'Provisiones obtenidas: Rogue Cloth ×3';return !err}return false}if(!available(nearest))return false;openedNPC=nearest;mode='dialog';clearMotion();feedback('');const a=nearest;const line=DIALOGUES[a.id]?.text||'Naruto, keep training. A shinobi must know the village before setting out.';
  $('villageName').textContent=a.name;$('villageRole').textContent=a.role;$('villageLine').textContent=line;
  const c=$('villagePortrait'),g=c.getContext('2d');g.clearRect(0,0,24,32);const sheet=getSheet(a.kind);if(sheet)g.drawImage(sheet,0,0,24,32,0,0,24,32);else g.drawImage(a.tex.image,0,0);render();dialog.showModal();return true}
  hint.onclick=talk;
  select.onchange=()=>{if(!Object.hasOwn(CHARACTERS,select.value)){select.value=hero;return}hero=select.value;clearMotion();close();nearest=null;hint.hidden=true;onSelect(hero,getSheet(CHARACTERS[hero].art));select.blur()};
- function update(dt,p,active,discover=active){position=p;activeNow=active;services.update(p,discover);const sp=services.resources();const status=sp.coins+' ryō · '+sp.xp+' EXP · HP '+sp.hp+' · CH '+sp.chakra;if(stats.textContent!==status)stats.textContent=status;nearest=null;let best=VILLAGE_REACH;
+ function update(dt,p,active,discover=active,region='konoha'){currentRegion=region;position=p;activeNow=active;services.update(p,discover,region);const sp=services.resources();const status=sp.coins+' ryō · '+sp.xp+' EXP · HP '+sp.hp+' · CH '+sp.chakra;if(stats.textContent!==status)stats.textContent=status;nearest=null;let best=VILLAGE_REACH;
   for(const a of actors){const visible=available(a);a.visual.m.visible=a.shade.visible=visible;if(!visible)continue;
    a.motion=false;if(active&&!dialog.open){a.time+=dt;a.wait=Math.max(0,a.wait-dt);const [tx,ty]=a.route[a.target],dx=tx-a.x,dy=ty-a.y,d=Math.hypot(dx,dy);
     if(d<.08){a.target=(a.target+1)%a.route.length;a.wait=2.6}
@@ -79,7 +79,7 @@ export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearM
    a.visual.x=a.x;a.visual.z=a.visual.depth=a.y;a.shade.position.set(a.x,.10,a.y);paint(a,a.time);
    const d=Math.hypot(p.x-a.x,p.y-a.y);if(active&&!dialog.open&&d<best){nearest=a;best=d}
   }
-  const supply=active&&services.nearSupply(p);hint.hidden=(!nearest&&!supply)||dialog.open;if(nearest)hint.textContent='E · Hablar con '+nearest.name;else if(supply)hint.textContent='E · Recoger provisiones de práctica (3 telas)';journal.disabled=!active;
+  const supply=active&&currentRegion==='konoha'&&services.nearSupply(p);hint.hidden=(!nearest&&!supply)||dialog.open;if(nearest)hint.textContent='E · Hablar con '+nearest.name;else if(supply)hint.textContent='E · Recoger provisiones de práctica (3 telas)';journal.disabled=!active;
  }
  return {update,talk,close,openJournal,get opened(){return dialog.open},state:()=>({hero,nearby:nearest?.id||null,dialog:openedNPC?.id||null,mode,services:services.state(),npcs:actors.map(a=>({id:a.id,x:a.x,y:a.y,visible:available(a),motion:a.motion,fallback:!getSheet(a.kind)}))})};
 }

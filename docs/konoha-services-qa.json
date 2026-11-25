@@ -1,0 +1,30 @@
+{
+  "checks": [
+    "seed",
+    "accept strategic walk",
+    "premature quest rejected",
+    "reachable garden",
+    "reachable market",
+    "reachable hokage",
+    "reachable ichiraku",
+    "reachable bridge",
+    "reachable forest",
+    "strategic reward",
+    "no duplicate rewards",
+    "Iruka reward",
+    "Sakura supply requirement",
+    "cache reachable",
+    "one-time nearby cache",
+    "Sakura consumes cloth",
+    "buy original price",
+    "invalid transactions rejected",
+    "sell half price",
+    "healing",
+    "no charge full health",
+    "consumable original effect",
+    "insufficient funds",
+    "session isolation"
+  ],
+  "passed": 24,
+  "method": "real original RPG/world functions and map collisions; syntax parse; no browser rendering"
+}

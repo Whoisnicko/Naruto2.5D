@@ -3,7 +3,7 @@ import {COMBAT} from './combat-data.js';
 import {roleFor} from './enemy-ai.js';
 import {characterFor} from './character-data.js';
 import * as THREE from 'three';
-import {makeActorSheet,makeSheets,ANIMS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SIZE,FX_COLS,TREE_W,TREE_H,artFor,makeRasenganSheet,RAS_COLS,RAS_ROWS,rasenganPose,rasenganHand} from './pixel-art.js';
+import {makeActorSheet,makeSheets,makeEnhancedActorSheet,makeEnhancedSheets,ANIMS,ACTOR_W,ACTOR_H,ACTOR_COLS,FX_ROWS,FX_SIZE,FX_COLS,TREE_W,TREE_H,artFor,makeRasenganSheet,RAS_COLS,RAS_ROWS,rasenganPose,rasenganHand} from './pixel-art.js';
 const TILT=-Math.atan2(25,30),UP_Y=Math.cos(TILT),UP_Z=Math.sin(TILT);
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 export function direction(x=0,z=1){return Math.abs(x)>Math.abs(z)?(x<0?1:2):(z<0?3:0);}
@@ -71,7 +71,7 @@ function makeShadowTexture(){
 }
 function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material);o.rotation.x=-Math.PI/2;o.position.y=.024;return o;}
 export function createPixelSystem(scene){
- const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
+ const sheets=makeEnhancedSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
  const active=new Map(),free={jiraiya:[],jiraiyaSage:[],player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],kabuto:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[],shukaku:[],orochimaru:[],whiteSerpent:[],kimimaro:[],kimiMarked:[],kimiCursed:[],sasukeSharingan:[],sasukeMarked:[],sasukeCursed:[],sasukeInjured:[]},trails=[],fxPool=[];
  const worldMeshes=[];let warmIndex=0;const warmKinds=['jiraiya','jiraiyaSage','zabuza','haku','npc','sasuke','kabuto','shukaku','orochimaru','whiteSerpent','kimimaro','kimiMarked','kimiCursed','sasukeSharingan','sasukeMarked','sasukeCursed','sasukeInjured'];
@@ -86,9 +86,9 @@ export function createPixelSystem(scene){
  const armMap=pixelLayer('arm',512,24,cx=>{for(let f=0;f<8;f++){cx.fillStyle='#a52b39';cx.fillRect(f*64,7,62,10);cx.fillStyle='#ff7548';cx.fillRect(f*64,10,64,4);}});
  const tailCanvas=document.createElement('canvas');tailCanvas.width=512;tailCanvas.height=512;const tc=tailCanvas.getContext('2d');tc.imageSmoothingEnabled=false;
  for(let count=1;count<=2;count++)for(let row=0;row<4;row++)for(let f=0;f<8;f++)for(let j=0;j<count;j++){const ox=f*64,oy=((count-1)*4+row)*64,side=row===1?1:row===2?-1:(j%2?1:-1),wave=Math.sin(f*Math.PI/4+j*1.9),spread=count===2?(j?1:-1):side;for(let k=0;k<=24;k++){const u=k/24,x=Math.round(32+side*9*u+spread*(12+j*3)*Math.sin(u*1.6)+wave*4*u),y=Math.round(43-26*u+4*Math.sin(u*4+j)),w=Math.max(1,Math.round(5*(1-u)));tc.fillStyle='#781d33';tc.fillRect(ox+x-w,oy+y-w,w*2+1,w*2+1);tc.fillStyle='#d73e43';tc.fillRect(ox+x-w+1,oy+y-w+1,Math.max(1,w*2-1),Math.max(1,w*2-1));tc.fillStyle='#ff864a';tc.fillRect(ox+x,oy+y,Math.max(1,w),Math.max(1,w));}}const tailMap=texture(tailCanvas);
- function gearSheet(gear,kind='player',red=false){const key=kind+JSON.stringify(gear||{});if(red){if(key!==redGearKey){redGearKey=key;redGearCanvas=makeActorSheet(kind,gear,true);}return redGearCanvas;}if(key!==gearKey){gearKey=key;gearCanvas=makeActorSheet(kind,gear);}return gearCanvas;}
- function previewEquipment(gear,canvas,kind='player'){const c=gearSheet(gear,kind),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,24,32,0,0,canvas.width,canvas.height);}
- function portrait(kind,canvas){const c=sheets[kind]||sheets.npc,ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(c,0,0,24,19,0,0,canvas.width,canvas.height);}
+ function gearSheet(gear,kind='player',red=false){const key=kind+JSON.stringify(gear||{});if(red){if(key!==redGearKey){redGearKey=key;redGearCanvas=makeEnhancedActorSheet(kind,gear,true);}return redGearCanvas;}if(key!==gearKey){gearKey=key;gearCanvas=makeEnhancedActorSheet(kind,gear);}return gearCanvas;}
+ function previewEquipment(gear,canvas,kind='player'){const c=gearSheet(gear,kind),cx=canvas.getContext('2d');cx.clearRect(0,0,canvas.width,canvas.height);cx.imageSmoothingEnabled=false;cx.drawImage(c,0,0,c.width/ACTOR_COLS,c.height/4,0,0,canvas.width,canvas.height);}
+ function portrait(kind,canvas){const c=sheets[kind]||sheets.npc,ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(c,0,0,c.width/ACTOR_COLS,c.height/4*19/32,0,0,canvas.width,canvas.height);}
  function makeActor(kind){
   const scale=kind==='jiraiyaSage'?1.26:kind==='jiraiya'?1.14:kind==='sasukeCursed'?1.22:kind==='kimiCursed'?1.4:kind==='whiteSerpent'?2:kind==='shukaku'?1.85:kind==='zabuza'?1.3:1;const s=sprite(maps[kind],ACTOR_COLS,4,1.80*scale,2.40*scale,true);s.kind=kind;s.baseScale=scale;s.clock=0;s.trailAt=-99;s.shadow=shadowMesh(shadowGeo,shadowMat);
   scene.add(s.obj,s.shadow);return s;

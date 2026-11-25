@@ -1,0 +1,99 @@
+{
+  "cases": [
+    {
+      "kind": "player",
+      "width": 48,
+      "height": 64,
+      "frames": 256,
+      "empty": 0,
+      "partial": 0
+    },
+    {
+      "kind": "clone",
+      "width": 48,
+      "height": 64,
+      "frames": 256,
+      "empty": 0,
+      "partial": 0
+    },
+    {
+      "kind": "sasuke",
+      "width": 48,
+      "height": 64,
+      "frames": 256,
+      "empty": 0,
+      "partial": 0
+    },
+    {
+      "kind": "sakura",
+      "width": 48,
+      "height": 64,
+      "frames": 256,
+      "empty": 0,
+      "partial": 0
+    },
+    {
+      "kind": "npc",
+      "width": 48,
+      "height": 64,
+      "frames": 256,
+      "empty": 0,
+      "partial": 0
+    },
+    {
+      "kind": "zabuza",
+      "width": 24,
+      "height": 32,
+      "frames": 256,
+      "empty": 0,
+      "partial": 0
+    },
+    {
+      "kind": "sasukeCursed",
+      "width": 24,
+      "height": 32,
+      "frames": 256,
+      "empty": 0,
+      "partial": 0
+    },
+    {
+      "kind": "shukaku",
+      "width": 24,
+      "height": 32,
+      "frames": 256,
+      "empty": 0,
+      "partial": 0
+    }
+  ],
+  "kyubiDistinct": true,
+  "gearDistinct": true,
+  "legacyUnchanged": true,
+  "responsive": [
+    {
+      "width": 1920,
+      "height": 1080,
+      "overflow": false
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "overflow": false
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

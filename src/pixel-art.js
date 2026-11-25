@@ -1,3 +1,4 @@
+import {TEAM7_KINDS,TEAM7_COLORS,enhancedCell,paintTeamBody,paintTeamHead} from './team7-art.js';
 // Original, deterministic pixel sheets. All primitives rasterize on integer pixels;
 // no generated image or third-party character assets are needed.
 export const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=64,DIRS=['down','left','right','up'];
@@ -74,13 +75,14 @@ function whiteSerpentCell(dir,frame){
  for(let i=0;i<4;i++)rect(4+i*4,28+(i%2),2,1,purple);
  return s.c;
 }
-function actorCell(kind,dir,frame,gear=null,kyubi=false){
+function actorCell(kind,dir,frame,gear=null,kyubi=false,enhanced=false){
+ enhanced=enhanced&&TEAM7_KINDS.has(kind);
  if(kind==='whiteSerpent')return whiteSerpentCell(dir,frame);
  if(kind==='shukaku')return shukakuCell(dir,frame);
  const extra=frame>=44?frame-44:-1;if(extra>=0)frame=[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][extra];
  const ras=frame>=38?frame-38:-1;if(ras>=0)frame=[14,14,14,7,12,0][ras];
  const special=frame>=22?Math.floor((frame-22)/4):-1,stage=frame>=22?(frame-22)%4:0;if(special>=0)frame=[14,14,15,14][stage];
- const sage=kind==='jiraiyaSage';if(sage)kind='jiraiya';const sasukeForm=kind==='sasukeSharingan'?1:kind==='sasukeMarked'?2:kind==='sasukeCursed'?3:kind==='sasukeInjured'?4:0;if(sasukeForm)kind='sasuke';const kimiForm=kind==='kimiMarked'?1:kind==='kimiCursed'?2:0;if(kimiForm)kind='kimimaro';const role=kind;const p=sasukeForm===3?{hair:'#56516d',hairLight:'#8782a2',hairShade:'#363247',shirt:'#847d91',shade:'#534f69',light:'#b0a7bd',trim:'#ddd9d7',metal:'#c8c7df'}:kimiForm===2?{hair:'#d6d6ce',hairLight:'#eee9df',hairShade:'#8b878d',shirt:'#8e7c74',shade:'#645956',light:'#b5a091',trim:'#554653',metal:'#f2eada'}:PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
+ const sage=kind==='jiraiyaSage';if(sage)kind='jiraiya';const sasukeForm=kind==='sasukeSharingan'?1:kind==='sasukeMarked'?2:kind==='sasukeCursed'?3:kind==='sasukeInjured'?4:0;if(sasukeForm)kind='sasuke';const kimiForm=kind==='kimiMarked'?1:kind==='kimiCursed'?2:0;if(kimiForm)kind='kimimaro';const role=kind;const p=sasukeForm===3?{hair:'#56516d',hairLight:'#8782a2',hairShade:'#363247',shirt:'#847d91',shade:'#534f69',light:'#b0a7bd',trim:'#ddd9d7',metal:'#c8c7df'}:kimiForm===2?{hair:'#d6d6ce',hairLight:'#eee9df',hairShade:'#8b878d',shirt:'#8e7c74',shade:'#645956',light:'#b5a091',trim:'#554653',metal:'#f2eada'}:(enhanced?TEAM7_COLORS[kind]:PALETTES[kind]),s=enhanced?enhancedCell(24,32):cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
  const side=dir===1||dir===2,back=dir===3,run=frame>=6&&frame<=9,walk=frame>=2&&frame<=5,attack=frame>=10&&frame<=12||frame>=16,cast=frame===14||frame===15,kick=frame>=16&&frame<=18,finish=frame>=19;
  const f=walk?(frame-2):run?(frame-6):0,step=[-3,0,3,0][f],bob=(walk||run)&&f%2===1?1:frame===1?1:0;
  const phase=kick?frame-16:finish?frame-19:attack?frame-10:cast?frame-14:0;const lean=ras>=0&&kind==='player'?(side?[0,-1,0,3,2,0][ras]:0):side&&run?2:side&&attack?(phase===1?2:0):0;const hx=12+lean,hy=8+bob,bodyY=16+bob;
@@ -106,11 +108,13 @@ function actorCell(kind,dir,frame,gear=null,kyubi=false){
  else if(!back){rect(side?15:11,bodyY+4,1,6,p.trim);rect(side?14:10,bodyY+4,1,1,p.light);}
  else{rect(10,bodyY+4,4,4,'#a33337');rect(11,bodyY+5,2,2,p.light);}
  rect(8,24,8,1,p.trim);
+ if(enhanced)paintTeamBody(s,role,p,{lean,bodyY,back,side});
  if(side){const x=run?4:attack?[8,21,17][phase]:cast?17+phase:16+step,y=run?22:attack?[18,16,21][phase]:cast?18-phase:22;limb(14+lean,bodyY+2,x,y,p.shirt,3);rect(x-1,y-1,3,3,skin);rect(x-1,y+1,3,1,skinShade);}
  else if(cast){rect(9,18,3,3,skin);rect(12,18,3,3,skin);rect(11,17,2,1,skinLight);}
  // Distinct combo poses, with the same palette and original 24×32 cell.
  if(kick&&phase===1){if(side){limb(13,23,22,19,p.shirt,4);rect(20,17,4,4,ink);rect(20,18,3,1,'#657286');}else{limb(14,23,19,back?18:26,p.shirt,4);rect(18,back?16:25,5,3,ink);}}
  if(finish&&phase===1){if(side){limb(11,18,21,13,p.shade,4);limb(15,18,22,15,p.shirt,4);rect(20,12,4,5,skin);}else{limb(8,19,5,13,p.shirt,4);limb(16,19,19,13,p.shirt,4);rect(3,11,4,4,skin);rect(18,11,4,4,skin);}}
+ if(enhanced){paintTeamHead(s,role,p,{hx,hy,side,back,kyubi});}else{
  // rounded anime head, outline, shade and a readable face at tiny scale.
  poly([[hx-6,hy-3],[hx+4,hy-4],[hx+7,hy],[hx+6,hy+6],[hx+3,hy+9],[hx-4,hy+9],[hx-6,hy+5]],ink);
  poly([[hx-5,hy-2],[hx+4,hy-3],[hx+6,hy+1],[hx+5,hy+6],[hx+2,hy+8],[hx-3,hy+8],[hx-5,hy+5]],kind==='enemy'?p.trim:skin);
@@ -127,7 +131,8 @@ function actorCell(kind,dir,frame,gear=null,kyubi=false){
    if(kind==='npc'||kind==='enemy'){rect(hx-4,hy+6,9,3,p.trim);if(kind==='npc')rect(hx-4,hy+3,4,3,p.trim);}
    else{rect(hx-4,hy+6,2,1,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx,hy+7,2,1,'#9d574e');}
  }
- if(role==='sakura'){rect(hx-6,hy-1,2,8,p.hairShade);rect(hx+5,hy-1,2,8,p.hair);rect(hx-5,hy-2,10,3,p.hair);rect(hx-2,hy-3,4,2,p.hairLight);}if(role==='teuchi'){rect(hx-6,hy-6,12,7,p.hair);rect(hx-7,hy-1,14,2,p.hairLight);rect(9,bodyY+3,7,7,'#f3ead8');}if(role==='tenten'){rect(hx-7,hy-7,4,5,p.hair);rect(hx+4,hy-7,4,5,p.hair);rect(hx-6,hy-6,2,2,p.hairLight);}if(role==='iruka'){rect(hx-1,hy-8,4,5,p.hair);if(!back)rect(hx-3,hy+6,7,1,'#a66c56');}
+ }
+ if(!enhanced&&role==='sakura'){rect(hx-6,hy-1,2,8,p.hairShade);rect(hx+5,hy-1,2,8,p.hair);rect(hx-5,hy-2,10,3,p.hair);rect(hx-2,hy-3,4,2,p.hairLight);}if(role==='teuchi'){rect(hx-6,hy-6,12,7,p.hair);rect(hx-7,hy-1,14,2,p.hairLight);rect(9,bodyY+3,7,7,'#f3ead8');}if(role==='tenten'){rect(hx-7,hy-7,4,5,p.hair);rect(hx+4,hy-7,4,5,p.hair);rect(hx-6,hy-6,2,2,p.hairLight);}if(role==='iruka'){rect(hx-1,hy-8,4,5,p.hair);if(!back)rect(hx-3,hy+6,7,1,'#a66c56');}
  if(role==='kabuto'){rect(hx-3,hy-7,6,4,p.hairLight);if(back){rect(hx-2,hy+3,4,9,p.hairShade);rect(hx-1,hy+3,2,8,p.hairLight);}else{if(side){rect(hx+1,hy+3,5,4,'#303748');rect(hx+2,hy+4,3,2,'#d4e7eb');}else{rect(hx-5,hy+3,4,4,'#303748');rect(hx+1,hy+3,4,4,'#303748');rect(hx-4,hy+4,2,2,'#d4e7eb');rect(hx+2,hy+4,2,2,'#d4e7eb');rect(hx-1,hy+4,2,1,'#303748');}}rect(7,bodyY+5,10,2,p.trim);if(attack||cast){rect(4,bodyY+4,3,6,'#8cebd2');rect(17,bodyY+4,3,6,'#8cebd2');}}
  if(role==='zabuza'){rect(hx-5,hy+5,11,5,'#d6d9cf');rect(hx-4,hy+6,9,1,'#87999c');line(side?17:19,8,side?21:21,25,'#344051',4);line(side?17:19,8,side?21:21,22,'#b5ced5',3);rect(19,25,3,4,'#795c50');}if(role==='haku'){if(!back){rect(hx-4,hy+1,8,9,'#e7e8dc');rect(hx-3,hy+3,2,1,'#554253');rect(hx+1,hy+3,2,1,'#554253');rect(hx-1,hy+6,2,2,'#b06b78');}rect(hx-6,hy,2,11,p.hair);rect(hx+5,hy,2,11,p.hairShade);}
  if(role==='shikamaru'){rect(hx-2,hy-8,4,5,p.hair);rect(hx-3,hy-7,6,2,p.hairShade);rect(hx-1,hy-9,2,2,p.hairLight);rect(9,bodyY+5,6,2,p.shade);}
@@ -138,7 +143,7 @@ function actorCell(kind,dir,frame,gear=null,kyubi=false){
  if(role==='jiraiya'){poly([[hx-7,hy-4],[hx-9,hy+4],[hx-10,hy+14],[hx-6,hy+12],[hx-5,hy+4]],p.hairShade);poly([[hx+5,hy-4],[hx+8,hy+3],[hx+10,hy+14],[hx+5,hy+13],[hx+4,hy+3]],p.hair);line(hx-8,hy+3,hx-8,hy+11,p.hairLight,2);line(hx+6,hy+4,hx+7,hy+11,p.hairLight,2);rect(6+lean,bodyY+2,3,8,'#a84540');rect(15+lean,bodyY+2,3,8,'#a84540');rect(7,24,11,2,'#6e3436');if(!back){rect(hx-5,hy+1,11,3,'#b2b3a4');rect(hx-1,hy+1,3,2,'#544e43');line(hx-4,hy+6,hx-4,hy+9,'#b83c43',2);line(hx+4,hy+6,hx+4,hy+9,'#b83c43',2);if(sage){rect(hx-5,hy+3,4,3,'#b95142');rect(hx+2,hy+3,4,3,'#b95142');rect(hx-4,hy+4,3,1,'#e5c65c');rect(hx+2,hy+4,3,1,'#e5c65c');}}else{rect(8,17,8,7,'#b2443d');rect(11,18,2,4,'#e4d0a5');}}
  if(role==='orochimaru'){rect(hx-6,hy-4,12,4,p.hair);rect(hx-7,hy-1,3,13,p.hair);rect(hx+5,hy-1,3,13,p.hairShade);rect(hx-6,hy+1,2,10,p.hairLight);if(!back){rect(hx-4,hy+2,9,2,'#e9ddd8');rect(hx-4,hy+4,3,2,'#6b478f');rect(hx+2,hy+4,3,2,'#6b478f');rect(hx-3,hy+4,1,1,'#ead06b');rect(hx+3,hy+4,1,1,'#ead06b');rect(hx-1,hy+7,3,1,'#64475d');}rect(6,23,12,3,'#79559c');rect(9,24,6,3,'#a88ac7');if(attack){line(16,19,22,12,'#d7dce0',2);rect(16,19,2,3,'#514563');}}
  if(role==='gaara'){rect(5,17,4,10,'#bd9c68');rect(4,19,5,6,'#d0b58a');rect(5,16,3,2,'#8d6348');if(!back)rect(hx+3,hy-1,2,2,'#a74646');}
- if(role==='sasuke'){if(!back){rect(hx-5,hy-2,3,5,p.hair);rect(hx+4,hy-2,2,6,p.hairShade);rect(hx+3,hy+4,1,1,'#bc6a72');}else{rect(10,bodyY+4,4,2,'#b65a55');rect(11,bodyY+6,2,2,'#e9dfd1');}rect(8,24,8,2,'#c7c7d6');if(sasukeForm===3){rect(hx-4,hy+2,8,6,'#8e879f');if(!back){rect(hx-4,hy+4,3,1,'#e6dc7d');rect(hx+2,hy+4,3,1,'#e6dc7d');}poly([[4,16],[0,7],[5,11],[8,19]],'#716889');poly([[20,16],[24,7],[19,11],[16,19]],'#716889');}else if(sasukeForm===4){if(!back){line(hx-4,hy+5,hx-2,hy+7,'#93626b',1);line(hx+2,hy+3,hx+4,hy+5,'#a27173',1);rect(hx-2,hy+7,2,1,'#79505d');}poly([[8,17],[11,19],[9,21]],'#b99588');poly([[15,21],[13,23],[17,23]],'#7b6a77');rect(8,26,2,2,'#a49b9d');}else if(sasukeForm){if(!back){rect(hx-4,hy+4,2,1,'#c94450');rect(hx+2,hy+4,2,1,'#c94450');}if(sasukeForm===2){line(hx-4,hy+2,hx-1,hy+7,'#39303e',2);line(8,17,13,21,'#39303e',2);line(15,15,17,18,'#39303e',2);}}}
+ if(!enhanced&&role==='sasuke'){if(!back){rect(hx-5,hy-2,3,5,p.hair);rect(hx+4,hy-2,2,6,p.hairShade);rect(hx+3,hy+4,1,1,'#bc6a72');}else{rect(10,bodyY+4,4,2,'#b65a55');rect(11,bodyY+6,2,2,'#e9dfd1');}rect(8,24,8,2,'#c7c7d6');if(sasukeForm===3){rect(hx-4,hy+2,8,6,'#8e879f');if(!back){rect(hx-4,hy+4,3,1,'#e6dc7d');rect(hx+2,hy+4,3,1,'#e6dc7d');}poly([[4,16],[0,7],[5,11],[8,19]],'#716889');poly([[20,16],[24,7],[19,11],[16,19]],'#716889');}else if(sasukeForm===4){if(!back){line(hx-4,hy+5,hx-2,hy+7,'#93626b',1);line(hx+2,hy+3,hx+4,hy+5,'#a27173',1);rect(hx-2,hy+7,2,1,'#79505d');}poly([[8,17],[11,19],[9,21]],'#b99588');poly([[15,21],[13,23],[17,23]],'#7b6a77');rect(8,26,2,2,'#a49b9d');}else if(sasukeForm){if(!back){rect(hx-4,hy+4,2,1,'#c94450');rect(hx+2,hy+4,2,1,'#c94450');}if(sasukeForm===2){line(hx-4,hy+2,hx-1,hy+7,'#39303e',2);line(8,17,13,21,'#39303e',2);line(15,15,17,18,'#39303e',2);}}}
  if(gear&&['player','sasuke','sakura','npc'].includes(role)){
  const {head,torso,legs,feet,weapon,offhand,accessory}=gear;
  if(head){rect(hx-5,hy+1,11,3,head.accent);rect(side?hx+1:hx-3,hy+1,side?5:7,2,head.color);rect(hx+1,hy+1,1,1,'#ecf6eb');}
@@ -213,7 +218,7 @@ function actorCell(kind,dir,frame,gear=null,kyubi=false){
   }
  }
  if(frame===13){rect(2,10,2,2,'#ffe4bc');rect(20,13,2,2,'#ffe4bc');}
- if(dir===1){const out=cell(24,32);out.ctx.translate(24,0);out.ctx.scale(-1,1);out.ctx.drawImage(s.c,0,0);return out.c;}
+ if(dir===1){const out=enhanced?enhancedCell(24,32):cell(24,32);out.ctx.translate(out.c.width,0);out.ctx.scale(-1,1);out.ctx.drawImage(s.c,0,0);return out.c;}
  return s.c;
 }
 export function makeActorSheet(kind,gear=null,kyubi=false){
@@ -221,6 +226,15 @@ export function makeActorSheet(kind,gear=null,kyubi=false){
  for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++){if(f>=44&&!['player','sasuke','sakura','npc'].includes(kind)){const src=[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][f-44];ctx.drawImage(c,src*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H,f*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H);}else ctx.drawImage(actorCell(kind,d,f,gear,kyubi),f*ACTOR_W,d*ACTOR_H);}
  return c;
 }
+// Opt-in high-resolution atlas; original 24×32 assets remain available for fallback and legacy labs.
+export function makeEnhancedActorSheet(kind,gear=null,kyubi=false){
+ if(!TEAM7_KINDS.has(kind))return makeActorSheet(kind,gear,kyubi);
+ try{const w=48,h=64,c=canvas(w*ACTOR_COLS,h*4),ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;
+  for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++){const src=kind==='clone'&&f>=44?[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][f-44]:f;ctx.drawImage(actorCell(kind,d,src,gear,kyubi,true),f*w,d*h);}
+  return c;
+ }catch(e){console.warn('Team 7 enhanced art fallback',kind,e);return makeActorSheet(kind,gear,kyubi);}
+}
+export function makeEnhancedSheets(){return makeSheets(makeEnhancedActorSheet);}
 // High-speed, deliberately stretched silhouettes. 32x32, three frames per direction.
 // Rasengan reference atlas: discrete pixel ribbons, not a blurred glow or HD character.
 export const RAS_SIZE=48,RAS_COLS=12,RAS_ROWS=6;
@@ -351,4 +365,4 @@ export function makeWorldPattern(){
  }
  return c;
 }
-export function makeSheets(){return {jiraiya:makeActorSheet('jiraiya'),jiraiyaSage:makeActorSheet('jiraiyaSage'),player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),sasukeSharingan:makeActorSheet('sasukeSharingan'),sasukeMarked:makeActorSheet('sasukeMarked'),sasukeCursed:makeActorSheet('sasukeCursed'),sasukeInjured:makeActorSheet('sasukeInjured'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),orochimaru:makeActorSheet('orochimaru'),kimimaro:makeActorSheet('kimimaro'),kimiMarked:makeActorSheet('kimiMarked'),kimiCursed:makeActorSheet('kimiCursed'),whiteSerpent:makeActorSheet('whiteSerpent'),shukaku:makeActorSheet('shukaku'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),kabuto:makeActorSheet('kabuto'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+export function makeSheets(actorFactory=makeActorSheet){return {jiraiya:actorFactory('jiraiya'),jiraiyaSage:actorFactory('jiraiyaSage'),player:actorFactory('player'),sasuke:actorFactory('sasuke'),sasukeSharingan:actorFactory('sasukeSharingan'),sasukeMarked:actorFactory('sasukeMarked'),sasukeCursed:actorFactory('sasukeCursed'),sasukeInjured:actorFactory('sasukeInjured'),lee:actorFactory('lee'),neji:actorFactory('neji'),gaara:actorFactory('gaara'),orochimaru:actorFactory('orochimaru'),kimimaro:actorFactory('kimimaro'),kimiMarked:actorFactory('kimiMarked'),kimiCursed:actorFactory('kimiCursed'),whiteSerpent:actorFactory('whiteSerpent'),shukaku:actorFactory('shukaku'),npc:actorFactory('npc'),enemy:actorFactory('enemy'),thrower:actorFactory('thrower'),guard:actorFactory('guard'),clone:actorFactory('clone'),sakura:actorFactory('sakura'),teuchi:actorFactory('teuchi'),tenten:actorFactory('tenten'),iruka:actorFactory('iruka'),kabuto:actorFactory('kabuto'),zabuza:actorFactory('zabuza'),haku:actorFactory('haku'),shikamaru:actorFactory('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}

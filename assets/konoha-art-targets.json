@@ -2,21 +2,21 @@
   "mountain": {
     "file": "mountain.webp",
     "pixels": [
-      570,
-      174
+      2172,
+      724
     ],
     "anchor": [
       0.5,
       1
     ],
-    "description": "Acantilado y cuatro rostros del Hokage, sin texto.",
-    "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
+    "description": "Monte Hokage ilustrado, cuatro rostros y terrazas. Interpretación estilizada.",
+    "source": "Ilustración original generada y aprobada por el usuario; WebP sin reescalado.",
     "minPixels": [
       2048,
       640
     ],
     "transparent": true,
-    "status": "provisional",
+    "status": "illustrated",
     "displayWidth": 124,
     "minDensity": 16,
     "targetDensity": 24,
@@ -24,34 +24,34 @@
       0.25,
       0.5
     ],
-    "artApproval": "pending"
+    "artApproval": "user-approved"
   },
   "tower": {
     "file": "tower.webp",
     "pixels": [
-      213,
-      117
+      1536,
+      1024
     ],
     "anchor": [
       0.5,
       1
     ],
-    "description": "Torre del Hokage: cuerpo circular y tejados originales; coronación incompleta por el rótulo del plano.",
-    "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
+    "description": "Torre circular ilustrada, techos terracota, escalinata y banderas.",
+    "source": "Ilustración original generada y aprobada por el usuario; WebP sin reescalado.",
     "minPixels": [
       1024,
       640
     ],
     "transparent": true,
-    "status": "provisional",
+    "status": "illustrated",
     "displayWidth": 25.08,
     "minDensity": 32,
     "targetDensity": 64,
     "aspectRange": [
       0.48,
-      0.8
+      0.84
     ],
-    "artApproval": "pending"
+    "artApproval": "user-approved"
   },
   "academy": {
     "file": "academy.webp",

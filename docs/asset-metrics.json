@@ -1,0 +1,34 @@
+{
+  "mountain": {
+    "filePixels": [
+      2172,
+      724
+    ],
+    "visiblePixels": [
+      2159,
+      700
+    ],
+    "density": 17.41,
+    "targetDensity": 24,
+    "alpha": 0.3295,
+    "ratio": 0.3242,
+    "bytes": 561552,
+    "minimumPassed": true
+  },
+  "tower": {
+    "filePixels": [
+      1536,
+      1024
+    ],
+    "visiblePixels": [
+      1229,
+      998
+    ],
+    "density": 49.0,
+    "targetDensity": 64,
+    "alpha": 0.4782,
+    "ratio": 0.812,
+    "bytes": 320788,
+    "minimumPassed": true
+  }
+}

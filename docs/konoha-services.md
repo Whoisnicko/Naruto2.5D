@@ -9,3 +9,5 @@ Preview prevista: https://preview-konoha-world3c.naruto2-5d.pages.dev/konoha-thr
 GitHub: https://github.com/Whoisnicko/Naruto2.5D/tree/preview/konoha-world3c
 PR #34: https://github.com/Whoisnicko/Naruto2.5D/pull/34
 Producción: https://naruto2-5d.pages.dev/
+
+QA adicional: ocho interacciones ejecutadas con DOM y Three.js simulados (no navegador real): abrir Shikamaru, aceptar, cerrar, reclamar, comprar ramen, recoger provisiones, completar/curar con Sakura y abrir diario. Se verificó sintaxis del conjunto de módulos JS de standalone, sin empaquetar Three.js ni imágenes. HUD optimizado: no reconstruye inventario cada frame.

@@ -7,3 +7,5 @@ Base d0590426e38693208c6dc71e26586df68370c863. Usuario confirmó los seis puntos
 Preview esperada https://preview-konoha-world3c.naruto2-5d.pages.dev/konoha-three-lab.html?v=3c5
 GitHub https://github.com/Whoisnicko/Naruto2.5D/tree/preview/konoha-world3c
 Producción https://naruto2-5d.pages.dev/
+
+Runtime regression: 13 additional checks passed using real Three.js r169 geometry and simulated DOM, canvas, renderer and clock: boot, manual night and rain, scene filter, region ambience continuity, direct travel, M menu and return, NPC restoration, journal, auto clock, south portal and depth order. Actual images, GPU, audio playback and Cloudflare not tested.

@@ -1,0 +1,4 @@
+# Naruto 2.5D — Itch.io embedded HUD fix (experimental)
+Base: v1.20e.1, commit 5197ff0fc03f61a9af51bbcd0cd90d7ac4cce7d0. The reported iframe is approximately 941×534. The approved compact ribbon was previously enabled only at 1121px or above. New CSS preserves original art, controls, game state and desktop/touch layouts, adds a dedicated 760–1120px landscape/fine-pointer layout, reduces the minimap, keeps left-side controls and right utility dock separate. Very short wide viewports also cap dock width. No production merge. No claim of full game or itch.io validation.
+
+Files: assets/itch-responsive.css, index.html (one stylesheet link after the other HUD styles). Repo https://github.com/Whoisnicko/Naruto2.5D ; production https://naruto2-5d.pages.dev/ ; preview branch feature/itch-responsive-hud (Cloudflare preview not verified). Itch.io: suggested click-to-launch fullscreen, embed width 960 and height 540 for testing. Actual itch project URL not supplied.

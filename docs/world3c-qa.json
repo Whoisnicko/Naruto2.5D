@@ -1,0 +1,122 @@
+[
+  {
+    "size": [
+      1366,
+      768
+    ],
+    "initial": {
+      "ready": true,
+      "p": {
+        "x": 72,
+        "y": 43
+      },
+      "mode": "sample",
+      "zoom": 1,
+      "failures": [],
+      "loaded": 39,
+      "total": 39,
+      "frames": 4,
+      "revision": "169",
+      "backend": "Canvas respaldo",
+      "drawCalls": 249,
+      "billboards": 123,
+      "blocked": false
+    },
+    "movement": true,
+    "bridgeCollision": true,
+    "bridgeMovement": {
+      "x": 28.08044000000006,
+      "y": 43
+    },
+    "gate": true,
+    "zoom": true,
+    "pageErrors": [],
+    "webglInitializationMessages": [
+      "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, Sandboxed = no",
+      "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, Sandboxed = no",
+      "THREE.WebGLRenderer: Error creating WebGL context."
+    ],
+    "missingTest": false
+  },
+  {
+    "size": [
+      390,
+      844
+    ],
+    "initial": {
+      "ready": true,
+      "p": {
+        "x": 72,
+        "y": 43
+      },
+      "mode": "sample",
+      "zoom": 1,
+      "failures": [],
+      "loaded": 39,
+      "total": 39,
+      "frames": 3,
+      "revision": "169",
+      "backend": "Canvas respaldo",
+      "drawCalls": 249,
+      "billboards": 123,
+      "blocked": false
+    },
+    "movement": true,
+    "bridgeCollision": true,
+    "bridgeMovement": {
+      "x": 28.360160000000032,
+      "y": 43
+    },
+    "gate": true,
+    "zoom": true,
+    "pageErrors": [],
+    "webglInitializationMessages": [
+      "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, Sandboxed = no",
+      "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, Sandboxed = no",
+      "THREE.WebGLRenderer: Error creating WebGL context."
+    ],
+    "missingTest": false
+  },
+  {
+    "size": [
+      1024,
+      768
+    ],
+    "initial": {
+      "ready": true,
+      "p": {
+        "x": 72,
+        "y": 43
+      },
+      "mode": "sample",
+      "zoom": 1,
+      "failures": [
+        "tower",
+        "grass-natural"
+      ],
+      "loaded": 37,
+      "total": 39,
+      "frames": 3,
+      "revision": "169",
+      "backend": "Canvas respaldo",
+      "drawCalls": 249,
+      "billboards": 123,
+      "blocked": false
+    },
+    "movement": true,
+    "bridgeCollision": true,
+    "bridgeMovement": {
+      "x": 28.3814,
+      "y": 43
+    },
+    "gate": true,
+    "zoom": true,
+    "pageErrors": [],
+    "webglInitializationMessages": [
+      "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, Sandboxed = no",
+      "THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, Sandboxed = no",
+      "THREE.WebGLRenderer: Error creating WebGL context."
+    ],
+    "missingTest": true
+  }
+]

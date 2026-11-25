@@ -1,0 +1,19 @@
+{
+  "checks": [
+    "boot and actual geometry",
+    "night rain from controls",
+    "visual filter applied",
+    "forest retains ambience",
+    "outpost travel",
+    "M menu",
+    "M return to Konoha",
+    "NPC restored",
+    "journal works",
+    "automatic clock resumes",
+    "south portal preserved",
+    "south arrival",
+    "depth order preserved"
+  ],
+  "passed": 13,
+  "method": "real Three.js geometry, simulated DOM, canvas, clock and renderer"
+}

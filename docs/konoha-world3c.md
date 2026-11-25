@@ -1,6 +1,6 @@
 # Mundo 3C — Konoha Three Lab
 
-Base experimental: 17c4fb16517e5673030b1b89820fcfd22ac5b66a. Producción v1.20e.1 intacta. Escenario independiente de la campaña, utiliza los datos y colisiones aprobados del blockout (144×84, 12 sectores, 23 huellas, tres puentes). Se seleccionaron 39 de los 92 WebP aprobados; se mantienen bytes nativos. El sprite original Naruto se genera con pixel-art.js (no se usa el rediseño rechazado).
+Base experimental: 17c4fb16517e5673030b1b89820fcfd22ac5b66a. No se escribió a main. Al verificar el repositorio, main ya estaba tres commits por delante de v1.20e.1, con cambios independientes de web-shell y respuesta a pantalla. La rama experimental diverge de main y requerirá integración conservando esos cambios. Escenario independiente de la campaña, utiliza los datos y colisiones aprobados del blockout (144×84, 12 sectores, 23 huellas, tres puentes). Se seleccionaron 39 de los 92 WebP aprobados; se mantienen bytes nativos. El sprite original Naruto se genera con pixel-art.js (no se usa el rediseño rechazado).
 
 ## Implementación
 - Three.js r169, versión idéntica a la del juego. Cámara ortográfica elevada atan2(25,30), suelo y caminos con geometría y materiales texturados; planos orientados a cámara para arte 2D. Orden por anclaje al suelo. 123 planos decorativos, más el jugador. Sombras elípticas. Escala de exploración provisional, cámara panorámica, zoom, accesos directos a puente y entrada, teclado y pad táctil.
@@ -18,3 +18,5 @@ Tres resoluciones (1366×768, 390×844 y 1024×768). HTML inyectado con mismo c�
 
 ## Siguiente aprobación
 Probar WebGL en equipo real y comprobar que el estado muestre WebGL, verificar escala, profundidad y FPS. Después pulir terreno, skyline, oclusión de puentes y colisiones de props. No migrar campaña ni aprobar 3C hasta validar motor.
+
+Commit de implementación: 1271b322281a1580d3084bec6a8ae724e819e298.

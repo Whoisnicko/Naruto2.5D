@@ -7,3 +7,9 @@ Base ae69592dedf8c39e6b473e9474cb4ba952e4f872. Preview only; PR #34 remains draf
 Preview: https://preview-konoha-world3c.naruto2-5d.pages.dev/konoha-three-lab.html
 GitHub: https://github.com/Whoisnicko/Naruto2.5D/tree/preview/konoha-world3c
 Production: https://naruto2-5d.pages.dev/
+
+## 3C.4.1 — Hotfix (user reported exterior maps not accessible, fast travel failed and south gate flicker)
+- Preview intentionally unlocks all destinations; added direct buttons for all three regions. Campaign router default still requires discovery.
+- South gate now has bidirectional connection with forest, and proximity prompt or walking into the passage starts travel. Added signage to Konoha exits. Real elapsed time prevents low FPS prolonging travel indefinitely.
+- Candidate visual fix: separate overlapping road/circle heights and exterior ground patches, remove wall segment overlap, stable unique depth order for visible billboards. Real GPU verification still required.
+- Version 3C.4.1 visible in HUD, query version on entry module/region import. Cloudflare URL not accessible from environment, older standalone not updated here. 20 targeted logic checks and combined app syntax passed. No browser/GPU test yet; do not approve visually until user confirms.

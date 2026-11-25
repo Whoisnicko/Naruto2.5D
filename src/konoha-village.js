@@ -70,7 +70,7 @@ export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearM
  const c=$('villagePortrait'),g=c.getContext('2d');g.clearRect(0,0,24,32);const sheet=getSheet(a.kind);if(sheet)g.drawImage(sheet,0,0,24,32,0,0,24,32);else g.drawImage(a.tex.image,0,0);render();dialog.showModal();return true}
  hint.onclick=talk;
  select.onchange=()=>{if(!Object.hasOwn(CHARACTERS,select.value)){select.value=hero;return}hero=select.value;clearMotion();close();nearest=null;hint.hidden=true;onSelect(hero,getSheet(CHARACTERS[hero].art));select.blur()};
- function update(dt,p,active,discover=active){position=p;activeNow=active;services.update(p,discover);const sp=services.state().player;const status=sp.coins+' ryō · '+sp.xp+' EXP · HP '+sp.hp+' · CH '+sp.chakra;if(stats.textContent!==status)stats.textContent=status;nearest=null;let best=VILLAGE_REACH;
+ function update(dt,p,active,discover=active){position=p;activeNow=active;services.update(p,discover);const sp=services.resources();const status=sp.coins+' ryō · '+sp.xp+' EXP · HP '+sp.hp+' · CH '+sp.chakra;if(stats.textContent!==status)stats.textContent=status;nearest=null;let best=VILLAGE_REACH;
   for(const a of actors){const visible=available(a);a.visual.m.visible=a.shade.visible=visible;if(!visible)continue;
    a.motion=false;if(active&&!dialog.open){a.time+=dt;a.wait=Math.max(0,a.wait-dt);const [tx,ty]=a.route[a.target],dx=tx-a.x,dy=ty-a.y,d=Math.hypot(dx,dy);
     if(d<.08){a.target=(a.target+1)%a.route.length;a.wait=2.6}

@@ -16,7 +16,15 @@
       640
     ],
     "transparent": true,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 124,
+    "minDensity": 16,
+    "targetDensity": 24,
+    "aspectRange": [
+      0.25,
+      0.5
+    ],
+    "artApproval": "pending"
   },
   "tower": {
     "file": "tower.webp",
@@ -26,7 +34,7 @@
     ],
     "anchor": [
       0.5,
-      0.96
+      1
     ],
     "description": "Torre del Hokage: cuerpo circular y tejados originales; coronación incompleta por el rótulo del plano.",
     "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
@@ -35,7 +43,15 @@
       640
     ],
     "transparent": true,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 25.08,
+    "minDensity": 32,
+    "targetDensity": 64,
+    "aspectRange": [
+      0.48,
+      0.8
+    ],
+    "artApproval": "pending"
   },
   "academy": {
     "file": "academy.webp",
@@ -45,7 +61,7 @@
     ],
     "anchor": [
       0.5,
-      0.94
+      1
     ],
     "description": "Academia, fachada y cubiertas; recorte sin rótulo.",
     "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
@@ -54,7 +70,15 @@
       256
     ],
     "transparent": true,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 15.96,
+    "minDensity": 32,
+    "targetDensity": 64,
+    "aspectRange": [
+      0.45,
+      0.95
+    ],
+    "artApproval": "pending"
   },
   "hospital": {
     "file": "hospital.webp",
@@ -64,7 +88,7 @@
     ],
     "anchor": [
       0.5,
-      0.94
+      1
     ],
     "description": "Hospital, fachada y cruz roja; cubierta parcial.",
     "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
@@ -73,7 +97,15 @@
       256
     ],
     "transparent": true,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 18.24,
+    "minDensity": 32,
+    "targetDensity": 64,
+    "aspectRange": [
+      0.45,
+      0.95
+    ],
+    "artApproval": "pending"
   },
   "house-round": {
     "file": "house-round.webp",
@@ -83,7 +115,7 @@
     ],
     "anchor": [
       0.5,
-      0.95
+      1
     ],
     "description": "Vivienda circular de tejado naranja.",
     "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
@@ -92,7 +124,15 @@
       320
     ],
     "transparent": true,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 11.4,
+    "minDensity": 32,
+    "targetDensity": 64,
+    "aspectRange": [
+      0.55,
+      1.05
+    ],
+    "artApproval": "pending"
   },
   "house-tile": {
     "file": "house-tile.webp",
@@ -102,7 +142,7 @@
     ],
     "anchor": [
       0.5,
-      0.95
+      1
     ],
     "description": "Vivienda de cubierta a dos aguas.",
     "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
@@ -111,7 +151,15 @@
       320
     ],
     "transparent": true,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 11.4,
+    "minDensity": 32,
+    "targetDensity": 64,
+    "aspectRange": [
+      0.55,
+      1.05
+    ],
+    "artApproval": "pending"
   },
   "house-blue": {
     "file": "house-blue.webp",
@@ -121,7 +169,7 @@
     ],
     "anchor": [
       0.5,
-      0.95
+      1
     ],
     "description": "Vivienda de cubierta gris azulada.",
     "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
@@ -130,7 +178,15 @@
       320
     ],
     "transparent": true,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 11.4,
+    "minDensity": 32,
+    "targetDensity": 64,
+    "aspectRange": [
+      0.55,
+      1.05
+    ],
+    "artApproval": "pending"
   },
   "cherry": {
     "file": "cherry.webp",
@@ -140,7 +196,7 @@
     ],
     "anchor": [
       0.5,
-      0.95
+      1
     ],
     "description": "Cerezo ornamental, provisional.",
     "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
@@ -149,7 +205,15 @@
       256
     ],
     "transparent": true,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 4.62,
+    "minDensity": 32,
+    "targetDensity": 64,
+    "aspectRange": [
+      0.8,
+      1.6
+    ],
+    "artApproval": "pending"
   },
   "tree": {
     "file": "tree.webp",
@@ -159,7 +223,7 @@
     ],
     "anchor": [
       0.5,
-      0.95
+      1
     ],
     "description": "Árbol de copa verde, provisional.",
     "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
@@ -168,7 +232,15 @@
       256
     ],
     "transparent": true,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 4.62,
+    "minDensity": 32,
+    "targetDensity": 64,
+    "aspectRange": [
+      0.8,
+      1.6
+    ],
+    "artApproval": "pending"
   },
   "ramen": {
     "file": "ramen.webp",
@@ -178,7 +250,7 @@
     ],
     "anchor": [
       0.5,
-      0.95
+      1
     ],
     "description": "Ichiraku Ramen, fachada extraída del plano; rótulo original japonés.",
     "source": "Recorte del plano maestro aprobado (arte generado previamente); provisional.",
@@ -187,7 +259,15 @@
       256
     ],
     "transparent": true,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 11.4,
+    "minDensity": 32,
+    "targetDensity": 64,
+    "aspectRange": [
+      0.48,
+      1.05
+    ],
+    "artApproval": "pending"
   },
   "paving": {
     "file": "paving.webp",
@@ -206,6 +286,14 @@
       256
     ],
     "transparent": false,
-    "status": "provisional"
+    "status": "provisional",
+    "displayWidth": 4,
+    "minDensity": 32,
+    "targetDensity": 64,
+    "aspectRange": [
+      1,
+      1
+    ],
+    "artApproval": "pending"
   }
 }

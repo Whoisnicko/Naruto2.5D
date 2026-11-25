@@ -1,0 +1,22 @@
+{
+  "checks": [
+    "boot and actual scene construction",
+    "mock image decode path",
+    "direct button begins travel",
+    "forest arrival even at low FPS",
+    "Konoha NPCs hidden outside",
+    "outpost arrival",
+    "M menu all destinations",
+    "M to plaza",
+    "NPCs restored",
+    "walk into south gate",
+    "south forest transition",
+    "return E begins",
+    "return south",
+    "visible ground valid",
+    "unique depth order"
+  ],
+  "passed": 15,
+  "three": "169",
+  "method": "actual Three geometry, simulated DOM, canvas, renderer and clock; no visual browser"
+}

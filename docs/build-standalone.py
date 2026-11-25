@@ -9,10 +9,12 @@ mods=['src/konoha-layout.js','src/pixel-art.js','src/konoha-three-data.js','src/
 def scoped(file,names):
  text=(p/file).read_text()
  text=re.sub(r'^import .*?;\n','',text,flags=re.M).replace('export ','')
+ if file=='src/konoha-regions.js': text='const villageBlocked=blocked,villageStep=step;\n'+text
  return 'const {'+names+'}=(()=>{\n'+text+'\nreturn {'+names+'};})();'
 source+='\n'+scoped('src/rpg-data.js','newRPG,itemFor,itemCount,addItem,removeItem,rewardItems,useItem,collectOverflow')
 source+='\n'+scoped('src/world-data.js','NPCS,DIALOGUES,newWorld,SIDEQUESTS,SHOPS,choicesFor,questProgress,acceptQuest,finishQuest,buyPrice,sellPrice,buyItem,sellItem,healPlayer')
 source+='\n'+scoped('src/character-data.js','CHARACTERS')
+source+='\n'+scoped('src/konoha-regions.js','REGIONS,PORTALS,regionBlocked,regionStep,createRegionRouter')
 source+='\n'+scoped('src/konoha-services.js','createVillageServices')
 source+='\n'+scoped('src/konoha-village.js','createVillage')
 assets={a.stem:'data:image/webp;base64,'+b64(a.read_bytes()) for a in (p/'assets/konoha-world3c').glob('*.webp')}

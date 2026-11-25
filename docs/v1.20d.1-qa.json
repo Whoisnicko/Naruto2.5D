@@ -1,0 +1,139 @@
+{
+  "checks": [
+    {
+      "name": "10 Naruto nodes",
+      "pass": true
+    },
+    {
+      "name": "clone base 2",
+      "pass": true
+    },
+    {
+      "name": "prerequisite locked",
+      "pass": true
+    },
+    {
+      "name": "3 clones",
+      "pass": true
+    },
+    {
+      "name": "damage bonus removed",
+      "pass": true
+    },
+    {
+      "name": "4 clones",
+      "pass": true
+    },
+    {
+      "name": "5 clones",
+      "pass": true
+    },
+    {
+      "name": "duration optional",
+      "pass": true
+    },
+    {
+      "name": "giant remains locked",
+      "pass": true
+    },
+    {
+      "name": "giant unlocked",
+      "pass": true
+    },
+    {
+      "name": "scroll consumed",
+      "pass": true
+    },
+    {
+      "name": "save validation",
+      "pass": true
+    },
+    {
+      "name": "sasuke six nodes",
+      "pass": true
+    },
+    {
+      "name": "sasuke base clones unaffected",
+      "pass": true
+    },
+    {
+      "name": "sakura six nodes",
+      "pass": true
+    },
+    {
+      "name": "sakura base clones unaffected",
+      "pass": true
+    },
+    {
+      "name": "kakashi six nodes",
+      "pass": true
+    },
+    {
+      "name": "kakashi base clones unaffected",
+      "pass": true
+    },
+    {
+      "name": "1920x1080 no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "1920x1080 edges exist",
+      "pass": true
+    },
+    {
+      "name": "1366x768 no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "1366x768 edges exist",
+      "pass": true
+    },
+    {
+      "name": "1280x720 no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "1280x720 edges exist",
+      "pass": true
+    },
+    {
+      "name": "1024x768 no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "1024x768 edges exist",
+      "pass": true
+    },
+    {
+      "name": "768x1024 no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "768x1024 edges exist",
+      "pass": true
+    },
+    {
+      "name": "390x844 no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "390x844 edges exist",
+      "pass": true
+    },
+    {
+      "name": "320x568 no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "320x568 edges exist",
+      "pass": true
+    },
+    {
+      "name": "no JS exceptions",
+      "pass": true
+    }
+  ],
+  "passed": 33,
+  "total": 33,
+  "scope": "Chromium isolated UI with real RPG data and UI modules; not full game; clone spawn logic not executed in full engine."
+}

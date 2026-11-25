@@ -33,8 +33,12 @@ export const SKILLS={
  reflex:{name:'Ninja Reflexes',branch:'Taijutsu',cost:1,level:3,requires:'fists',desc:'+8% speed and +5 percentage points critical chance',stats:{speed:.08,crit:.05}},
  focus:{name:'Chakra Control',branch:'Ninjutsu',cost:1,level:2,desc:'+2 chakra per second and +10% ninjutsu damage',stats:{chakra:2,ninjutsu:.10}},
  giant:{name:'Giant Rasengan',branch:'Ninjutsu',cost:1,level:3,requires:'focus',scroll:'scroll',desc:'Unlocks Giant Rasengan: 84 damage, 32 chakra, 6 s cooldown.'},
- bond:{name:'Shadow Bond',branch:'Clones',cost:1,level:2,desc:'+4 clone strike damage',stats:{clone:4}},
- endurance:{name:'Resilient Shadows',branch:'Clones',cost:1,level:3,requires:'bond',desc:'+2 seconds of clone duration',cloneDuration:2}
+ bond:{name:'Shadow Clone Mastery I',branch:'Clones',cost:1,level:2,desc:'Summon 3 shadow clones instead of 2.',cloneCount:1},
+ endurance:{name:'Resilient Shadows',branch:'Clones',cost:1,level:3,requires:'bond',desc:'+2 seconds of clone duration',cloneDuration:2},
+ cloneII:{name:'Shadow Clone Mastery II',branch:'Clones',cost:1,level:4,requires:'bond',desc:'Summon 4 shadow clones.',cloneCount:1},
+ cloneIII:{name:'Multi Shadow Clone Jutsu',branch:'Clones',cost:1,level:6,requires:'cloneII',desc:'Summon 5 shadow clones.',cloneCount:1},
+ guardMaster:{name:'Shinobi Guard',branch:'Taijutsu',cost:1,level:3,requires:'fists',desc:'+2 defense',stats:{defense:2}},
+ chakraMaster:{name:'Chakra Flow',branch:'Ninjutsu',cost:1,level:4,requires:'focus',desc:'+1 chakra per second',stats:{chakra:1}}
 };
 // Independent point budgets at the shared account level. Naruto's original IDs remain stable.
 export const CHARACTER_TREES={
@@ -123,10 +127,10 @@ export function unlockReason(r,xp,id,char='naruto'){
 }
 export function unlockSkill(r,xp,id,char='naruto'){const reason=unlockReason(r,xp,id,char);if(reason)return reason;const s=treeFor(char)[id];if(s.scroll)removeItem(r,s.scroll);learnedFor(r,char).push(id);return null;}
 export function statsFor(r,char='naruto'){
- const out={attack:0,defense:0,speed:0,crit:0,chakra:0,clone:0,ninjutsu:0,cloneDuration:0};
+ const out={attack:0,defense:0,speed:0,crit:0,chakra:0,clone:0,ninjutsu:0,cloneDuration:0,cloneCount:0};
  function add(s){for(const [k,v] of Object.entries(s||{}))if(k in out)out[k]+=v;}
  for(const id of Object.values(r.equipment))add(itemFor(id)?.stats);
- for(const id of learnedFor(r,char)){const skill=treeFor(char)[id];add(skill.stats);out.cloneDuration+=skill.cloneDuration||0;}
+ for(const id of learnedFor(r,char)){const skill=treeFor(char)[id];add(skill.stats);out.cloneDuration+=skill.cloneDuration||0;out.cloneCount+=skill.cloneCount||0;}
  return out;
 }
 export function equipmentVisuals(r){return Object.fromEntries(SLOTS.map(s=>[s,itemFor(r.equipment[s])?.visual||null]));}
@@ -146,3 +150,6 @@ export function validateRPG(raw,xp,legacy=true){
  }
  return {inventory,equipment,hotbar,skills,trees,overflow,round:raw.round};
 }
+
+// Maximum five simultaneous player shadow clones; independent of scripted enemy clones.
+export function shadowCloneLimit(bonus){return Math.min(5,2+Math.max(0,Math.floor(bonus?.cloneCount||0)));}

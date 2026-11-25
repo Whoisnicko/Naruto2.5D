@@ -1,0 +1,82 @@
+[
+  {
+    "viewport": "1920x1080",
+    "pass": true,
+    "checks": [
+      "menu navigation",
+      "credits modal",
+      "settings tabs",
+      "26 bindings",
+      "swap",
+      "persist",
+      "cancel",
+      "reset",
+      "new game and continue routing"
+    ],
+    "asset": "original cover unavailable locally; fallback used; no visual cover validation"
+  },
+  {
+    "viewport": "1366x768",
+    "pass": true,
+    "checks": [
+      "menu navigation",
+      "credits modal",
+      "settings tabs",
+      "26 bindings",
+      "swap",
+      "persist",
+      "cancel",
+      "reset",
+      "new game and continue routing"
+    ],
+    "asset": "original cover unavailable locally; fallback used; no visual cover validation"
+  },
+  {
+    "viewport": "1024x600",
+    "pass": true,
+    "checks": [
+      "menu navigation",
+      "credits modal",
+      "settings tabs",
+      "26 bindings",
+      "swap",
+      "persist",
+      "cancel",
+      "reset",
+      "new game and continue routing"
+    ],
+    "asset": "original cover unavailable locally; fallback used; no visual cover validation"
+  },
+  {
+    "viewport": "768x1024",
+    "pass": true,
+    "checks": [
+      "menu navigation",
+      "credits modal",
+      "settings tabs",
+      "26 bindings",
+      "swap",
+      "persist",
+      "cancel",
+      "reset",
+      "new game and continue routing"
+    ],
+    "asset": "original cover unavailable locally; fallback used; no visual cover validation"
+  },
+  {
+    "viewport": "390x844",
+    "pass": true,
+    "checks": [
+      "menu navigation",
+      "credits modal",
+      "settings tabs",
+      "26 bindings",
+      "swap",
+      "persist",
+      "cancel",
+      "reset",
+      "new game and continue routing"
+    ],
+    "asset": "original cover unavailable locally; fallback used; no visual cover validation"
+  }
+]

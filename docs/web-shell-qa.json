@@ -1,0 +1,48 @@
+{
+  "scope": "Browser fixture with actual new CSS/JS/markup, simulated game import, not full game",
+  "viewports": [
+    {
+      "viewport": [
+        941,
+        534
+      ],
+      "waitsForEngine": true,
+      "menuUnlockedAfterInit": true,
+      "missingCoverFallback": true,
+      "noPageErrors": true
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "waitsForEngine": true,
+      "menuUnlockedAfterInit": true,
+      "missingCoverFallback": true,
+      "noPageErrors": true
+    },
+    {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "waitsForEngine": true,
+      "menuUnlockedAfterInit": true,
+      "missingCoverFallback": true,
+      "noPageErrors": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "waitsForEngine": true,
+      "menuUnlockedAfterInit": true,
+      "missingCoverFallback": true,
+      "noPageErrors": true
+    }
+  ],
+  "rejectedImportShowsRetry": true,
+  "iframeFullscreenEnterExit": true,
+  "deniedFullscreenFeedback": true
+}

@@ -1,0 +1,23 @@
+/* Web shell: truthful startup milestones and user-initiated fullscreen. No game state changes. */
+(()=>{
+ 'use strict';
+ const $=id=>document.getElementById(id), root=document.documentElement;
+ const boot=$('webBoot'), progress=$('webBootProgress'), status=$('webBootStatus'), error=$('webBootError'), menu=$('menu'), hud=$('hud');
+ const toggles=[...document.querySelectorAll('[data-web-fullscreen]')], toast=$('webFullscreenStatus');
+ let toastTimer, switching=false, failed=false, started=false, count=1, artReady=false, engineReady=false;
+ function announce(message){toast.textContent=message;toast.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>{toast.hidden=true;},6500);}
+ function fullscreenElement(){return document.fullscreenElement||document.webkitFullscreenElement||null;}
+ function syncFullscreen(){const active=!!fullscreenElement();for(const button of toggles){button.setAttribute('aria-pressed',String(active));button.setAttribute('aria-label',active?'Exit fullscreen':'Enter fullscreen');button.title=active?'Exit fullscreen (Esc)':'Enter fullscreen';button.querySelector('.web-fs-label').textContent=active?'Exit fullscreen':'Fullscreen';button.dataset.active=String(active);}}
+ async function toggleFullscreen(){if(switching)return;switching=true;try{if(fullscreenElement()){const exit=document.exitFullscreen||document.webkitExitFullscreen;if(!exit)throw Error('No fullscreen exit API');await exit.call(document);}else{const enter=root.requestFullscreen||root.webkitRequestFullscreen;if(!enter||document.fullscreenEnabled===false)throw Error('Fullscreen unavailable');await enter.call(root);}syncFullscreen();}catch(e){console.warn('Fullscreen unavailable',e);announce('Fullscreen is unavailable here. Use the itch.io fullscreen button or open the game in its own tab.');}finally{switching=false;}}
+ for(const button of toggles){button.addEventListener('click',toggleFullscreen);button.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();if(!e.repeat)button.click();}});}
+ for(const event of ['fullscreenchange','webkitfullscreenchange'])document.addEventListener(event,syncFullscreen);
+ syncFullscreen();
+ function step(){if(failed)return;count=1+Number(artReady)+Number(engineReady);progress.value=count;status.textContent=artReady&&engineReady?'Ready · opening menu…':artReady?'Title artwork checked · preparing engine…':'Engine initialized · checking title artwork…';$('webBootCount').textContent=count+' / 3';}
+ function fail(reason){if(failed)return;failed=true;clearTimeout(deadline);console.error('Game startup failed',reason);boot.dataset.state='error';status.textContent='Unable to finish loading';error.hidden=false;progress.hidden=true;$('webBootCount').hidden=true;error.querySelector('a').focus({preventScroll:true});}
+ const deadline=setTimeout(()=>fail(Error('Startup exceeded 60 seconds')),60000);
+ function settleTitleArt(){const image=menu.querySelector('.classic-art');if(!image)return Promise.resolve();return new Promise(resolve=>{let settled=false,timer;const finish=(ok)=>{if(settled)return;settled=true;clearTimeout(timer);image.removeEventListener('load',loaded);image.removeEventListener('error',missing);if(!ok){image.hidden=true;image.parentElement.classList.add('art-fallback');}resolve();};const loaded=()=>{if(!image.naturalWidth){finish(false);return;}if(typeof image.decode==='function')image.decode().then(()=>finish(true),()=>finish(false));else finish(true);};const missing=()=>finish(false);timer=setTimeout(missing,8000);image.addEventListener('load',loaded);image.addEventListener('error',missing);if(image.complete){if(image.naturalWidth)loaded();else missing();}});}
+ async function start(importGame,{lab=false}={}){if(started||failed)return;started=true;try{status.textContent='Preparing title artwork and 3D engine…';const cover=settleTitleArt().then(()=>{artReady=true;step();});const game=Promise.resolve().then(importGame).then(()=>{if(lab?root.dataset.labReady!=='true':$('start').disabled)throw Error('Game module did not signal menu readiness');engineReady=true;step();});await Promise.all([cover,game]);if(failed)return;clearTimeout(deadline);menu.inert=false;hud.inert=false;boot.hidden=true;root.dataset.webReady='true';}catch(e){fail(e);}}
+ window.ShinobiWebShell=Object.freeze({start,fail});
+ // Catch early import/boot failures, but do not treat unrelated gameplay errors as startup failures.
+ document.addEventListener('keydown',e=>{if(!boot.hidden&&!boot.contains(e.target)){e.preventDefault();e.stopImmediatePropagation();}},true);
+})();

@@ -1,0 +1,28 @@
+/* Startup and fullscreen presentation; independent of combat and HUD state. */
+#webBoot{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:18px;background:radial-gradient(ellipse at 50% 34%,#334253 0%,#182433 48%,#0c131e 100%);color:#f7e5c4;font:14px/1.4 system-ui;text-align:center;overflow:auto;isolation:isolate}
+#webBoot[hidden],#webBootError[hidden],#webFullscreenStatus[hidden]{display:none!important}
+#webBoot::before{content:'';position:absolute;inset:12px;border:1px solid #b58b4e60;pointer-events:none;z-index:-1}
+#webBoot .web-boot-card{width:min(100%,480px);padding:clamp(16px,4vh,32px) 14px;display:grid;justify-items:center;gap:12px}
+#webBoot .web-boot-emblem{width:clamp(50px,14vh,104px);aspect-ratio:1;display:grid;place-items:center;border:2px solid #bc8b48;border-radius:50%;background:#172330;box-shadow:0 0 0 5px #b58b4e20,0 0 38px #eb9f3b30}
+#webBoot .web-boot-emblem svg{width:72%;height:72%;color:#ffbd69}
+#webBoot .web-boot-kicker{font:700 10px/1.2 system-ui;letter-spacing:.23em;text-transform:uppercase;color:#d9b986}
+#webBoot h1{font:900 italic clamp(29px,6vw,54px)/1 system-ui;color:#ffb35d;text-shadow:2px 3px #452a20;margin:0;letter-spacing:-.035em}
+#webBoot .web-boot-subtitle{margin:0;font:700 clamp(12px,2.5vw,16px)/1.2 Georgia,serif;letter-spacing:.12em;text-transform:uppercase;color:#edce99}
+#webBoot .web-boot-progress{width:min(100%,340px);height:10px;appearance:none;border:1px solid #9e7440;border-radius:2px;background:#111c29;overflow:hidden}
+#webBoot progress::-webkit-progress-bar{background:#111c29}#webBoot progress::-webkit-progress-value{background:linear-gradient(90deg,#ad5127,#ffbd68)}#webBoot progress::-moz-progress-bar{background:linear-gradient(90deg,#ad5127,#ffbd68)}
+#webBootStatus{min-height:1.4em;margin:0;color:#ead8ba;font-size:12px}
+#webBootCount{font:700 10px/1 monospace;color:#d9ba8a;letter-spacing:.1em}
+#webBoot .web-boot-seal{width:22px;height:22px;border:2px solid #b58b4e45;border-top-color:#ffb35d;border-radius:50%;animation:web-boot-spin .9s linear infinite}
+@keyframes web-boot-spin{to{transform:rotate(360deg)}}
+#webBoot[data-state=error] .web-boot-seal{display:none}
+#webBootError{width:100%;color:#ffe4c1;font-size:12px}
+#webBootError p{margin:4px 0 12px}#webBootError a{display:inline-block;color:#ffe4b4;border:1px solid #b58b4e;padding:8px 13px;margin:3px;text-decoration:none;background:#263547;border-radius:3px}
+#webBootError a:focus-visible,[data-web-fullscreen]:focus-visible{outline:2px solid #ffc879;outline-offset:2px}
+[data-web-fullscreen] .web-fs-icon{width:15px;height:15px;flex:none;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#titleFullscreen{position:absolute;right:2%;top:2%;z-index:4;display:inline-flex;align-items:center;gap:5px;padding:6px 9px;color:#ffe5ba;background:#182634ed;border:1px solid #b58b4e;font:700 clamp(10px,1.1vw,14px)/1.2 system-ui;white-space:nowrap}
+#hud #utilityDock #gameFullscreen{display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;min-width:0}
+#webFullscreenStatus{position:fixed;z-index:2147482999;top:12px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 24px);padding:10px 14px;background:#182634f5;color:#ffe5ba;border:1px solid #b58b4e;box-shadow:0 3px 12px #0008;font:12px/1.4 system-ui;text-align:center;pointer-events:none}
+@media(min-width:1121px) and (pointer:fine){#hud #utilityDock{grid-template-columns:repeat(4,auto)}#hud #utilityDock #gameFullscreen{padding-inline:6px}#hud #utilityDock #gameFullscreen .web-fs-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}}
+@media(max-width:1120px){#hud #utilityDock #gameFullscreen{font-size:9px;padding-inline:3px}#hud #utilityDock #gameFullscreen .web-fs-icon{width:12px;height:12px}}
+@media(max-height:420px){#webBoot .web-boot-card{gap:7px;padding:8px}#webBoot .web-boot-emblem{width:44px}#webBoot h1{font-size:30px}}
+@media(prefers-reduced-motion:reduce){#webBoot .web-boot-seal{animation:none}}

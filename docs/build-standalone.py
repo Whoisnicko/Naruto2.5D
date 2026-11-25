@@ -5,13 +5,16 @@ for x in ex.split(','):
  s=x.split(' as ');items.append((s[-1]+':'+s[0]))
 three='const THREE=(()=>{'+head+'\nreturn {'+','.join(items)+'};})();'
 mods=['src/konoha-layout.js','src/pixel-art.js','src/konoha-three-data.js','src/konoha-mobility.js']; source='\n'.join((p/f).read_text().replace('export ','') for f in mods)
-# Extract only the original data exports required by the isolated lab, not campaign logic.
-world=(p/'src/world-data.js').read_text()
-chars=(p/'src/character-data.js').read_text()
-for text,start,end in [(world,'export const NPCS=','export const CHESTS='),(world,'export const DIALOGUES=','// Keep the v11'),(chars,'export const CHARACTERS=','export function characterFor')]:
- source+='\n'+text[text.index(start):text.index(end)].replace('export ','')
-village=(p/'src/konoha-village.js').read_text()
-source+='\n'+re.sub(r'^import .*?;\n','',village,flags=re.M).replace('export ','')
+# Scope original RPG and world modules to avoid collisions with the lab's globals.
+def scoped(file,names):
+ text=(p/file).read_text()
+ text=re.sub(r'^import .*?;\n','',text,flags=re.M).replace('export ','')
+ return 'const {'+names+'}=(()=>{\n'+text+'\nreturn {'+names+'};})();'
+source+='\n'+scoped('src/rpg-data.js','newRPG,itemFor,itemCount,addItem,removeItem,rewardItems,useItem,collectOverflow')
+source+='\n'+scoped('src/world-data.js','NPCS,DIALOGUES,newWorld,SIDEQUESTS,SHOPS,choicesFor,questProgress,acceptQuest,finishQuest,buyPrice,sellPrice,buyItem,sellItem,healPlayer')
+source+='\n'+scoped('src/character-data.js','CHARACTERS')
+source+='\n'+scoped('src/konoha-services.js','createVillageServices')
+source+='\n'+scoped('src/konoha-village.js','createVillage')
 assets={a.stem:'data:image/webp;base64,'+b64(a.read_bytes()) for a in (p/'assets/konoha-world3c').glob('*.webp')}
 s=(p/'src/konoha-three-lab.js').read_text();s=re.sub(r'^import .*?;\n','',s,flags=re.M).replace('import.meta.url','location.href');
 # classic script async wrapper; the original library is unchanged in the modular package.

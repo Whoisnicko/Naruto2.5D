@@ -1,0 +1,43 @@
+[
+  {
+    "viewport": [
+      1366,
+      768
+    ],
+    "backend": "Canvas respaldo",
+    "sprint": {
+      "ready": true,
+      "p": {
+        "x": 72,
+        "y": 51.622031155555355
+      },
+      "mode": "walk",
+      "zoom": 1,
+      "held": 2.9497999999999975,
+      "sprint": true,
+      "speed": 15.999999999999996,
+      "unlocked": true,
+      "dust": 18,
+      "travel": null,
+      "view": {
+        "x": 72,
+        "z": 50.36050841729549,
+        "height": 24.000000039835847
+      },
+      "failures": [],
+      "loaded": 39,
+      "total": 39,
+      "frames": 374,
+      "revision": "169",
+      "backend": "Canvas respaldo",
+      "drawCalls": 153,
+      "billboards": 123,
+      "blocked": false
+    },
+    "travel": true,
+    "lookout": true,
+    "lockedSprint": true,
+    "collision": true,
+    "errors": []
+  }
+]

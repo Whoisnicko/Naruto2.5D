@@ -1,0 +1,156 @@
+[
+  {
+    "resolution": "1366x768",
+    "tab": "inventory",
+    "horizontal": 0,
+    "vertical": 0,
+    "visible": false,
+    "nodes": 10,
+    "edges": 0,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "1366x768",
+    "tab": "skills",
+    "horizontal": 0,
+    "vertical": 0,
+    "visible": true,
+    "nodes": 10,
+    "edges": 13,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "1920x1080",
+    "tab": "inventory",
+    "horizontal": 0,
+    "vertical": 0,
+    "visible": false,
+    "nodes": 10,
+    "edges": 0,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "1920x1080",
+    "tab": "skills",
+    "horizontal": 0,
+    "vertical": 0,
+    "visible": true,
+    "nodes": 10,
+    "edges": 13,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "1280x720",
+    "tab": "inventory",
+    "horizontal": 0,
+    "vertical": 11,
+    "visible": false,
+    "nodes": 10,
+    "edges": 0,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "1280x720",
+    "tab": "skills",
+    "horizontal": 0,
+    "vertical": 17,
+    "visible": true,
+    "nodes": 10,
+    "edges": 13,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "1024x768",
+    "tab": "inventory",
+    "horizontal": 0,
+    "vertical": 0,
+    "visible": false,
+    "nodes": 10,
+    "edges": 0,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "1024x768",
+    "tab": "skills",
+    "horizontal": 0,
+    "vertical": 22,
+    "visible": true,
+    "nodes": 10,
+    "edges": 13,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "768x1024",
+    "tab": "inventory",
+    "horizontal": 0,
+    "vertical": 209,
+    "visible": false,
+    "nodes": 10,
+    "edges": 0,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "768x1024",
+    "tab": "skills",
+    "horizontal": 0,
+    "vertical": 8,
+    "visible": true,
+    "nodes": 10,
+    "edges": 13,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "390x844",
+    "tab": "inventory",
+    "horizontal": 0,
+    "vertical": 910,
+    "visible": false,
+    "nodes": 10,
+    "edges": 0,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "390x844",
+    "tab": "skills",
+    "horizontal": 0,
+    "vertical": 973,
+    "visible": true,
+    "nodes": 10,
+    "edges": 10,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "320x568",
+    "tab": "inventory",
+    "horizontal": 0,
+    "vertical": 1204,
+    "visible": false,
+    "nodes": 10,
+    "edges": 0,
+    "art": 7,
+    "clipped": 0
+  },
+  {
+    "resolution": "320x568",
+    "tab": "skills",
+    "horizontal": 0,
+    "vertical": 1361,
+    "visible": true,
+    "nodes": 10,
+    "edges": 10,
+    "art": 7,
+    "clipped": 0
+  }
+]

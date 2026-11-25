@@ -15,7 +15,7 @@ const art={
  charm:`<path d="M32 4q-22 4-19 20t19 9q17 0 19-9T32 4" fill="none" stroke="#c99a51" stroke-width="3"/><path d="M32 22 46 33 42 51 32 59 22 51 18 33Z" fill="url(#gold)"/><path d="M32 28 41 38 32 52 23 38Z" fill="var(--accent)"/><path d="M32 30l-7 8 7 11" fill="none" stroke="#fff3c4" stroke-width="2"/>`,
  cloth:`<path d="M10 13 47 8 55 48 17 56 22 36Z" fill="var(--cloth)"/><path d="M14 15 48 10l3 12-33 5m5 9 29-7M20 48l34-7" fill="none" stroke="var(--accent)" stroke-width="3"/>`
 };
-const illustratedItems={kunai:'kunai',headband:'konoha-plate'};
+const illustratedItems={kunai:'kunai'};
 export function inventoryIcon(item,fallback,itemId){
  if(!item||!(itemArt[itemId]||art[item.icon]))return fallback();
  try{const el=document.createElement('span');el.className='inventory-art-icon';el.setAttribute('aria-hidden','true');el.style.setProperty('--cloth',item.visual?.color||'#729489');el.style.setProperty('--accent',item.visual?.accent||'#dfb578');

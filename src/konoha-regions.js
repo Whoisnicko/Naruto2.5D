@@ -7,7 +7,7 @@ export const REGIONS={
  konoha:{name:'Konoha',country:'País del Fuego',spawn:[72,43],width:144,height:84,zones:[],objects:[]},
  forest:{name:'Bosque de entrenamiento',country:'País del Fuego',spawn:[8,30],width:84,height:60,ground:'grass-natural',tint:'#a0b38b',
  zones:[{name:'Sendero occidental',at:[8,30]},{name:'Claro de entrenamiento',at:[42,30]},{name:'Camino al puesto',at:[77,30]}],
- groundPieces:[{art:'dirt-compact',x:42,y:30,w:84,h:7,tint:'#d8bf99'},{art:'dirt-compact',x:42,y:30,w:17,h:17,tint:'#d8bf99'}],
+ groundPieces:[{art:'dirt-compact',x:42,y:30,w:84,h:7,tint:'#d8bf99'},{art:'dirt-compact',x:42,y:30,w:17,h:17,tint:'#d8bf99'},{art:'dirt-compact',x:8,y:41,w:5,h:25,tint:'#d8bf99'}],
  objects:[...grove,...[21,30,53,63].map((x,i)=>({x,y:i%2?25:36,r:.65,art:'rocks-flat',w:2.7})),{x:38,y:23,r:.65,art:'training-post',w:2},{x:46,y:23,r:.65,art:'training-post',w:2}]},
  outpost:{name:'Puesto fronterizo',country:'País del Fuego',spawn:[8,30],width:64,height:60,ground:'grass-wildflowers',tint:'#b5be93',
  zones:[{name:'Entrada occidental',at:[8,30]},{name:'Plaza del puesto',at:[32,30]},{name:'Mirador de frontera',at:[53,30]}],
@@ -16,7 +16,9 @@ export const REGIONS={
 };
 export const PORTALS=[
  {id:'konoha-east',region:'konoha',at:[139,44],to:'forest',arrival:[8,30],name:'Bosque de entrenamiento'},
- {id:'forest-west',region:'forest',at:[5,30],to:'konoha',arrival:[135,44],name:'Konoha'},
+ {id:'forest-west',region:'forest',at:[5,30],to:'konoha',arrival:[135,44],name:'Konoha · salida oriental'},
+ {id:'konoha-south',region:'konoha',at:[72,81],to:'forest',arrival:[8,47],name:'Bosque de entrenamiento'},
+ {id:'forest-south',region:'forest',at:[8,51],to:'konoha',arrival:[72,76],name:'Konoha · puerta sur'},
  {id:'forest-east',region:'forest',at:[79,30],to:'outpost',arrival:[8,30],name:'Puesto fronterizo'},
  {id:'outpost-west',region:'outpost',at:[5,30],to:'forest',arrival:[75,30],name:'Bosque de entrenamiento'}
 ];
@@ -31,13 +33,13 @@ export function regionStep(region,p,dx,dy,dt,speed){
  if(region==='konoha')return villageStep(p,dx,dy,dt,speed);
  const len=Math.hypot(dx,dy);if(!len)return p;const n=Math.max(1,Math.ceil(dt*speed/.25));for(let i=0;i<n;i++){const x=p.x+dx/len*speed*dt/n,y=p.y+dy/len*speed*dt/n;if(!regionBlocked(region,x,p.y))p.x=x;if(!regionBlocked(region,p.x,y))p.y=y;}return p;
 }
-export function createRegionRouter(){
+export function createRegionRouter({preview=false}={}){
  let region='konoha';const visited=new Set(['konoha']),unlocked=new Set(REGION_TRAVEL.filter(d=>d.region==='konoha').map(d=>d.id));
  function near(p){return PORTALS.find(t=>t.region===region&&Math.hypot(p.x-t.at[0],p.y-t.at[1])<=PORTAL_REACH)||null}
  function enter(id,at){if(!Object.hasOwn(REGIONS,id)||!Array.isArray(at)||at.length!==2||!at.every(Number.isFinite)||regionBlocked(id,...at))return false;region=id;visited.add(id);return true}
  function observe(p){for(const d of REGION_TRAVEL)if(d.region===region&&Math.hypot(p.x-d.at[0],p.y-d.at[1])<=3)unlocked.add(d.id);}
- function destinations(){return REGION_TRAVEL.map(d=>({...d,available:unlocked.has(d.id)}))}
+ function destinations(){return REGION_TRAVEL.map(d=>({...d,available:preview||unlocked.has(d.id),discovered:unlocked.has(d.id)}))}
  function portal(p){const t=near(p);return t?{id:t.id,name:t.name,region:t.to,at:[...t.arrival],type:'road'}:null}
- function fast(id){const d=REGION_TRAVEL.find(t=>t.id===id);return d&&unlocked.has(id)?{...d,type:'fast'}:null}
+ function fast(id){const d=REGION_TRAVEL.find(t=>t.id===id);return d&&(preview||unlocked.has(id))?{...d,type:'fast'}:null}
  return {get region(){return region},near,enter,observe,destinations,portal,fast,state:()=>({region,visited:[...visited],unlocked:[...unlocked]})}
 }

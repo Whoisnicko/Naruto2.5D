@@ -1,0 +1,38 @@
+/* Isolated UI skin, scoped to the review sandbox dialog. No campaign HUD overrides. */
+body[data-mode=sandbox] #fieldPause[data-sandbox-control=true]{width:min(920px,95vw);max-width:95vw;max-height:94dvh;padding:0;border:1px solid #b49565;border-radius:14px;background:#18271f;color:#f5e6cc;overflow:auto;box-shadow:0 20px 90px #000b}
+body[data-mode=sandbox] #fieldPause[data-sandbox-control=true]>:not(#sb-control){display:none!important}
+#sb-control{padding:20px;display:grid;gap:15px;color:#f4e6cf;font:14px system-ui,sans-serif}
+#sb-control [hidden]{display:none!important}
+#sb-control .sb-header{display:flex;align-items:center;justify-content:space-between;gap:15px}
+#sb-control .sb-kicker{color:#bda477;font-size:10px;letter-spacing:.14em;font-weight:700}
+#sb-control h2{font:700 clamp(21px,3vw,29px) Georgia,serif;margin:4px 0;color:#f0dbb2}
+#sb-control .sb-header p,#sb-control .sb-note{margin:5px 0 12px;font-size:12px;color:#bbc9ba;line-height:1.45}
+#sb-control .sb-header button{width:auto;min-width:114px;background:#45624c;border-color:#c6ad7c;white-space:nowrap}
+#sb-control .sb-summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:#405246;border:1px solid #405246;border-radius:8px;overflow:hidden}
+#sb-control .sb-stat{background:#24362c;min-width:0;padding:10px}
+#sb-control .sb-stat small{display:block;font-size:9px;font-weight:700;letter-spacing:.09em;color:#b1bfae}
+#sb-control .sb-stat strong{display:block;margin-top:3px;font-size:14px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;color:#f7e1b4}
+#sb-control .sb-layout{display:grid;grid-template-columns:155px minmax(0,1fr);gap:16px;min-height:320px}
+#sb-control .sb-tabs{display:flex;flex-direction:column;gap:4px;border-right:1px solid #445549;padding-right:12px}
+#sb-control button,#sb-control a.sb-choice{border:1px solid #536754;background:#283c30;color:#f3e5c9;border-radius:7px;text-decoration:none;margin:0;min-height:40px;padding:9px 11px;font:inherit;text-align:left;cursor:pointer}
+#sb-control button:hover,#sb-control a.sb-choice:hover{background:#354f3d;border-color:#c6ad7c}
+#sb-control button:focus-visible,#sb-control a:focus-visible{outline:2px solid #f1cf88;outline-offset:2px}
+#sb-control button[aria-selected=true],#sb-control button[aria-pressed=true]{background:#405b43;color:#ffe9b9;border:1px solid #d0ad74;box-shadow:inset 3px 0 #d0ad74}
+#sb-control button:disabled{opacity:.5;cursor:not-allowed}
+#sb-control .sb-panel h3{font:700 20px Georgia,serif;color:#f0dbb2;margin:0 0 8px}
+#sb-control .sb-panel h4{font-size:12px;letter-spacing:.05em;color:#d3b982;margin:16px 0 8px}
+#sb-control .sb-grid,#sb-control .sb-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#sb-control .sb-choice{display:grid;align-content:center;gap:4px;min-height:57px}
+#sb-control .sb-choice strong{font-size:13px}
+#sb-control .sb-choice small{font-size:11px;color:#bdcbb8;line-height:1.35}
+#sb-control .sb-primary{margin-top:14px;background:#98703a;color:#fff0d4;border-color:#d6b67c;text-align:center;font-weight:700}
+#sb-control .sb-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #46594a;padding-top:12px}
+#sb-control .sb-feedback{min-width:0;color:#d1d9bd;font-size:12px;line-height:1.4}
+#sb-control #sandboxFeedback{display:block;color:#e6c48d}
+#sb-control #fieldPauseStatus{font-size:11px;color:#aebdac;margin:4px 0 0}
+#sb-control #sandboxExitField{width:auto;white-space:nowrap}
+#sb-control #fieldPerformance{margin:10px 0;padding:10px;border:1px solid #536754;border-radius:7px}
+#sb-control #sandboxStressStatus{display:block;margin:8px 0;color:#cdd4bc}
+#sb-control .sb-settings{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+#sb-control #fieldPauseUtility{margin-top:12px}
+@media(max-width:640px){#sb-control{padding:12px;gap:12px}#sb-control .sb-header{align-items:flex-start}#sb-control .sb-header button{min-width:90px;white-space:normal}#sb-control .sb-summary{grid-template-columns:repeat(3,minmax(0,1fr))}#sb-control .sb-layout{grid-template-columns:1fr;gap:10px;min-height:0}#sb-control .sb-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-right:0;padding-right:0}#sb-control .sb-tab{text-align:center;padding:8px 4px;font-size:12px}#sb-control .sb-footer{flex-wrap:wrap}#sb-control #sandboxExitField{width:100%;text-align:center}#sb-control .sb-choice strong{font-size:12px}}

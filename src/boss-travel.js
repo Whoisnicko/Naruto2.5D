@@ -23,4 +23,4 @@ export function campaignDestinations({quest,character,progress,campaign,examComp
 }
 export function practiceDestinations(){return Object.entries(PRACTICE_BOSSES).map(([id,s])=>({id,name:s.name,location:'Boss practice arena',detail:'Phase 1 · '+s.stages.length+' phases available in pause tools',available:true,boss:true}));}
 export function encounterLabel(d){return (d.done?'✓ ':d.available?'▶ ':'🔒 ')+d.name+(d.location?' · '+d.location:'')+(d.done?' · Completed':!d.available?' · '+d.reason:d.detail?' · '+d.detail:'');}
-export function practiceURL(id,phase=1,version='3c75'){if(!Object.hasOwn(PRACTICE_BOSSES,id)||!Number.isInteger(phase)||phase<1||phase>PRACTICE_BOSSES[id].stages.length)return null;return './?arenaPractice=1&boss='+encodeURIComponent(id)+'&phase='+phase+'&v='+encodeURIComponent(version);}
+export function practiceURL(id,phase=1,version='3c76'){if(!Object.hasOwn(PRACTICE_BOSSES,id)||!Number.isInteger(phase)||phase<1||phase>PRACTICE_BOSSES[id].stages.length)return null;return './?arenaPractice=1&boss='+encodeURIComponent(id)+'&phase='+phase+'&v='+encodeURIComponent(version);}

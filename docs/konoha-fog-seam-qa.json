@@ -1,0 +1,20 @@
+{
+  "checks": [
+    "textures and patterns cached once",
+    "two pattern fills per composite at 20 Hz; one presentation blit per frame",
+    "canvas transform restored",
+    "adaptive low mode",
+    "one fill per low mode composite",
+    "reduced motion static",
+    "old fog fallback supported",
+    "all other atmospheric drawing and effects unchanged"
+  ],
+  "chromiumIsolated": {
+    "frames": 240,
+    "oldBadPixels": 0,
+    "newBadPixels": 0,
+    "minAlpha": 217,
+    "maxAlpha": 217
+  },
+  "limitations": "No reproduction of original artifact in isolated test, no full game visual/FPS test."
+}

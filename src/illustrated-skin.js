@@ -37,7 +37,7 @@ export function createIllustratedSkin({view,canvas,overlay,buildings,foliage,rep
   billboard('mountain',-13,-49,55);for(const lamp of lamps)billboard('lamp-post',lamp.x+.26,lamp.z,1.1);
   ready=true;return status();
  }
- function sync({visible,x,z,spanX}){active=!!(ready&&visible);root.visible=active;const near=(a)=>Math.abs(a.x-x)<spanX+20&&Math.abs(a.z-z)<42;for(const b of buildings){b.fallback.visible=visible&&near(b)&&!buildingVisuals.some(v=>v.fallback===b.fallback&&active);}
+ function sync({visible,x,z,spanX,enabled=true}){active=!!(ready&&visible&&enabled);root.visible=active;const near=(a)=>Math.abs(a.x-x)<spanX+20&&Math.abs(a.z-z)<42;for(const b of buildings){b.fallback.visible=visible&&near(b)&&!buildingVisuals.some(v=>v.fallback===b.fallback&&active);}
   for(const b of buildingVisuals)b.m.visible=active&&near(b);for(const a of treeVisuals)a.m.visible=active&&near(a);return active&&treesReady;
  }
  function drawAtmosphere({clock,kind,time,dt,x,z}){if(!active||!atmosphere)return false;

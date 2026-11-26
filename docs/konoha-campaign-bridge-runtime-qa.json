@@ -1,0 +1,19 @@
+{
+  "checks": [
+    "campaign scene boots",
+    "hero from campaign and locked",
+    "campaign wallet and HP",
+    "exterior discovery required",
+    "campaign controls",
+    "clock restored",
+    "practice cache absent",
+    "forest portal preserved",
+    "forest unlocked",
+    "return to Konoha",
+    "journal opens",
+    "main chapter shown",
+    "return transaction"
+  ],
+  "passed": 13,
+  "method": "actual child app and Three geometry, mocked DOM/renderer and parent bridge; no real iframe"
+}

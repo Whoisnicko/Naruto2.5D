@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "boot",
+    "six existing Konoha lamps",
+    "storm animation in frame loop",
+    "night filter",
+    "no audio control",
+    "forest travel and weather",
+    "outpost travel and lamps",
+    "fast travel restores Konoha lamps",
+    "south portal preserved",
+    "south arrival"
+  ],
+  "passed": 10,
+  "method": "real Three.js geometry, simulated DOM, canvas, clock and renderer"
+}

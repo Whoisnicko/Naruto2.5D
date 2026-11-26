@@ -24,7 +24,7 @@ export function techniqueTargets(actor,targets,skill,visible){
 
 // A close, visible target may be behind the actor; explicit directional input wins
 // when a valid target is in front. No long-range magnetism or wall bypass.
-export function responsiveMeleeTarget(actor,targets,dir,range,visible,explicit=false){
+export function responsiveMeleeTarget(actor,targets,dir,range,visible){
  const front=attackCone(actor,targets,{range},dir,visible)[0];if(front)return front;
  const radius=Math.min(range,2.35);return targets.filter(e=>e.hp>0&&distance(actor,e)<=radius&&visible(actor,e)).sort((a,b)=>distance(actor,a)-distance(actor,b))[0]||null;
 }

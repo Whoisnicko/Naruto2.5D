@@ -1,4 +1,4 @@
-import {newWorld,SIDEQUESTS,SHOPS,DIALOGUES,choicesFor,questProgress,acceptQuest,finishQuest,buyPrice,sellPrice,buyItem,sellItem,healPlayer} from './world-data.js';
+import {newWorld,SIDEQUESTS,SHOPS,DIALOGUES,choicesFor,questProgress,acceptQuest,finishQuest,buyPrice,sellPrice,buyItem,sellItem,healPlayer,openChest,REGIONAL_ENEMIES} from './world-data.js';
 import {newRPG,itemFor,itemCount,addItem,rewardItems,useItem,collectOverflow,LOOT} from './rpg-data.js';
 
 // Temporary remapping for the new village; no legacy coordinates or campaign save mutations.
@@ -8,7 +8,7 @@ export const VILLAGE_LANDMARKS=[
  {id:'hokage',name:'Mirador Hokage',at:[72,26],r:3},
  {id:'ichiraku',name:'Ichiraku Ramen',at:[85,74],r:2.8},
  {id:'bridge',name:'Puente central',at:[36,43],r:3},
- {id:'forest',name:'Claro de entrenamiento',region:'forest',at:[42,30],r:3}
+ {id:'forest',name:'Claro de entrenamiento',region:'forest',at:[42,30],r:3}, {id:'plaza',name:'Plaza central',at:[72,43],r:4},{id:'academy',name:'Academia',at:[47,31],r:4},{id:'eastroad',name:'Sendero fronterizo',region:'outpost',at:[8,30],r:5},{id:'shrine',name:'Puesto',region:'outpost',at:[32,30],r:5},{id:'ruins',name:'Ruinas',region:'outpost',at:[54,30],r:5}
 ];
 export const VILLAGE_SUPPLY={at:[119,25],radius:2.5,reward:[['cloth',3]]};
 export const VILLAGE_SEED={coins:100,xp:0,hp:60,chakra:50};
@@ -27,6 +27,6 @@ export function createVillageServices(initial=null){
  function trade(npc,mode,id){if(!Object.hasOwn(SHOPS,npc))return 'Comercio no disponible.';if(mode==='shop')return buyItem(rpg,p,npc,id);if(mode==='sell'&&choicesFor(world,npc).some(c=>c.action==='sell'))return sellItem(rpg,p,id);return 'Venta no disponible.';}
  function quests(){return Object.entries(SIDEQUESTS).map(([id,q])=>({id,...q,status:world.quests[id],progress:questProgress(world,rpg,id),locations:(q.visits||[]).map(v=>({...VILLAGE_LANDMARKS.find(l=>l.id===v),visited:world.visited.includes(v)}))}));}
  function startMain(){if(mainQuest!==0)return false;mainQuest=defeated.size===5?2:1;return true}
- function defeat(id){if(mainQuest!==1||!Number.isInteger(id)||id<0||id>=5||defeated.has(id))return false;defeated.add(id);p.xp=Math.min(1e9,p.xp+25);p.coins=Math.min(1e9,p.coins+12);rewardItems(rpg,LOOT[id]);if(defeated.size===5)mainQuest=2;return true}
- return {combatResources:p,combatRPG:rpg,startMain,defeat,mainQuest:()=>mainQuest,defeated:()=>[...defeated],campaignData:()=>({player:{...p},rpg,world,combat:{quest:mainQuest,defeated:[...defeated]}}),resources:()=>({...p}),update,nearSupply,collect,action,trade,quests,inventory,choices:id=>choicesFor(world,id),shop:id=>(SHOPS[id]||[]).map(k=>({id:k,...itemFor(k),count:itemCount(rpg,k),price:buyPrice(k)})),sell:()=>inventory().filter(i=>!['key','scroll'].includes(i.type)).map(i=>({...i,price:sellPrice(i.id)})),use:id=>useItem(rpg,p,id),overflow:()=>({...rpg.overflow}),recover:()=>collectOverflow(rpg),state:()=>({player:{...p},visited:[...world.visited],quests:{...world.quests},inventory:inventory().map(({id,count})=>({id,count})),overflow:{...rpg.overflow},cache,mainQuest,defeated:[...defeated]})};
+ function defeat(id){if(id>=100){const e=REGIONAL_ENEMIES.find(e=>e.id===id);if(!e||world.defeated.includes(id))return false;world.defeated.push(id);p.xp=Math.min(1e9,p.xp+e.xp);p.coins=Math.min(1e9,p.coins+e.coins);rewardItems(rpg,e.loot);return true;}if(!Number.isInteger(id)||id<0||id>=5||defeated.has(id)||mainQuest>=2)return false;if(mainQuest===0)mainQuest=1;defeated.add(id);p.xp=Math.min(1e9,p.xp+25);p.coins=Math.min(1e9,p.coins+12);rewardItems(rpg,LOOT[id]);if(defeated.size===5)mainQuest=2;return true}
+ return {world,openChest:id=>openChest(world,rpg,p,id),combatResources:p,combatRPG:rpg,startMain,defeat,mainQuest:()=>mainQuest,defeated:()=>[...defeated],campaignData:()=>({player:{...p},rpg,world,combat:{quest:mainQuest,defeated:[...defeated]}}),resources:()=>({...p}),update,nearSupply,collect,action,trade,quests,inventory,choices:id=>choicesFor(world,id),shop:id=>(SHOPS[id]||[]).map(k=>({id:k,...itemFor(k),count:itemCount(rpg,k),price:buyPrice(k)})),sell:()=>inventory().filter(i=>!['key','scroll'].includes(i.type)).map(i=>({...i,price:sellPrice(i.id)})),use:id=>useItem(rpg,p,id),overflow:()=>({...rpg.overflow}),recover:()=>collectOverflow(rpg),state:()=>({player:{...p},visited:[...world.visited],quests:{...world.quests},inventory:inventory().map(({id,count})=>({id,count})),overflow:{...rpg.overflow},cache,mainQuest,defeated:[...defeated]})};
 }

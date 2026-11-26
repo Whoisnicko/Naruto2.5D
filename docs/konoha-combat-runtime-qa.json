@@ -1,0 +1,18 @@
+{
+  "checks": [
+    "boot",
+    "forest travel",
+    "five rendered enemy meshes",
+    "keyboard taijutsu impact",
+    "J no journal conflict",
+    "journal guarded near enemies",
+    "fast travel blocked in combat",
+    "projectile loop",
+    "return outside combat",
+    "enemy meshes hidden in Konoha",
+    "I journal in Konoha",
+    "fog pattern regression"
+  ],
+  "passed": 12,
+  "method": "actual Three.js geometry and app, mocked DOM/renderer/canvas/clock; no real browser"
+}

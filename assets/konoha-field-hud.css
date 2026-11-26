@@ -44,3 +44,19 @@
 @media(max-width:1050px){#hud #combatDock{max-width:68vw}#hud #bottom .skill{min-width:38px;width:53px}#hud #combatDock .toolkit-heading{display:none}#info{max-width:17vw;font-size:9px}#fieldQuest{width:19vw}}
 @media(max-width:760px),(pointer:coarse){:root{--field-dock:125px}#head{left:6px;right:6px;top:6px;gap:4px;flex-direction:column}#brand{padding:3px 6px}#brand small{font-size:8px}#buttons{max-width:100%;justify-content:flex-start;gap:3px}#buttons button,#buttons select{padding:3px 5px;min-height:24px;font-size:9px}#hud #top,#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top{left:6px;width:min(44vw,215px);max-height:calc(100dvh - var(--field-top) - 190px)}#fieldQuest{right:6px;width:min(38vw,165px);padding:5px;max-height:calc(100dvh - var(--field-top) - 185px)}#fieldQuest strong{font-size:11px}#fieldQuest p,#fieldQuest button{font-size:9px}#hud #combatDock{bottom:4px;left:50%;max-width:calc(100vw - 12px);width:max-content}#hud #bottom{justify-content:flex-start}#hud #bottom .skill{flex:0 0 42px;width:42px;min-width:42px;grid-template-rows:25px 11px minmax(17px,auto) 10px;gap:1px}#hud #bottom .skill em{font-size:8px}#hud #bottom .skill .skill-orb{width:24px;height:24px}#hud #bottom .skill .skill-cost{font-size:8px}#hud #integratedHud{bottom:calc(var(--field-dock) + 6px);left:6px;max-width:50vw}#hud #consumableBar .quick-item{width:36px;height:42px}#info{bottom:calc(var(--field-dock) + 7px);right:6px;max-width:38vw;width:38vw;padding:4px;font-size:9px}#info #status,#info>div:nth-child(2),#info>small{display:none}#pad{left:6px;right:auto;bottom:calc(var(--field-dock) + 64px);grid-template-columns:repeat(3,32px)}#pad button{padding:6px;min-height:28px}#info #runTrack{width:35px}}
 @media(max-height:480px){#fieldQuest{max-height:120px}#fieldMapPanel{display:none}#hud #top{max-height:135px}#info #status{display:none}}
+
+/* Original finished frame positions are preserved on wide screens. Override only field layout. */
+@media(min-width:1100px) and (pointer:fine){
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #combatDock{--finished-dock-w:min(620px,58vw);width:var(--finished-dock-w);height:calc(var(--finished-dock-w)*.349315);max-width:none;bottom:6px}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #combatDock #combatPanel{position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);width:max-content;max-width:90%;padding:5px 12px;background:#1b2835ef;border:1px solid #bd955d;border-radius:6px}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #top{max-height:calc(100dvh - var(--field-top) - 240px)}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill{min-width:0}
+}
+@media(max-width:1099px),(pointer:coarse){
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #combatDock{width:max-content;max-width:calc(100vw - 12px);height:auto;padding:5px;display:grid;gap:3px;background:linear-gradient(#26374c,#171c27)!important}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #combatDock .toolkit-heading{display:none}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom{position:static;inset:auto;transform:none;width:auto;max-width:100%;overflow-x:auto;justify-content:flex-start}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #bottom .skill{flex:0 0 43px;width:43px;min-width:43px;grid-template-rows:25px 11px minmax(17px,auto) 10px}
+#hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #defenseActions{position:static;inset:auto;transform:none;display:flex;width:auto}
+}
+#hud[data-campaign=true] #fieldQuest{max-height:calc(100dvh - var(--field-top) - 180px)}

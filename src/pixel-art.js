@@ -109,8 +109,8 @@ function actorCell(kind,dir,frame,gear=null,kyubi=false){
  if(side){const x=run?4:attack?[8,21,17][phase]:cast?17+phase:16+step,y=run?22:attack?[18,16,21][phase]:cast?18-phase:22;limb(14+lean,bodyY+2,x,y,p.shirt,3);rect(x-1,y-1,3,3,skin);rect(x-1,y+1,3,1,skinShade);}
  else if(cast){rect(9,18,3,3,skin);rect(12,18,3,3,skin);rect(11,17,2,1,skinLight);}
  // Distinct combo poses, with the same palette and original 24×32 cell.
- if(kick&&phase===1){if(side){limb(13,23,22,19,p.shirt,4);rect(20,17,4,4,ink);rect(20,18,3,1,'#657286');}else{limb(14,23,19,back?18:26,p.shirt,4);rect(18,back?16:25,5,3,ink);}}
- if(finish&&phase===1){if(side){limb(11,18,21,13,p.shade,4);limb(15,18,22,15,p.shirt,4);rect(20,12,4,5,skin);}else{limb(8,19,5,13,p.shirt,4);limb(16,19,19,13,p.shirt,4);rect(3,11,4,4,skin);rect(18,11,4,4,skin);}}
+ if(kick&&phase===0){if(side){limb(13,23,18,20,p.shirt,4);rect(16,20,4,3,ink);}else{limb(14,23,17,22,p.shirt,4);rect(15,21,4,3,ink);}}if(kick&&phase===2){if(side){limb(13,23,17,25,p.shirt,4);rect(16,25,5,3,ink);}else{limb(14,23,17,27,p.shirt,4);rect(15,27,5,3,ink);}}if(kick&&phase===1){if(side){limb(13,23,22,19,p.shirt,4);rect(20,17,4,4,ink);rect(20,18,3,1,'#657286');}else{limb(14,23,19,back?18:26,p.shirt,4);rect(18,back?16:25,5,3,ink);}}
+ if(finish&&phase===0){if(side){limb(11,18,5,15,p.shade,4);limb(15,18,8,13,p.shirt,4);rect(6,11,4,4,skin);}else{limb(8,19,4,22,p.shirt,4);limb(16,19,20,22,p.shirt,4);rect(2,20,4,4,skin);rect(18,20,4,4,skin);}}if(finish&&phase===2){if(side){limb(14,18,19,21,p.shirt,4);rect(18,20,4,4,skin);}else{limb(8,19,5,20,p.shirt,4);limb(16,19,19,20,p.shirt,4);}}if(finish&&phase===1){if(side){limb(11,18,21,13,p.shade,4);limb(15,18,22,15,p.shirt,4);rect(20,12,4,5,skin);}else{limb(8,19,5,13,p.shirt,4);limb(16,19,19,13,p.shirt,4);rect(3,11,4,4,skin);rect(18,11,4,4,skin);}}
  // rounded anime head, outline, shade and a readable face at tiny scale.
  poly([[hx-6,hy-3],[hx+4,hy-4],[hx+7,hy],[hx+6,hy+6],[hx+3,hy+9],[hx-4,hy+9],[hx-6,hy+5]],ink);
  poly([[hx-5,hy-2],[hx+4,hy-3],[hx+6,hy+1],[hx+5,hy+6],[hx+2,hy+8],[hx-3,hy+8],[hx-5,hy+5]],kind==='enemy'?p.trim:skin);

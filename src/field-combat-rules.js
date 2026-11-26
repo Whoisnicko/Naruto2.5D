@@ -28,3 +28,8 @@ export function responsiveMeleeTarget(actor,targets,dir,range,visible){
  const front=attackCone(actor,targets,{range},dir,visible)[0];if(front)return front;
  const radius=Math.min(range,2.35);return targets.filter(e=>e.hp>0&&distance(actor,e)<=radius&&visible(actor,e)).sort((a,b)=>distance(actor,a)-distance(actor,b))[0]||null;
 }
+
+// Bounded homing: only visible living targets inside the remaining travel budget.
+// Rotate progressively; collision checks remain with the caller.
+export function steerRasengan(actor,action,targets,visible,dt){const limit=action.remaining+1.2,valid=e=>e.hp>0&&distance(actor,e)<=limit&&visible(actor,e);let target=targets.find(e=>e.id===action.targetId&&valid(e));if(!target){target=targets.filter(e=>valid(e)&&((e.x-actor.x)*action.dir.x+(e.z-actor.z)*action.dir.z>=distance(actor,e)*-.15)).sort((a,b)=>distance(actor,a)-distance(actor,b))[0];}if(!target)return action.dir;action.targetId=target.id;const from=Math.atan2(action.dir.z,action.dir.x),to=Math.atan2(target.z-actor.z,target.x-actor.x),delta=Math.atan2(Math.sin(to-from),Math.cos(to-from)),angle=from+Math.max(-dt*12,Math.min(dt*12,delta));return {x:Math.cos(angle),z:Math.sin(angle)};}
+export function stressPositions(at,count,blocked){const out=[];for(let ring=0;ring<12&&out.length<count;ring++){const radius=3+ring*1.4,n=Math.max(12,Math.floor(radius*5));for(let i=0;i<n&&out.length<count;i++){const a=i/n*Math.PI*2+ring*.37,x=at.x+Math.cos(a)*radius,z=at.y+Math.sin(a)*radius;if(!blocked(x,z,.48)&&out.every(p=>Math.hypot(p.x-x,p.z-z)>1.0))out.push({x,z});}}return out;}

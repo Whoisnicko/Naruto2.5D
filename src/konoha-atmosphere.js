@@ -14,8 +14,8 @@ export function sampleLight(clock){
  const a=GRADES[i-1],b=GRADES[i],t=(q-a[0])/(b[0]-a[0]),[brightness,saturation,sepia,night,warm]=a.slice(1).map((v,j)=>mix(v,b[j+1],t));
  return {brightness,saturation,sepia,night,warm,phase:q<96?'Día':q<160?'Atardecer':'Noche',time:worldTime(q)};
 }
-export function createAtmosphere(random=Math.random){
- let clock=0,elapsed=0,kind='clear',until=weatherDuration('clear',random),automatic=true,autoClock=true;
+export function createAtmosphere(random=Math.random,initialClock=0){
+ let clock=wrap(initialClock,DAY_SECONDS),elapsed=0,kind='clear',until=weatherDuration('clear',random),automatic=true,autoClock=true;
  let rain=0,fog=0,shade=0,flash=0,boltAge=Infinity,boltSeed=0,nextFlash=Infinity;
  function selectWeather(id){if(!Object.hasOwn(WEATHER,id))return false;kind=id;until=elapsed+weatherDuration(id,random);flash=0;boltAge=Infinity;nextFlash=id==='storm'?elapsed+.65+random()*.65:Infinity;return true}
  function setWeather(id){if(id==='auto'){automatic=true;until=elapsed+weatherDuration(kind,random);return true}if(!selectWeather(id))return false;automatic=false;return true}

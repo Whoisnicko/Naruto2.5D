@@ -38,14 +38,15 @@ export function makeFogPixels(seed=17,size=FOG_TILE){
  return out;
 }
 export function createFogBanks({makeCanvas=()=>document.createElement('canvas'),reduced=false}={}){
- let tiles=null,buffer=null,bc=null,last=-Infinity,slow=0,quality='normal',updates=0,failed=false;
- function init(){try{tiles=[17,83].map(seed=>{const t=makeCanvas();t.width=t.height=FOG_TILE;const c=t.getContext('2d');if(!c)throw Error('fog canvas unavailable');const data=c.createImageData(FOG_TILE,FOG_TILE);data.data.set(makeFogPixels(seed));c.putImageData(data,0,0);return t});buffer=makeCanvas();buffer.width=FOG_BUFFER_W;buffer.height=FOG_BUFFER_H;bc=buffer.getContext('2d');if(!bc)throw Error('fog buffer unavailable');return true}catch{failed=true;return false}}
- function layer(tile,t,scale,vx,vy,alpha){const tw=FOG_BUFFER_W*scale,th=FOG_BUFFER_H*scale,x=wrap(t*vx,tw),y=wrap(t*vy,th);bc.globalAlpha=alpha;for(let iy=-1;iy<=0;iy++)for(let ix=-1;ix<=0;ix++)bc.drawImage(tile,x+ix*tw,y+iy*th,tw,th)}
+ let tiles=null,patterns=null,buffer=null,bc=null,last=-Infinity,slow=0,quality='normal',updates=0,failed=false;
+ function init(){try{tiles=[17,83].map(seed=>{const t=makeCanvas();t.width=t.height=FOG_TILE;const c=t.getContext('2d');if(!c)throw Error('fog canvas unavailable');const data=c.createImageData(FOG_TILE,FOG_TILE);data.data.set(makeFogPixels(seed));c.putImageData(data,0,0);return t});buffer=makeCanvas();buffer.width=FOG_BUFFER_W;buffer.height=FOG_BUFFER_H;bc=buffer.getContext('2d');if(!bc)throw Error('fog buffer unavailable');patterns=tiles.map(tile=>bc.createPattern(tile,'repeat'));if(patterns.some(p=>!p))throw Error('fog pattern unavailable');return true}catch{failed=true;return false}}
+ // A single repeating pattern covers the buffer: no fractional edges between separate drawImage tiles.
+ function layer(pattern,t,scale,vx,vy,alpha){const tw=FOG_BUFFER_W*scale,th=FOG_BUFFER_H*scale,x=wrap(t*vx,tw),y=wrap(t*vy,th);bc.save();try{bc.globalAlpha=alpha;bc.translate(x,y);bc.scale(tw/FOG_TILE,th/FOG_TILE);bc.fillStyle=pattern;bc.fillRect(-FOG_TILE,-FOG_TILE,FOG_TILE*3,FOG_TILE*3)}finally{bc.restore()}}
  function draw(ctx,w,h,s,frameDt=0){if(failed)return false;if(!buffer&&!init())return false;
   // Reduce work after sustained slow frames, with hysteresis.
   slow=clamp(slow+(frameDt>.033?1:-.25),0,90);if(slow>=24)quality='low';else if(slow<=4)quality='normal';
   const t=reduced?0:s.elapsed,interval=quality==='low'?.10:.05;
-  if(last===-Infinity||(!reduced&&t-last>=interval-1e-8)){bc.globalAlpha=1;bc.clearRect(0,0,FOG_BUFFER_W,FOG_BUFFER_H);layer(tiles[0],t,1,7,1.8,.85);if(quality==='normal')layer(tiles[1],t+11,1.35,-4.3,2.7,.54);bc.globalAlpha=1;last=t;updates++}
+  if(last===-Infinity||(!reduced&&t-last>=interval-1e-8)){bc.globalAlpha=1;bc.clearRect(0,0,FOG_BUFFER_W,FOG_BUFFER_H);layer(patterns[0],t,1,7,1.8,.85);if(quality==='normal')layer(patterns[1],t+11,1.35,-4.3,2.7,.54);bc.globalAlpha=1;last=t;updates++}
   ctx.save();try{ctx.fillStyle='rgba(188,207,211,'+(s.fog*.10).toFixed(3)+')';ctx.fillRect(0,0,w,h);ctx.globalAlpha=clamp(s.fog*1.15,0,1);ctx.imageSmoothingEnabled=true;ctx.drawImage(buffer,0,0,w,h)}finally{ctx.restore()}return true;
  }
  function reset(){last=-Infinity;slow=0;quality='normal'}

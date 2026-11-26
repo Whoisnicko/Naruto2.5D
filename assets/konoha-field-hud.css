@@ -60,3 +60,20 @@
 #hud[data-finish-art~="dock"]:not([data-living-fallback=true]) #defenseActions{position:static;inset:auto;transform:none;display:flex;width:auto}
 }
 #hud[data-campaign=true] #fieldQuest{max-height:calc(100dvh - var(--field-top) - 180px)}
+
+/* Campaign is a game, not an editor. Lab toolbar remains available only in sandbox. */
+body[data-mode=campaign] #head{display:none!important}
+body[data-mode=campaign] #info{width:min(19vw,220px);padding:7px 9px}
+body[data-mode=campaign] #info #status,body[data-mode=campaign] #info #campaignMode,body[data-mode=campaign] #info>small,body[data-mode=campaign] #info>div:nth-child(2){display:none}
+body[data-mode=campaign] #fieldPauseCompact{display:block;width:100%;text-align:center;margin-top:5px;font-size:11px}
+body[data-mode=campaign] #hud #top{top:12px}
+body[data-mode=campaign] #fieldQuest{top:12px}
+#fieldPauseNavigation,#fieldPauseUtility{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+#fieldPauseNavigation button,#fieldPauseUtility button{margin:0}
+#fieldAdvanced{margin-top:12px;border-top:1px solid #9d825b;padding-top:8px}
+#fieldAdvanced summary{cursor:pointer;font-size:12px}
+#fieldAdvanced small,.field-controls{font-size:10px;line-height:1.4;color:#c5cbbf}
+#fieldWarning{position:fixed;z-index:40;left:50%;top:10px;transform:translateX(-50%);max-width:70vw;padding:8px 12px;border-radius:6px;background:#45281f;color:#ffe2c7;border:1px solid #d28c62;font-size:12px;pointer-events:none}
+#hud[data-finish-art~="map"] .field-map-frame{padding:0;overflow:hidden;aspect-ratio:1;position:relative}
+#hud[data-finish-art~="map"] #fieldMap{position:absolute;inset:14%;width:72%;height:72%;border-radius:50%;object-fit:fill;z-index:1}
+@media(max-width:760px),(pointer:coarse){body[data-mode=campaign] #info{width:38vw;max-width:38vw}body[data-mode=campaign] #hud #top{top:6px}body[data-mode=campaign] #fieldQuest{top:6px}}

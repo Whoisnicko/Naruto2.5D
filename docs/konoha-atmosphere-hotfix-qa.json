@@ -1,0 +1,21 @@
+{
+  "checks": [
+    "neutral day start",
+    "no dawn",
+    "day grade unchanged",
+    "strong sunset",
+    "night mask",
+    "dense fog",
+    "strong rain no flashes",
+    "storm flash and visible bolt windows",
+    "storm distinct",
+    "storm stops immediately",
+    "audio removed",
+    "lamp mask cutouts and warm glows",
+    "strong rain geometry",
+    "storm more rain geometry",
+    "reduced motion retains static rain without lightning"
+  ],
+  "passed": 15,
+  "method": "logic, simulated Canvas commands and combined app syntax"
+}

@@ -32,7 +32,7 @@ export const SKILLS={
  fists:{name:'Steel Fists',branch:'Taijutsu',cost:1,level:2,desc:'+3 attack',stats:{attack:3}},
  reflex:{name:'Ninja Reflexes',branch:'Taijutsu',cost:1,level:3,requires:'fists',desc:'+8% speed and +5 percentage points critical chance',stats:{speed:.08,crit:.05}},
  focus:{name:'Chakra Control',branch:'Ninjutsu',cost:1,level:2,desc:'+2 chakra per second and +10% ninjutsu damage',stats:{chakra:2,ninjutsu:.10}},
- giant:{name:'Giant Rasengan',branch:'Ninjutsu',cost:1,level:3,requires:'focus',scroll:'scroll',desc:'Unlocks Giant Rasengan: 84 damage, 32 chakra, 6 s cooldown.'},
+ giant:{name:'Giant Rasengan',branch:'Ninjutsu',cost:1,level:3,requires:'focus',desc:'Unlocks Giant Rasengan: 84 damage, 32 chakra, 6 s cooldown.'},
  bond:{name:'Shadow Clone Mastery I',branch:'Clones',cost:1,level:2,desc:'Summon 3 shadow clones instead of 2.',cloneCount:1},
  endurance:{name:'Resilient Shadows',branch:'Clones',cost:1,level:3,requires:'bond',desc:'+2 seconds of clone duration',cloneDuration:2},
  cloneII:{name:'Shadow Clone Mastery II',branch:'Clones',cost:1,level:4,requires:'bond',desc:'Summon 4 shadow clones.',cloneCount:1},

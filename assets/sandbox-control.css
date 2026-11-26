@@ -36,3 +36,14 @@ body[data-mode=sandbox] #fieldPause[data-sandbox-control=true]>:not(#sb-control)
 #sb-control .sb-settings{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
 #sb-control #fieldPauseUtility{margin-top:12px}
 @media(max-width:640px){#sb-control{padding:12px;gap:12px}#sb-control .sb-header{align-items:flex-start}#sb-control .sb-header button{min-width:90px;white-space:normal}#sb-control .sb-summary{grid-template-columns:repeat(3,minmax(0,1fr))}#sb-control .sb-layout{grid-template-columns:1fr;gap:10px;min-height:0}#sb-control .sb-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-right:0;padding-right:0}#sb-control .sb-tab{text-align:center;padding:8px 4px;font-size:12px}#sb-control .sb-footer{flex-wrap:wrap}#sb-control #sandboxExitField{width:100%;text-align:center}#sb-control .sb-choice strong{font-size:12px}}
+
+/* Responsive review hardening: portrait, landscape, zoom and long labels. */
+#sb-control,.sb-panels,#sb-control .sb-panel{min-width:0}
+#sb-control button,#sb-control a.sb-choice,#sb-control select{max-width:100%;overflow-wrap:anywhere;min-width:0}
+#sb-control .sb-header>div,#sb-control .sb-footer>div{min-width:0}
+#sb-control .sb-choice small{overflow-wrap:anywhere}
+#sb-control #fieldPerformance p,#sb-control #fieldPerformance small{overflow-wrap:anywhere}
+#sb-control input[type=range],#sb-control textarea{max-width:100%;width:100%;box-sizing:border-box}
+@media(max-width:420px){#sb-control .sb-header{flex-wrap:wrap}#sb-control .sb-header button{width:100%;text-align:center}#sb-control .sb-grid,#sb-control .sb-choice-grid{grid-template-columns:1fr}#sb-control .sb-settings{grid-template-columns:1fr}}
+@media(max-height:500px) and (orientation:landscape){body[data-mode=sandbox] #fieldPause[data-sandbox-control=true]{max-height:94dvh}#sb-control{padding:10px;gap:9px}#sb-control .sb-layout{min-height:0}#sb-control .sb-stat{padding:6px}#sb-control .sb-header p{margin-bottom:4px}}
+@media(pointer:coarse){#sb-control button,#sb-control a.sb-choice{min-height:44px}}

@@ -1,6 +1,6 @@
 // UI adapter only: reuse existing controls and handlers, never mutate campaign or combat state.
 export const SANDBOX_TABS=[['character','Characters'],['enemies','Enemies'],['bosses','Bosses'],['resources','Resources'],['world','World'],['performance','Performance']];
-export function encounterURL(id,roles,version='3c76'){
+export function encounterURL(id,roles,version='3c77'){
  if(!['mixed','regional',...roles].includes(id))return null;
  return './konoha-three-lab.html?sandbox=1&encounter='+encodeURIComponent(id)+'&v='+encodeURIComponent(version);
 }
@@ -32,7 +32,7 @@ export function initSandboxControl({document:doc,characterFor,enemyRoles,bosses,
  const enemyGrid=create('div','sb-choice-grid');enemies.append(enemyGrid);
  for(const e of [{id:'mixed',name:'Mixed roster',detail:'All 7 roles'},{id:'regional',name:'Regional patrols',detail:'Explore both hostile regions'},...enemyRoles]){const href=encounterURL(e.id,enemyRoles.map(x=>x.id));if(!href)continue;const a=create('a','sb-choice');a.href=href;a.target='_blank';a.rel='noopener';a.append(create('strong','',e.name),create('small','',e.detail));enemyGrid.append(a);}
  label(enemies,'Current encounter');grid(enemies,['sandboxResetEnemies','sandboxStressStop']);note(enemies,'Respawn restores your current encounter. Stop / clear removes stress-test enemies.');
- const bossesPanel=panel('bosses');note(bossesPanel,'Select a boss, then a starting phase. Opens an isolated encounter, not the retired world.');
+ const bossesPanel=panel('bosses');note(bossesPanel,'Select a boss and starting phase. Fight in this tab; returning restarts the temporary field encounter.');
  const bossSelect=$('sandboxBoss'),phaseSelect=$('sandboxPhase'),bossPicker=choiceGrid(bossesPanel,bossSelect,id=>bosses[id].stages.length+' phases');label(bossesPanel,'Starting phase');const phasePicker=choiceGrid(bossesPanel,phaseSelect);bossSelect.addEventListener('change',()=>phasePicker.rebuild());const launch=$('sandboxBossStart');launch.classList.add('sb-primary');bossesPanel.append(launch);
  const res=panel('resources');note(res,'These changes affect only the active sandbox.');label(res,'Quick setup');grid(res,['sandboxXP','sandboxRefill','sandboxImmortalField']);label(res,'Progress & supplies');grid(res,['sandboxLevel1','sandboxLevel5','sandboxCoins','sandboxSupplies','sandboxScrolls']);
  const world=panel('world');note(world,'Jump to an illustrated region or use the full destination list.');grid(world,['regionHome','regionForest','fieldPractice','regionOutpost','travelOpen','reset','villageJournal','fieldView']);const util=$('fieldPauseUtility');world.append(util);

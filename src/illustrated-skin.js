@@ -47,7 +47,7 @@ export function createIllustratedSkin({view,canvas,overlay,buildings,foliage,rep
   const flash=flashAge<.14?.54*(1-flashAge/.14):flashAge>=.23&&flashAge<.4?.35*(1-(flashAge-.23)/.17):0;
   overlay.hidden=false;atmosphere.draw({...sampleLight(clock),...weatherBlend,kind,elapsed:time,boltAge:flashAge,boltSeed,flash},x>=50?'outpost':x>=14?'forest':'konoha',dt,{x,y:z},dt);return true;
  }
- function hideAtmosphere(){overlay.hidden=true;}
+ function hideAtmosphere(){overlay.hidden=true;}function disable(){ready=false;active=false;root.visible=false;hideAtmosphere();}
  function status(){return {ready,active,loaded:loaded.size,missing:[...failures],buildings:buildingVisuals.length,trees:treeVisuals.length};}
- return {initialize,sync,drawAtmosphere,hideAtmosphere,status};
+ return {initialize,sync,drawAtmosphere,hideAtmosphere,disable,status};
 }

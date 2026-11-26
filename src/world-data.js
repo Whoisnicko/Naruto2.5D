@@ -51,7 +51,7 @@ export const DIALOGUES={
  sakura:{text:'Naruto! Training without resting again? I need bandages for the infirmary.',choices:[
  {label:'Need help?',action:'accept',quest:'supplies',when:'suppliesNew'},
  {label:'Deliver three cloths',action:'finish',quest:'supplies',when:'suppliesActive'},
- {label:'Curarme (15 ryō)',action:'heal'},
+ {label:'Heal (15 ryō)',action:'heal'},
  {label:'See you later',action:'close'}]},
  teuchi:{text:'Welcome to Ichiraku! Good ramen is part of training.',choices:[
  {label:'View Menu',action:'shop',shop:'teuchi'},{label:'See you later',action:'close'}]},

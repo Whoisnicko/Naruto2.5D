@@ -61,7 +61,7 @@ export function createAtmosphereView({canvas,stage,project,lamps=()=>[],reduced=
  function resize(width,height){w=Math.max(1,width);h=Math.max(1,height);dpr=Math.min(globalThis.devicePixelRatio||1,1.5);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr)}
  function radial(x,y,rx,ry,stops){ctx.save();ctx.translate(x,y);ctx.scale(rx,ry);const g=ctx.createRadialGradient(0,0,0,0,0,1);for(const [at,color] of stops)g.addColorStop(at,color);ctx.fillStyle=g;ctx.fillRect(-1,-1,2,2);ctx.restore()}
  function draw(s,region,dt,player,frameDt=dt){
-  if(!ctx)return;acc+=dt;if(acc>=.06||!grade){acc=0;const filter='brightness('+s.brightness.toFixed(3)+') saturate('+s.saturation.toFixed(3)+') sepia('+s.sepia.toFixed(3)+')';if(filter!==grade){grade=filter;stage.style.filter=grade}}
+  if(!ctx)return;acc+=dt;if(acc>=.06||!grade){acc=0;const filter=Math.abs(s.brightness-1)<.0005&&Math.abs(s.saturation-1)<.0005&&s.sepia<.0005?'none':'brightness('+s.brightness.toFixed(3)+') saturate('+s.saturation.toFixed(3)+') sepia('+s.sepia.toFixed(3)+')';if(filter!==grade){grade=filter;stage.style.filter=grade}}
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,w,h);
   if(s.night>.005){ctx.fillStyle='rgba(9,18,43,'+s.night.toFixed(3)+')';ctx.fillRect(0,0,w,h)}
   const active=[];if(s.night>.07){for(const lamp of lamps(region)){const head=lamp.head,ground=lamp.ground;if(!head||!ground||head[0]<-220||head[0]>w+220||head[1]<-220||head[1]>h+220)continue;active.push(lamp);}

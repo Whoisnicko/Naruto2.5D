@@ -13,6 +13,7 @@ export function frameFor(actor,clock,pose=null){
   if(actor.character==='naruto'&&Number.isInteger(a.rasPose))return {col:38+a.rasPose,state:'rasengan'};
   if(actor.character==='naruto'&&a.k===' ')return {col:38+rasenganPose(a),state:'rasengan'};
   const special=actor.character&&artFor(actor.character,a.k);if(special){const v=ANIMS[special.pose],elapsed=Math.max(0,a.total-a.left),windup=a.windup||.001,recovery=Math.max(.001,a.total-windup);const phase=elapsed<windup?(elapsed<windup*.55?0:1):elapsed<windup+recovery*.65?2:3;return {col:v.start+phase,state:special.pose};}
+  if(a.k==='j'&&a.combo>=1&&a.combo<=3){const state=['attack','kick','finish'][a.combo-1],v=ANIMS[state],age=Math.max(0,a.total-a.left),windup=a.windup||.001;return {col:v.start+(age<windup?0:age<windup+Math.max(.075,(a.total-windup)*.55)?1:2),state};}
   const state=(a.k==='l'||a.k===' '||a.k==='f'||a.k==='g')?'cast':a.combo===2?'kick':a.combo===3?'finish':'attack',v=ANIMS[state],progress=clamp(1-a.left/a.total,0,.999);
   const col=a.windup?(a.left>a.total-a.windup?v.start:v.start+Math.min(v.count-1,1+Math.floor((1-a.left/(a.total-a.windup))*(v.count-1)))):v.start+Math.min(v.count-1,Math.floor(progress*v.count));return {col,state};
  }

@@ -17,10 +17,10 @@ source+='\n'+scoped('src/character-data.js','CHARACTERS')
 source+='\n'+scoped('src/konoha-regions.js','REGIONS,PORTALS,regionBlocked,regionStep,createRegionRouter')
 source+='\n'+scoped('src/konoha-services.js','createVillageServices')
 source+='\n'+scoped('src/konoha-village.js','createVillage')
-source+='\n'+scoped('src/konoha-atmosphere.js','createAtmosphere,createAtmosphereView,createAmbienceAudio,WEATHER_LABELS')
+source+='\n'+scoped('src/konoha-atmosphere.js','createAtmosphere,createAtmosphereView,WEATHER_LABELS')
 assets={a.stem:'data:image/webp;base64,'+b64(a.read_bytes()) for a in (p/'assets/konoha-world3c').glob('*.webp')}
 s=(p/'src/konoha-three-lab.js').read_text();s=re.sub(r'^import .*?;\n','',s,flags=re.M).replace('import.meta.url','location.href');
 # classic script async wrapper; the original library is unchanged in the modular package.
 script='(async()=>{'+three+'\n'+source+'\n'+s+'\n})().catch(e=>{document.getElementById("progress").textContent=e.message;console.error(e);});'
-html=(p/'konoha-three-lab.html').read_text().replace('<script type="module" src="./src/konoha-three-lab.js?v=3c5"></script>','<script>globalThis.KONOHA_INLINE_ASSETS='+json.dumps(assets)+';</script><script>'+script+'</script>')
+html=(p/'konoha-three-lab.html').read_text().replace('<script type="module" src="./src/konoha-three-lab.js?v=3c51"></script>','<script>globalThis.KONOHA_INLINE_ASSETS='+json.dumps(assets)+';</script><script>'+script+'</script>')
 (p/'konoha-three-playable.html').write_text(html);(p/'qa-inline.js').write_text(script);(p/'qa-assets.json').write_text(json.dumps(assets))

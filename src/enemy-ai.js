@@ -41,7 +41,7 @@ export function tickEnemy(e,p,clones,dt,move,fire,hit,blocked=()=>false,team={})
  const r=roleFor(e);e.motion=false;e.attack=Math.max(0,(e.attack||0)-dt);e.stagger=Math.max(0,(e.stagger||0)-dt);
  if(e.stagger>0){e.ai='stagger';e.guard=false;e.intent=null;e.pendingAttack=0;return;}
  if(e.intent){
-  e.guard=false;e.ai='windup';if(e.intent.mode==='melee'&&e.intent.left-dt>COMBAT.defense.enemyAimLock){const target=targetFor(e,p,clones),v=directionToward(target.x-e.x,target.z-e.z);e.dirX=e.intent.dx=v.x;e.dirZ=e.intent.dz=v.z;}e.intent.left-=dt;e.pendingAttack=Math.max(0,e.intent.left);
+  e.guard=false;e.ai='windup';if((e.intent.mode==='melee'||team.responsiveAim&&e.intent.mode==='ranged')&&e.intent.left-dt>COMBAT.defense.enemyAimLock){const target=targetFor(e,p,clones),v=directionToward(target.x-e.x,target.z-e.z);e.dirX=e.intent.dx=v.x;e.dirZ=e.intent.dz=v.z;if(team.responsiveAim){e.intent.x=target.x;e.intent.z=target.z;}}e.intent.left-=dt;e.pendingAttack=Math.max(0,e.intent.left);
   if(e.intent.left<=0){const intent=e.intent;e.intent=null;e.ai='recover';e.attack=r.cooldown;
    if(intent.mode==='heal'){team.heal?.(e,intent);}
    else if(intent.mode==='summon'){team.summon?.(e);}

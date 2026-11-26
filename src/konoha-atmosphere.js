@@ -1,8 +1,8 @@
 import {DAY_SECONDS,DAY_RATE,worldTime,WEATHER,weatherDuration} from './world-data.js';
 
 // Three visual phases, with the original six-minute clock. No sound subsystem.
-export const ATMOSPHERE_PRESETS={day:{at:48,label:'Día'},sunset:{at:130,label:'Atardecer'},night:{at:192,label:'Noche'}};
-export const WEATHER_LABELS={clear:'Despejado',rain:'Lluvia',fog:'Niebla',storm:'Tormenta'};
+export const ATMOSPHERE_PRESETS={day:{at:48,label:'Day'},sunset:{at:130,label:'Sunset'},night:{at:192,label:'Night'}};
+export const WEATHER_LABELS={clear:'Clear',rain:'Rain',fog:'Fog',storm:'Storm'};
 export const ATMOSPHERE_WEATHER={
  clear:{rain:0,fog:0,shade:0},rain:{rain:.86,fog:.05,shade:.07},fog:{rain:0,fog:.83,shade:.03},storm:{rain:1,fog:.24,shade:.22}
 };
@@ -12,7 +12,7 @@ const mix=(a,b,t)=>a+(b-a)*t,clamp=(x,a,b)=>Math.min(b,Math.max(a,x)),wrap=(v,n)
 export function sampleLight(clock){
  const q=wrap(clock,DAY_SECONDS);let i=1;while(i<GRADES.length-1&&q>GRADES[i][0])i++;
  const a=GRADES[i-1],b=GRADES[i],t=(q-a[0])/(b[0]-a[0]),[brightness,saturation,sepia,night,warm]=a.slice(1).map((v,j)=>mix(v,b[j+1],t));
- return {brightness,saturation,sepia,night,warm,phase:q<96?'Día':q<160?'Atardecer':'Noche',time:worldTime(q)};
+ return {brightness,saturation,sepia,night,warm,phase:q<96?'Day':q<160?'Sunset':'Night',time:worldTime(q)};
 }
 export function createAtmosphere(random=Math.random,initialClock=0){
  let clock=wrap(initialClock,DAY_SECONDS),elapsed=0,kind='clear',until=weatherDuration('clear',random),automatic=true,autoClock=true;

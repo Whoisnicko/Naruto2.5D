@@ -1,0 +1,7 @@
+# 3C.7.1 — Enemy Roster Sandbox
+
+User approved all seven Review 01 designs provisionally; many improvements desired later, artistic polish deferred (not priority). All previous validation retained. Production stays 3C.6.14. Integrate exact approved source d2e9b00895322f4c5e725413eec1a9b32db48a33 and existing animation frames. No new artistic effects or HUD layout. No campaign spawn/reward/save changes. Isolated sandbox encounter via ?sandbox=1&encounter=mixed&v=3c71 or individual role query. Forest clearing, seven active roles, existing AI shared with classic; connect allied healing and bounded summon callbacks only for roster. Heal 18, range 7 with line of sight; two reinforcements per encounter, 30 HP, temporary IDs and stress flag to suppress rewards. Existing FX reused (heal and smoke). Respawn existing tool restarts roster when active; Stop/clear and travel remove it. Stress 24/48 unchanged in code. Provisional stats inherited except support caps; no balance signoff. Exact reviewed source comparison and four JS syntax checks passed; actual simulation verification separately before publishing. No real browser/GPU or new FPS, offline HTML not rebuilt. Next: sandbox feedback, role-specific attack/VFX review before new art, then advanced coordination and regional distribution after approval.
+
+Production https://naruto2-5d.pages.dev/
+Preview https://preview-konoha-world3c.naruto2-5d.pages.dev/?v=3c71
+Mixed https://preview-konoha-world3c.naruto2-5d.pages.dev/konoha-three-lab.html?sandbox=1&encounter=mixed&v=3c71

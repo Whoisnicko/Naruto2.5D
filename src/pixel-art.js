@@ -14,6 +14,13 @@ export function artFor(character,key){return TECH_ART[character]?.[key]||null;}
 export const TREE_W=40,TREE_H=48;
 const ink='#273044',skin='#f7c08a',skinShade='#bc795d',skinLight='#ffe0a8';
 const PALETTES={
+striker:{"hair":"#644438","hairLight":"#9a6d48","hairShade":"#372c30","shirt":"#b86538","shade":"#6f3930","light":"#ebac65","trim":"#47333a","metal":"#dfcead"},
+assassin:{"hair":"#33314f","hairLight":"#79708e","hairShade":"#202235","shirt":"#514366","shade":"#302c47","light":"#a696c5","trim":"#222537","metal":"#c4b8de"},
+defender:{"hair":"#5d5140","hairLight":"#a39169","hairShade":"#3e352c","shirt":"#75674d","shade":"#4a4538","light":"#b69a59","trim":"#343a3d","metal":"#e1c895"},
+caster:{"hair":"#6a3e35","hairLight":"#b26c4f","hairShade":"#442b2c","shirt":"#963f3d","shade":"#582b36","light":"#e38b57","trim":"#3b2b36","metal":"#efbb89"},
+medic:{"hair":"#3c5650","hairLight":"#819d8a","hairShade":"#293b39","shirt":"#3d7966","shade":"#285343","light":"#a7cfa2","trim":"#34463e","metal":"#d8e7c4"},
+summoner:{"hair":"#68526b","hairLight":"#b48eaf","hairShade":"#3d354c","shirt":"#785a85","shade":"#493a63","light":"#bfa1cf","trim":"#3e334a","metal":"#d6c2a2"},
+elite:{"hair":"#c0b4a4","hairLight":"#f4e0ba","hairShade":"#75696c","shirt":"#49556d","shade":"#2d344a","light":"#8595ad","trim":"#462e38","metal":"#d7d7d1"},
  jiraiya:{hair:'#dedfd7',hairLight:'#fff9ed',hairShade:'#8d9696',shirt:'#8d9b70',shade:'#515f4a',light:'#bec69d',trim:'#973d39',metal:'#dedcc7'},
  lee:{hair:'#27372f',hairLight:'#4e6654',hairShade:'#1a2826',shirt:'#5b9b52',shade:'#35633d',light:'#a5c675',trim:'#d08041',metal:'#d9d9c8'},
  neji:{hair:'#5f463f',hairLight:'#997466',hairShade:'#3c3031',shirt:'#e1d8bb',shade:'#9c9a86',light:'#f7ebcf',trim:'#63716b',metal:'#c7d4d8'},
@@ -165,6 +172,33 @@ function actorCell(kind,dir,frame,gear=null,kyubi=false){
  if(offhand){rect(side?8:5,bodyY+5,3,3,offhand.accent);rect(side?9:6,bodyY+5,2,2,offhand.color);}
  if(accessory){rect(11,bodyY+3,2,3,accessory.accent);rect(11,bodyY+4,2,2,accessory.color);}
  }
+ // Phase 5 review candidate: role-specific silhouettes and equipment (presentation only).
+ if(role==='striker'){
+  rect(hx-6,hy+1,12,2,'#9e4234');rect(hx-5,hy+1,3,1,'#f2c179');
+  rect(7,24,10,2,p.trim);rect(8,24,3,1,p.light);rect(15,bodyY+6,3,2,'#e5d3b4');rect(14,bodyY+8,3,1,'#e5d3b4');
+ }else if(role==='assassin'){
+  poly([[hx-7,hy-3],[hx-6,hy-7],[hx+2,hy-9],[hx+7,hy-4],[hx+6,hy+1],[hx-6,hy+2]],p.hairShade);
+  line(hx-5,hy-5,hx+1,hy-7,p.hairLight);if(!back){rect(hx-5,hy+6,10,3,p.trim);rect(hx-4,hy+6,7,1,p.shade);rect(hx+(side?3:-3),hy+4,1,1,'#f2c3ff');}
+  poly([[7,bodyY+2],[11,bodyY+2],[8,26],[4,25]],p.shade);rect(6,22,3,2,p.light);
+ }else if(role==='defender'){
+  rect(4,bodyY+1,4,5,p.trim);rect(4,bodyY+1,4,3,p.metal);rect(17,bodyY+1,4,5,p.trim);rect(17,bodyY+1,4,3,p.metal);
+  rect(8,bodyY+4,8,5,p.shade);rect(9,bodyY+4,6,1,p.light);rect(10,bodyY+6,4,2,p.metal);
+  rect(hx-6,hy-2,12,3,p.trim);rect(hx-5,hy-2,10,1,p.metal);
+ }else if(role==='caster'){
+  poly([[7,bodyY],[9,bodyY+3],[6,24],[3,23]],p.shade);poly([[16,bodyY],[14,bodyY+3],[17,24],[20,23]],p.shade);
+  rect(9,bodyY+3,6,2,p.trim);rect(10,bodyY+4,4,1,p.light);if(!back)rect(hx+1,hy+1,4,2,p.metal);
+ }else if(role==='medic'){
+  rect(8,bodyY+3,8,6,p.light);rect(11,bodyY+3,2,6,p.shade);rect(9,bodyY+5,6,2,p.shade);rect(5,bodyY+6,4,5,p.trim);rect(6,bodyY+7,2,3,p.metal);
+  rect(hx-4,hy-1,8,3,p.light);rect(hx-2,hy,4,1,p.metal);
+ }else if(role==='summoner'){
+  poly([[5,bodyY+2],[8,bodyY],[9,25],[4,27]],p.shade);poly([[16,bodyY],[19,bodyY+2],[20,27],[15,25]],p.shade);
+  rect(17,bodyY+2,5,8,p.trim);rect(18,bodyY+3,3,6,p.metal);rect(17,bodyY+3,5,1,p.light);rect(17,bodyY+8,5,1,p.light);
+  rect(hx-3,hy-1,6,2,p.metal);
+ }else if(role==='elite'){
+  rect(7,bodyY+2,10,6,p.shade);rect(8,bodyY+2,8,1,p.light);rect(8,bodyY+5,3,3,p.metal);rect(13,bodyY+5,3,3,p.metal);
+  poly([[hx-6,hy+6],[hx+5,hy+5],[hx+4,hy+9],[hx-4,hy+9]],p.trim);if(!back){rect(hx-4,hy+4,2,1,'#e8a3a0');rect(hx+3,hy+4,2,1,'#e8a3a0');}
+  rect(6,24,12,2,p.trim);
+ }
  // Four additional pose families. Paint arms over torso, keeping equipment and the pixel silhouette.
  if(special>=0&&stage!==3){
   const sleeve=gear?.torso?.color||p.shirt,accent=gear?.offhand?.color||p.shade;
@@ -234,7 +268,7 @@ function actorCell(kind,dir,frame,gear=null,kyubi=false){
 }
 export function makeActorSheet(kind,gear=null,kyubi=false){
  const c=canvas(ACTOR_W*ACTOR_COLS,ACTOR_H*4),ctx=c.getContext('2d');
- for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++){if(f>=44&&!['player','sasuke','sakura','npc'].includes(kind)){const src=[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][f-44];ctx.drawImage(c,src*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H,f*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H);}else ctx.drawImage(actorCell(kind,d,f,gear,kyubi),f*ACTOR_W,d*ACTOR_H);}
+ for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++){if(f>=44&&!['player','sasuke','sakura','npc','striker','assassin','defender','caster','medic','summoner','elite'].includes(kind)){const src=[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][f-44];ctx.drawImage(c,src*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H,f*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H);}else ctx.drawImage(actorCell(kind,d,f,gear,kyubi),f*ACTOR_W,d*ACTOR_H);}
  return c;
 }
 // High-speed, deliberately stretched silhouettes. 32x32, three frames per direction.

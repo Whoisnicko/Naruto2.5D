@@ -7,3 +7,5 @@ Base 4bd1d5d27ab9bb0bd0a1fd857ac5a4c4e2e7cb37. User rejected night lighting, wea
 Preview https://preview-konoha-world3c.naruto2-5d.pages.dev/konoha-three-lab.html?v=3c51
 GitHub https://github.com/Whoisnicko/Naruto2.5D/tree/preview/konoha-world3c
 Production https://naruto2-5d.pages.dev/
+
+10 runtime regression checks passed with actual Three.js geometry and simulated canvas/DOM/renderer/clock: boot, 6 existing Konoha lamp sprites, storm loop, night filter, removed audio control, forest and outpost travel, 4 outpost lamp sprites, fast travel return and south gate. Inspected lamp asset itself and adjusted light anchor to 70% of sprite height. No real browser/GPU/deployment validation. No standalone regenerated.

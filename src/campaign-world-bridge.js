@@ -7,8 +7,18 @@ export function createCampaignTransaction(snapshot,revision,validate){
   const p=patch.player;if(!(p.hp>0))throw Error('Vida inválida.');
   for(const key of ['opened','defeated'])if(!Array.isArray(patch.world[key])||base.world[key].some(id=>!patch.world[key].includes(id)))throw Error('World progress cannot be reversed.');
   const candidate={...copy(base),p:{...base.p,hp:p.hp,chakra:p.chakra,xp:p.xp,coins:p.coins},rpg:copy(patch.rpg),world:{...base.world,quests:copy(patch.world.quests),visited:copy(patch.world.visited),clock:patch.world.clock,opened:copy(patch.world.opened),defeated:copy(patch.world.defeated)}};
-  // Accept only the five original enemy IDs, never reset an already defeated enemy.
-  if(patch.combat){const q=patch.combat.quest,ids=patch.combat.defeated,old=base.enemies.filter(e=>!e.hp).map(e=>e.id);if(!Array.isArray(ids)||new Set(ids).size!==ids.length||ids.some(id=>!base.enemies.some(e=>e.id===id))||old.some(id=>!ids.includes(id)))throw Error('Progreso de enemigos inválido.');if(base.quest>=2){if(q!==base.quest||ids.length!==old.length)throw Error('Misión ya completada.')}else{const expected=base.quest===0&&q===0?0:ids.length===base.enemies.length?2:1;if(q!==expected||q===0&&ids.length!==old.length)throw Error('Progreso de misión inválido.');candidate.quest=q;candidate.enemies=base.enemies.map(e=>({...e,hp:ids.includes(e.id)?0:e.hp}));}}
+  // Five durable original IDs; only a new, explicit training round may resurrect them.
+  const round=patch.rpg.round,oldRound=base.rpg.round;
+  if(!Number.isSafeInteger(round)||round<oldRound||round>oldRound+1)throw Error('Invalid training round.');
+  if(patch.combat){const q=patch.combat.quest,ids=patch.combat.defeated,old=base.enemies.filter(e=>!e.hp).map(e=>e.id),fresh=round===oldRound+1;
+   if(!Array.isArray(ids)||new Set(ids).size!==ids.length||ids.some(id=>!base.enemies.some(e=>e.id===id)))throw Error('Progreso de enemigos inválido.');
+   if(fresh){if(base.quest!==3||q!==3||old.length!==base.enemies.length)throw Error('Complete the previous training round.');}
+   else if(old.some(id=>!ids.includes(id)))throw Error('Progreso de enemigos inválido.');
+   if(base.quest===3){if(q!==3||!fresh&&oldRound===0&&ids.length!==old.length)throw Error('Misión ya completada.');}
+   else if(base.quest===2){if(q!==2||ids.length!==old.length||fresh)throw Error('Misión ya completada.');}
+   else{const expected=base.quest===0&&q===0?0:ids.length===base.enemies.length?2:1;if(q!==expected||q===0&&ids.length!==old.length||fresh)throw Error('Progreso de misión inválido.');}
+   candidate.quest=q;candidate.enemies=base.enemies.map(e=>({...e,hp:ids.includes(e.id)?0:fresh?70:e.hp}));
+  }else if(round!==oldRound)throw Error('Missing training progress.');
   const valid=validate(candidate);closed=true;return valid;
  },discard(){closed=true},get closed(){return closed}};
 }

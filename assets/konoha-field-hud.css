@@ -1,0 +1,46 @@
+/* Field HUD — reuses living/finished art. Layout is isolated to Konoha illustrated world. */
+:root{--field-top:92px;--field-dock:144px}
+#head{z-index:8;align-items:flex-start;left:12px;right:12px;top:10px}
+#brand{padding:7px 11px;min-width:138px}
+#brand strong{font-size:clamp(15px,2vw,23px)}
+#brand small{font-size:9px;letter-spacing:.04em}
+#buttons{max-width:min(76vw,1000px);gap:4px}
+#buttons button,#buttons select{padding:6px 8px;font-size:11px;min-height:30px}
+#hud{position:absolute;inset:0;top:0;left:0;max-width:none;z-index:6;pointer-events:none;--edge:12px;--hero-width:290px;--slot:62px;--dock-gap:4px}
+#hud #top{position:absolute;top:var(--field-top);left:12px;width:min(34vw,var(--hero-width));max-height:calc(100dvh - var(--field-top) - var(--field-dock) - 42px);overflow:auto;pointer-events:auto;scrollbar-width:thin}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top{width:min(34vw,420px);max-height:calc(100dvh - var(--field-top) - var(--field-dock) - 42px);overflow:auto}
+#hud #top .bar{background:#0e1817}
+#hud #integratedHud{position:absolute;bottom:12px;left:12px;top:auto;max-width:20vw;margin:0;padding:4px;background:transparent;border:0;box-shadow:none;pointer-events:auto}
+#hud #consumableBar{position:static;display:flex;flex-wrap:wrap;gap:3px}
+#hud #campaignSaveStatus{background:#15241de8;color:#f3d39e;padding:4px;border-radius:3px;font-size:10px}
+#hud #combatDock{position:absolute;bottom:10px;left:50%;right:auto;transform:translateX(-50%);width:max-content;max-width:min(65vw,680px);padding:5px 7px 7px;pointer-events:auto;overflow:visible;gap:3px}
+#hud #combatDock .toolkit-heading{height:26px;width:180px}
+#hud #bottom{display:flex;gap:3px;max-width:100%;overflow-x:auto;justify-content:center;padding:1px;scrollbar-width:thin}
+#hud #bottom .skill{flex:1 1 0;min-width:45px;width:65px;grid-template-rows:30px 12px minmax(18px,auto) 11px;gap:2px;padding:3px 2px}
+#hud #bottom .skill .skill-orb{width:29px;height:29px}
+#hud #bottom .skill b{font-size:9px;line-height:11px}
+#hud #bottom .skill em{font-size:9px;line-height:1.15}
+#hud #bottom .skill .skill-cost{font-size:9px}
+#hud #defenseActions button{min-height:24px;padding:3px;font-size:10px}
+#hud #combatPanel{position:static;inset:auto;transform:none;max-width:none;min-width:0;border:0;box-shadow:none;background:transparent;padding:0;text-align:center;font-size:10px;line-height:1.2;color:#ffdeb1}
+#hud #combatStatus{margin:2px 0;max-width:100%;color:#d6d9cd}
+#fieldQuest{position:absolute;right:12px;top:var(--field-top);width:min(18vw,220px);max-height:calc(100dvh - var(--field-top) - 184px);overflow:auto;background:linear-gradient(145deg,#223647ed,#172332f2);color:#f3d4a2;border:1px solid #b89560;border-radius:8px;padding:9px;pointer-events:auto;box-shadow:0 4px 12px #0005}
+#fieldQuest header{display:grid;gap:3px}#fieldQuest strong{font:700 15px/1.2 Georgia,serif}
+#fieldQuest p{font-size:11px;line-height:1.4;margin:7px 0;color:#f4e1bf}
+#fieldQuest button{width:100%;font-size:10px;padding:5px}
+#fieldMapPanel{margin-top:5px}#fieldMapPanel small{display:block;font-size:9px;line-height:1.3}
+.field-map-frame{position:relative;padding:7px;border:1px solid #a98c65;border-radius:7px;background:#172630}
+#fieldMap{display:block;width:100%;height:auto;aspect-ratio:180/150;image-rendering:pixelated;border-radius:3px}
+#hud[data-finish-art~="map"] .field-map-frame{background:#172630 url('./hud-art/finished/minimap-frame.webp') center/100% 100% no-repeat;padding:17% 13% 11%;border:0;aspect-ratio:1}
+#hud[data-finish-art~="map"] #fieldMap{border-radius:50%;height:100%;object-fit:contain}
+#info{z-index:7;bottom:12px;left:auto;right:12px;width:min(19vw,225px);max-width:none;padding:7px 9px;font-size:10px;line-height:1.3}
+#info b{font-size:13px}#info #status{font-size:9px;opacity:.8}
+#info #campaignMode{font-size:10px}#info #regionLabel{display:none}#info #runMeter{margin:4px 0}
+#info #villageTalk,#info #chestHint,#info #regionExit{width:100%;font-size:10px;text-align:left}
+#fieldPause{color:#f9e6c2;background:#203242;border:2px solid #c4a369;border-radius:12px;padding:22px;width:min(420px,92vw);max-height:88dvh;overflow:auto}
+#fieldPause::backdrop{background:#0a1420bb}#fieldPause button{display:block;width:100%;margin:6px 0}#fieldPause label{display:grid;gap:5px;margin-top:10px}
+#rpgPanel{z-index:20}#loading{z-index:30}#travelBanner{z-index:10;top:calc(var(--field-top) + 4px)}
+#pad{z-index:9}
+@media(max-width:1050px){#hud #combatDock{max-width:68vw}#hud #bottom .skill{min-width:38px;width:53px}#hud #combatDock .toolkit-heading{display:none}#info{max-width:17vw;font-size:9px}#fieldQuest{width:19vw}}
+@media(max-width:760px),(pointer:coarse){:root{--field-dock:125px}#head{left:6px;right:6px;top:6px;gap:4px;flex-direction:column}#brand{padding:3px 6px}#brand small{font-size:8px}#buttons{max-width:100%;justify-content:flex-start;gap:3px}#buttons button,#buttons select{padding:3px 5px;min-height:24px;font-size:9px}#hud #top,#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top{left:6px;width:min(44vw,215px);max-height:calc(100dvh - var(--field-top) - 190px)}#fieldQuest{right:6px;width:min(38vw,165px);padding:5px;max-height:calc(100dvh - var(--field-top) - 185px)}#fieldQuest strong{font-size:11px}#fieldQuest p,#fieldQuest button{font-size:9px}#hud #combatDock{bottom:4px;left:50%;max-width:calc(100vw - 12px);width:max-content}#hud #bottom{justify-content:flex-start}#hud #bottom .skill{flex:0 0 42px;width:42px;min-width:42px;grid-template-rows:25px 11px minmax(17px,auto) 10px;gap:1px}#hud #bottom .skill em{font-size:8px}#hud #bottom .skill .skill-orb{width:24px;height:24px}#hud #bottom .skill .skill-cost{font-size:8px}#hud #integratedHud{bottom:calc(var(--field-dock) + 6px);left:6px;max-width:50vw}#hud #consumableBar .quick-item{width:36px;height:42px}#info{bottom:calc(var(--field-dock) + 7px);right:6px;max-width:38vw;width:38vw;padding:4px;font-size:9px}#info #status,#info>div:nth-child(2),#info>small{display:none}#pad{left:6px;right:auto;bottom:calc(var(--field-dock) + 64px);grid-template-columns:repeat(3,32px)}#pad button{padding:6px;min-height:28px}#info #runTrack{width:35px}}
+@media(max-height:480px){#fieldQuest{max-height:120px}#fieldMapPanel{display:none}#hud #top{max-height:135px}#info #status{display:none}}

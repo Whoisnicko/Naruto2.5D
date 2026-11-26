@@ -3,12 +3,12 @@ import {newRPG,itemFor,itemCount,addItem,rewardItems,useItem,collectOverflow,LOO
 
 // Temporary remapping for the new village; no legacy coordinates or campaign save mutations.
 export const VILLAGE_LANDMARKS=[
- {id:'garden',name:'Jardín Nara (barrio oeste)',at:[20,43],r:3},
- {id:'market',name:'Mercado',at:[92,59],r:3},
- {id:'hokage',name:'Mirador Hokage',at:[72,26],r:3},
+ {id:'garden',name:'Nara Garden (West District)',at:[20,43],r:3},
+ {id:'market',name:'Market',at:[92,59],r:3},
+ {id:'hokage',name:'Hokage Lookout',at:[72,26],r:3},
  {id:'ichiraku',name:'Ichiraku Ramen',at:[85,74],r:2.8},
- {id:'bridge',name:'Puente central',at:[36,43],r:3},
- {id:'forest',name:'Claro de entrenamiento',region:'forest',at:[42,30],r:3}, {id:'plaza',name:'Plaza central',at:[72,43],r:4},{id:'academy',name:'Academia',at:[47,31],r:4},{id:'eastroad',name:'Sendero fronterizo',region:'outpost',at:[8,30],r:5},{id:'shrine',name:'Puesto',region:'outpost',at:[32,30],r:5},{id:'ruins',name:'Ruinas',region:'outpost',at:[54,30],r:5}
+ {id:'bridge',name:'Central Bridge',at:[36,43],r:3},
+ {id:'forest',name:'Training Clearing',region:'forest',at:[42,30],r:3}, {id:'plaza',name:'Central Plaza',at:[72,43],r:4},{id:'academy',name:'Academia',at:[47,31],r:4},{id:'eastroad',name:'Border Trail',region:'outpost',at:[8,30],r:5},{id:'shrine',name:'Outpost',region:'outpost',at:[32,30],r:5},{id:'ruins',name:'Ruins',region:'outpost',at:[54,30],r:5}
 ];
 export const VILLAGE_SUPPLY={at:[119,25],radius:2.5,reward:[['cloth',3]]};
 export const VILLAGE_SEED={coins:100,xp:0,hp:60,chakra:50};
@@ -17,14 +17,14 @@ export function createVillageServices(initial=null){
  const inventory=()=>[...new Set(rpg.inventory.filter(Boolean).map(s=>s.id))].map(id=>({id,count:itemCount(rpg,id),...itemFor(id)}));
  function update(pos,active=true,region='konoha'){if(!active)return;for(const l of VILLAGE_LANDMARKS)if((l.region||'konoha')===region&&!world.visited.includes(l.id)&&Math.hypot(pos.x-l.at[0],pos.y-l.at[1])<=l.r)world.visited.push(l.id);}
  function nearSupply(pos){return !initial&&!cache&&Math.hypot(pos.x-VILLAGE_SUPPLY.at[0],pos.y-VILLAGE_SUPPLY.at[1])<=VILLAGE_SUPPLY.radius;}
- function collect(pos){if(!nearSupply(pos))return 'No hay provisiones disponibles aquí.';rewardItems(rpg,VILLAGE_SUPPLY.reward);cache=true;return null;}
- function action(npc,choice,id){if(!choice||!choicesFor(world,npc).some(c=>c.action===choice.action&&c.quest===choice.quest&&c.shop===choice.shop))return 'Opción no disponible.';
+ function collect(pos){if(!nearSupply(pos))return 'No supplies available here.';rewardItems(rpg,VILLAGE_SUPPLY.reward);cache=true;return null;}
+ function action(npc,choice,id){if(!choice||!choicesFor(world,npc).some(c=>c.action===choice.action&&c.quest===choice.quest&&c.shop===choice.shop))return 'Option unavailable.';
   if(choice.action==='accept')return acceptQuest(world,choice.quest);
   if(choice.action==='finish')return finishQuest(world,rpg,p,choice.quest);
   if(choice.action==='heal')return healPlayer(p);
-  return 'Acción no disponible.';
+  return 'Action unavailable.';
  }
- function trade(npc,mode,id){if(!Object.hasOwn(SHOPS,npc))return 'Comercio no disponible.';if(mode==='shop')return buyItem(rpg,p,npc,id);if(mode==='sell'&&choicesFor(world,npc).some(c=>c.action==='sell'))return sellItem(rpg,p,id);return 'Venta no disponible.';}
+ function trade(npc,mode,id){if(!Object.hasOwn(SHOPS,npc))return 'Shop unavailable.';if(mode==='shop')return buyItem(rpg,p,npc,id);if(mode==='sell'&&choicesFor(world,npc).some(c=>c.action==='sell'))return sellItem(rpg,p,id);return 'Sale unavailable.';}
  function quests(){return Object.entries(SIDEQUESTS).map(([id,q])=>({id,...q,status:world.quests[id],progress:questProgress(world,rpg,id),locations:(q.visits||[]).map(v=>({...VILLAGE_LANDMARKS.find(l=>l.id===v),visited:world.visited.includes(v)}))}));}
  function startMain(){if(mainQuest!==0)return false;mainQuest=defeated.size===5?2:1;return true}
  function train(){if(mainQuest!==3||defeated.size!==5||rpg.round>=1000000)return false;rpg.round++;defeated.clear();p.hp=p.chakra=100;return true;}

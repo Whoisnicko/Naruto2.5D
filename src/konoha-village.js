@@ -11,7 +11,7 @@ export const VILLAGE_ROUTES={
 };
 export const VILLAGE_NPCS=[{id:'kakashi',name:CHARACTERS.kakashi.name,kind:CHARACTERS.kakashi.art,role:'Sensei'},...NPCS];
 export const VILLAGE_REACH=2.7;
-export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearMotion,onSelect,campaignSession=null,onCampaignReturn=()=>{}}){
+export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearMotion,onSelect,campaignSession=null,onCampaignReturn=()=>{},onTrain=()=>false}){
  const $=id=>document.getElementById(id),sheets=new Map(),actors=[];
  let hero=campaignSession?.state.p.character||'naruto',nearest=null,openedNPC=null,mode='dialog',position=null,activeNow=false,currentRegion='konoha';
  const services=createVillageServices(campaignSession?.state||null);
@@ -54,7 +54,7 @@ export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearM
   const a=openedNPC;if(!a)return;$('villagePortrait').hidden=false;
   if(mode==='dialog'){
    $('villageLine').textContent=DIALOGUES[a.id]?.text|| (campaignSession?campaignSession.chapter.goal+'':'Naruto, keep training. A shinobi must know the village before setting out. Las misiones principales se conectarán con la campaña.');
-   if(campaignSession&&a.id==='kakashi'){const q=services.mainQuest();if(q===0)actions.append(button('Aceptar misión: cinco renegados',()=>{services.startMain();feedback('Misión aceptada. Viajá al bosque.');render()}));else if(q===1)actions.append(el('p','Renegados derrotados: '+services.defeated().length+'/5'));else if(q===2)actions.append(button('Entregar misión',()=>onCampaignReturn('kakashi')));else actions.append(el('p','Consultá los encuentros disponibles en Shinobi Chronicles.'));}
+   if(campaignSession&&a.id==='kakashi'){const q=services.mainQuest();if(q===0)actions.append(button('Aceptar misión: cinco renegados',()=>{services.startMain();feedback('Misión aceptada. Viajá al bosque.');render()}));else if(q===1)actions.append(el('p','Renegados derrotados: '+services.defeated().length+'/5'));else if(q===2)actions.append(button('Entregar misión',()=>onCampaignReturn('kakashi')));else{actions.append(el('p','Consultá los encuentros disponibles en Shinobi Chronicles.'));if(services.defeated().length===5)actions.append(button('Nueva ronda de entrenamiento',()=>{if(onTrain()){close();}else feedback('No se pudo iniciar la ronda. Guardá e intentá de nuevo.');}));}}
    if(campaignSession&&a.id==='iruka'&&services.mainQuest()===3)actions.append(button('Inscribirse a los exámenes Chūnin',()=>onCampaignReturn('exam')));if(campaignSession&&a.id==='kakashi'&&services.mainQuest()===3)actions.append(button('Elegir shinobi del Equipo 7',()=>onCampaignReturn('characters')));
    for(const choice of services.choices(a.id)){
     if(choice.action==='close')continue;let label=choice.label;if(choice.action==='finish'){const q=services.quests().find(q=>q.id===choice.quest);label+=' · '+q.progress}
@@ -84,5 +84,5 @@ export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearM
   }
   const supply=active&&currentRegion==='konoha'&&services.nearSupply(p);hint.hidden=(!nearest&&!supply)||dialog.open;if(nearest)hint.textContent='E · Hablar con '+nearest.name;else if(supply)hint.textContent='E · Recoger provisiones de práctica (3 telas)';journal.disabled=!active;
  }
- return {world:services.world,openChest:services.openChest,combatResources:services.combatResources,combatRPG:services.combatRPG,mainQuest:services.mainQuest,defeated:services.defeated,defeat:services.defeat,get hero(){return hero},campaignData:services.campaignData,update,talk,close,openJournal,get opened(){return dialog.open},state:()=>({hero,nearby:nearest?.id||null,dialog:openedNPC?.id||null,mode,services:services.state(),npcs:actors.map(a=>({id:a.id,x:a.x,y:a.y,visible:available(a),motion:a.motion,fallback:!getSheet(a.kind)}))})};
+ return {world:services.world,train:services.train,openChest:services.openChest,combatResources:services.combatResources,combatRPG:services.combatRPG,mainQuest:services.mainQuest,defeated:services.defeated,defeat:services.defeat,get hero(){return hero},campaignData:services.campaignData,update,talk,close,openJournal,get opened(){return dialog.open},state:()=>({hero,nearby:nearest?.id||null,dialog:openedNPC?.id||null,mode,services:services.state(),npcs:actors.map(a=>({id:a.id,x:a.x,y:a.y,visible:available(a),motion:a.motion,fallback:!getSheet(a.kind)}))})};
 }

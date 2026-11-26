@@ -22,7 +22,7 @@ export const PORTALS=[
  {id:'forest-east',region:'forest',at:[79,30],to:'outpost',arrival:[8,30],name:'Puesto fronterizo'},
  {id:'outpost-west',region:'outpost',at:[5,30],to:'forest',arrival:[75,30],name:'Bosque de entrenamiento'}
 ];
-export const REGION_TRAVEL=[...TRAVEL.map(d=>({...d,region:'konoha'})),{id:'forest-camp',name:'Claro de entrenamiento',region:'forest',at:[42,30],icon:'森'},{id:'outpost-plaza',name:'Plaza del puesto',region:'outpost',at:[32,30],icon:'門'}];
+export const REGION_TRAVEL=[...TRAVEL.map(d=>({...d,region:'konoha'})),{id:'forest-entry',name:'Entrada del bosque',region:'forest',at:[8,30],icon:'森'},{id:'forest-camp',name:'Claro de entrenamiento',region:'forest',at:[42,30],icon:'森'},{id:'outpost-plaza',name:'Plaza del puesto',region:'outpost',at:[32,30],icon:'門'}];
 export const PORTAL_REACH=2.7,REGION_RADIUS=.48;
 export function regionBlocked(region,x,y,r=REGION_RADIUS){
  if(region==='konoha')return villageBlocked(x,y,r);
@@ -33,8 +33,8 @@ export function regionStep(region,p,dx,dy,dt,speed){
  if(region==='konoha')return villageStep(p,dx,dy,dt,speed);
  const len=Math.hypot(dx,dy);if(!len)return p;const n=Math.max(1,Math.ceil(dt*speed/.25));for(let i=0;i<n;i++){const x=p.x+dx/len*speed*dt/n,y=p.y+dy/len*speed*dt/n;if(!regionBlocked(region,x,p.y))p.x=x;if(!regionBlocked(region,p.x,y))p.y=y;}return p;
 }
-export function createRegionRouter({preview=false}={}){
- let region='konoha';const visited=new Set(['konoha']),unlocked=new Set(REGION_TRAVEL.filter(d=>d.region==='konoha').map(d=>d.id));
+export function createRegionRouter({preview=false,discovered=[]}={}){
+ let region='konoha';const visited=new Set(['konoha']),unlocked=new Set(REGION_TRAVEL.filter(d=>d.region==='konoha').map(d=>d.id));unlocked.add('forest-entry');if(discovered.includes('forest'))unlocked.add('forest-camp');if(discovered.includes('shrine'))unlocked.add('outpost-plaza');
  function near(p){return PORTALS.find(t=>t.region===region&&Math.hypot(p.x-t.at[0],p.y-t.at[1])<=PORTAL_REACH)||null}
  function enter(id,at){if(!Object.hasOwn(REGIONS,id)||!Array.isArray(at)||at.length!==2||!at.every(Number.isFinite)||regionBlocked(id,...at))return false;region=id;visited.add(id);return true}
  function observe(p){for(const d of REGION_TRAVEL)if(d.region===region&&Math.hypot(p.x-d.at[0],p.y-d.at[1])<=3)unlocked.add(d.id);}

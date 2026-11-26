@@ -16,7 +16,7 @@ import {renderBingoBook,setJournalPage,typeDialogue,revealDialogue,portraitFallb
 import {ARENA,BOSSES,newBossProgress,nextBoss,makeBoss,tickBoss,sandboxBoost,MIST_SCENES,mistBoss,mistAlly,MIST_CAMERA,bossContains,MIST_COMBAT,WORLD_BOSSES,KABUTO_RULES,GAARA_RULES,absorbGaaraDamage,sandSlow,ORO_RULES,orochimaruTargets,hurtOroMinion,KIMI_RULES,boneSlow,VALLEY_RULES,valleyEligible,valleyDamageFloor,valleyClashOutcome,newValleyUltimate,advanceValleyCharge,steerValleyFire,addValleyBurn,tickValleyBurn,valleyElectricSlow,tickValleyElectric,PRACTICE_BOSSES,practiceStage,applyPracticeStage,makeWorldBoss,JIRAIYA_RULES,jiraiyaEligible,worldBossEligible,jiraiyaFloor,jiraiyaSlow,BOSS_POLISH,bossPhysical} from './boss-data.js';
 import {addItem} from './rpg-data.js';
 import {CHAPTERS,FINALE,newCampaign,chapterIndex,completeCampaign,campaignSummary,partOneProgress} from './campaign-data.js';
-import {createCampaignTransaction} from './campaign-world-bridge.js?v=3c61';
+import {createCampaignTransaction} from './campaign-world-bridge.js?v=3c62';
 const $=id=>document.getElementById(id), canvas=$('c'), view=createRenderer(canvas);
 const audio=createAudio(),feedback=createFeedback(view,$('damageLayer'));
 let pixels=null;try{pixels=createPixelSystem(view.scene);}catch(e){console.warn('Pixel assets fallback',e);} 
@@ -196,10 +196,10 @@ function openIllustrated(){
   acquire(caller){if(campaignWorld!==entry||caller!==frame.contentWindow)return null;const data=tx.acquire();if(!data)return null;const chapter=CHAPTERS[chapterIndex(initial.quest,initial.bossProgress,initial.campaign)];return {state:data,chapter:{title:chapter.title,goal:chapter.goal},quest:initial.quest}},
   finish(caller,patch,action){if(campaignWorld!==entry||caller!==frame.contentWindow)return {ok:false,error:'Invalid campaign session.'};if(!['return','kakashi'].includes(action))return {ok:false,error:'Invalid action.'};
    let valid;try{valid=tx.commit(patch,sessionRevision)}catch(e){return {ok:false,error:e.message}}
-   Object.assign(p,{hp:valid.p.hp,chakra:valid.p.chakra,xp:valid.p.xp,coins:valid.p.coins});rpg=valid.rpg;world=valid.world;syncRPG();close();closeModal();if(action==='kakashi'){running=true;audio.wind(true);$('pause').textContent='II';interact();}const saved=save(true);if(action!=='kakashi'||!saved)msg(saved?'Konoha progress saved.':'Konoha progress applied; save or export a backup.',5);return {ok:true};
+   Object.assign(p,{hp:valid.p.hp,chakra:valid.p.chakra,xp:valid.p.xp,coins:valid.p.coins});rpg=valid.rpg;world=valid.world;quest=valid.quest;for(const e of enemies){const next=valid.enemies.find(n=>n.id===e.id);if(next&&next.hp===0){e.hp=0;e.intent=null;e.pendingAttack=0;}}syncRPG();close();closeModal();if(action==='kakashi'){running=true;audio.wind(true);$('pause').textContent='II';interact();}const saved=save(true);if(action!=='kakashi'||!saved)msg(saved?'Konoha progress saved.':'Konoha progress applied; save or export a backup.',5);return {ok:true};
   }
  };
- try{dialog.showModal();frame.src='./konoha-three-lab.html?campaign=1&v=3c61';frame.focus()}catch(e){cancel();$('pauseStatus').textContent='Unable to open illustrated Konoha.';return false}return true;
+ try{dialog.showModal();frame.src='./konoha-three-lab.html?campaign=1&v=3c62';frame.focus()}catch(e){cancel();$('pauseStatus').textContent='Unable to open illustrated Konoha.';return false}return true;
 }
 $('campaignWorldOpen').onclick=openIllustrated;
 

@@ -127,6 +127,22 @@ function actorCell(kind,dir,frame,gear=null,kyubi=false){
    if(kind==='npc'||kind==='enemy'){rect(hx-4,hy+6,9,3,p.trim);if(kind==='npc')rect(hx-4,hy+3,4,3,p.trim);}
    else{rect(hx-4,hy+6,2,1,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx,hy+7,2,1,'#9d574e');}
  }
+ if(kyubi&&(role==='player'||role==='clone')&&!back){
+ const dark='#482235',red='#ff344f',glow='#fff0d6',scar='#8b3944';
+ if(side){
+  rect(hx+1,hy+3,4,1,dark);rect(hx+1,hy+4,4,2,dark);
+  rect(hx+2,hy+4,2,1,red);rect(hx+4,hy+4,1,1,glow);rect(hx+3,hy+5,1,1,red);
+  rect(hx-2,hy+5,2,1,scar);rect(hx-1,hy+7,2,1,scar);
+  rect(hx+2,hy+7,3,1,dark);rect(hx+3,hy+7,1,1,glow);
+ }else{
+  rect(hx-5,hy+3,3,1,dark);rect(hx+3,hy+3,3,1,dark);
+  rect(hx-4,hy+4,4,2,dark);rect(hx+1,hy+4,4,2,dark);
+  rect(hx-4,hy+4,1,1,glow);rect(hx-3,hy+4,2,1,red);rect(hx-2,hy+5,1,1,red);
+  rect(hx+4,hy+4,1,1,glow);rect(hx+2,hy+4,2,1,red);rect(hx+2,hy+5,1,1,red);
+  rect(hx-4,hy+6,2,1,scar);rect(hx+3,hy+6,2,1,scar);
+  rect(hx-2,hy+7,4,1,dark);rect(hx-1,hy+7,1,1,glow);rect(hx+1,hy+7,1,1,glow);
+ }
+}
  if(role==='sakura'){rect(hx-6,hy-1,2,8,p.hairShade);rect(hx+5,hy-1,2,8,p.hair);rect(hx-5,hy-2,10,3,p.hair);rect(hx-2,hy-3,4,2,p.hairLight);}if(role==='teuchi'){rect(hx-6,hy-6,12,7,p.hair);rect(hx-7,hy-1,14,2,p.hairLight);rect(9,bodyY+3,7,7,'#f3ead8');}if(role==='tenten'){rect(hx-7,hy-7,4,5,p.hair);rect(hx+4,hy-7,4,5,p.hair);rect(hx-6,hy-6,2,2,p.hairLight);}if(role==='iruka'){rect(hx-1,hy-8,4,5,p.hair);if(!back)rect(hx-3,hy+6,7,1,'#a66c56');}
  if(role==='kabuto'){rect(hx-3,hy-7,6,4,p.hairLight);if(back){rect(hx-2,hy+3,4,9,p.hairShade);rect(hx-1,hy+3,2,8,p.hairLight);}else{if(side){rect(hx+1,hy+3,5,4,'#303748');rect(hx+2,hy+4,3,2,'#d4e7eb');}else{rect(hx-5,hy+3,4,4,'#303748');rect(hx+1,hy+3,4,4,'#303748');rect(hx-4,hy+4,2,2,'#d4e7eb');rect(hx+2,hy+4,2,2,'#d4e7eb');rect(hx-1,hy+4,2,1,'#303748');}}rect(7,bodyY+5,10,2,p.trim);if(attack||cast){rect(4,bodyY+4,3,6,'#8cebd2');rect(17,bodyY+4,3,6,'#8cebd2');}}
  if(role==='zabuza'){rect(hx-5,hy+5,11,5,'#d6d9cf');rect(hx-4,hy+6,9,1,'#87999c');line(side?17:19,8,side?21:21,25,'#344051',4);line(side?17:19,8,side?21:21,22,'#b5ced5',3);rect(19,25,3,4,'#795c50');}if(role==='haku'){if(!back){rect(hx-4,hy+1,8,9,'#e7e8dc');rect(hx-3,hy+3,2,1,'#554253');rect(hx+1,hy+3,2,1,'#554253');rect(hx-1,hy+6,2,2,'#b06b78');}rect(hx-6,hy,2,11,p.hair);rect(hx+5,hy,2,11,p.hairShade);}

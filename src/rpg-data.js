@@ -121,8 +121,8 @@ export function useItem(r,p,id,index=null){
 export function pointsFor(r,xp,char='naruto'){return Math.max(0,levelFor(xp)-1-learnedFor(r,char).reduce((n,k)=>n+treeFor(char)[k].cost,0));}
 export function unlockReason(r,xp,id,char='naruto'){
  const tree=treeFor(char),learned=learnedFor(r,char);if(!owns(tree,id))return 'Unknown technique';const s=tree[id];
- if(learned.includes(id))return 'Aprendida';if(levelFor(xp)<s.level)return 'Requires level '+s.level;
- if(s.requires&&!learned.includes(s.requires))return 'Requiere '+tree[s.requires].name;
+ if(learned.includes(id))return 'Learned';if(levelFor(xp)<s.level)return 'Requires level '+s.level;
+ if(s.requires&&!learned.includes(s.requires))return 'Requires '+tree[s.requires].name;
  if(pointsFor(r,xp,char)<s.cost)return 'No points available';if(s.scroll&&!itemCount(r,s.scroll))return 'Requires a Chakra Scroll';return '';
 }
 export function unlockSkill(r,xp,id,char='naruto'){const reason=unlockReason(r,xp,id,char);if(reason)return reason;const s=treeFor(char)[id];if(s.scroll)removeItem(r,s.scroll);learnedFor(r,char).push(id);return null;}

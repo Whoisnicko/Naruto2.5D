@@ -1,5 +1,5 @@
 import {NPCS,DIALOGUES} from './world-data.js';
-import {createVillageServices} from './konoha-services.js?v=3c64';
+import {createVillageServices} from './konoha-services.js?v=3c613';
 import {CHARACTERS} from './character-data.js';
 import {makeActorSheet,ACTOR_W,ACTOR_H,ANIMS} from './pixel-art.js';
 

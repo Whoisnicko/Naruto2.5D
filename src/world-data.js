@@ -1,4 +1,5 @@
 import {itemFor,itemCount,addItem,removeItem,rewardItems} from './rpg-data.js';
+import {validatePatrolProgress} from './field-patrol-progress.js';
 // Positions use the existing map, so legacy saves and the original five enemy IDs remain valid.
 export const EAST={minX:50,maxX:109,minZ:-19,maxZ:19,gate:{x:49,z:-2},ruin:{x:90,z:0}};
 export const REGIONAL_ENEMIES=[
@@ -65,13 +66,13 @@ export const DIALOGUES={
 // Keep the v11 save clock range 0..240, but advance at 2/3 unit per real simulation second.
 export const DAY_SECONDS=240,DAY_RATE=2/3,PHASE_UNITS=80;
 export function dayPhase(clock){const q=((clock%DAY_SECONDS)+DAY_SECONDS)%DAY_SECONDS,i=Math.floor(q/PHASE_UNITS);return {id:['day','sunset','night'][i],name:['Day','Sunset','Night'][i],remaining:Math.ceil((PHASE_UNITS-q%PHASE_UNITS)/DAY_RATE)};}
-export function newWorld(){return {opened:[],quests:{supplies:0,scouting:0,village:0},visited:[],clock:0,defeated:[]};}
+export function newWorld(){return {opened:[],quests:{supplies:0,scouting:0,village:0},visited:[],clock:0,defeated:[],patrols:[]};}
 export function validateWorld(raw,legacy=false,legacyRegion=legacy){
  if(!raw||!Array.isArray(raw.opened)||!Array.isArray(raw.visited)||!raw.quests||!Number.isFinite(raw.clock)||raw.clock<0||raw.clock>=DAY_SECONDS)throw Error('Invalid world state.');
  const unique=(a,valid)=>{if(new Set(a).size!==a.length||a.some(k=>!valid.includes(k)))throw Error('Invalid world record.');return [...a];};
  const quests={};for(const id of Object.keys(SIDEQUESTS)){const v=id==='village'&&legacy&&raw.quests[id]===undefined?0:raw.quests[id];if(![0,1,2].includes(v))throw Error('Invalid side quest.');quests[id]=v;}
  const dead=raw.defeated===undefined&&legacyRegion?[]:raw.defeated;if(!Array.isArray(dead))throw Error('Invalid regional progress.');const defeated=unique(dead,REGIONAL_ENEMIES.map(e=>e.id));if(raw.opened.includes('reliccache')&&!defeated.includes(103))throw Error('Reliquary guardian not defeated.');
- return {defeated,opened:unique(raw.opened,CHESTS.map(c=>c.id)),quests,visited:unique(raw.visited,LANDMARKS.map(l=>l.id)),clock:raw.clock};
+ return {defeated,patrols:validatePatrolProgress(raw.patrols),opened:unique(raw.opened,CHESTS.map(c=>c.id)),quests,visited:unique(raw.visited,LANDMARKS.map(l=>l.id)),clock:raw.clock};
 }
 export function discover(world,p){for(const l of LANDMARKS)if(!world.visited.includes(l.id)&&Math.hypot(p.x-l.x,p.z-l.z)<=l.r)world.visited.push(l.id);}
 export function nearestWorld(p,world,npcs=NPCS){return [...npcs.map(o=>({...o,category:'npc'})),...CHESTS.filter(o=>!world.opened.includes(o.id)).map(o=>({...o,category:'chest'}))].map(o=>({...o,d:Math.hypot(p.x-o.x,p.z-o.z)})).filter(o=>o.d<(o.category==='npc'?2.5:1.9)).sort((a,b)=>a.d-b.d)[0]||null;}

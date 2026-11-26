@@ -1,3 +1,4 @@
+import {mergePatrolProgress} from './field-patrol-progress.js';
 // Campaign owns all durable state. The child receives a detached transaction.
 const copy=v=>JSON.parse(JSON.stringify(v));
 export function createCampaignTransaction(snapshot,revision,validate){
@@ -19,6 +20,7 @@ export function createCampaignTransaction(snapshot,revision,validate){
    else{const expected=base.quest===0&&q===0?0:ids.length===base.enemies.length?2:1;if(q!==expected||q===0&&ids.length!==old.length||fresh)throw Error('Progreso de misión inválido.');}
    candidate.quest=q;candidate.enemies=base.enemies.map(e=>({...e,hp:ids.includes(e.id)?0:fresh?70:e.hp}));
   }else if(round!==oldRound)throw Error('Missing training progress.');
+  candidate.world.patrols=mergePatrolProgress(base.world.patrols,patch.world.patrols,base.quest===3);
   const valid=validate(candidate);closed=true;return valid;
  },discard(){closed=true},get closed(){return closed}};
 }

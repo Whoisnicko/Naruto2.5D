@@ -42,7 +42,7 @@ export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearM
  function action(fn){const err=fn();feedback(err||'Operación completada.');render();}
  function render(){
   const state=services.state(),p=state.player,actions=$('villageActions');actions.replaceChildren();
-  $('villageWallet').textContent=p.coins+' ryō · '+p.xp+' EXP · HP '+p.hp+'/100 · Chakra '+p.chakra+'/100';
+  $('villageWallet').textContent=p.coins+' ryō · '+p.xp+' EXP · HP '+Math.round(p.hp)+'/100 · Chakra '+Math.round(p.chakra)+'/100';
   if(mode==='journal'){
    $('villageName').textContent='Diario y mochila';$('villageRole').textContent='KONOHA · EXPLORACIÓN';$('villagePortrait').hidden=true;$('villageLine').textContent='Misiones existentes, adaptadas a este mapa. El Jardín Nara sigue siendo provisional; el bosque se visita cruzando el mapa. Cambiá de héroe si un NPC está oculto.';
    if(campaignSession){const q=services.mainQuest();actions.append(el('h3',q<3?['I · The First Lesson','II · The Training Forest','III · Return to Konoha'][q]:campaignSession.chapter.title),el('p',q===0?'Hablá con Kakashi.':q===1?'Derrotá a los cinco renegados del bosque · '+services.defeated().length+'/5':q===2?'Regresá con Kakashi para recibir la recompensa.':campaignSession.chapter.goal));}
@@ -72,7 +72,7 @@ export function createVillage({THREE,scene,billboards,shadow,blocked,step,clearM
  const c=$('villagePortrait'),g=c.getContext('2d');g.clearRect(0,0,24,32);const sheet=getSheet(a.kind);if(sheet)g.drawImage(sheet,0,0,24,32,0,0,24,32);else g.drawImage(a.tex.image,0,0);render();dialog.showModal();return true}
  hint.onclick=talk;
  select.onchange=()=>{if(campaignSession){select.value=hero;return}if(!Object.hasOwn(CHARACTERS,select.value)){select.value=hero;return}hero=select.value;clearMotion();close();nearest=null;hint.hidden=true;onSelect(hero,getSheet(CHARACTERS[hero].art));select.blur()};
- function update(dt,p,active,discover=active,region='konoha'){currentRegion=region;position=p;activeNow=active;services.update(p,discover,region);const sp=services.resources();const status=sp.coins+' ryō · '+sp.xp+' EXP · HP '+sp.hp+' · CH '+sp.chakra;if(stats.textContent!==status)stats.textContent=status;nearest=null;let best=VILLAGE_REACH;
+ function update(dt,p,active,discover=active,region='konoha'){currentRegion=region;position=p;activeNow=active;services.update(p,discover,region);const sp=services.resources();const status=sp.coins+' ryō · '+sp.xp+' EXP · HP '+Math.round(sp.hp)+' · CH '+Math.round(sp.chakra);if(stats.textContent!==status)stats.textContent=status;nearest=null;let best=VILLAGE_REACH;
   for(const a of actors){const visible=available(a);a.visual.m.visible=a.shade.visible=visible;if(!visible)continue;
    a.motion=false;if(active&&!dialog.open){a.time+=dt;a.wait=Math.max(0,a.wait-dt);const [tx,ty]=a.route[a.target],dx=tx-a.x,dy=ty-a.y,d=Math.hypot(dx,dy);
     if(d<.08){a.target=(a.target+1)%a.route.length;a.wait=2.6}

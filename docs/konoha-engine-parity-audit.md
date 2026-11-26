@@ -1,0 +1,27 @@
+# Mundo 3C.6.7 — Auditoría de paridad y motor unificado
+Fecha 26/11/2026. Base preview: 46dc3a9380054219acda7b8d83963089387a98de.
+
+## Petición y hallazgo
+Usuario informa 78 FPS en 3C.6.6, combate mejor pero todavía extraño; no marcó nuevos puntos como validados. Se mantienen 28 aprobaciones históricas y las 56 comprobaciones sin validar de la lista 3C.6.6. La intención original era cambiar la presentación, no reimplementar el juego.
+Comparación directa de main/src/game.js (223837 caracteres) con preview/src/game.js (232651 caracteres) y módulos de mundo ilustrado: original conserva 203 funciones de nivel superior. El flujo preview creaba un iframe con su propia simulación, recursos y transacción de retorno. src/konoha-combat.js (16994 caracteres), src/konoha-three-lab.js (61366) y src/konoha-services.js (4932) duplican o adaptan responsabilidad del motor principal. Es la raíz arquitectónica de las regresiones.
+La auditoría identifica: 
+- Movimiento/combate: adaptador no conserva toda la cola de acciones, ventana de dash, interrupciones, daño por dirección, knockback continuo, estados de ataque, recursos y comportamiento original de animaciones.
+- Técnicas: faltan fases completas, colisiones y recuperación original Rasengan, sinergia/consumo de marca de clones, variaciones por héroe, furia involuntaria de Kyūbi, explosión y efectos exactos; balance diverge.
+- IA: original dispone de patrullas, respawn, coordinación de equipo, refuerzos, eventos y reglas de regiones; adaptador solo aproxima parte.
+- Campaña: puente transaccional y handoffs separan estados; jefes, Chūnin, diálogos, interiores, eventos y cutscenes del motor original no eran nativos en el mundo ilustrado.
+- UI: paneles recreados pierden opciones originales (controles configurables, Bingo Book, estados de jefes, rendimiento, herramientas de prueba).
+- Guardado: posición ilustrada aparte del v11; una copia no puede garantizar paridad de comportamiento ni de coordenadas.
+
+## Corrección estructural
+La preview abre por defecto el motor original src/game.js; sin iframe ni adaptador de combate en campaña. src/illustrated-skin.js es únicamente presentación: aplica assets WebP existentes de Konoha a los ocho edificios originales, terreno, caminos, río, árboles, faroles y montaña. Respeta coordenadas/colliders originales, conserva geometría original si falta un asset, se oculta durante arenas/interiores y vuelve al salir. Reusa reloj y clima originales con vista atmosférica ilustrada; no hay segundo reloj/estado de campaña. El motor original sigue dibujando actores, animaciones, habilidades, daño, efectos, cinemáticas, UI y arenas. Un fallo de presentación tiene fallback gráfico.
+Esc > Presentación / sandbox permite alternar arte clásico/ilustrado sin cambiar de motor, abrir sandbox nativo sin guardar, o conservar versión anterior. FPS y configuración originales. No hay franja de laboratorio. Viaje rápido seguro desde pausa a destinos visitados, plaza y entrada del bosque; no permite saltar la puerta de ruinas ni salir de combate/eventos.
+La geometría original es distinta de la maqueta 144x84: no se afirma que esta primera capa tenga el aspecto exacto de 3C.6.6. Se conserva esa maqueta en ?engine=adapter y el laboratorio independiente. El sprint progresivo de 16 u/s, polvo propio, tres objetivos de práctica de la ciudad y cámara panorámica del mirador del adaptador no se transfirieron al motor nativo en este cambio; no se modificó update ni se reimplementó combate para incorporarlos. Deben reconciliarse como mejoras específicas y no como segundo motor. La posición del save v11 usa coordenadas originales, no el punto de la maqueta; exportar respaldo antes de alternar modos. No se alteran las reglas originales de clima automático, que no selecciona niebla aleatoria, aunque se conserva su visualización cuando se activa en sandbox. Arenas/interiores aún tienen su arte original, no se redibujan en este cambio. HTML offline no regenerado.
+## QA
+57/57 cuerpos de funciones críticas idénticos carácter por carácter a main: update, attack, dash, requestAction, drainAction, hurt, playerHurt, Rasengan, resolveAttack, resolveCharacterTechnique, Kyūbi, IA, eventos, interiores, jefes, exámenes, progresión, guardado/aplicación, colisiones, feedback y HUD. 203 funciones originales presentes. 17/17 módulos compartidos con mismo SHA de contenido (combate, personajes, IA, bosses, exam, campaign, RPG, UI, world, save, pixel renderer/art, feedback, performance, renderer y chronicles). 16/16 pruebas de capa visual con clases Three/DOM simuladas: reemplazos, colisiones intactas, fallback de edificio/árbol/terreno, visibilidad exterior/interior, reloj/clima y controles de transición. Sintaxis comprobada, no navegador/GPU real ni verificación Cloudflare; no garantizar paridad visual ni FPS reales. Los 78 FPS reportados pertenecen a 3C.6.6.
+## Playtest
+Primero comprobar arranque y HUD nativo, probar mismo ataque con arte clásico/ilustrado sin cambiar motor, FPS, técnicas, bosses y cinemáticas, inventario, progreso, guardado, interiores/eventos; retomar los 56 pendientes de la versión anterior. Revalidar las mejoras específicas de exploración al reconciliarlas.
+Preview nativo: https://preview-konoha-world3c.naruto2-5d.pages.dev/?v=3c67
+Respaldo adaptador: https://preview-konoha-world3c.naruto2-5d.pages.dev/?engine=adapter&v=3c66
+Sandbox: https://preview-konoha-world3c.naruto2-5d.pages.dev/konoha-three-lab.html?v=3c66
+GitHub: https://github.com/Whoisnicko/Naruto2.5D/tree/preview/konoha-world3c
+Producción main intacta.

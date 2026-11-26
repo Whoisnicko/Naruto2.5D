@@ -1,0 +1,21 @@
+{
+  "initialChecks": 15,
+  "strictChecks": [
+    "no practice loot",
+    "purchase",
+    "accept sidequest",
+    "finish sidequest",
+    "parent unmodified before apply",
+    "strict v11 validated transaction",
+    "combat/story/exam/position/hero preserved",
+    "original save pack/read round trip",
+    "invalid resources rejected, retry permitted",
+    "valid retry",
+    "revision mismatch",
+    "discard leaves original untouched",
+    "clock continuity",
+    "lab still independent"
+  ],
+  "passed": 14,
+  "method": "actual original save v11 validator, pack/read round trip and campaign transaction; no browser"
+}

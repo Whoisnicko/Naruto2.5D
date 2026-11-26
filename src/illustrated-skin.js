@@ -34,7 +34,7 @@ export function createIllustratedSkin({view,canvas,overlay,buildings,foliage,rep
   for(const d of groundPlacements())plane(d);
   buildings.forEach((b,i)=>{const p=buildingPlacement(b,i),m=billboard(p.name,p.x,p.z,p.width);if(m)buildingVisuals.push({fallback:b.fallback,m,x:p.x,z:p.z});});
   treesReady=replaceTrees&&TREE_ART.every(n=>loaded.has(n));if(treesReady)foliage.forEach((f,i)=>{const m=billboard(TREE_ART[i%3],f.x,f.z,3.9*f.s);if(m)treeVisuals.push({m,x:f.x,z:f.z});});
-  billboard('mountain',-13,-49,55);
+  billboard('mountain',-13,-49,55);for(const lamp of lamps)billboard('lamp-post',lamp.x+.26,lamp.z,1.1);
   ready=true;return status();
  }
  function sync({visible,x,z,spanX}){active=!!(ready&&visible);root.visible=active;const near=(a)=>Math.abs(a.x-x)<spanX+20&&Math.abs(a.z-z)<42;for(const b of buildings){b.fallback.visible=visible&&near(b)&&!buildingVisuals.some(v=>v.fallback===b.fallback&&active);}
@@ -43,7 +43,7 @@ export function createIllustratedSkin({view,canvas,overlay,buildings,foliage,rep
  function drawAtmosphere({clock,kind,time,dt,x,z}){if(!active||!atmosphere)return false;
   if(innerWidth!==w||innerHeight!==h){w=innerWidth;h=innerHeight;atmosphere.resize(w,h);}const target=ATMOSPHERE_WEATHER[kind]||ATMOSPHERE_WEATHER.clear,blend=1-Math.exp(-Math.max(0,dt)*2.4);for(const key of ['rain','fog','shade'])weatherBlend[key]+=(target[key]-weatherBlend[key])*blend;
   if(kind!==previousKind){previousKind=kind;flashAge=Infinity;nextFlash=time+2;weatherBlend.shade=Math.max(0,weatherBlend.shade);}
-  if(kind==='storm'&&time>=nextFlash){stormAt=time;nextFlash=time+6.1;boltSeed=(Math.sin(time*13.3)+1)/2;}flashAge=kind==='storm'?time-stormAt:Infinity;
+  if(kind==='storm'&&time>=nextFlash){stormAt=time;nextFlash=time+6.1;boltSeed=(Math.sin(time*13.3)+1)/2;}flashAge=kind==='storm'&&stormAt>0?time-stormAt:Infinity;
   const flash=flashAge<.14?.54*(1-flashAge/.14):flashAge>=.23&&flashAge<.4?.35*(1-(flashAge-.23)/.17):0;
   overlay.hidden=false;atmosphere.draw({...sampleLight(clock),...weatherBlend,kind,elapsed:time,boltAge:flashAge,boltSeed,flash},x>=50?'outpost':x>=14?'forest':'konoha',dt,{x,y:z},dt);return true;
  }

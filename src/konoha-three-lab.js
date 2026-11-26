@@ -5,14 +5,14 @@ import {ART,DECOR,VIEW} from './konoha-three-data.js';
 import {MOBILITY,createMobility,updateMobility,TRAVEL} from './konoha-mobility.js';
 import {createVillage} from './konoha-village.js';
 import {REGIONS,PORTALS,regionBlocked,regionStep,createRegionRouter} from './konoha-regions.js?v=3c41';
-import {createAtmosphere,createAtmosphereView,WEATHER_LABELS} from './konoha-atmosphere.js?v=3c52';
+import {createAtmosphere,createAtmosphereView,WEATHER_LABELS} from './konoha-atmosphere.js?v=3c53';
 const $=id=>document.getElementById(id),stage=$('stage');
 let renderer,backend='WebGL';try{renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});}catch(e){backend='Canvas respaldo';renderer=makeFallbackRenderer();}
 renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;stage.append(renderer.domElement);
 renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();$('loading').hidden=false;$('progress').textContent='Contexto gráfico perdido. Recargá la página.';});
 const scene=new THREE.Scene();scene.background=new THREE.Color('#607c57');const camera=new THREE.OrthographicCamera(-60,60,40,-40,.1,500);camera.position.set(72,100,134);camera.lookAt(72,0,14);camera.updateMatrixWorld();
 const billboards=[],textures={},failures=[],keys=new Set(),p={x:72,y:43};let mode='walk',zoom=1,dir=0,elapsed=0,last=performance.now(),moving=false,ready=false,frames=0;
-const BUILD='3C.5.2',router=createRegionRouter({preview:true}),regionVisuals=new Map();let roadLayer=0,portalCooldown=0;
+const BUILD='3C.5.3',router=createRegionRouter({preview:true}),regionVisuals=new Map();let roadLayer=0,portalCooldown=0;
 const mobility=createMobility(),dust=[],fx=$('dust'),fxctx=fx.getContext('2d');let dustBudget=0,animTime=0,touchRun=false,travel=null,viewCurrent=null;
 function clearMotion(){keys.clear();touchRun=false;mobility.held=0;mobility.speed=MOBILITY.walk;mobility.sprint=false;moving=false;$('touchrun').setAttribute('aria-pressed','false');}
 function closeTravel(){if($('travelMenu').open)$('travelMenu').close();}

@@ -1,0 +1,774 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shinobi Art Review · Kyūbi 3C.6.14</title><style>
+:root{color-scheme:dark;--zoom:3;--bg:#10161c;--line:#35434a;--muted:#a5b3b8;--gold:#f2c477}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#edf0ec;font:15px system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:30px 18px 48px}header{border-bottom:1px solid var(--line);padding-bottom:20px}h1{margin:6px 0;font-size:clamp(24px,4vw,36px);letter-spacing:-.03em}h2{font-size:17px;margin:0 0 9px}p{line-height:1.55;margin:7px 0;color:var(--muted)}small,.eyebrow{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:20px 0}.controls label{display:flex;gap:7px;align-items:center}select,button{background:#202b32;border:1px solid #45545e;color:#edf0ec;border-radius:6px;padding:9px 11px;font:inherit;cursor:pointer}button:hover{border-color:var(--gold)}.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.panel{min-width:0;border:1px solid var(--line);border-radius:10px;background:#182128;padding:15px}.stage{height:clamp(180px,38vw,490px);overflow:auto;background:#212b30;display:flex;align-items:center;justify-content:center;border:1px solid #35434a;border-radius:6px}canvas{image-rendering:pixelated;display:block}.stage canvas{width:calc(96px * var(--zoom));height:calc(80px * var(--zoom));max-width:none;flex:none}.sheet{margin-top:18px;border:1px solid var(--line);border-radius:10px;padding:16px;background:#182128}.atlas{overflow:auto;background:#252e34;padding:10px}.atlas canvas{width:560px;height:288px;max-width:none}.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:12px monospace;color:var(--muted);margin:12px 0}.foot{font-size:13px;margin-top:20px}.candidate{border-color:#a4704a}@media(max-width:620px){.pair{grid-template-columns:1fr}.stage{height:270px}}
+</style></head><body><main><header><div class="eyebrow">Art lab · approval required · not integrated</div><h1>Kyūbi — Visual Polish</h1><p>3C.6.14 candidate 01 · exact 24 × 32 actor cells from 3C.6.13, original aura/tail assets, unchanged movement frames. Candidate adds eyes, cheek marks and fangs, and moves cloak behind the actor. Neutral review stage, not a game screenshot.</p></header>
+<div class="controls"><label>Action <select id="action"><option value="idle">Idle</option><option value="walk">Walk</option><option value="run">Run</option><option value="combo">Triple combo</option><option value="rasengan">Rasengan poses</option><option value="guard">Guard</option><option value="charge">Charge</option><option value="dash">Dash</option></select></label><label>Direction <select id="direction"><option value="0">Front</option><option value="1">Left</option><option value="2">Right</option><option value="3">Back</option></select></label><label><input id="aura" type="checkbox" checked> Original aura</label><label><input id="tint" type="checkbox" checked> Approx. field tint</label><label>Zoom <input id="size" type="range" min="1" max="5" value="3"><span id="zoomLabel">3×</span></label><button id="play">Pause</button></div>
+<div class="pair"><section class="panel"><small>Current · 3C.6.13</small><h2>Before</h2><div class="stage"><canvas id="before" width="96" height="80"></canvas></div><p>Original face; aura painted after the body.</p></section><section class="panel candidate"><small>Draft · 3C.6.14</small><h2>Candidate 01</h2><div class="stage"><canvas id="after" width="96" height="80"></canvas></div><p>Red eyes, dark whisker marks, pale fang highlights; aura behind body.</p></section></div>
+<div class="meta"><span id="frame"></span><span id="status"></span></div><section class="sheet"><h2>Candidate contact sheet</h2><p>10 representative poses × 4 directions: idle, run, punch, kick, finish, Rasengan wind-up/contact, guard, charge, dash. Actual atlas contains 64 columns × 4 directions (1536 × 128 PNG).</p><div class="atlas"><canvas id="contact" width="280" height="144"></canvas></div><div class="controls"><button id="download">Export candidate PNG</button><button id="downloadOld">Export original PNG</button></div></section><p class="foot">Review scope: pixel face and layer order only. No new combat rules, no changes to the campaign, no boss/weapon/VFX redesign. The actual game camera, equipment, GPU tint, weather, UI and hit effects require in-game playtest after approval. Aura is the original embedded asset, with original procedural fallback; tail generator unchanged.</p></main><script>const baseline=(()=>{// Original, deterministic pixel sheets. All primitives rasterize on integer pixels;
+// no generated image or third-party character assets are needed.
+const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=64,DIRS=['down','left','right','up'];
+const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12},thrust:{start:22,count:4,fps:12},release:{start:26,count:4,fps:12},seal:{start:30,count:4,fps:10},slam:{start:34,count:4,fps:12},rasengan:{start:38,count:6,fps:12},guard:{start:44,count:4,fps:8},charge:{start:48,count:4,fps:8},dash:{start:52,count:4,fps:24},brake:{start:56,count:2,fps:18},guardBreak:{start:58,count:2,fps:8},dashStrike:{start:60,count:4,fps:16}};
+const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice','lightning','fire','heal','earth','focus','shockwave','sparks','slash','firetrail','dragon','wall','cracks','aura','storm','infernoOrb','infernoBurst','infernoEmber','infernoTrail','infernoGround'];
+const FX_SIZE=32,FX_COLS=8;
+const TECH_ART={
+ naruto:{' ':{pose:'thrust',fx:'rasengan'},f:{pose:'release',fx:'wind'},l:{pose:'seal',fx:'clone'},g:{pose:'thrust',fx:'giant'}},
+ sasuke:{' ':{pose:'thrust',fx:'lightning'},f:{pose:'release',fx:'fire'},l:{pose:'seal',fx:'focus'},g:{pose:'slam',fx:'storm'}},
+ sakura:{' ':{pose:'slam',fx:'earth'},f:{pose:'slam',fx:'cracks'},l:{pose:'seal',fx:'heal'},g:{pose:'slam',fx:'cracks'}},
+ kakashi:{' ':{pose:'thrust',fx:'lightning'},f:{pose:'release',fx:'dragon'},l:{pose:'seal',fx:'wall'},g:{pose:'slam',fx:'storm'}}
+};
+function artFor(character,key){return TECH_ART[character]?.[key]||null;}
+const TREE_W=40,TREE_H=48;
+const ink='#273044',skin='#f7c08a',skinShade='#bc795d',skinLight='#ffe0a8';
+const PALETTES={
+ jiraiya:{hair:'#dedfd7',hairLight:'#fff9ed',hairShade:'#8d9696',shirt:'#8d9b70',shade:'#515f4a',light:'#bec69d',trim:'#973d39',metal:'#dedcc7'},
+ lee:{hair:'#27372f',hairLight:'#4e6654',hairShade:'#1a2826',shirt:'#5b9b52',shade:'#35633d',light:'#a5c675',trim:'#d08041',metal:'#d9d9c8'},
+ neji:{hair:'#5f463f',hairLight:'#997466',hairShade:'#3c3031',shirt:'#e1d8bb',shade:'#9c9a86',light:'#f7ebcf',trim:'#63716b',metal:'#c7d4d8'},
+ kimimaro:{hair:'#dcded5',hairLight:'#f9f5e9',hairShade:'#989b9b',shirt:'#d6d6ca',shade:'#90918e',light:'#f1ead7',trim:'#786389',metal:'#eee6d5'},
+ orochimaru:{hair:'#262437',hairLight:'#4b465c',hairShade:'#171825',shirt:'#c9c6b8',shade:'#82798a',light:'#f0e5d0',trim:'#8a65a9',metal:'#dcd4d8'},
+ gaara:{hair:'#aa4b42',hairLight:'#d47b62',hairShade:'#70383b',shirt:'#95624e',shade:'#65463e',light:'#c8a37b',trim:'#e1caa5',metal:'#c6c0ab'},
+ sasuke:{hair:'#35384e',hairLight:'#777a9b',hairShade:'#23283b',shirt:'#465a8e',shade:'#303c67',light:'#8393bf',trim:'#e2dcca',metal:'#c3cbd7'},
+ player:{hair:'#f4c848',hairLight:'#fff0a1',hairShade:'#bf8739',shirt:'#f58b36',shade:'#b94b30',light:'#ffb650',trim:'#26344c',metal:'#bacfd3'},
+ npc:{hair:'#c4d3df',hairLight:'#f0f4f8',hairShade:'#8495ae',shirt:'#78935a',shade:'#475e46',light:'#a5ba76',trim:'#26344c',metal:'#c6d6dd'},
+ enemy:{hair:'#34364d',hairLight:'#69627e',hairShade:'#262839',shirt:'#665272',shade:'#3d354f',light:'#93748a',trim:'#29283c',metal:'#b8b6c6'},
+ thrower:{hair:'#4d625d',hairLight:'#91b5a1',hairShade:'#304840',shirt:'#427a71',shade:'#284b4d',light:'#7fbaa6',trim:'#263644',metal:'#ced6ce'},
+ guard:{hair:'#70494f',hairLight:'#b68176',hairShade:'#422d3c',shirt:'#97564b',shade:'#58373f',light:'#c98468',trim:'#352c39',metal:'#e0c293'},
+ sakura:{hair:'#df7b92',hairLight:'#ffc0bb',hairShade:'#ad536f',shirt:'#c64e5f',shade:'#86364b',light:'#e88b85',trim:'#57394d',metal:'#e9d4cf'},
+ teuchi:{hair:'#e9dec2',hairLight:'#fff7e7',hairShade:'#b6a78e',shirt:'#e5d7b9',shade:'#99876e',light:'#f8efda',trim:'#695646',metal:'#ede1c5'},
+ tenten:{hair:'#593e39',hairLight:'#a57b65',hairShade:'#3b2830',shirt:'#ddadad',shade:'#a66877',light:'#ffe1c9',trim:'#4d4453',metal:'#cfdae1'},
+ iruka:{hair:'#684536',hairLight:'#a47853',hairShade:'#392e35',shirt:'#779768',shade:'#43594d',light:'#a1be8a',trim:'#354457',metal:'#c0d2d7'},
+ kabuto:{hair:'#a8b7bd',hairLight:'#e1e8e6',hairShade:'#788491',shirt:'#75637d',shade:'#413b54',light:'#aa94af',trim:'#d5c8b0',metal:'#b7d6d7'},
+ zabuza:{hair:'#313746',hairLight:'#6a7781',hairShade:'#222737',shirt:'#687e87',shade:'#384c5b',light:'#9eafb6',trim:'#344051',metal:'#d5dde0'},
+ haku:{hair:'#272d3e',hairLight:'#67748a',hairShade:'#1d2434',shirt:'#6a9e8c',shade:'#385f60',light:'#a3cfb4',trim:'#6a455d',metal:'#e8e8dc'},
+ shikamaru:{hair:'#34393b',hairLight:'#626966',hairShade:'#242a30',shirt:'#859673',shade:'#4a5c50',light:'#b1c09b',trim:'#343b45',metal:'#c4c9be'},
+ clone:{hair:'#edc448',hairLight:'#fff0a1',hairShade:'#bf8739',shirt:'#f58b36',shade:'#b94b30',light:'#ffb650',trim:'#26344c',metal:'#bacfd3'}
+};
+function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
+function cell(w,h){
+ const c=canvas(w,h),ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;
+ function rect(x,y,w,h,col){if(w<=0||h<=0)return;ctx.fillStyle=col;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
+ function poly(pts,col){const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);for(let y=Math.max(0,Math.floor(Math.min(...ys)));y<=Math.min(h-1,Math.ceil(Math.max(...ys)));y++)for(let x=Math.max(0,Math.floor(Math.min(...xs)));x<=Math.min(w-1,Math.ceil(Math.max(...xs)));x++){let inside=false;for(let i=0,j=pts.length-1;i<pts.length;j=i++){const a=pts[i],b=pts[j];if((a[1]>y+.5)!==(b[1]>y+.5)&&x+.5<(b[0]-a[0])*(y+.5-a[1])/(b[1]-a[1])+a[0])inside=!inside;}if(inside)rect(x,y,1,1,col);}}
+ function ellipse(x,y,rx,ry,col){for(let yy=Math.floor(y-ry);yy<=Math.ceil(y+ry);yy++)for(let xx=Math.floor(x-rx);xx<=Math.ceil(x+rx);xx++)if(((xx+.5-x)/rx)**2+((yy+.5-y)/ry)**2<=1)rect(xx,yy,1,1,col);}
+ function line(x,y,xx,yy,col,w=1){const n=Math.max(1,Math.ceil(Math.max(Math.abs(xx-x),Math.abs(yy-y))));for(let i=0;i<=n;i++)rect(Math.round(x+(xx-x)*i/n)-Math.floor(w/2),Math.round(y+(yy-y)*i/n)-Math.floor(w/2),w,w,col);}
+ return {c,ctx,rect,poly,ellipse,line};
+}
+// Dedicated Shukaku chakra avatar; original procedural directional atlas.
+function shukakuCell(dir,frame){
+ const s=cell(24,32),{rect,poly,line,ellipse}=s,outline='#493e41',shade='#9a7048',sand='#d6b076',light='#f3d69b',mark='#4b485d',eye='#ffe76b',back=dir===3,side=dir===1||dir===2;
+ const step=frame>=2&&frame<=9?[-1,0,1,0][(frame-2)%4]:0,cast=frame===14||frame===15||frame>=22,attack=frame>=10&&frame<=12||frame>=16&&frame<=21;
+ poly([[5,21],[10,21],[10,28+step],[8,31],[2,31],[3,27]],outline);poly([[6,22],[9,23],[8,28+step],[3,29],[4,26]],sand);
+ poly([[13,21],[18,21],[21,29-step],[21,31],[14,31],[12,27]],outline);poly([[14,22],[17,23],[19,28-step],[15,29]],sand);
+ ellipse(12,18,8,10,outline);ellipse(12,18,7,9,sand);ellipse(11,16,5,6,light);
+ const ay=cast?11:attack?16:23+step,by=cast?10:attack?14:23-step;
+ line(7,14,3,ay,outline,7);line(7,14,3,ay,sand,5);line(17,14,20,by,outline,7);line(17,14,20,by,sand,5);
+ for(let j=0;j<3;j++){rect(1+j*2,ay+2,1,2,light);rect(18+j*2,by+2,1,2,light);}
+ poly([[4,12],[4,2],[9,6],[15,6],[20,2],[20,12],[17,16],[7,16]],outline);poly([[5,10],[5,4],[9,7],[15,7],[19,4],[19,11],[16,15],[8,15]],sand);poly([[6,5],[8,8],[6,9]],shade);poly([[18,5],[16,8],[18,9]],shade);
+ if(!back){if(side){rect(dir===1?5:15,9,5,3,mark);rect(dir===1?6:16,10,3,1,eye);}else{rect(6,9,5,3,mark);rect(13,9,5,3,mark);rect(7,10,3,1,eye);rect(14,10,3,1,eye);}rect(10,12,4,2,outline);rect(8,14,8,1,mark);rect(10,14,1,1,light);rect(14,14,1,1,light);}else{line(8,9,16,9,mark,2);line(12,7,12,12,mark,1);}
+ line(10,17,7,20,mark,2);line(7,20,11,23,mark,2);line(14,17,17,20,mark,2);line(17,20,13,23,mark,2);rect(11,24,3,2,mark);
+ return s.c;
+}
+// White Serpent: dedicated coiled-body directional pixel art.
+function whiteSerpentCell(dir,frame){
+ const s=cell(24,32),{rect,poly,line,ellipse}=s,ink='#423b51',shade='#a6a1b6',white='#e4e0db',light='#fff5e6',purple='#82629c',eye='#f5d858',back=dir===3,side=dir===1||dir===2,attack=frame>=10&&frame<=12||frame>=16&&frame<=21,cast=frame===14||frame===15||frame>=22;
+ const wig=frame>=2&&frame<=9?[-1,0,1,0][(frame-2)%4]:0,hx=side?(dir===1?9:15):12,hy=attack?7:cast?5:6+wig;
+ ellipse(12,26,11,5,ink);ellipse(12,25,10,5,shade);ellipse(12,24,9,3,white);
+ ellipse(12,21,9,5,ink);ellipse(12,20,8,5,white);ellipse(12,20,5,2,shade);
+ line(10,24,16,18,ink,9);line(10,24,16,18,white,7);line(16,18,hx,hy+5,ink,10);line(16,18,hx,hy+5,white,8);line(hx-1,hy+6,14,18,light,2);
+ for(let i=0;i<4;i++){line(11+i%2,17+i*2,16,18+i*2,purple,1);}
+ poly([[hx-7,hy],[hx-4,hy-3],[hx+4,hy-3],[hx+7,hy],[hx+6,hy+6],[hx+3,hy+9],[hx-4,hy+9],[hx-7,hy+5]],ink);
+ poly([[hx-6,hy],[hx-3,hy-2],[hx+3,hy-2],[hx+6,hy],[hx+5,hy+5],[hx+3,hy+8],[hx-3,hy+8],[hx-6,hy+4]],white);
+ rect(hx-4,hy-1,8,1,light);if(!back){if(side){const ex=dir===1?hx-5:hx+2;rect(ex,hy+2,3,3,purple);rect(ex+1,hy+3,1,2,eye);}else{rect(hx-5,hy+2,4,3,purple);rect(hx+1,hy+2,4,3,purple);rect(hx-4,hy+3,2,1,eye);rect(hx+2,hy+3,2,1,eye);}rect(hx-3,hy+6,6,attack?3:1,ink);rect(hx-3,hy+6,1,2,light);rect(hx+2,hy+6,1,2,light);if(attack||cast)rect(hx,hy+8,1,3,'#be6884');}else line(hx-3,hy+2,hx+3,hy+5,purple,2);
+ for(let i=0;i<4;i++)rect(4+i*4,28+(i%2),2,1,purple);
+ return s.c;
+}
+function actorCell(kind,dir,frame,gear=null,kyubi=false){
+ if(kind==='whiteSerpent')return whiteSerpentCell(dir,frame);
+ if(kind==='shukaku')return shukakuCell(dir,frame);
+ const extra=frame>=44?frame-44:-1;if(extra>=0)frame=[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][extra];
+ const ras=frame>=38?frame-38:-1;if(ras>=0)frame=[14,14,14,7,12,0][ras];
+ const special=frame>=22?Math.floor((frame-22)/4):-1,stage=frame>=22?(frame-22)%4:0;if(special>=0)frame=[14,14,15,14][stage];
+ const sage=kind==='jiraiyaSage';if(sage)kind='jiraiya';const sasukeForm=kind==='sasukeSharingan'?1:kind==='sasukeMarked'?2:kind==='sasukeCursed'?3:kind==='sasukeInjured'?4:0;if(sasukeForm)kind='sasuke';const kimiForm=kind==='kimiMarked'?1:kind==='kimiCursed'?2:0;if(kimiForm)kind='kimimaro';const role=kind;const p=sasukeForm===3?{hair:'#56516d',hairLight:'#8782a2',hairShade:'#363247',shirt:'#847d91',shade:'#534f69',light:'#b0a7bd',trim:'#ddd9d7',metal:'#c8c7df'}:kimiForm===2?{hair:'#d6d6ce',hairLight:'#eee9df',hairShade:'#8b878d',shirt:'#8e7c74',shade:'#645956',light:'#b5a091',trim:'#554653',metal:'#f2eada'}:PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
+ const side=dir===1||dir===2,back=dir===3,run=frame>=6&&frame<=9,walk=frame>=2&&frame<=5,attack=frame>=10&&frame<=12||frame>=16,cast=frame===14||frame===15,kick=frame>=16&&frame<=18,finish=frame>=19;
+ const f=walk?(frame-2):run?(frame-6):0,step=[-3,0,3,0][f],bob=(walk||run)&&f%2===1?1:frame===1?1:0;
+ const phase=kick?frame-16:finish?frame-19:attack?frame-10:cast?frame-14:0;const lean=ras>=0&&kind==='player'?(side?[0,-1,0,3,2,0][ras]:0):side&&run?2:side&&attack?(phase===1?2:0):0;const hx=12+lean,hy=8+bob,bodyY=16+bob;
+ // side frames are painted facing right, mirrored for left.
+ function limb(x,y,xx,yy,c,w=4){line(x,y,xx,yy,ink,w+2);line(x,y,xx,yy,c,w);}
+ if(side){
+   limb(10,23,8-step,28,p.shade,3);rect(5-step,28,6,3,ink);rect(6-step,28,4,1,p.trim);
+   limb(13,23,13+step,28,p.shirt,4);rect(11+step,28,6,3,ink);rect(12+step,28,4,1,'#657286');
+   const ax=run?4:attack?[6,18,14][phase]:cast?15+phase:8-step,ay=run?20:attack?[20,17,21][phase]:cast?18:21;
+   limb(10,bodyY+2,ax,ay,p.shade,3);
+ }else{
+   limb(9,23,8,28+(step>0?-1:0),p.shade,4);rect(5,28+(step>0?-1:0),6,3,ink);
+   limb(14,23,15,28+(step<0?-1:0),p.shirt,4);rect(13,28+(step<0?-1:0),6,3,ink);
+   rect(6,28+(step>0?-1:0),4,1,'#657286');rect(14,28+(step<0?-1:0),4,1,'#657286');
+   limb(7,bodyY+2,run?5:attack?[8,4,6][phase]:6,run?18:22+(step>0?1:0),p.shade,3);
+   limb(16,bodyY+2,run?19:attack?[15,21,18][phase]:17,run?18:cast?18-phase:22+(step<0?1:0),p.shirt,3);
+ }
+ // jacket silhouette, shoulder panels, zipper and belt.
+ poly([[7+lean,bodyY],[16+lean,bodyY],[18,bodyY+4],[16,25],[8,25],[6,bodyY+4]],ink);
+ poly([[8+lean,bodyY+1],[15+lean,bodyY+1],[16,bodyY+4],[15,24],[9,24],[7,bodyY+4]],p.shirt);
+ rect(9,23,6,1,p.shade);rect(8+lean,bodyY+1,7,3,p.trim);
+ if(kind==='npc'){rect(8,bodyY+4,4,5,p.shade);rect(13,bodyY+4,3,5,p.light);}
+ else if(!back){rect(side?15:11,bodyY+4,1,6,p.trim);rect(side?14:10,bodyY+4,1,1,p.light);}
+ else{rect(10,bodyY+4,4,4,'#a33337');rect(11,bodyY+5,2,2,p.light);}
+ rect(8,24,8,1,p.trim);
+ if(side){const x=run?4:attack?[8,21,17][phase]:cast?17+phase:16+step,y=run?22:attack?[18,16,21][phase]:cast?18-phase:22;limb(14+lean,bodyY+2,x,y,p.shirt,3);rect(x-1,y-1,3,3,skin);rect(x-1,y+1,3,1,skinShade);}
+ else if(cast){rect(9,18,3,3,skin);rect(12,18,3,3,skin);rect(11,17,2,1,skinLight);}
+ // Distinct combo poses, with the same palette and original 24×32 cell.
+ if(kick&&phase===0){if(side){limb(13,23,18,20,p.shirt,4);rect(16,20,4,3,ink);}else{limb(14,23,17,22,p.shirt,4);rect(15,21,4,3,ink);}}if(kick&&phase===2){if(side){limb(13,23,17,25,p.shirt,4);rect(16,25,5,3,ink);}else{limb(14,23,17,27,p.shirt,4);rect(15,27,5,3,ink);}}if(kick&&phase===1){if(side){limb(13,23,22,19,p.shirt,4);rect(20,17,4,4,ink);rect(20,18,3,1,'#657286');}else{limb(14,23,19,back?18:26,p.shirt,4);rect(18,back?16:25,5,3,ink);}}
+ if(finish&&phase===0){if(side){limb(11,18,5,15,p.shade,4);limb(15,18,8,13,p.shirt,4);rect(6,11,4,4,skin);}else{limb(8,19,4,22,p.shirt,4);limb(16,19,20,22,p.shirt,4);rect(2,20,4,4,skin);rect(18,20,4,4,skin);}}if(finish&&phase===2){if(side){limb(14,18,19,21,p.shirt,4);rect(18,20,4,4,skin);}else{limb(8,19,5,20,p.shirt,4);limb(16,19,19,20,p.shirt,4);}}if(finish&&phase===1){if(side){limb(11,18,21,13,p.shade,4);limb(15,18,22,15,p.shirt,4);rect(20,12,4,5,skin);}else{limb(8,19,5,13,p.shirt,4);limb(16,19,19,13,p.shirt,4);rect(3,11,4,4,skin);rect(18,11,4,4,skin);}}
+ // rounded anime head, outline, shade and a readable face at tiny scale.
+ poly([[hx-6,hy-3],[hx+4,hy-4],[hx+7,hy],[hx+6,hy+6],[hx+3,hy+9],[hx-4,hy+9],[hx-6,hy+5]],ink);
+ poly([[hx-5,hy-2],[hx+4,hy-3],[hx+6,hy+1],[hx+5,hy+6],[hx+2,hy+8],[hx-3,hy+8],[hx-5,hy+5]],kind==='enemy'?p.trim:skin);
+ if(!back&&kind!=='enemy'){rect(hx-4,hy+5,2,2,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx-3,hy+7,6,1,skinShade);}
+ const hairPoints=kind==='enemy'?[[hx-6,hy-4],[hx+5,hy-4],[hx+7,hy],[hx+4,hy+2],[hx-5,hy+2]]:[[hx-7,hy-2],[hx-7,hy-6],[hx-4,hy-5],[hx-4,hy-8],[hx-1,hy-6],[hx+2,hy-9],[hx+3,hy-6],[hx+6,hy-8],[hx+6,hy-4],[hx+8,hy-5],[hx+7,hy+1],[hx+4,hy+3],[hx-5,hy+2]];
+ poly(hairPoints,ink);
+ poly(kind==='enemy'?[[hx-5,hy-3],[hx+4,hy-3],[hx+5,hy],[hx-4,hy+1]]:[[hx-6,hy-3],[hx-6,hy-5],[hx-3,hy-4],[hx-3,hy-6],[hx,hy-5],[hx+2,hy-7],[hx+3,hy-4],[hx+5,hy-6],[hx+5,hy-3],[hx+6,hy-3],[hx+5,hy+1],[hx-4,hy+1]],p.hair);
+ rect(hx-4,hy-3,6,1,p.hairLight);rect(hx,hy-5,2,2,p.hairLight);
+ if(back){rect(hx-5,hy+2,10,3,p.trim);rect(hx-1,hy+4,2,3,p.trim);rect(hx+1,hy+5,3,2,p.trim);rect(hx-4,hy+1,2,1,p.hairShade);}
+ else{
+   rect(hx-5,hy+1,11,3,p.trim);rect(side?hx+1:hx-3,hy+1,side?5:7,2,p.metal);rect(side?hx+3:hx,hy+1,1,1,'#536b79');
+   if(side){rect(hx+2,hy+4,3,2,ink);rect(hx+3,hy+4,1,1,kind==='player'||kind==='clone'?(kyubi?'#ed3d43':'#61b8d7'):'#d6d8ce');}
+   else{rect(hx-4,hy+4,3,2,ink);rect(hx+2,hy+4,3,2,ink);rect(hx-3,hy+4,1,1,kind==='player'||kind==='clone'?(kyubi?'#ed3d43':'#61b8d7'):'#d6d8ce');rect(hx+3,hy+4,1,1,kind==='player'||kind==='clone'?(kyubi?'#ed3d43':'#61b8d7'):'#d6d8ce');}
+   if(kind==='npc'||kind==='enemy'){rect(hx-4,hy+6,9,3,p.trim);if(kind==='npc')rect(hx-4,hy+3,4,3,p.trim);}
+   else{rect(hx-4,hy+6,2,1,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx,hy+7,2,1,'#9d574e');}
+ }
+ if(role==='sakura'){rect(hx-6,hy-1,2,8,p.hairShade);rect(hx+5,hy-1,2,8,p.hair);rect(hx-5,hy-2,10,3,p.hair);rect(hx-2,hy-3,4,2,p.hairLight);}if(role==='teuchi'){rect(hx-6,hy-6,12,7,p.hair);rect(hx-7,hy-1,14,2,p.hairLight);rect(9,bodyY+3,7,7,'#f3ead8');}if(role==='tenten'){rect(hx-7,hy-7,4,5,p.hair);rect(hx+4,hy-7,4,5,p.hair);rect(hx-6,hy-6,2,2,p.hairLight);}if(role==='iruka'){rect(hx-1,hy-8,4,5,p.hair);if(!back)rect(hx-3,hy+6,7,1,'#a66c56');}
+ if(role==='kabuto'){rect(hx-3,hy-7,6,4,p.hairLight);if(back){rect(hx-2,hy+3,4,9,p.hairShade);rect(hx-1,hy+3,2,8,p.hairLight);}else{if(side){rect(hx+1,hy+3,5,4,'#303748');rect(hx+2,hy+4,3,2,'#d4e7eb');}else{rect(hx-5,hy+3,4,4,'#303748');rect(hx+1,hy+3,4,4,'#303748');rect(hx-4,hy+4,2,2,'#d4e7eb');rect(hx+2,hy+4,2,2,'#d4e7eb');rect(hx-1,hy+4,2,1,'#303748');}}rect(7,bodyY+5,10,2,p.trim);if(attack||cast){rect(4,bodyY+4,3,6,'#8cebd2');rect(17,bodyY+4,3,6,'#8cebd2');}}
+ if(role==='zabuza'){rect(hx-5,hy+5,11,5,'#d6d9cf');rect(hx-4,hy+6,9,1,'#87999c');line(side?17:19,8,side?21:21,25,'#344051',4);line(side?17:19,8,side?21:21,22,'#b5ced5',3);rect(19,25,3,4,'#795c50');}if(role==='haku'){if(!back){rect(hx-4,hy+1,8,9,'#e7e8dc');rect(hx-3,hy+3,2,1,'#554253');rect(hx+1,hy+3,2,1,'#554253');rect(hx-1,hy+6,2,2,'#b06b78');}rect(hx-6,hy,2,11,p.hair);rect(hx+5,hy,2,11,p.hairShade);}
+ if(role==='shikamaru'){rect(hx-2,hy-8,4,5,p.hair);rect(hx-3,hy-7,6,2,p.hairShade);rect(hx-1,hy-9,2,2,p.hairLight);rect(9,bodyY+5,6,2,p.shade);}
+ if(role==='guard'){rect(6,17,12,3,p.metal);rect(5,19,3,5,p.shade);rect(16,19,3,5,p.shade);}if(role==='thrower'){rect(6,22,3,4,p.metal);rect(15,22,3,4,p.metal);}
+ if(role==='lee'){rect(hx-6,hy-5,12,6,p.hair);rect(hx-5,hy-4,10,1,p.hairLight);if(!back){rect(hx-4,hy+3,3,1,ink);rect(hx+2,hy+3,3,1,ink);}rect(7,25,3,3,p.trim);rect(14,25,3,3,p.trim);}
+ if(role==='neji'){rect(hx-6,hy,2,12,p.hair);rect(hx+5,hy,2,12,p.hairShade);if(!back){rect(hx-3,hy+4,2,1,'#e7e6ea');rect(hx+3,hy+4,2,1,'#e7e6ea');}}
+ if(role==='kimimaro'){rect(hx-6,hy-4,12,4,p.hair);rect(hx-7,hy-1,3,10,p.hairShade);rect(hx+5,hy-1,3,10,p.hair);rect(hx-6,hy-2,2,8,p.hairLight);if(!back){rect(hx-3,hy,2,1,'#a34d55');rect(hx+2,hy,2,1,'#a34d55');rect(hx-4,hy+3,2,1,'#66845a');rect(hx+2,hy+3,2,1,'#66845a');}rect(7,23,10,3,'#88719c');if(kimiForm===1){line(hx-5,hy+2,hx-2,hy+6,'#453747',2);line(9,17,13,22,'#453747',2);line(15,15,13,18,'#453747',2);}if(kimiForm===2){rect(hx-4,hy+1,8,6,'#987e76');if(!back){rect(hx-4,hy+3,3,1,'#e7ce6b');rect(hx+2,hy+3,3,1,'#e7ce6b');}for(let i=0;i<3;i++){poly([[4,13+i*3],[1,9+i*3],[6,15+i*3]],'#eae4d3');poly([[19,13+i*3],[23,9+i*3],[18,15+i*3]],'#eae4d3');}rect(8,18,8,4,'#9f887d');}if(attack||cast){line(16,19,22,13,'#eee5d3',kimiForm===2?3:2);rect(15,19,2,2,'#b6b5a5');}}
+ if(role==='jiraiya'){poly([[hx-7,hy-4],[hx-9,hy+4],[hx-10,hy+14],[hx-6,hy+12],[hx-5,hy+4]],p.hairShade);poly([[hx+5,hy-4],[hx+8,hy+3],[hx+10,hy+14],[hx+5,hy+13],[hx+4,hy+3]],p.hair);line(hx-8,hy+3,hx-8,hy+11,p.hairLight,2);line(hx+6,hy+4,hx+7,hy+11,p.hairLight,2);rect(6+lean,bodyY+2,3,8,'#a84540');rect(15+lean,bodyY+2,3,8,'#a84540');rect(7,24,11,2,'#6e3436');if(!back){rect(hx-5,hy+1,11,3,'#b2b3a4');rect(hx-1,hy+1,3,2,'#544e43');line(hx-4,hy+6,hx-4,hy+9,'#b83c43',2);line(hx+4,hy+6,hx+4,hy+9,'#b83c43',2);if(sage){rect(hx-5,hy+3,4,3,'#b95142');rect(hx+2,hy+3,4,3,'#b95142');rect(hx-4,hy+4,3,1,'#e5c65c');rect(hx+2,hy+4,3,1,'#e5c65c');}}else{rect(8,17,8,7,'#b2443d');rect(11,18,2,4,'#e4d0a5');}}
+ if(role==='orochimaru'){rect(hx-6,hy-4,12,4,p.hair);rect(hx-7,hy-1,3,13,p.hair);rect(hx+5,hy-1,3,13,p.hairShade);rect(hx-6,hy+1,2,10,p.hairLight);if(!back){rect(hx-4,hy+2,9,2,'#e9ddd8');rect(hx-4,hy+4,3,2,'#6b478f');rect(hx+2,hy+4,3,2,'#6b478f');rect(hx-3,hy+4,1,1,'#ead06b');rect(hx+3,hy+4,1,1,'#ead06b');rect(hx-1,hy+7,3,1,'#64475d');}rect(6,23,12,3,'#79559c');rect(9,24,6,3,'#a88ac7');if(attack){line(16,19,22,12,'#d7dce0',2);rect(16,19,2,3,'#514563');}}
+ if(role==='gaara'){rect(5,17,4,10,'#bd9c68');rect(4,19,5,6,'#d0b58a');rect(5,16,3,2,'#8d6348');if(!back)rect(hx+3,hy-1,2,2,'#a74646');}
+ if(role==='sasuke'){if(!back){rect(hx-5,hy-2,3,5,p.hair);rect(hx+4,hy-2,2,6,p.hairShade);rect(hx+3,hy+4,1,1,'#bc6a72');}else{rect(10,bodyY+4,4,2,'#b65a55');rect(11,bodyY+6,2,2,'#e9dfd1');}rect(8,24,8,2,'#c7c7d6');if(sasukeForm===3){rect(hx-4,hy+2,8,6,'#8e879f');if(!back){rect(hx-4,hy+4,3,1,'#e6dc7d');rect(hx+2,hy+4,3,1,'#e6dc7d');}poly([[4,16],[0,7],[5,11],[8,19]],'#716889');poly([[20,16],[24,7],[19,11],[16,19]],'#716889');}else if(sasukeForm===4){if(!back){line(hx-4,hy+5,hx-2,hy+7,'#93626b',1);line(hx+2,hy+3,hx+4,hy+5,'#a27173',1);rect(hx-2,hy+7,2,1,'#79505d');}poly([[8,17],[11,19],[9,21]],'#b99588');poly([[15,21],[13,23],[17,23]],'#7b6a77');rect(8,26,2,2,'#a49b9d');}else if(sasukeForm){if(!back){rect(hx-4,hy+4,2,1,'#c94450');rect(hx+2,hy+4,2,1,'#c94450');}if(sasukeForm===2){line(hx-4,hy+2,hx-1,hy+7,'#39303e',2);line(8,17,13,21,'#39303e',2);line(15,15,17,18,'#39303e',2);}}}
+ if(gear&&['player','sasuke','sakura','npc'].includes(role)){
+ const {head,torso,legs,feet,weapon,offhand,accessory}=gear;
+ if(head){rect(hx-5,hy+1,11,3,head.accent);rect(side?hx+1:hx-3,hy+1,side?5:7,2,head.color);rect(hx+1,hy+1,1,1,'#ecf6eb');}
+ if(torso){poly([[8+lean,bodyY+2],[15+lean,bodyY+2],[16,bodyY+5],[15,24],[9,24],[7,bodyY+5]],torso.color);rect(9,bodyY+5,3,3,torso.accent);rect(13,bodyY+5,2,3,torso.accent);rect(12,bodyY+3,1,5,ink);}
+ if(legs){if(side){line(10,24,8-step,27,legs.color,2);line(13,24,13+step,27,legs.color,3);}else{rect(7,25,4,3,legs.color);rect(13,25,4,3,legs.color);}}
+ if(feet){if(side){rect(6-step,28,4,2,feet.color);rect(12+step,28,4,2,feet.color);}else{rect(6,28+(step>0?-1:0),4,2,feet.color);rect(14,28+(step<0?-1:0),4,2,feet.color);}}
+ if(weapon){const wx=side?(run?5:attack?[8,21,17][phase]:cast?17+phase:16+step):17,wy=side?(run?22:attack?[18,16,21][phase]:cast?18-phase:22):22;line(wx,wy,Math.min(23,wx+2),Math.max(1,wy-6),weapon.accent,3);line(wx,wy-1,Math.min(23,wx+2),Math.max(1,wy-6),weapon.color,1);}
+ if(offhand){rect(side?8:5,bodyY+5,3,3,offhand.accent);rect(side?9:6,bodyY+5,2,2,offhand.color);}
+ if(accessory){rect(11,bodyY+3,2,3,accessory.accent);rect(11,bodyY+4,2,2,accessory.color);}
+ }
+ // Four additional pose families. Paint arms over torso, keeping equipment and the pixel silhouette.
+ if(special>=0&&stage!==3){
+  const sleeve=gear?.torso?.color||p.shirt,accent=gear?.offhand?.color||p.shade;
+  if(special===0){ // wind-up, reach, follow-through
+   const tx=side?[12,21,20][stage]:[12,12,13][stage],ty=side?[19,15,19][stage]:back?[18,11,14][stage]:[19,24,22][stage];
+   limb(15,18,tx,ty,sleeve,3);rect(tx-1,ty-1,3,3,skin);rect(tx,ty-1,1,1,skinLight);limb(8,18,side?5:8,21,accent,2);
+   if(stage===1){rect(5,29,6,2,ink);rect(16,28,6,3,ink);}
+  }else if(special===1){ // throw / elemental release
+   const x=side?[9,21,19][stage]:[11,19,17][stage],y=[13,15,19][stage];
+   limb(15,18,x,y,sleeve,3);rect(x-1,y-1,3,3,skin);limb(8,18,side?7:5,stage===0?15:20,accent,2);
+  }else if(special===2){ // hand seals and opening palms
+   const spread=[2,4,7][stage],y=[19,16,15][stage];
+   limb(8,18,12-spread,y,accent,3);limb(16,18,12+spread,y,sleeve,3);rect(11-spread,y-1,3,3,skin);rect(11+spread,y-1,3,3,skin);
+  }else{ // raised fists, downward strike, braced recovery
+   const x=side?[16,22,19][stage]:[17,13,16][stage],y=[10,26,23][stage];
+   limb(15,18,x,y,sleeve,4);rect(x-1,y-1,3,4,skin);limb(8,18,stage===0?5:7,stage===0?11:23,accent,3);
+   if(stage===1){rect(5,28,6,3,ink);rect(16,28,6,3,ink);}
+  }
+ }
+ // Dedicated Rasengan key poses, keeping the existing head, silhouette and equipment.
+ if(ras>=0&&role==='player'){
+  const sleeve=gear?.torso?.color||p.shirt,shade=gear?.offhand?.color||p.shade,leg=gear?.legs?.color||p.shirt,shoe=gear?.feet?.color||p.trim;
+  if(side){
+   const hand=[[11,20],[9,18],[14,16],[21,15],[22,17],[17,21]][ras],other=[[14,19],[13,17],[16,16],[8,20],[6,22],[10,21]][ras];
+   limb(8+lean,18,other[0],other[1],shade,3);rect(other[0]-1,other[1]-1,3,3,skin);
+   limb(15+lean,18,hand[0],hand[1],sleeve,3);rect(hand[0]-1,hand[1]-1,3,3,skin);rect(hand[0],hand[1]-1,2,1,skinLight);
+   if(ras===3||ras===4){limb(10,23,4,28,leg,3);rect(1,28,7,3,ink);rect(2,28,5,1,shoe);limb(15,23,19,27,leg,4);rect(17,28,6,3,ink);rect(18,28,4,1,shoe);}
+  }else{
+   const y=back?[20,18,15,10,12,21][ras]:[20,19,19,24,25,21][ras],x=back?[12,12,12,13,14,14][ras]:[12,11,12,13,14,16][ras];
+   limb(8,18,ras<3?x-2:5,ras<3?y:22,shade,3);limb(16,18,x,y,sleeve,3);rect(x-1,y-1,3,3,skin);rect(x,y-1,2,1,skinLight);
+   if(ras<3)rect(x-3,y-1,2,3,skin);
+   if(ras===3||ras===4){limb(9,23,6,28,leg,4);limb(14,23,18,28,leg,4);rect(3,28,6,3,ink);rect(16,28,6,3,ink);rect(4,28,4,1,shoe);rect(17,28,4,1,shoe);}
+  }
+ }
+ // New, direction-aware defensive and movement poses. All coordinates stay on the original pixel grid.
+ if(extra>=0){
+  const sleeve=gear?.torso?.color||p.shirt,shade=gear?.offhand?.color||p.shade,leg=gear?.legs?.color||p.shirt,shoe=gear?.feet?.color||p.trim;
+  const arm=(x,y,xx,yy,col)=>{limb(x,y,xx,yy,col,3);rect(xx-1,yy-1,3,3,skin);rect(xx,yy-1,1,1,skinLight);};
+  const foot=(x,y,xx,yy,col)=>{limb(x,y,xx,yy,col,3);rect(xx-2,yy,5,3,ink);rect(xx-1,yy,3,1,shoe);};
+  if(extra<4){ // raise, brace, breathe and settle the forearm guard
+   const q=extra===0?1:extra===2?1:0;
+   if(side){arm(9,19,15,14+q,shade);arm(15,19,19,12+q,sleeve);foot(10,23,7,28,leg);foot(14,23,17,28,leg);}
+   else{arm(7,19,10,13+q,shade);arm(16,19,14,13+q,sleeve);foot(9,23,7,28,leg);foot(14,23,17,28,leg);}
+  }else if(extra<8){ // hand seal, focus, two breathing poses
+   const q=extra-4,spread=q===0?4:q===2?2:1,yy=17+(q===2?1:0);
+   arm(8,19,12-spread,yy,shade);arm(16,19,12+spread,yy,sleeve);
+   if(q>0){rect(11,yy-2,2,4,skinLight);rect(10,yy+1,4,1,skinShade);}
+   foot(9,23,7,28,leg);foot(14,23,17,28,leg);
+  }else if(extra<12){ // lean into dash, alternate stride, trailing arms
+   const q=extra-8,step=[-3,-1,3,1][q];
+   if(side){arm(11,19,4+q%2,22,shade);arm(15,19,8+q%2,23,sleeve);foot(10,23,5-step,27,leg);foot(14,23,17+step,27,leg);}
+   else{arm(7,19,4,23,shade);arm(16,19,20,23,sleeve);foot(9,23,7,27+(q%2),leg);foot(14,23,17,28-(q%2),leg);}
+  }else if(extra<14){ // brake without extending the collision body
+   const q=extra-12;if(side){arm(10,19,7,20,shade);arm(15,19,19-q*2,20,sleeve);foot(10,23,6,28,leg);foot(14,23,18-q*2,28,leg);}
+   else{arm(8,19,5+q,20,shade);arm(16,19,19-q,20,sleeve);foot(9,23,6,28,leg);foot(14,23,18,28,leg);}
+  }else if(extra<16){ // staggered guard break
+   const q=extra-14;arm(8,19,4+q,23,shade);arm(16,19,20-q,23,sleeve);foot(9,23,6,28,leg);foot(14,23,18,28,leg);
+  }else{ // dash strike: anticipation, contact, follow through, recovery
+   const q=extra-16;
+   if(side){arm(10,19,[5,8,7,9][q],[20,20,22,22][q],shade);arm(15,18,[10,21,20,16][q],[16,15,20,22][q],sleeve);foot(10,23,[4,3,7,8][q],28,leg);foot(14,23,[17,19,18,15][q],28,leg);}
+   else{arm(8,19,[6,5,5,8][q],[18,19,21,22][q],shade);arm(16,18,[14,20,18,16][q],[16,back?10:23,20,22][q],sleeve);foot(9,23,6,28,leg);foot(14,23,18,28,leg);}
+  }
+ }
+ if(frame===13){rect(2,10,2,2,'#ffe4bc');rect(20,13,2,2,'#ffe4bc');}
+ if(dir===1){const out=cell(24,32);out.ctx.translate(24,0);out.ctx.scale(-1,1);out.ctx.drawImage(s.c,0,0);return out.c;}
+ return s.c;
+}
+function makeActorSheet(kind,gear=null,kyubi=false){
+ const c=canvas(ACTOR_W*ACTOR_COLS,ACTOR_H*4),ctx=c.getContext('2d');
+ for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++){if(f>=44&&!['player','sasuke','sakura','npc'].includes(kind)){const src=[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][f-44];ctx.drawImage(c,src*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H,f*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H);}else ctx.drawImage(actorCell(kind,d,f,gear,kyubi),f*ACTOR_W,d*ACTOR_H);}
+ return c;
+}
+// High-speed, deliberately stretched silhouettes. 32x32, three frames per direction.
+// Rasengan reference atlas: discrete pixel ribbons, not a blurred glow or HD character.
+const RAS_SIZE=48,RAS_COLS=12,RAS_ROWS=6;
+function rasenganPose(anim){const e=Math.max(0,anim.total-anim.left),w=anim.windup||.26;return e<w?Math.min(2,Math.floor(e/w*3)):3+Math.min(2,Math.floor((e-w)/Math.max(.001,anim.total-w)*3));}
+function rasenganHand(dir,pose){const d=dir===1?-1:dir===2?1:0;return {x:d*[0,-.22,.12,.66,.74,.38][pose],y:[.96,1.08,1.22,1.27,1.13,.86][pose],z:dir===0?[.22,.3,.39,.7,.75,.32][pose]:dir===3?-[.2,.32,.44,.72,.65,.3][pose]:0};}
+function makeRasenganSheet(purple=false){
+ const atlas=canvas(RAS_SIZE*RAS_COLS,RAS_SIZE*RAS_ROWS),ctx=atlas.getContext('2d');ctx.imageSmoothingEnabled=false;
+ const palette=purple?['#30134f','#5a258f','#9144d8','#c17aff','#ffffff','#ffffff']:['#17488d','#236db7','#329ed9','#80d8ff','#c7f4ff','#ffffff'];
+ const ribbon=[[0,-13],[5,-12],[10,-9],[13,-4],[12,2],[8,7],[3,8],[-2,5],[-3,1],[0,-2],[4,-1]];
+ const arc=[[0,-14],[6,-13],[11,-9],[14,-3],[14,3],[10,9],[4,13],[-3,14],[-10,10],[-14,3],[-13,-4],[-9,-10],[-4,-13]];
+ for(let row=0;row<RAS_ROWS;row++)for(let f=0;f<12;f++){
+  const c=cell(48,48),{rect,line,ellipse,poly}=c,q=f/11;
+  function stroke(path,angle,sx,sy,ox,oy,col,w){const pts=path.map(([x,y])=>[ox+(x*Math.cos(angle)-y*Math.sin(angle))*sx,oy+(x*Math.sin(angle)+y*Math.cos(angle))*sy]);for(let i=1;i<pts.length;i++)line(...pts[i-1],...pts[i],col,w);}
+  if(row===0){
+   const size=14+Math.sin(f*Math.PI/6)*.65,cx=24,cy=24;ellipse(cx,cy,size+1,size+1,palette[0]);ellipse(cx,cy,size,size,palette[1]);ellipse(cx-1,cy-1,size*.87,size*.87,palette[2]);if(!purple){ellipse(cx-1,cy-1,size*.64,size*.64,palette[3]);ellipse(cx,cy,size*.35,size*.35,palette[4]);}
+   for(let k=0;k<3;k++){const angle=f*.82+k*2.094;stroke(ribbon,angle,size/14,size/14,cx,cy,palette[1],3);stroke(ribbon,angle+.12,size/14,size/14,cx,cy,palette[4],2);stroke(ribbon.slice(2,8),angle+.12,size/14,size/14,cx,cy,palette[5],1);}
+   ellipse(cx-1,cy,size*.23,size*.27,palette[5]);for(let k=0;k<5;k++){const ang=f*.6+k*1.26,r=size+3+(k%2)*2;line(cx+Math.cos(ang)*r,cy+Math.sin(ang)*r,cx+Math.cos(ang+.15)*r,cy+Math.sin(ang+.15)*r,purple?palette[3]:palette[5],1);}
+  }else if(row===1){
+   // Forward burst. Bright, compact contact flash gives way to torn cyan ribbons.
+   const r=4+q*16,cy=24,cx=18+q*5;
+   if(f<5){const s=1+f*.85;poly([[cx-s*4,cy],[cx-s,cy-s],[cx,cy-s*4],[cx+s,cy-s],[cx+s*5,cy],[cx+s,cy+s],[cx,cy+s*4],[cx-s,cy+s]],palette[3]);ellipse(cx,cy,s*1.9,s*1.6,palette[5]);}
+   for(let k=0;k<3;k++){const ang=f*.26+k*2.094;const section=arc.slice(k,Math.max(k+2,11-Math.floor(q*5)));stroke(section,ang,r/14,r*.78/14,cx,cy,palette[0],f<6?4:2);stroke(section,ang+.04,r/14,r*.78/14,cx,cy,palette[f<7?3:2],f<6?2:1);if(f<8)stroke(section.slice(1,5),ang+.05,r/14,r*.78/14,cx,cy,palette[5],1);}
+   for(let k=0;k<8;k++){const angle=(k-3.5)*.38+f*.04,len=4+(k%3)*3,rr=6+q*14;const x=cx+Math.cos(angle)*rr,y=cy+Math.sin(angle)*rr;line(x-len*(1-q*.65),y-Math.sin(angle)*len,x,y,palette[k%3===0?5:3],f<4?2:1);}
+  }else if(row===2){
+   const r=4+q*17;for(let k=0;k<4;k++){const seg=arc.slice(k*2,k*2+5);stroke(seg,k*1.57+q*.5,r/14,r*.42/14,24,28,palette[2],2);if(f<9)stroke(seg,k*1.57+q*.5,r/14,r*.42/14,24,27,palette[4],1);}
+   for(let k=0;k<7;k++){const ang=k*2.4,rr=4+q*17,x=24+Math.cos(ang)*rr,y=28+Math.sin(ang)*rr*.4-q*4;rect(x,y,2,1,k%2?'#c9c1a4':'#92bed1');}
+  }else if(row===3){
+   // Orbiting torn ribbons, with bright tips and a dark blue pixel outline.
+   for(let k=0;k<4;k++){const angle=f*.61+k*1.57;const path=arc.slice(k, k+5);stroke(path,angle,1.28,1.18,24,24,palette[0],4);stroke(path,angle+.04,1.28,1.18,24,24,purple?palette[3]:palette[4],2);stroke(path.slice(1,4),angle+.04,1.28,1.18,24,24,palette[5],purple?1:2);}
+  }else if(row===4){
+   for(let k=0;k<10;k++){const angle=k*2.399+f*.41,rad=14+(k%4)*2.2,x=24+Math.cos(angle)*rad,y=24+Math.sin(angle)*rad;line(x,y,x+Math.cos(angle+.8)*4,y+Math.sin(angle+.8)*4,palette[k%3===0?5:3],k%3===0?2:1);rect(x-1,y-1,1,1,palette[4]);}
+  }else{
+   // Directional streaming tails pointing opposite the carry direction.
+   for(let k=0;k<7;k++){const y=10+k*4+Math.sin(f*.9+k)*3,x=34+(k%3)*3,len=13+(k%4)*4;poly([[x,y],[x-len*.6,y-2],[x-len,y+1],[x-3,y+3]],palette[0]);line(x-len,y+1,x-2,y,palette[3],2);line(x-len*.55,y,x,y,palette[5],1);}
+  }
+  ctx.drawImage(c.c,f*48,row*48);
+ }
+ return atlas;
+}
+function makeSmearSheet(){
+ const c=canvas(32*3,32*4),ctx=c.getContext('2d');
+ for(let d=0;d<4;d++)for(let f=0;f<3;f++){
+   const s=cell(32,32),{poly,line,rect}=s;
+   poly([[1,19],[9,14],[4,10],[21,12],[28,9],[31,14],[27,20],[31,24],[17,26],[2,25],[12,21]],'#343450');
+   poly([[2,20],[16,15],[9,12],[23,13],[29,12],[27,18],[21,20],[29,23],[17,24]],f===0?'#bc553c':f===1?'#f48a37':'#ffd079');
+   line(3,15,19,15,'#f9bd61',2);line(1,23,18,23,'#ffd98a');rect(23,11,5,3,'#f7d56a');rect(25,15,3,2,'#dbe7ee');
+   s.ctx.save();s.ctx.globalAlpha=.8;s.ctx.drawImage(actorCell('player',d===1?2:d,6+f),8,0);s.ctx.restore();
+   ctx.save();ctx.translate(f*32+(d===1?32:0),d*32);if(d===1)ctx.scale(-1,1);ctx.drawImage(s.c,0,0);ctx.restore();
+ }
+ return c;
+}
+function makeFXSheet(){
+ const c=canvas(32*8,32*FX_ROWS.length),ctx=c.getContext('2d');
+ for(let row=0;row<FX_ROWS.length;row++)for(let f=0;f<8;f++){
+   const s=cell(32,32),{ellipse,line,rect,poly}=s,t=f/7,angle=f*.77;
+   if(row===0){
+     const r=4+Math.sin(t*Math.PI)*10;
+     ellipse(16,16,r,r,'#145aa4');ellipse(16,16,r-2,r-2,'#32a9e3');ellipse(16,16,Math.max(2,r*.62),Math.max(2,r*.62),'#8eefff');ellipse(16,16,Math.max(1,r*.31),Math.max(1,r*.31),'#f5ffff');
+     for(let k=0;k<3;k++)for(let j=0;j<11;j++){const a=angle+k*2.094+j*.16,rr=r*.88+j*.12;rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr,2,1,j%3===0?'#ffffff':'#b7f7ff');}
+     for(let k=0;k<7;k++){const a=angle+k*.9,rr=r+2+(k%3);rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr,1+(k%2),1,'#8ce8ff');}
+   }else if(row===1){
+     const radius=3+10*t;
+     for(let k=0;k<8;k++){const a=k*Math.PI/4+.12*f,x=16+Math.cos(a)*radius*.65,y=18+Math.sin(a)*radius*.62,rr=Math.max(2,6-f*.45);ellipse(x,y,rr,rr*.8,'#798fa6');ellipse(x,y-1,rr-1,rr*.6,'#e3edf1');}
+     if(f<4){ellipse(16,17,6,5,'#f5f5dd');line(5,22,27,22,'#b5d6dc');}
+   }else if(row===2){
+     const r=5+f*1.5;for(let k=0;k<8;k++){const a=k*Math.PI/4+.1;line(16+Math.cos(a)*r*.3,16+Math.sin(a)*r*.3,16+Math.cos(a)*r,16+Math.sin(a)*r,k%2?'#ed703e':'#ffd677',f<3?3:1);}
+     if(f<3){ellipse(16,16,5-f,5-f,'#fff3b4');poly([[16,1],[18,13],[31,16],[18,19],[16,31],[13,19],[1,16],[13,13]],'#fff0be');}
+   }else if(row===3){
+     for(let j=0;j<6;j++){const y=6+j*4,x=2+(j%3)*3+f;line(x,y,Math.min(31,x+20-f),y-2,j%2?'#f5ab4f':'#ffe5a3',j%3===0?2:1);}
+     if(f<4)poly([[3,16],[20,11],[31,16],[20,21]],'#ffc464');
+   }else if(row===5){for(let k=0;k<3;k++)for(let j=0;j<15;j++){const a=angle+k*2.094+j*.11,r=5+j*.61;rect(16+Math.cos(a)*r,16+Math.sin(a)*r,2,2,j%3?'#a9e8cb':'#f1fff2');}ellipse(16,16,4,4,'#5cbba5');}
+   else if(row===6){poly([[16,1],[20,18],[16,25],[12,18]],'#c3c9cc');line(16,3,16,22,'#f6d7a7',2);rect(14,21,4,7,'#7b4447');ellipse(16,28,3,2,'#292c3d');}
+   else if(row===7){rect(10,6,12,21,'#69483d');rect(12,7,8,19,'#9f7852');line(14,9,14,24,'#c69c68',2);for(let k=0;k<6;k++){const a=k*1.047+angle;ellipse(16+Math.cos(a)*(4+f*1.4),16+Math.sin(a)*(4+f),Math.max(2,5-f*.4),3,'#dce6e2');}}
+   else if(row===8){const r=5+Math.sin(Math.PI*t)*9;ellipse(16,16,r,r,'#1d5eae');ellipse(16,16,r*.83,r*.83,'#3cbae7');ellipse(16,16,r*.55,r*.55,'#b9fbff');ellipse(16,16,r*.25,r*.25,'#ffffff');for(let k=0;k<4;k++)for(let j=0;j<14;j++){const a=angle+k*Math.PI/2+j*.13,rr=r*.67+j*.32;rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr,2,2,j%2?'#d7ffff':'#76c6f8');}for(let k=0;k<8;k++){const a=k*Math.PI/4+angle;line(16+Math.cos(a)*r,16+Math.sin(a)*r,16+Math.cos(a)*15,16+Math.sin(a)*15,'#e4ffff');}}
+   else if(row===9){const radius=5+f*1.25;for(let k=0;k<4;k++)for(let j=0;j<12;j++){const a=angle*.55+k*Math.PI/2+j*.13,rr=radius+j*.23;const x=16+Math.cos(a)*rr,y=16+Math.sin(a)*rr*.76;rect(x,y,3,3,'#285b83');rect(x,y,2,2,j%3?'#5cc7e1':'#e4fbf6');}for(let k=0;k<6;k++){const a=k*1.05+angle;rect(16+Math.cos(a)*(radius+3),16+Math.sin(a)*(radius+3),2,2,'#b7e7e9');}}
+   else if(row===10){for(let k=0;k<6;k++){const a=k*Math.PI/3+angle*.12,r=4+f*1.55,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;poly([[x,y-6],[x+3,y-1],[x+1,y+5],[x-3,y+1]],'#4f92b5');poly([[x,y-5],[x+2,y-1],[x,y+3],[x-1,y-1]],'#e1f7ff');rect(x,y-3,1,2,'#ffffff');}ellipse(16,16,Math.max(1,5-f*.4),Math.max(1,5-f*.4),'#b7f3ff');}
+   else if(row===11){for(let k=0;k<7;k++){const a=k*Math.PI*2/7+angle,r=5+f*1.2,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;line(16,16,x-3,y+2,'#5967d8',3);line(x-3,y+2,x+2,y-3,'#82caff',2);line(x+2,y-3,x+3,y,'#edffff');}ellipse(16,16,4,4,'#e6fbff');}
+   else if(row===12){const r=5+f*.9;ellipse(16,18,r,r*.7,'#a44339');ellipse(16,17,r*.8,r*.65,'#ee793e');for(let k=0;k<5;k++){const x=7+k*4,y=10+Math.sin(k+f)*3;poly([[x-3,20],[x,y-4],[x+3,20]],'#ffc15c');}ellipse(16,18,r*.4,r*.35,'#fff4bd');}
+   else if(row===13){for(let k=0;k<8;k++){const a=k*.785+angle,r=5+f*1.4;rect(16+Math.cos(a)*r,16+Math.sin(a)*r,2,2,'#a4f8b9');}rect(14,7,4,18,'#60c795');rect(7,14,18,4,'#60c795');rect(15,8,2,16,'#e0ffe6');rect(8,15,16,2,'#e0ffe6');}
+   else if(row===14){for(let k=0;k<9;k++){const a=k*.698+angle*.2,r=4+f*1.45,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r*.8;rect(x,y,4,3,'#755c4d');rect(x,y-1,3,2,'#d6b38b');}if(f<4)ellipse(16,16,5-f,3,'#fff0ba');}
+   else if(row===15){ellipse(16,16,10+f*.3,10+f*.3,'#772d4c');ellipse(16,16,8,8,'#c14b61');ellipse(16,16,3,3,'#2e263e');for(let k=0;k<3;k++){const a=k*2.094+angle;ellipse(16+Math.cos(a)*6,16+Math.sin(a)*6,2,2,'#30273a');}}
+   else if(row===16){const r=3+f*1.65;for(let k=0;k<48;k++){const a=k*Math.PI/24,rr=r+(k%4===0?1:0);rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr*.55,2,f<3?2:1,k%3?'#e9f9ed':'#8eb7b9');}if(f<3)ellipse(16,16,4-f,2,'#fff8d9');}
+   else if(row===17){for(let k=0;k<9;k++){const a=k*2.4+f*.18,r=3+f*1.5+(k%3),x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;line(x,y,x+Math.cos(a)*3,y+Math.sin(a)*3,k%2?'#fff8ce':'#9be9f7',f<3?2:1);}}
+   else if(row===18){for(let k=0;k<30;k++){const a=-1.1+k*.074+f*.23,r=8+f*.55;rect(16+Math.cos(a)*r,16+Math.sin(a)*r,3,2,k%3?'#f3fff7':'#88c5d6');}if(f<4)line(10,24,26,7,'#fff2c5',2);}
+   else if(row===19){for(let k=0;k<7;k++){const x=3+k*4,y=16+Math.sin(k*2+angle)*(4+k*.3);poly([[x-3,y],[x+3,y-5],[x+5,y+3],[x,y+6]],'#a84b40');poly([[x-1,y],[x+3,y-3],[x+4,y+2]],k%2?'#f9b05b':'#ffde85');}}
+   else if(row===20){for(let k=0;k<13;k++){const x=3+k*2,y=18+Math.sin(k*.6-angle)*5;ellipse(x,y,3.2,3.2,'#275d85');ellipse(x,y-1,2.2,2.2,k%2?'#a2edeb':'#4fb9dd');}poly([[20,12],[25,8],[30,10],[31,15],[25,19],[21,17]],'#95e5ec');rect(27,12,2,2,'#eafff1');rect(28,12,1,1,'#28435d');line(25,15,31,15,'#23557b',2);}
+   else if(row===21){for(let j=0;j<3;j++)for(let i=0;i<4;i++){const x=2+i*7+(j%2)*2,y=25-j*7-Math.min(f,3)*2;rect(x,y,7,6,'#675b50');rect(x,y,6,5,'#ab9072');rect(x,y,6,1,'#dac39b');}for(let k=0;k<6;k++)rect(3+k*5,27-f,2,2,'#d8bc94');}
+   else if(row===22){for(let k=0;k<8;k++){const a=k*Math.PI/4+f*.04,r=4+f*1.4,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r*.62;line(16,16,x-3,y+2,'#594f49',2);line(x-3,y+2,x,y,'#d8ac77',2);rect(x,y-2-(f%3),3,3,'#b89b77');}if(f<3)ellipse(16,15,5-f,4-f,'#fff0be');}
+   else if(row===23){for(let k=0;k<12;k++){const a=k*Math.PI/6+angle,r=9+Math.sin(k+f)*2;line(16+Math.cos(a)*r,18+Math.sin(a)*r*.65,16+Math.cos(a)*r*.8,9+Math.sin(a)*r*.5,'#a5e8bc',k%3===0?2:1);}}
+   else if(row===24){for(let k=0;k<8;k++){const a=k*Math.PI/4+f*.12,r=5+f*1.35,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;line(16,16,x-3,y+2,'#48478e',3);line(x-3,y+2,x+2,y-2,'#83cfff',2);line(x+2,y-2,x,y,'#f7ffff',2);}if(f<5)ellipse(16,16,4,4,'#f1fbff');}
+   else if(row===25||row===27){const ember=row===27,cx=ember?19:20,cy=16,rad=ember?6:10,heat=['#702231','#b42f24','#ef5424','#ff922a','#ffd34e','#fff2b5'];
+     for(let k=0;k<7;k++){const yy=cy+(k-3)*2.6,xx=2+(k%3)*2+Math.sin(angle+k)*2;poly([[xx,yy],[cx-3,yy-3],[cx+2,cy],[cx-5,yy+4]],heat[k%3]);poly([[xx+5,yy],[cx-1,yy-1],[cx+2,cy],[cx-4,yy+2]],heat[3+k%2]);}
+     for(let layer=0;layer<5;layer++){const rr=rad-layer*rad*.155,pts=Array.from({length:18},(_,k)=>{const th=k*Math.PI/9,noise=1+.13*Math.sin(th*5+angle+layer*.7)+.075*Math.cos(th*9-angle);return[cx+Math.cos(th)*rr*noise,cy+Math.sin(th)*rr*noise];});poly(pts,heat[layer]);}
+     for(let k=0;k<5;k++){const th=angle+k*1.25,r=rad*(.3+.11*(k%3));line(cx+Math.cos(th)*r,cy+Math.sin(th)*r,cx+Math.cos(th+.7)*r,cy+Math.sin(th+.7)*r,heat[4+k%2],2);}
+     for(let k=0;k<6;k++){const xx=2+(k*5+f*3)%13,yy=6+(k*7+f)%21;rect(xx,yy,k%3===0?2:1,1,heat[3+k%3]);}
+   }else if(row===28){const heat=['#8b292c','#d43a24','#f56a25','#ffbd40','#ffe99a'];for(let k=0;k<5;k++){const y=8+k*4,shift=Math.sin(angle+k*1.2)*3,tip=1+(k*3+f*2)%8;poly([[tip,y+shift],[17,y-5],[30,16],[15,y+5]],heat[k%3]);poly([[tip+7,y+shift],[20,y-2],[30,16],[18,y+3]],heat[3+k%2]);}for(let k=0;k<5;k++)rect(2+(k*7+f*3)%17,6+(k*9+f*2)%20,2,1,heat[3+k%2]);
+   }else if(row===29){const heat=['#762627','#c03b24','#f16b27','#ffaf39','#ffe08a'];ellipse(16,26,13,4,'#8c392a');for(let k=0;k<6;k++){const x=5+k*4,ht=8+5*Math.sin(angle+k*1.7)+k%3*2,lean=3*Math.sin(angle+k);poly([[x-4,26],[x-3,19],[x+lean,26-ht],[x+3,20],[x+4,26]],heat[k%3+1]);poly([[x-2,26],[x+lean*.6,25-ht*.65],[x+2,26]],heat[3+k%2]);}for(let k=0;k<4;k++)rect(7+(k*7+f)%19,5+(k*4-f+8)%15,1,1,'#ffcc61');
+   }else if(row===26){const rr=3+f*1.65,heat=['#702231','#bb3928','#f45c26','#ff9a30','#ffe46c','#fff2b5'];for(let k=0;k<12;k++){const th=k*Math.PI/6+angle*.12,r=rr*(.75+.22*Math.sin(k*2+f)),xx=16+Math.cos(th)*r,yy=16+Math.sin(th)*r;poly([[16,16],[16+Math.cos(th-.31)*r*.7,16+Math.sin(th-.31)*r*.7],[xx,yy],[16+Math.cos(th+.31)*r*.7,16+Math.sin(th+.31)*r*.7]],heat[f<3?2+k%3:k%3]);if(f>2){const out=rr+2+(k%2);rect(16+Math.cos(th)*out,16+Math.sin(th)*out,2,2,heat[3+k%3]);}}
+     if(f<4){ellipse(16,16,rr*.70,rr*.70,heat[4]);ellipse(16,16,rr*.35,rr*.35,heat[5]);}else for(let k=0;k<18;k++){const th=k*Math.PI/9,rad=rr*.8;rect(16+Math.cos(th)*rad,16+Math.sin(th)*rad,2,1,heat[k%3+1]);}
+   }else{
+     for(let k=0;k<4;k++){const a=angle+k*Math.PI/2;poly([[16,16],[16+Math.cos(a)*13,16+Math.sin(a)*13],[16+Math.cos(a+.45)*5,16+Math.sin(a+.45)*5]],'#252e45');line(16+Math.cos(a)*4,16+Math.sin(a)*4,16+Math.cos(a)*11,16+Math.sin(a)*11,'#d4e4e9');}ellipse(16,16,3,3,'#8597a6');ellipse(16,16,1.5,1.5,'#273044');
+   }
+   ctx.drawImage(s.c,f*32,row*32);
+ }
+ return c;
+}
+// Three expressive foliage silhouettes; large clusters, 4 shades, no real-world texture.
+function makeTreeSheet(){
+ const c=canvas(TREE_W*3,TREE_H),ctx=c.getContext('2d');
+ const palettes=[['#253e3b','#396b49','#65934c','#9bb75d','#c2ce78'],['#29483e','#3c795b','#75a75b','#a6cb75','#c7d990'],['#533c44','#a15d67','#cd8791','#efb8ac','#ffe0ba']];
+ for(let f=0;f<3;f++){const s=cell(40,48),{poly,rect,ellipse,line}=s,p=palettes[f];
+  poly([[17,45],[15,47],[24,47],[22,44],[22,30],[26,25],[23,25],[20,32],[17,28],[15,28],[17,36]],'#634d43');rect(18,33,3,13,'#a57954');rect(19,34,1,10,'#c59a65');
+  const clusters=[[11,23,10,9],[29,23,10,9],[20,13,13,12],[7,29,6,5],[31,30,8,6],[19,29,12,9]];
+  for(const [x,y,rx,ry] of clusters){ellipse(x,y,rx,ry,p[0]);ellipse(x,y-1,rx-1,ry-1,p[1]);ellipse(x-1,y-3,rx-2,Math.max(2,ry-3),p[2]);}
+  for(const [x,y] of [[8,18],[14,10],[25,8],[29,19],[17,24],[6,28],[27,27]]){poly([[x-3,y],[x,y-3],[x+5,y-2],[x+4,y+1],[x,y+3]],p[3]);rect(x,y-2,2,1,p[4]);}
+  line(16,39,13,35,'#80604b',2);ctx.drawImage(s.c,f*40,0);
+ }
+ return c;
+}
+function makeWorldPattern(){
+ const c=canvas(64,16),ctx=c.getContext('2d');
+ for(let y=0;y<16;y++)for(let x=0;x<64;x++){let k=Math.floor(x/16),u=x%16,v=y;let b=248;
+   if(k===0)b=((u*13+v*7)%19===0)?211:248;
+   if(k===1)b=(v%8===0||u%8===0)?204:250;
+   if(k===2)b=(u%5===0)?205:(u+v*3)%11===0?230:250;
+   if(k===3)b=(v%4===0||((u+(Math.floor(v/4)%2)*4)%8===0))?190:248;
+   ctx.fillStyle='rgb('+b+','+b+','+b+')';ctx.fillRect(x,y,1,1);
+ }
+ return c;
+}
+function makeSheets(){return {jiraiya:makeActorSheet('jiraiya'),jiraiyaSage:makeActorSheet('jiraiyaSage'),player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),sasukeSharingan:makeActorSheet('sasukeSharingan'),sasukeMarked:makeActorSheet('sasukeMarked'),sasukeCursed:makeActorSheet('sasukeCursed'),sasukeInjured:makeActorSheet('sasukeInjured'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),orochimaru:makeActorSheet('orochimaru'),kimimaro:makeActorSheet('kimimaro'),kimiMarked:makeActorSheet('kimiMarked'),kimiCursed:makeActorSheet('kimiCursed'),whiteSerpent:makeActorSheet('whiteSerpent'),shukaku:makeActorSheet('shukaku'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),kabuto:makeActorSheet('kabuto'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+
+return {makeActorSheet,ANIMS}})();
+const candidate=(()=>{// Original, deterministic pixel sheets. All primitives rasterize on integer pixels;
+// no generated image or third-party character assets are needed.
+const ACTOR_W=24,ACTOR_H=32,ACTOR_COLS=64,DIRS=['down','left','right','up'];
+const ANIMS={idle:{start:0,count:2,fps:3},walk:{start:2,count:4,fps:9},run:{start:6,count:4,fps:13},attack:{start:10,count:3,fps:14},hit:{start:13,count:1,fps:1},cast:{start:14,count:2,fps:9},kick:{start:16,count:3,fps:14},finish:{start:19,count:3,fps:12},thrust:{start:22,count:4,fps:12},release:{start:26,count:4,fps:12},seal:{start:30,count:4,fps:10},slam:{start:34,count:4,fps:12},rasengan:{start:38,count:6,fps:12},guard:{start:44,count:4,fps:8},charge:{start:48,count:4,fps:8},dash:{start:52,count:4,fps:24},brake:{start:56,count:2,fps:18},guardBreak:{start:58,count:2,fps:8},dashStrike:{start:60,count:4,fps:16}};
+const FX_ROWS=['rasengan','clone','hit','dash','shuriken','wind','kunai','substitute','giant','water','ice','lightning','fire','heal','earth','focus','shockwave','sparks','slash','firetrail','dragon','wall','cracks','aura','storm','infernoOrb','infernoBurst','infernoEmber','infernoTrail','infernoGround'];
+const FX_SIZE=32,FX_COLS=8;
+const TECH_ART={
+ naruto:{' ':{pose:'thrust',fx:'rasengan'},f:{pose:'release',fx:'wind'},l:{pose:'seal',fx:'clone'},g:{pose:'thrust',fx:'giant'}},
+ sasuke:{' ':{pose:'thrust',fx:'lightning'},f:{pose:'release',fx:'fire'},l:{pose:'seal',fx:'focus'},g:{pose:'slam',fx:'storm'}},
+ sakura:{' ':{pose:'slam',fx:'earth'},f:{pose:'slam',fx:'cracks'},l:{pose:'seal',fx:'heal'},g:{pose:'slam',fx:'cracks'}},
+ kakashi:{' ':{pose:'thrust',fx:'lightning'},f:{pose:'release',fx:'dragon'},l:{pose:'seal',fx:'wall'},g:{pose:'slam',fx:'storm'}}
+};
+function artFor(character,key){return TECH_ART[character]?.[key]||null;}
+const TREE_W=40,TREE_H=48;
+const ink='#273044',skin='#f7c08a',skinShade='#bc795d',skinLight='#ffe0a8';
+const PALETTES={
+ jiraiya:{hair:'#dedfd7',hairLight:'#fff9ed',hairShade:'#8d9696',shirt:'#8d9b70',shade:'#515f4a',light:'#bec69d',trim:'#973d39',metal:'#dedcc7'},
+ lee:{hair:'#27372f',hairLight:'#4e6654',hairShade:'#1a2826',shirt:'#5b9b52',shade:'#35633d',light:'#a5c675',trim:'#d08041',metal:'#d9d9c8'},
+ neji:{hair:'#5f463f',hairLight:'#997466',hairShade:'#3c3031',shirt:'#e1d8bb',shade:'#9c9a86',light:'#f7ebcf',trim:'#63716b',metal:'#c7d4d8'},
+ kimimaro:{hair:'#dcded5',hairLight:'#f9f5e9',hairShade:'#989b9b',shirt:'#d6d6ca',shade:'#90918e',light:'#f1ead7',trim:'#786389',metal:'#eee6d5'},
+ orochimaru:{hair:'#262437',hairLight:'#4b465c',hairShade:'#171825',shirt:'#c9c6b8',shade:'#82798a',light:'#f0e5d0',trim:'#8a65a9',metal:'#dcd4d8'},
+ gaara:{hair:'#aa4b42',hairLight:'#d47b62',hairShade:'#70383b',shirt:'#95624e',shade:'#65463e',light:'#c8a37b',trim:'#e1caa5',metal:'#c6c0ab'},
+ sasuke:{hair:'#35384e',hairLight:'#777a9b',hairShade:'#23283b',shirt:'#465a8e',shade:'#303c67',light:'#8393bf',trim:'#e2dcca',metal:'#c3cbd7'},
+ player:{hair:'#f4c848',hairLight:'#fff0a1',hairShade:'#bf8739',shirt:'#f58b36',shade:'#b94b30',light:'#ffb650',trim:'#26344c',metal:'#bacfd3'},
+ npc:{hair:'#c4d3df',hairLight:'#f0f4f8',hairShade:'#8495ae',shirt:'#78935a',shade:'#475e46',light:'#a5ba76',trim:'#26344c',metal:'#c6d6dd'},
+ enemy:{hair:'#34364d',hairLight:'#69627e',hairShade:'#262839',shirt:'#665272',shade:'#3d354f',light:'#93748a',trim:'#29283c',metal:'#b8b6c6'},
+ thrower:{hair:'#4d625d',hairLight:'#91b5a1',hairShade:'#304840',shirt:'#427a71',shade:'#284b4d',light:'#7fbaa6',trim:'#263644',metal:'#ced6ce'},
+ guard:{hair:'#70494f',hairLight:'#b68176',hairShade:'#422d3c',shirt:'#97564b',shade:'#58373f',light:'#c98468',trim:'#352c39',metal:'#e0c293'},
+ sakura:{hair:'#df7b92',hairLight:'#ffc0bb',hairShade:'#ad536f',shirt:'#c64e5f',shade:'#86364b',light:'#e88b85',trim:'#57394d',metal:'#e9d4cf'},
+ teuchi:{hair:'#e9dec2',hairLight:'#fff7e7',hairShade:'#b6a78e',shirt:'#e5d7b9',shade:'#99876e',light:'#f8efda',trim:'#695646',metal:'#ede1c5'},
+ tenten:{hair:'#593e39',hairLight:'#a57b65',hairShade:'#3b2830',shirt:'#ddadad',shade:'#a66877',light:'#ffe1c9',trim:'#4d4453',metal:'#cfdae1'},
+ iruka:{hair:'#684536',hairLight:'#a47853',hairShade:'#392e35',shirt:'#779768',shade:'#43594d',light:'#a1be8a',trim:'#354457',metal:'#c0d2d7'},
+ kabuto:{hair:'#a8b7bd',hairLight:'#e1e8e6',hairShade:'#788491',shirt:'#75637d',shade:'#413b54',light:'#aa94af',trim:'#d5c8b0',metal:'#b7d6d7'},
+ zabuza:{hair:'#313746',hairLight:'#6a7781',hairShade:'#222737',shirt:'#687e87',shade:'#384c5b',light:'#9eafb6',trim:'#344051',metal:'#d5dde0'},
+ haku:{hair:'#272d3e',hairLight:'#67748a',hairShade:'#1d2434',shirt:'#6a9e8c',shade:'#385f60',light:'#a3cfb4',trim:'#6a455d',metal:'#e8e8dc'},
+ shikamaru:{hair:'#34393b',hairLight:'#626966',hairShade:'#242a30',shirt:'#859673',shade:'#4a5c50',light:'#b1c09b',trim:'#343b45',metal:'#c4c9be'},
+ clone:{hair:'#edc448',hairLight:'#fff0a1',hairShade:'#bf8739',shirt:'#f58b36',shade:'#b94b30',light:'#ffb650',trim:'#26344c',metal:'#bacfd3'}
+};
+function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
+function cell(w,h){
+ const c=canvas(w,h),ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;
+ function rect(x,y,w,h,col){if(w<=0||h<=0)return;ctx.fillStyle=col;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
+ function poly(pts,col){const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);for(let y=Math.max(0,Math.floor(Math.min(...ys)));y<=Math.min(h-1,Math.ceil(Math.max(...ys)));y++)for(let x=Math.max(0,Math.floor(Math.min(...xs)));x<=Math.min(w-1,Math.ceil(Math.max(...xs)));x++){let inside=false;for(let i=0,j=pts.length-1;i<pts.length;j=i++){const a=pts[i],b=pts[j];if((a[1]>y+.5)!==(b[1]>y+.5)&&x+.5<(b[0]-a[0])*(y+.5-a[1])/(b[1]-a[1])+a[0])inside=!inside;}if(inside)rect(x,y,1,1,col);}}
+ function ellipse(x,y,rx,ry,col){for(let yy=Math.floor(y-ry);yy<=Math.ceil(y+ry);yy++)for(let xx=Math.floor(x-rx);xx<=Math.ceil(x+rx);xx++)if(((xx+.5-x)/rx)**2+((yy+.5-y)/ry)**2<=1)rect(xx,yy,1,1,col);}
+ function line(x,y,xx,yy,col,w=1){const n=Math.max(1,Math.ceil(Math.max(Math.abs(xx-x),Math.abs(yy-y))));for(let i=0;i<=n;i++)rect(Math.round(x+(xx-x)*i/n)-Math.floor(w/2),Math.round(y+(yy-y)*i/n)-Math.floor(w/2),w,w,col);}
+ return {c,ctx,rect,poly,ellipse,line};
+}
+// Dedicated Shukaku chakra avatar; original procedural directional atlas.
+function shukakuCell(dir,frame){
+ const s=cell(24,32),{rect,poly,line,ellipse}=s,outline='#493e41',shade='#9a7048',sand='#d6b076',light='#f3d69b',mark='#4b485d',eye='#ffe76b',back=dir===3,side=dir===1||dir===2;
+ const step=frame>=2&&frame<=9?[-1,0,1,0][(frame-2)%4]:0,cast=frame===14||frame===15||frame>=22,attack=frame>=10&&frame<=12||frame>=16&&frame<=21;
+ poly([[5,21],[10,21],[10,28+step],[8,31],[2,31],[3,27]],outline);poly([[6,22],[9,23],[8,28+step],[3,29],[4,26]],sand);
+ poly([[13,21],[18,21],[21,29-step],[21,31],[14,31],[12,27]],outline);poly([[14,22],[17,23],[19,28-step],[15,29]],sand);
+ ellipse(12,18,8,10,outline);ellipse(12,18,7,9,sand);ellipse(11,16,5,6,light);
+ const ay=cast?11:attack?16:23+step,by=cast?10:attack?14:23-step;
+ line(7,14,3,ay,outline,7);line(7,14,3,ay,sand,5);line(17,14,20,by,outline,7);line(17,14,20,by,sand,5);
+ for(let j=0;j<3;j++){rect(1+j*2,ay+2,1,2,light);rect(18+j*2,by+2,1,2,light);}
+ poly([[4,12],[4,2],[9,6],[15,6],[20,2],[20,12],[17,16],[7,16]],outline);poly([[5,10],[5,4],[9,7],[15,7],[19,4],[19,11],[16,15],[8,15]],sand);poly([[6,5],[8,8],[6,9]],shade);poly([[18,5],[16,8],[18,9]],shade);
+ if(!back){if(side){rect(dir===1?5:15,9,5,3,mark);rect(dir===1?6:16,10,3,1,eye);}else{rect(6,9,5,3,mark);rect(13,9,5,3,mark);rect(7,10,3,1,eye);rect(14,10,3,1,eye);}rect(10,12,4,2,outline);rect(8,14,8,1,mark);rect(10,14,1,1,light);rect(14,14,1,1,light);}else{line(8,9,16,9,mark,2);line(12,7,12,12,mark,1);}
+ line(10,17,7,20,mark,2);line(7,20,11,23,mark,2);line(14,17,17,20,mark,2);line(17,20,13,23,mark,2);rect(11,24,3,2,mark);
+ return s.c;
+}
+// White Serpent: dedicated coiled-body directional pixel art.
+function whiteSerpentCell(dir,frame){
+ const s=cell(24,32),{rect,poly,line,ellipse}=s,ink='#423b51',shade='#a6a1b6',white='#e4e0db',light='#fff5e6',purple='#82629c',eye='#f5d858',back=dir===3,side=dir===1||dir===2,attack=frame>=10&&frame<=12||frame>=16&&frame<=21,cast=frame===14||frame===15||frame>=22;
+ const wig=frame>=2&&frame<=9?[-1,0,1,0][(frame-2)%4]:0,hx=side?(dir===1?9:15):12,hy=attack?7:cast?5:6+wig;
+ ellipse(12,26,11,5,ink);ellipse(12,25,10,5,shade);ellipse(12,24,9,3,white);
+ ellipse(12,21,9,5,ink);ellipse(12,20,8,5,white);ellipse(12,20,5,2,shade);
+ line(10,24,16,18,ink,9);line(10,24,16,18,white,7);line(16,18,hx,hy+5,ink,10);line(16,18,hx,hy+5,white,8);line(hx-1,hy+6,14,18,light,2);
+ for(let i=0;i<4;i++){line(11+i%2,17+i*2,16,18+i*2,purple,1);}
+ poly([[hx-7,hy],[hx-4,hy-3],[hx+4,hy-3],[hx+7,hy],[hx+6,hy+6],[hx+3,hy+9],[hx-4,hy+9],[hx-7,hy+5]],ink);
+ poly([[hx-6,hy],[hx-3,hy-2],[hx+3,hy-2],[hx+6,hy],[hx+5,hy+5],[hx+3,hy+8],[hx-3,hy+8],[hx-6,hy+4]],white);
+ rect(hx-4,hy-1,8,1,light);if(!back){if(side){const ex=dir===1?hx-5:hx+2;rect(ex,hy+2,3,3,purple);rect(ex+1,hy+3,1,2,eye);}else{rect(hx-5,hy+2,4,3,purple);rect(hx+1,hy+2,4,3,purple);rect(hx-4,hy+3,2,1,eye);rect(hx+2,hy+3,2,1,eye);}rect(hx-3,hy+6,6,attack?3:1,ink);rect(hx-3,hy+6,1,2,light);rect(hx+2,hy+6,1,2,light);if(attack||cast)rect(hx,hy+8,1,3,'#be6884');}else line(hx-3,hy+2,hx+3,hy+5,purple,2);
+ for(let i=0;i<4;i++)rect(4+i*4,28+(i%2),2,1,purple);
+ return s.c;
+}
+function actorCell(kind,dir,frame,gear=null,kyubi=false){
+ if(kind==='whiteSerpent')return whiteSerpentCell(dir,frame);
+ if(kind==='shukaku')return shukakuCell(dir,frame);
+ const extra=frame>=44?frame-44:-1;if(extra>=0)frame=[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][extra];
+ const ras=frame>=38?frame-38:-1;if(ras>=0)frame=[14,14,14,7,12,0][ras];
+ const special=frame>=22?Math.floor((frame-22)/4):-1,stage=frame>=22?(frame-22)%4:0;if(special>=0)frame=[14,14,15,14][stage];
+ const sage=kind==='jiraiyaSage';if(sage)kind='jiraiya';const sasukeForm=kind==='sasukeSharingan'?1:kind==='sasukeMarked'?2:kind==='sasukeCursed'?3:kind==='sasukeInjured'?4:0;if(sasukeForm)kind='sasuke';const kimiForm=kind==='kimiMarked'?1:kind==='kimiCursed'?2:0;if(kimiForm)kind='kimimaro';const role=kind;const p=sasukeForm===3?{hair:'#56516d',hairLight:'#8782a2',hairShade:'#363247',shirt:'#847d91',shade:'#534f69',light:'#b0a7bd',trim:'#ddd9d7',metal:'#c8c7df'}:kimiForm===2?{hair:'#d6d6ce',hairLight:'#eee9df',hairShade:'#8b878d',shirt:'#8e7c74',shade:'#645956',light:'#b5a091',trim:'#554653',metal:'#f2eada'}:PALETTES[kind],s=cell(24,32),{rect,poly,line}=s;if(kind==='guard'||kind==='thrower')kind='enemy';
+ const side=dir===1||dir===2,back=dir===3,run=frame>=6&&frame<=9,walk=frame>=2&&frame<=5,attack=frame>=10&&frame<=12||frame>=16,cast=frame===14||frame===15,kick=frame>=16&&frame<=18,finish=frame>=19;
+ const f=walk?(frame-2):run?(frame-6):0,step=[-3,0,3,0][f],bob=(walk||run)&&f%2===1?1:frame===1?1:0;
+ const phase=kick?frame-16:finish?frame-19:attack?frame-10:cast?frame-14:0;const lean=ras>=0&&kind==='player'?(side?[0,-1,0,3,2,0][ras]:0):side&&run?2:side&&attack?(phase===1?2:0):0;const hx=12+lean,hy=8+bob,bodyY=16+bob;
+ // side frames are painted facing right, mirrored for left.
+ function limb(x,y,xx,yy,c,w=4){line(x,y,xx,yy,ink,w+2);line(x,y,xx,yy,c,w);}
+ if(side){
+   limb(10,23,8-step,28,p.shade,3);rect(5-step,28,6,3,ink);rect(6-step,28,4,1,p.trim);
+   limb(13,23,13+step,28,p.shirt,4);rect(11+step,28,6,3,ink);rect(12+step,28,4,1,'#657286');
+   const ax=run?4:attack?[6,18,14][phase]:cast?15+phase:8-step,ay=run?20:attack?[20,17,21][phase]:cast?18:21;
+   limb(10,bodyY+2,ax,ay,p.shade,3);
+ }else{
+   limb(9,23,8,28+(step>0?-1:0),p.shade,4);rect(5,28+(step>0?-1:0),6,3,ink);
+   limb(14,23,15,28+(step<0?-1:0),p.shirt,4);rect(13,28+(step<0?-1:0),6,3,ink);
+   rect(6,28+(step>0?-1:0),4,1,'#657286');rect(14,28+(step<0?-1:0),4,1,'#657286');
+   limb(7,bodyY+2,run?5:attack?[8,4,6][phase]:6,run?18:22+(step>0?1:0),p.shade,3);
+   limb(16,bodyY+2,run?19:attack?[15,21,18][phase]:17,run?18:cast?18-phase:22+(step<0?1:0),p.shirt,3);
+ }
+ // jacket silhouette, shoulder panels, zipper and belt.
+ poly([[7+lean,bodyY],[16+lean,bodyY],[18,bodyY+4],[16,25],[8,25],[6,bodyY+4]],ink);
+ poly([[8+lean,bodyY+1],[15+lean,bodyY+1],[16,bodyY+4],[15,24],[9,24],[7,bodyY+4]],p.shirt);
+ rect(9,23,6,1,p.shade);rect(8+lean,bodyY+1,7,3,p.trim);
+ if(kind==='npc'){rect(8,bodyY+4,4,5,p.shade);rect(13,bodyY+4,3,5,p.light);}
+ else if(!back){rect(side?15:11,bodyY+4,1,6,p.trim);rect(side?14:10,bodyY+4,1,1,p.light);}
+ else{rect(10,bodyY+4,4,4,'#a33337');rect(11,bodyY+5,2,2,p.light);}
+ rect(8,24,8,1,p.trim);
+ if(side){const x=run?4:attack?[8,21,17][phase]:cast?17+phase:16+step,y=run?22:attack?[18,16,21][phase]:cast?18-phase:22;limb(14+lean,bodyY+2,x,y,p.shirt,3);rect(x-1,y-1,3,3,skin);rect(x-1,y+1,3,1,skinShade);}
+ else if(cast){rect(9,18,3,3,skin);rect(12,18,3,3,skin);rect(11,17,2,1,skinLight);}
+ // Distinct combo poses, with the same palette and original 24×32 cell.
+ if(kick&&phase===0){if(side){limb(13,23,18,20,p.shirt,4);rect(16,20,4,3,ink);}else{limb(14,23,17,22,p.shirt,4);rect(15,21,4,3,ink);}}if(kick&&phase===2){if(side){limb(13,23,17,25,p.shirt,4);rect(16,25,5,3,ink);}else{limb(14,23,17,27,p.shirt,4);rect(15,27,5,3,ink);}}if(kick&&phase===1){if(side){limb(13,23,22,19,p.shirt,4);rect(20,17,4,4,ink);rect(20,18,3,1,'#657286');}else{limb(14,23,19,back?18:26,p.shirt,4);rect(18,back?16:25,5,3,ink);}}
+ if(finish&&phase===0){if(side){limb(11,18,5,15,p.shade,4);limb(15,18,8,13,p.shirt,4);rect(6,11,4,4,skin);}else{limb(8,19,4,22,p.shirt,4);limb(16,19,20,22,p.shirt,4);rect(2,20,4,4,skin);rect(18,20,4,4,skin);}}if(finish&&phase===2){if(side){limb(14,18,19,21,p.shirt,4);rect(18,20,4,4,skin);}else{limb(8,19,5,20,p.shirt,4);limb(16,19,19,20,p.shirt,4);}}if(finish&&phase===1){if(side){limb(11,18,21,13,p.shade,4);limb(15,18,22,15,p.shirt,4);rect(20,12,4,5,skin);}else{limb(8,19,5,13,p.shirt,4);limb(16,19,19,13,p.shirt,4);rect(3,11,4,4,skin);rect(18,11,4,4,skin);}}
+ // rounded anime head, outline, shade and a readable face at tiny scale.
+ poly([[hx-6,hy-3],[hx+4,hy-4],[hx+7,hy],[hx+6,hy+6],[hx+3,hy+9],[hx-4,hy+9],[hx-6,hy+5]],ink);
+ poly([[hx-5,hy-2],[hx+4,hy-3],[hx+6,hy+1],[hx+5,hy+6],[hx+2,hy+8],[hx-3,hy+8],[hx-5,hy+5]],kind==='enemy'?p.trim:skin);
+ if(!back&&kind!=='enemy'){rect(hx-4,hy+5,2,2,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx-3,hy+7,6,1,skinShade);}
+ const hairPoints=kind==='enemy'?[[hx-6,hy-4],[hx+5,hy-4],[hx+7,hy],[hx+4,hy+2],[hx-5,hy+2]]:[[hx-7,hy-2],[hx-7,hy-6],[hx-4,hy-5],[hx-4,hy-8],[hx-1,hy-6],[hx+2,hy-9],[hx+3,hy-6],[hx+6,hy-8],[hx+6,hy-4],[hx+8,hy-5],[hx+7,hy+1],[hx+4,hy+3],[hx-5,hy+2]];
+ poly(hairPoints,ink);
+ poly(kind==='enemy'?[[hx-5,hy-3],[hx+4,hy-3],[hx+5,hy],[hx-4,hy+1]]:[[hx-6,hy-3],[hx-6,hy-5],[hx-3,hy-4],[hx-3,hy-6],[hx,hy-5],[hx+2,hy-7],[hx+3,hy-4],[hx+5,hy-6],[hx+5,hy-3],[hx+6,hy-3],[hx+5,hy+1],[hx-4,hy+1]],p.hair);
+ rect(hx-4,hy-3,6,1,p.hairLight);rect(hx,hy-5,2,2,p.hairLight);
+ if(back){rect(hx-5,hy+2,10,3,p.trim);rect(hx-1,hy+4,2,3,p.trim);rect(hx+1,hy+5,3,2,p.trim);rect(hx-4,hy+1,2,1,p.hairShade);}
+ else{
+   rect(hx-5,hy+1,11,3,p.trim);rect(side?hx+1:hx-3,hy+1,side?5:7,2,p.metal);rect(side?hx+3:hx,hy+1,1,1,'#536b79');
+   if(side){rect(hx+2,hy+4,3,2,ink);rect(hx+3,hy+4,1,1,kind==='player'||kind==='clone'?(kyubi?'#ed3d43':'#61b8d7'):'#d6d8ce');}
+   else{rect(hx-4,hy+4,3,2,ink);rect(hx+2,hy+4,3,2,ink);rect(hx-3,hy+4,1,1,kind==='player'||kind==='clone'?(kyubi?'#ed3d43':'#61b8d7'):'#d6d8ce');rect(hx+3,hy+4,1,1,kind==='player'||kind==='clone'?(kyubi?'#ed3d43':'#61b8d7'):'#d6d8ce');}
+   if(kind==='npc'||kind==='enemy'){rect(hx-4,hy+6,9,3,p.trim);if(kind==='npc')rect(hx-4,hy+3,4,3,p.trim);}
+   else{rect(hx-4,hy+6,2,1,skinShade);rect(hx+3,hy+6,2,1,skinShade);rect(hx,hy+7,2,1,'#9d574e');}
+ }
+ if(kyubi&&(role==='player'||role==='clone')&&!back){
+ const dark='#482235',red='#ff344f',glow='#fff0d6',scar='#8b3944';
+ if(side){
+  rect(hx+1,hy+3,4,1,dark);rect(hx+1,hy+4,4,2,dark);
+  rect(hx+2,hy+4,2,1,red);rect(hx+4,hy+4,1,1,glow);rect(hx+3,hy+5,1,1,red);
+  rect(hx-2,hy+5,2,1,scar);rect(hx-1,hy+7,2,1,scar);
+  rect(hx+2,hy+7,3,1,dark);rect(hx+3,hy+7,1,1,glow);
+ }else{
+  rect(hx-5,hy+3,3,1,dark);rect(hx+3,hy+3,3,1,dark);
+  rect(hx-4,hy+4,4,2,dark);rect(hx+1,hy+4,4,2,dark);
+  rect(hx-4,hy+4,1,1,glow);rect(hx-3,hy+4,2,1,red);rect(hx-2,hy+5,1,1,red);
+  rect(hx+4,hy+4,1,1,glow);rect(hx+2,hy+4,2,1,red);rect(hx+2,hy+5,1,1,red);
+  rect(hx-4,hy+6,2,1,scar);rect(hx+3,hy+6,2,1,scar);
+  rect(hx-2,hy+7,4,1,dark);rect(hx-1,hy+7,1,1,glow);rect(hx+1,hy+7,1,1,glow);
+ }
+}
+ if(role==='sakura'){rect(hx-6,hy-1,2,8,p.hairShade);rect(hx+5,hy-1,2,8,p.hair);rect(hx-5,hy-2,10,3,p.hair);rect(hx-2,hy-3,4,2,p.hairLight);}if(role==='teuchi'){rect(hx-6,hy-6,12,7,p.hair);rect(hx-7,hy-1,14,2,p.hairLight);rect(9,bodyY+3,7,7,'#f3ead8');}if(role==='tenten'){rect(hx-7,hy-7,4,5,p.hair);rect(hx+4,hy-7,4,5,p.hair);rect(hx-6,hy-6,2,2,p.hairLight);}if(role==='iruka'){rect(hx-1,hy-8,4,5,p.hair);if(!back)rect(hx-3,hy+6,7,1,'#a66c56');}
+ if(role==='kabuto'){rect(hx-3,hy-7,6,4,p.hairLight);if(back){rect(hx-2,hy+3,4,9,p.hairShade);rect(hx-1,hy+3,2,8,p.hairLight);}else{if(side){rect(hx+1,hy+3,5,4,'#303748');rect(hx+2,hy+4,3,2,'#d4e7eb');}else{rect(hx-5,hy+3,4,4,'#303748');rect(hx+1,hy+3,4,4,'#303748');rect(hx-4,hy+4,2,2,'#d4e7eb');rect(hx+2,hy+4,2,2,'#d4e7eb');rect(hx-1,hy+4,2,1,'#303748');}}rect(7,bodyY+5,10,2,p.trim);if(attack||cast){rect(4,bodyY+4,3,6,'#8cebd2');rect(17,bodyY+4,3,6,'#8cebd2');}}
+ if(role==='zabuza'){rect(hx-5,hy+5,11,5,'#d6d9cf');rect(hx-4,hy+6,9,1,'#87999c');line(side?17:19,8,side?21:21,25,'#344051',4);line(side?17:19,8,side?21:21,22,'#b5ced5',3);rect(19,25,3,4,'#795c50');}if(role==='haku'){if(!back){rect(hx-4,hy+1,8,9,'#e7e8dc');rect(hx-3,hy+3,2,1,'#554253');rect(hx+1,hy+3,2,1,'#554253');rect(hx-1,hy+6,2,2,'#b06b78');}rect(hx-6,hy,2,11,p.hair);rect(hx+5,hy,2,11,p.hairShade);}
+ if(role==='shikamaru'){rect(hx-2,hy-8,4,5,p.hair);rect(hx-3,hy-7,6,2,p.hairShade);rect(hx-1,hy-9,2,2,p.hairLight);rect(9,bodyY+5,6,2,p.shade);}
+ if(role==='guard'){rect(6,17,12,3,p.metal);rect(5,19,3,5,p.shade);rect(16,19,3,5,p.shade);}if(role==='thrower'){rect(6,22,3,4,p.metal);rect(15,22,3,4,p.metal);}
+ if(role==='lee'){rect(hx-6,hy-5,12,6,p.hair);rect(hx-5,hy-4,10,1,p.hairLight);if(!back){rect(hx-4,hy+3,3,1,ink);rect(hx+2,hy+3,3,1,ink);}rect(7,25,3,3,p.trim);rect(14,25,3,3,p.trim);}
+ if(role==='neji'){rect(hx-6,hy,2,12,p.hair);rect(hx+5,hy,2,12,p.hairShade);if(!back){rect(hx-3,hy+4,2,1,'#e7e6ea');rect(hx+3,hy+4,2,1,'#e7e6ea');}}
+ if(role==='kimimaro'){rect(hx-6,hy-4,12,4,p.hair);rect(hx-7,hy-1,3,10,p.hairShade);rect(hx+5,hy-1,3,10,p.hair);rect(hx-6,hy-2,2,8,p.hairLight);if(!back){rect(hx-3,hy,2,1,'#a34d55');rect(hx+2,hy,2,1,'#a34d55');rect(hx-4,hy+3,2,1,'#66845a');rect(hx+2,hy+3,2,1,'#66845a');}rect(7,23,10,3,'#88719c');if(kimiForm===1){line(hx-5,hy+2,hx-2,hy+6,'#453747',2);line(9,17,13,22,'#453747',2);line(15,15,13,18,'#453747',2);}if(kimiForm===2){rect(hx-4,hy+1,8,6,'#987e76');if(!back){rect(hx-4,hy+3,3,1,'#e7ce6b');rect(hx+2,hy+3,3,1,'#e7ce6b');}for(let i=0;i<3;i++){poly([[4,13+i*3],[1,9+i*3],[6,15+i*3]],'#eae4d3');poly([[19,13+i*3],[23,9+i*3],[18,15+i*3]],'#eae4d3');}rect(8,18,8,4,'#9f887d');}if(attack||cast){line(16,19,22,13,'#eee5d3',kimiForm===2?3:2);rect(15,19,2,2,'#b6b5a5');}}
+ if(role==='jiraiya'){poly([[hx-7,hy-4],[hx-9,hy+4],[hx-10,hy+14],[hx-6,hy+12],[hx-5,hy+4]],p.hairShade);poly([[hx+5,hy-4],[hx+8,hy+3],[hx+10,hy+14],[hx+5,hy+13],[hx+4,hy+3]],p.hair);line(hx-8,hy+3,hx-8,hy+11,p.hairLight,2);line(hx+6,hy+4,hx+7,hy+11,p.hairLight,2);rect(6+lean,bodyY+2,3,8,'#a84540');rect(15+lean,bodyY+2,3,8,'#a84540');rect(7,24,11,2,'#6e3436');if(!back){rect(hx-5,hy+1,11,3,'#b2b3a4');rect(hx-1,hy+1,3,2,'#544e43');line(hx-4,hy+6,hx-4,hy+9,'#b83c43',2);line(hx+4,hy+6,hx+4,hy+9,'#b83c43',2);if(sage){rect(hx-5,hy+3,4,3,'#b95142');rect(hx+2,hy+3,4,3,'#b95142');rect(hx-4,hy+4,3,1,'#e5c65c');rect(hx+2,hy+4,3,1,'#e5c65c');}}else{rect(8,17,8,7,'#b2443d');rect(11,18,2,4,'#e4d0a5');}}
+ if(role==='orochimaru'){rect(hx-6,hy-4,12,4,p.hair);rect(hx-7,hy-1,3,13,p.hair);rect(hx+5,hy-1,3,13,p.hairShade);rect(hx-6,hy+1,2,10,p.hairLight);if(!back){rect(hx-4,hy+2,9,2,'#e9ddd8');rect(hx-4,hy+4,3,2,'#6b478f');rect(hx+2,hy+4,3,2,'#6b478f');rect(hx-3,hy+4,1,1,'#ead06b');rect(hx+3,hy+4,1,1,'#ead06b');rect(hx-1,hy+7,3,1,'#64475d');}rect(6,23,12,3,'#79559c');rect(9,24,6,3,'#a88ac7');if(attack){line(16,19,22,12,'#d7dce0',2);rect(16,19,2,3,'#514563');}}
+ if(role==='gaara'){rect(5,17,4,10,'#bd9c68');rect(4,19,5,6,'#d0b58a');rect(5,16,3,2,'#8d6348');if(!back)rect(hx+3,hy-1,2,2,'#a74646');}
+ if(role==='sasuke'){if(!back){rect(hx-5,hy-2,3,5,p.hair);rect(hx+4,hy-2,2,6,p.hairShade);rect(hx+3,hy+4,1,1,'#bc6a72');}else{rect(10,bodyY+4,4,2,'#b65a55');rect(11,bodyY+6,2,2,'#e9dfd1');}rect(8,24,8,2,'#c7c7d6');if(sasukeForm===3){rect(hx-4,hy+2,8,6,'#8e879f');if(!back){rect(hx-4,hy+4,3,1,'#e6dc7d');rect(hx+2,hy+4,3,1,'#e6dc7d');}poly([[4,16],[0,7],[5,11],[8,19]],'#716889');poly([[20,16],[24,7],[19,11],[16,19]],'#716889');}else if(sasukeForm===4){if(!back){line(hx-4,hy+5,hx-2,hy+7,'#93626b',1);line(hx+2,hy+3,hx+4,hy+5,'#a27173',1);rect(hx-2,hy+7,2,1,'#79505d');}poly([[8,17],[11,19],[9,21]],'#b99588');poly([[15,21],[13,23],[17,23]],'#7b6a77');rect(8,26,2,2,'#a49b9d');}else if(sasukeForm){if(!back){rect(hx-4,hy+4,2,1,'#c94450');rect(hx+2,hy+4,2,1,'#c94450');}if(sasukeForm===2){line(hx-4,hy+2,hx-1,hy+7,'#39303e',2);line(8,17,13,21,'#39303e',2);line(15,15,17,18,'#39303e',2);}}}
+ if(gear&&['player','sasuke','sakura','npc'].includes(role)){
+ const {head,torso,legs,feet,weapon,offhand,accessory}=gear;
+ if(head){rect(hx-5,hy+1,11,3,head.accent);rect(side?hx+1:hx-3,hy+1,side?5:7,2,head.color);rect(hx+1,hy+1,1,1,'#ecf6eb');}
+ if(torso){poly([[8+lean,bodyY+2],[15+lean,bodyY+2],[16,bodyY+5],[15,24],[9,24],[7,bodyY+5]],torso.color);rect(9,bodyY+5,3,3,torso.accent);rect(13,bodyY+5,2,3,torso.accent);rect(12,bodyY+3,1,5,ink);}
+ if(legs){if(side){line(10,24,8-step,27,legs.color,2);line(13,24,13+step,27,legs.color,3);}else{rect(7,25,4,3,legs.color);rect(13,25,4,3,legs.color);}}
+ if(feet){if(side){rect(6-step,28,4,2,feet.color);rect(12+step,28,4,2,feet.color);}else{rect(6,28+(step>0?-1:0),4,2,feet.color);rect(14,28+(step<0?-1:0),4,2,feet.color);}}
+ if(weapon){const wx=side?(run?5:attack?[8,21,17][phase]:cast?17+phase:16+step):17,wy=side?(run?22:attack?[18,16,21][phase]:cast?18-phase:22):22;line(wx,wy,Math.min(23,wx+2),Math.max(1,wy-6),weapon.accent,3);line(wx,wy-1,Math.min(23,wx+2),Math.max(1,wy-6),weapon.color,1);}
+ if(offhand){rect(side?8:5,bodyY+5,3,3,offhand.accent);rect(side?9:6,bodyY+5,2,2,offhand.color);}
+ if(accessory){rect(11,bodyY+3,2,3,accessory.accent);rect(11,bodyY+4,2,2,accessory.color);}
+ }
+ // Four additional pose families. Paint arms over torso, keeping equipment and the pixel silhouette.
+ if(special>=0&&stage!==3){
+  const sleeve=gear?.torso?.color||p.shirt,accent=gear?.offhand?.color||p.shade;
+  if(special===0){ // wind-up, reach, follow-through
+   const tx=side?[12,21,20][stage]:[12,12,13][stage],ty=side?[19,15,19][stage]:back?[18,11,14][stage]:[19,24,22][stage];
+   limb(15,18,tx,ty,sleeve,3);rect(tx-1,ty-1,3,3,skin);rect(tx,ty-1,1,1,skinLight);limb(8,18,side?5:8,21,accent,2);
+   if(stage===1){rect(5,29,6,2,ink);rect(16,28,6,3,ink);}
+  }else if(special===1){ // throw / elemental release
+   const x=side?[9,21,19][stage]:[11,19,17][stage],y=[13,15,19][stage];
+   limb(15,18,x,y,sleeve,3);rect(x-1,y-1,3,3,skin);limb(8,18,side?7:5,stage===0?15:20,accent,2);
+  }else if(special===2){ // hand seals and opening palms
+   const spread=[2,4,7][stage],y=[19,16,15][stage];
+   limb(8,18,12-spread,y,accent,3);limb(16,18,12+spread,y,sleeve,3);rect(11-spread,y-1,3,3,skin);rect(11+spread,y-1,3,3,skin);
+  }else{ // raised fists, downward strike, braced recovery
+   const x=side?[16,22,19][stage]:[17,13,16][stage],y=[10,26,23][stage];
+   limb(15,18,x,y,sleeve,4);rect(x-1,y-1,3,4,skin);limb(8,18,stage===0?5:7,stage===0?11:23,accent,3);
+   if(stage===1){rect(5,28,6,3,ink);rect(16,28,6,3,ink);}
+  }
+ }
+ // Dedicated Rasengan key poses, keeping the existing head, silhouette and equipment.
+ if(ras>=0&&role==='player'){
+  const sleeve=gear?.torso?.color||p.shirt,shade=gear?.offhand?.color||p.shade,leg=gear?.legs?.color||p.shirt,shoe=gear?.feet?.color||p.trim;
+  if(side){
+   const hand=[[11,20],[9,18],[14,16],[21,15],[22,17],[17,21]][ras],other=[[14,19],[13,17],[16,16],[8,20],[6,22],[10,21]][ras];
+   limb(8+lean,18,other[0],other[1],shade,3);rect(other[0]-1,other[1]-1,3,3,skin);
+   limb(15+lean,18,hand[0],hand[1],sleeve,3);rect(hand[0]-1,hand[1]-1,3,3,skin);rect(hand[0],hand[1]-1,2,1,skinLight);
+   if(ras===3||ras===4){limb(10,23,4,28,leg,3);rect(1,28,7,3,ink);rect(2,28,5,1,shoe);limb(15,23,19,27,leg,4);rect(17,28,6,3,ink);rect(18,28,4,1,shoe);}
+  }else{
+   const y=back?[20,18,15,10,12,21][ras]:[20,19,19,24,25,21][ras],x=back?[12,12,12,13,14,14][ras]:[12,11,12,13,14,16][ras];
+   limb(8,18,ras<3?x-2:5,ras<3?y:22,shade,3);limb(16,18,x,y,sleeve,3);rect(x-1,y-1,3,3,skin);rect(x,y-1,2,1,skinLight);
+   if(ras<3)rect(x-3,y-1,2,3,skin);
+   if(ras===3||ras===4){limb(9,23,6,28,leg,4);limb(14,23,18,28,leg,4);rect(3,28,6,3,ink);rect(16,28,6,3,ink);rect(4,28,4,1,shoe);rect(17,28,4,1,shoe);}
+  }
+ }
+ // New, direction-aware defensive and movement poses. All coordinates stay on the original pixel grid.
+ if(extra>=0){
+  const sleeve=gear?.torso?.color||p.shirt,shade=gear?.offhand?.color||p.shade,leg=gear?.legs?.color||p.shirt,shoe=gear?.feet?.color||p.trim;
+  const arm=(x,y,xx,yy,col)=>{limb(x,y,xx,yy,col,3);rect(xx-1,yy-1,3,3,skin);rect(xx,yy-1,1,1,skinLight);};
+  const foot=(x,y,xx,yy,col)=>{limb(x,y,xx,yy,col,3);rect(xx-2,yy,5,3,ink);rect(xx-1,yy,3,1,shoe);};
+  if(extra<4){ // raise, brace, breathe and settle the forearm guard
+   const q=extra===0?1:extra===2?1:0;
+   if(side){arm(9,19,15,14+q,shade);arm(15,19,19,12+q,sleeve);foot(10,23,7,28,leg);foot(14,23,17,28,leg);}
+   else{arm(7,19,10,13+q,shade);arm(16,19,14,13+q,sleeve);foot(9,23,7,28,leg);foot(14,23,17,28,leg);}
+  }else if(extra<8){ // hand seal, focus, two breathing poses
+   const q=extra-4,spread=q===0?4:q===2?2:1,yy=17+(q===2?1:0);
+   arm(8,19,12-spread,yy,shade);arm(16,19,12+spread,yy,sleeve);
+   if(q>0){rect(11,yy-2,2,4,skinLight);rect(10,yy+1,4,1,skinShade);}
+   foot(9,23,7,28,leg);foot(14,23,17,28,leg);
+  }else if(extra<12){ // lean into dash, alternate stride, trailing arms
+   const q=extra-8,step=[-3,-1,3,1][q];
+   if(side){arm(11,19,4+q%2,22,shade);arm(15,19,8+q%2,23,sleeve);foot(10,23,5-step,27,leg);foot(14,23,17+step,27,leg);}
+   else{arm(7,19,4,23,shade);arm(16,19,20,23,sleeve);foot(9,23,7,27+(q%2),leg);foot(14,23,17,28-(q%2),leg);}
+  }else if(extra<14){ // brake without extending the collision body
+   const q=extra-12;if(side){arm(10,19,7,20,shade);arm(15,19,19-q*2,20,sleeve);foot(10,23,6,28,leg);foot(14,23,18-q*2,28,leg);}
+   else{arm(8,19,5+q,20,shade);arm(16,19,19-q,20,sleeve);foot(9,23,6,28,leg);foot(14,23,18,28,leg);}
+  }else if(extra<16){ // staggered guard break
+   const q=extra-14;arm(8,19,4+q,23,shade);arm(16,19,20-q,23,sleeve);foot(9,23,6,28,leg);foot(14,23,18,28,leg);
+  }else{ // dash strike: anticipation, contact, follow through, recovery
+   const q=extra-16;
+   if(side){arm(10,19,[5,8,7,9][q],[20,20,22,22][q],shade);arm(15,18,[10,21,20,16][q],[16,15,20,22][q],sleeve);foot(10,23,[4,3,7,8][q],28,leg);foot(14,23,[17,19,18,15][q],28,leg);}
+   else{arm(8,19,[6,5,5,8][q],[18,19,21,22][q],shade);arm(16,18,[14,20,18,16][q],[16,back?10:23,20,22][q],sleeve);foot(9,23,6,28,leg);foot(14,23,18,28,leg);}
+  }
+ }
+ if(frame===13){rect(2,10,2,2,'#ffe4bc');rect(20,13,2,2,'#ffe4bc');}
+ if(dir===1){const out=cell(24,32);out.ctx.translate(24,0);out.ctx.scale(-1,1);out.ctx.drawImage(s.c,0,0);return out.c;}
+ return s.c;
+}
+function makeActorSheet(kind,gear=null,kyubi=false){
+ const c=canvas(ACTOR_W*ACTOR_COLS,ACTOR_H*4),ctx=c.getContext('2d');
+ for(let d=0;d<4;d++)for(let f=0;f<ACTOR_COLS;f++){if(f>=44&&!['player','sasuke','sakura','npc'].includes(kind)){const src=[14,14,15,14,14,14,15,15,6,7,8,9,6,0,13,13,6,10,11,12][f-44];ctx.drawImage(c,src*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H,f*ACTOR_W,d*ACTOR_H,ACTOR_W,ACTOR_H);}else ctx.drawImage(actorCell(kind,d,f,gear,kyubi),f*ACTOR_W,d*ACTOR_H);}
+ return c;
+}
+// High-speed, deliberately stretched silhouettes. 32x32, three frames per direction.
+// Rasengan reference atlas: discrete pixel ribbons, not a blurred glow or HD character.
+const RAS_SIZE=48,RAS_COLS=12,RAS_ROWS=6;
+function rasenganPose(anim){const e=Math.max(0,anim.total-anim.left),w=anim.windup||.26;return e<w?Math.min(2,Math.floor(e/w*3)):3+Math.min(2,Math.floor((e-w)/Math.max(.001,anim.total-w)*3));}
+function rasenganHand(dir,pose){const d=dir===1?-1:dir===2?1:0;return {x:d*[0,-.22,.12,.66,.74,.38][pose],y:[.96,1.08,1.22,1.27,1.13,.86][pose],z:dir===0?[.22,.3,.39,.7,.75,.32][pose]:dir===3?-[.2,.32,.44,.72,.65,.3][pose]:0};}
+function makeRasenganSheet(purple=false){
+ const atlas=canvas(RAS_SIZE*RAS_COLS,RAS_SIZE*RAS_ROWS),ctx=atlas.getContext('2d');ctx.imageSmoothingEnabled=false;
+ const palette=purple?['#30134f','#5a258f','#9144d8','#c17aff','#ffffff','#ffffff']:['#17488d','#236db7','#329ed9','#80d8ff','#c7f4ff','#ffffff'];
+ const ribbon=[[0,-13],[5,-12],[10,-9],[13,-4],[12,2],[8,7],[3,8],[-2,5],[-3,1],[0,-2],[4,-1]];
+ const arc=[[0,-14],[6,-13],[11,-9],[14,-3],[14,3],[10,9],[4,13],[-3,14],[-10,10],[-14,3],[-13,-4],[-9,-10],[-4,-13]];
+ for(let row=0;row<RAS_ROWS;row++)for(let f=0;f<12;f++){
+  const c=cell(48,48),{rect,line,ellipse,poly}=c,q=f/11;
+  function stroke(path,angle,sx,sy,ox,oy,col,w){const pts=path.map(([x,y])=>[ox+(x*Math.cos(angle)-y*Math.sin(angle))*sx,oy+(x*Math.sin(angle)+y*Math.cos(angle))*sy]);for(let i=1;i<pts.length;i++)line(...pts[i-1],...pts[i],col,w);}
+  if(row===0){
+   const size=14+Math.sin(f*Math.PI/6)*.65,cx=24,cy=24;ellipse(cx,cy,size+1,size+1,palette[0]);ellipse(cx,cy,size,size,palette[1]);ellipse(cx-1,cy-1,size*.87,size*.87,palette[2]);if(!purple){ellipse(cx-1,cy-1,size*.64,size*.64,palette[3]);ellipse(cx,cy,size*.35,size*.35,palette[4]);}
+   for(let k=0;k<3;k++){const angle=f*.82+k*2.094;stroke(ribbon,angle,size/14,size/14,cx,cy,palette[1],3);stroke(ribbon,angle+.12,size/14,size/14,cx,cy,palette[4],2);stroke(ribbon.slice(2,8),angle+.12,size/14,size/14,cx,cy,palette[5],1);}
+   ellipse(cx-1,cy,size*.23,size*.27,palette[5]);for(let k=0;k<5;k++){const ang=f*.6+k*1.26,r=size+3+(k%2)*2;line(cx+Math.cos(ang)*r,cy+Math.sin(ang)*r,cx+Math.cos(ang+.15)*r,cy+Math.sin(ang+.15)*r,purple?palette[3]:palette[5],1);}
+  }else if(row===1){
+   // Forward burst. Bright, compact contact flash gives way to torn cyan ribbons.
+   const r=4+q*16,cy=24,cx=18+q*5;
+   if(f<5){const s=1+f*.85;poly([[cx-s*4,cy],[cx-s,cy-s],[cx,cy-s*4],[cx+s,cy-s],[cx+s*5,cy],[cx+s,cy+s],[cx,cy+s*4],[cx-s,cy+s]],palette[3]);ellipse(cx,cy,s*1.9,s*1.6,palette[5]);}
+   for(let k=0;k<3;k++){const ang=f*.26+k*2.094;const section=arc.slice(k,Math.max(k+2,11-Math.floor(q*5)));stroke(section,ang,r/14,r*.78/14,cx,cy,palette[0],f<6?4:2);stroke(section,ang+.04,r/14,r*.78/14,cx,cy,palette[f<7?3:2],f<6?2:1);if(f<8)stroke(section.slice(1,5),ang+.05,r/14,r*.78/14,cx,cy,palette[5],1);}
+   for(let k=0;k<8;k++){const angle=(k-3.5)*.38+f*.04,len=4+(k%3)*3,rr=6+q*14;const x=cx+Math.cos(angle)*rr,y=cy+Math.sin(angle)*rr;line(x-len*(1-q*.65),y-Math.sin(angle)*len,x,y,palette[k%3===0?5:3],f<4?2:1);}
+  }else if(row===2){
+   const r=4+q*17;for(let k=0;k<4;k++){const seg=arc.slice(k*2,k*2+5);stroke(seg,k*1.57+q*.5,r/14,r*.42/14,24,28,palette[2],2);if(f<9)stroke(seg,k*1.57+q*.5,r/14,r*.42/14,24,27,palette[4],1);}
+   for(let k=0;k<7;k++){const ang=k*2.4,rr=4+q*17,x=24+Math.cos(ang)*rr,y=28+Math.sin(ang)*rr*.4-q*4;rect(x,y,2,1,k%2?'#c9c1a4':'#92bed1');}
+  }else if(row===3){
+   // Orbiting torn ribbons, with bright tips and a dark blue pixel outline.
+   for(let k=0;k<4;k++){const angle=f*.61+k*1.57;const path=arc.slice(k, k+5);stroke(path,angle,1.28,1.18,24,24,palette[0],4);stroke(path,angle+.04,1.28,1.18,24,24,purple?palette[3]:palette[4],2);stroke(path.slice(1,4),angle+.04,1.28,1.18,24,24,palette[5],purple?1:2);}
+  }else if(row===4){
+   for(let k=0;k<10;k++){const angle=k*2.399+f*.41,rad=14+(k%4)*2.2,x=24+Math.cos(angle)*rad,y=24+Math.sin(angle)*rad;line(x,y,x+Math.cos(angle+.8)*4,y+Math.sin(angle+.8)*4,palette[k%3===0?5:3],k%3===0?2:1);rect(x-1,y-1,1,1,palette[4]);}
+  }else{
+   // Directional streaming tails pointing opposite the carry direction.
+   for(let k=0;k<7;k++){const y=10+k*4+Math.sin(f*.9+k)*3,x=34+(k%3)*3,len=13+(k%4)*4;poly([[x,y],[x-len*.6,y-2],[x-len,y+1],[x-3,y+3]],palette[0]);line(x-len,y+1,x-2,y,palette[3],2);line(x-len*.55,y,x,y,palette[5],1);}
+  }
+  ctx.drawImage(c.c,f*48,row*48);
+ }
+ return atlas;
+}
+function makeSmearSheet(){
+ const c=canvas(32*3,32*4),ctx=c.getContext('2d');
+ for(let d=0;d<4;d++)for(let f=0;f<3;f++){
+   const s=cell(32,32),{poly,line,rect}=s;
+   poly([[1,19],[9,14],[4,10],[21,12],[28,9],[31,14],[27,20],[31,24],[17,26],[2,25],[12,21]],'#343450');
+   poly([[2,20],[16,15],[9,12],[23,13],[29,12],[27,18],[21,20],[29,23],[17,24]],f===0?'#bc553c':f===1?'#f48a37':'#ffd079');
+   line(3,15,19,15,'#f9bd61',2);line(1,23,18,23,'#ffd98a');rect(23,11,5,3,'#f7d56a');rect(25,15,3,2,'#dbe7ee');
+   s.ctx.save();s.ctx.globalAlpha=.8;s.ctx.drawImage(actorCell('player',d===1?2:d,6+f),8,0);s.ctx.restore();
+   ctx.save();ctx.translate(f*32+(d===1?32:0),d*32);if(d===1)ctx.scale(-1,1);ctx.drawImage(s.c,0,0);ctx.restore();
+ }
+ return c;
+}
+function makeFXSheet(){
+ const c=canvas(32*8,32*FX_ROWS.length),ctx=c.getContext('2d');
+ for(let row=0;row<FX_ROWS.length;row++)for(let f=0;f<8;f++){
+   const s=cell(32,32),{ellipse,line,rect,poly}=s,t=f/7,angle=f*.77;
+   if(row===0){
+     const r=4+Math.sin(t*Math.PI)*10;
+     ellipse(16,16,r,r,'#145aa4');ellipse(16,16,r-2,r-2,'#32a9e3');ellipse(16,16,Math.max(2,r*.62),Math.max(2,r*.62),'#8eefff');ellipse(16,16,Math.max(1,r*.31),Math.max(1,r*.31),'#f5ffff');
+     for(let k=0;k<3;k++)for(let j=0;j<11;j++){const a=angle+k*2.094+j*.16,rr=r*.88+j*.12;rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr,2,1,j%3===0?'#ffffff':'#b7f7ff');}
+     for(let k=0;k<7;k++){const a=angle+k*.9,rr=r+2+(k%3);rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr,1+(k%2),1,'#8ce8ff');}
+   }else if(row===1){
+     const radius=3+10*t;
+     for(let k=0;k<8;k++){const a=k*Math.PI/4+.12*f,x=16+Math.cos(a)*radius*.65,y=18+Math.sin(a)*radius*.62,rr=Math.max(2,6-f*.45);ellipse(x,y,rr,rr*.8,'#798fa6');ellipse(x,y-1,rr-1,rr*.6,'#e3edf1');}
+     if(f<4){ellipse(16,17,6,5,'#f5f5dd');line(5,22,27,22,'#b5d6dc');}
+   }else if(row===2){
+     const r=5+f*1.5;for(let k=0;k<8;k++){const a=k*Math.PI/4+.1;line(16+Math.cos(a)*r*.3,16+Math.sin(a)*r*.3,16+Math.cos(a)*r,16+Math.sin(a)*r,k%2?'#ed703e':'#ffd677',f<3?3:1);}
+     if(f<3){ellipse(16,16,5-f,5-f,'#fff3b4');poly([[16,1],[18,13],[31,16],[18,19],[16,31],[13,19],[1,16],[13,13]],'#fff0be');}
+   }else if(row===3){
+     for(let j=0;j<6;j++){const y=6+j*4,x=2+(j%3)*3+f;line(x,y,Math.min(31,x+20-f),y-2,j%2?'#f5ab4f':'#ffe5a3',j%3===0?2:1);}
+     if(f<4)poly([[3,16],[20,11],[31,16],[20,21]],'#ffc464');
+   }else if(row===5){for(let k=0;k<3;k++)for(let j=0;j<15;j++){const a=angle+k*2.094+j*.11,r=5+j*.61;rect(16+Math.cos(a)*r,16+Math.sin(a)*r,2,2,j%3?'#a9e8cb':'#f1fff2');}ellipse(16,16,4,4,'#5cbba5');}
+   else if(row===6){poly([[16,1],[20,18],[16,25],[12,18]],'#c3c9cc');line(16,3,16,22,'#f6d7a7',2);rect(14,21,4,7,'#7b4447');ellipse(16,28,3,2,'#292c3d');}
+   else if(row===7){rect(10,6,12,21,'#69483d');rect(12,7,8,19,'#9f7852');line(14,9,14,24,'#c69c68',2);for(let k=0;k<6;k++){const a=k*1.047+angle;ellipse(16+Math.cos(a)*(4+f*1.4),16+Math.sin(a)*(4+f),Math.max(2,5-f*.4),3,'#dce6e2');}}
+   else if(row===8){const r=5+Math.sin(Math.PI*t)*9;ellipse(16,16,r,r,'#1d5eae');ellipse(16,16,r*.83,r*.83,'#3cbae7');ellipse(16,16,r*.55,r*.55,'#b9fbff');ellipse(16,16,r*.25,r*.25,'#ffffff');for(let k=0;k<4;k++)for(let j=0;j<14;j++){const a=angle+k*Math.PI/2+j*.13,rr=r*.67+j*.32;rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr,2,2,j%2?'#d7ffff':'#76c6f8');}for(let k=0;k<8;k++){const a=k*Math.PI/4+angle;line(16+Math.cos(a)*r,16+Math.sin(a)*r,16+Math.cos(a)*15,16+Math.sin(a)*15,'#e4ffff');}}
+   else if(row===9){const radius=5+f*1.25;for(let k=0;k<4;k++)for(let j=0;j<12;j++){const a=angle*.55+k*Math.PI/2+j*.13,rr=radius+j*.23;const x=16+Math.cos(a)*rr,y=16+Math.sin(a)*rr*.76;rect(x,y,3,3,'#285b83');rect(x,y,2,2,j%3?'#5cc7e1':'#e4fbf6');}for(let k=0;k<6;k++){const a=k*1.05+angle;rect(16+Math.cos(a)*(radius+3),16+Math.sin(a)*(radius+3),2,2,'#b7e7e9');}}
+   else if(row===10){for(let k=0;k<6;k++){const a=k*Math.PI/3+angle*.12,r=4+f*1.55,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;poly([[x,y-6],[x+3,y-1],[x+1,y+5],[x-3,y+1]],'#4f92b5');poly([[x,y-5],[x+2,y-1],[x,y+3],[x-1,y-1]],'#e1f7ff');rect(x,y-3,1,2,'#ffffff');}ellipse(16,16,Math.max(1,5-f*.4),Math.max(1,5-f*.4),'#b7f3ff');}
+   else if(row===11){for(let k=0;k<7;k++){const a=k*Math.PI*2/7+angle,r=5+f*1.2,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;line(16,16,x-3,y+2,'#5967d8',3);line(x-3,y+2,x+2,y-3,'#82caff',2);line(x+2,y-3,x+3,y,'#edffff');}ellipse(16,16,4,4,'#e6fbff');}
+   else if(row===12){const r=5+f*.9;ellipse(16,18,r,r*.7,'#a44339');ellipse(16,17,r*.8,r*.65,'#ee793e');for(let k=0;k<5;k++){const x=7+k*4,y=10+Math.sin(k+f)*3;poly([[x-3,20],[x,y-4],[x+3,20]],'#ffc15c');}ellipse(16,18,r*.4,r*.35,'#fff4bd');}
+   else if(row===13){for(let k=0;k<8;k++){const a=k*.785+angle,r=5+f*1.4;rect(16+Math.cos(a)*r,16+Math.sin(a)*r,2,2,'#a4f8b9');}rect(14,7,4,18,'#60c795');rect(7,14,18,4,'#60c795');rect(15,8,2,16,'#e0ffe6');rect(8,15,16,2,'#e0ffe6');}
+   else if(row===14){for(let k=0;k<9;k++){const a=k*.698+angle*.2,r=4+f*1.45,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r*.8;rect(x,y,4,3,'#755c4d');rect(x,y-1,3,2,'#d6b38b');}if(f<4)ellipse(16,16,5-f,3,'#fff0ba');}
+   else if(row===15){ellipse(16,16,10+f*.3,10+f*.3,'#772d4c');ellipse(16,16,8,8,'#c14b61');ellipse(16,16,3,3,'#2e263e');for(let k=0;k<3;k++){const a=k*2.094+angle;ellipse(16+Math.cos(a)*6,16+Math.sin(a)*6,2,2,'#30273a');}}
+   else if(row===16){const r=3+f*1.65;for(let k=0;k<48;k++){const a=k*Math.PI/24,rr=r+(k%4===0?1:0);rect(16+Math.cos(a)*rr,16+Math.sin(a)*rr*.55,2,f<3?2:1,k%3?'#e9f9ed':'#8eb7b9');}if(f<3)ellipse(16,16,4-f,2,'#fff8d9');}
+   else if(row===17){for(let k=0;k<9;k++){const a=k*2.4+f*.18,r=3+f*1.5+(k%3),x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;line(x,y,x+Math.cos(a)*3,y+Math.sin(a)*3,k%2?'#fff8ce':'#9be9f7',f<3?2:1);}}
+   else if(row===18){for(let k=0;k<30;k++){const a=-1.1+k*.074+f*.23,r=8+f*.55;rect(16+Math.cos(a)*r,16+Math.sin(a)*r,3,2,k%3?'#f3fff7':'#88c5d6');}if(f<4)line(10,24,26,7,'#fff2c5',2);}
+   else if(row===19){for(let k=0;k<7;k++){const x=3+k*4,y=16+Math.sin(k*2+angle)*(4+k*.3);poly([[x-3,y],[x+3,y-5],[x+5,y+3],[x,y+6]],'#a84b40');poly([[x-1,y],[x+3,y-3],[x+4,y+2]],k%2?'#f9b05b':'#ffde85');}}
+   else if(row===20){for(let k=0;k<13;k++){const x=3+k*2,y=18+Math.sin(k*.6-angle)*5;ellipse(x,y,3.2,3.2,'#275d85');ellipse(x,y-1,2.2,2.2,k%2?'#a2edeb':'#4fb9dd');}poly([[20,12],[25,8],[30,10],[31,15],[25,19],[21,17]],'#95e5ec');rect(27,12,2,2,'#eafff1');rect(28,12,1,1,'#28435d');line(25,15,31,15,'#23557b',2);}
+   else if(row===21){for(let j=0;j<3;j++)for(let i=0;i<4;i++){const x=2+i*7+(j%2)*2,y=25-j*7-Math.min(f,3)*2;rect(x,y,7,6,'#675b50');rect(x,y,6,5,'#ab9072');rect(x,y,6,1,'#dac39b');}for(let k=0;k<6;k++)rect(3+k*5,27-f,2,2,'#d8bc94');}
+   else if(row===22){for(let k=0;k<8;k++){const a=k*Math.PI/4+f*.04,r=4+f*1.4,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r*.62;line(16,16,x-3,y+2,'#594f49',2);line(x-3,y+2,x,y,'#d8ac77',2);rect(x,y-2-(f%3),3,3,'#b89b77');}if(f<3)ellipse(16,15,5-f,4-f,'#fff0be');}
+   else if(row===23){for(let k=0;k<12;k++){const a=k*Math.PI/6+angle,r=9+Math.sin(k+f)*2;line(16+Math.cos(a)*r,18+Math.sin(a)*r*.65,16+Math.cos(a)*r*.8,9+Math.sin(a)*r*.5,'#a5e8bc',k%3===0?2:1);}}
+   else if(row===24){for(let k=0;k<8;k++){const a=k*Math.PI/4+f*.12,r=5+f*1.35,x=16+Math.cos(a)*r,y=16+Math.sin(a)*r;line(16,16,x-3,y+2,'#48478e',3);line(x-3,y+2,x+2,y-2,'#83cfff',2);line(x+2,y-2,x,y,'#f7ffff',2);}if(f<5)ellipse(16,16,4,4,'#f1fbff');}
+   else if(row===25||row===27){const ember=row===27,cx=ember?19:20,cy=16,rad=ember?6:10,heat=['#702231','#b42f24','#ef5424','#ff922a','#ffd34e','#fff2b5'];
+     for(let k=0;k<7;k++){const yy=cy+(k-3)*2.6,xx=2+(k%3)*2+Math.sin(angle+k)*2;poly([[xx,yy],[cx-3,yy-3],[cx+2,cy],[cx-5,yy+4]],heat[k%3]);poly([[xx+5,yy],[cx-1,yy-1],[cx+2,cy],[cx-4,yy+2]],heat[3+k%2]);}
+     for(let layer=0;layer<5;layer++){const rr=rad-layer*rad*.155,pts=Array.from({length:18},(_,k)=>{const th=k*Math.PI/9,noise=1+.13*Math.sin(th*5+angle+layer*.7)+.075*Math.cos(th*9-angle);return[cx+Math.cos(th)*rr*noise,cy+Math.sin(th)*rr*noise];});poly(pts,heat[layer]);}
+     for(let k=0;k<5;k++){const th=angle+k*1.25,r=rad*(.3+.11*(k%3));line(cx+Math.cos(th)*r,cy+Math.sin(th)*r,cx+Math.cos(th+.7)*r,cy+Math.sin(th+.7)*r,heat[4+k%2],2);}
+     for(let k=0;k<6;k++){const xx=2+(k*5+f*3)%13,yy=6+(k*7+f)%21;rect(xx,yy,k%3===0?2:1,1,heat[3+k%3]);}
+   }else if(row===28){const heat=['#8b292c','#d43a24','#f56a25','#ffbd40','#ffe99a'];for(let k=0;k<5;k++){const y=8+k*4,shift=Math.sin(angle+k*1.2)*3,tip=1+(k*3+f*2)%8;poly([[tip,y+shift],[17,y-5],[30,16],[15,y+5]],heat[k%3]);poly([[tip+7,y+shift],[20,y-2],[30,16],[18,y+3]],heat[3+k%2]);}for(let k=0;k<5;k++)rect(2+(k*7+f*3)%17,6+(k*9+f*2)%20,2,1,heat[3+k%2]);
+   }else if(row===29){const heat=['#762627','#c03b24','#f16b27','#ffaf39','#ffe08a'];ellipse(16,26,13,4,'#8c392a');for(let k=0;k<6;k++){const x=5+k*4,ht=8+5*Math.sin(angle+k*1.7)+k%3*2,lean=3*Math.sin(angle+k);poly([[x-4,26],[x-3,19],[x+lean,26-ht],[x+3,20],[x+4,26]],heat[k%3+1]);poly([[x-2,26],[x+lean*.6,25-ht*.65],[x+2,26]],heat[3+k%2]);}for(let k=0;k<4;k++)rect(7+(k*7+f)%19,5+(k*4-f+8)%15,1,1,'#ffcc61');
+   }else if(row===26){const rr=3+f*1.65,heat=['#702231','#bb3928','#f45c26','#ff9a30','#ffe46c','#fff2b5'];for(let k=0;k<12;k++){const th=k*Math.PI/6+angle*.12,r=rr*(.75+.22*Math.sin(k*2+f)),xx=16+Math.cos(th)*r,yy=16+Math.sin(th)*r;poly([[16,16],[16+Math.cos(th-.31)*r*.7,16+Math.sin(th-.31)*r*.7],[xx,yy],[16+Math.cos(th+.31)*r*.7,16+Math.sin(th+.31)*r*.7]],heat[f<3?2+k%3:k%3]);if(f>2){const out=rr+2+(k%2);rect(16+Math.cos(th)*out,16+Math.sin(th)*out,2,2,heat[3+k%3]);}}
+     if(f<4){ellipse(16,16,rr*.70,rr*.70,heat[4]);ellipse(16,16,rr*.35,rr*.35,heat[5]);}else for(let k=0;k<18;k++){const th=k*Math.PI/9,rad=rr*.8;rect(16+Math.cos(th)*rad,16+Math.sin(th)*rad,2,1,heat[k%3+1]);}
+   }else{
+     for(let k=0;k<4;k++){const a=angle+k*Math.PI/2;poly([[16,16],[16+Math.cos(a)*13,16+Math.sin(a)*13],[16+Math.cos(a+.45)*5,16+Math.sin(a+.45)*5]],'#252e45');line(16+Math.cos(a)*4,16+Math.sin(a)*4,16+Math.cos(a)*11,16+Math.sin(a)*11,'#d4e4e9');}ellipse(16,16,3,3,'#8597a6');ellipse(16,16,1.5,1.5,'#273044');
+   }
+   ctx.drawImage(s.c,f*32,row*32);
+ }
+ return c;
+}
+// Three expressive foliage silhouettes; large clusters, 4 shades, no real-world texture.
+function makeTreeSheet(){
+ const c=canvas(TREE_W*3,TREE_H),ctx=c.getContext('2d');
+ const palettes=[['#253e3b','#396b49','#65934c','#9bb75d','#c2ce78'],['#29483e','#3c795b','#75a75b','#a6cb75','#c7d990'],['#533c44','#a15d67','#cd8791','#efb8ac','#ffe0ba']];
+ for(let f=0;f<3;f++){const s=cell(40,48),{poly,rect,ellipse,line}=s,p=palettes[f];
+  poly([[17,45],[15,47],[24,47],[22,44],[22,30],[26,25],[23,25],[20,32],[17,28],[15,28],[17,36]],'#634d43');rect(18,33,3,13,'#a57954');rect(19,34,1,10,'#c59a65');
+  const clusters=[[11,23,10,9],[29,23,10,9],[20,13,13,12],[7,29,6,5],[31,30,8,6],[19,29,12,9]];
+  for(const [x,y,rx,ry] of clusters){ellipse(x,y,rx,ry,p[0]);ellipse(x,y-1,rx-1,ry-1,p[1]);ellipse(x-1,y-3,rx-2,Math.max(2,ry-3),p[2]);}
+  for(const [x,y] of [[8,18],[14,10],[25,8],[29,19],[17,24],[6,28],[27,27]]){poly([[x-3,y],[x,y-3],[x+5,y-2],[x+4,y+1],[x,y+3]],p[3]);rect(x,y-2,2,1,p[4]);}
+  line(16,39,13,35,'#80604b',2);ctx.drawImage(s.c,f*40,0);
+ }
+ return c;
+}
+function makeWorldPattern(){
+ const c=canvas(64,16),ctx=c.getContext('2d');
+ for(let y=0;y<16;y++)for(let x=0;x<64;x++){let k=Math.floor(x/16),u=x%16,v=y;let b=248;
+   if(k===0)b=((u*13+v*7)%19===0)?211:248;
+   if(k===1)b=(v%8===0||u%8===0)?204:250;
+   if(k===2)b=(u%5===0)?205:(u+v*3)%11===0?230:250;
+   if(k===3)b=(v%4===0||((u+(Math.floor(v/4)%2)*4)%8===0))?190:248;
+   ctx.fillStyle='rgb('+b+','+b+','+b+')';ctx.fillRect(x,y,1,1);
+ }
+ return c;
+}
+function makeSheets(){return {jiraiya:makeActorSheet('jiraiya'),jiraiyaSage:makeActorSheet('jiraiyaSage'),player:makeActorSheet('player'),sasuke:makeActorSheet('sasuke'),sasukeSharingan:makeActorSheet('sasukeSharingan'),sasukeMarked:makeActorSheet('sasukeMarked'),sasukeCursed:makeActorSheet('sasukeCursed'),sasukeInjured:makeActorSheet('sasukeInjured'),lee:makeActorSheet('lee'),neji:makeActorSheet('neji'),gaara:makeActorSheet('gaara'),orochimaru:makeActorSheet('orochimaru'),kimimaro:makeActorSheet('kimimaro'),kimiMarked:makeActorSheet('kimiMarked'),kimiCursed:makeActorSheet('kimiCursed'),whiteSerpent:makeActorSheet('whiteSerpent'),shukaku:makeActorSheet('shukaku'),npc:makeActorSheet('npc'),enemy:makeActorSheet('enemy'),thrower:makeActorSheet('thrower'),guard:makeActorSheet('guard'),clone:makeActorSheet('clone'),sakura:makeActorSheet('sakura'),teuchi:makeActorSheet('teuchi'),tenten:makeActorSheet('tenten'),iruka:makeActorSheet('iruka'),kabuto:makeActorSheet('kabuto'),zabuza:makeActorSheet('zabuza'),haku:makeActorSheet('haku'),shikamaru:makeActorSheet('shikamaru'),smear:makeSmearSheet(),fx:makeFXSheet(),trees:makeTreeSheet(),world:makeWorldPattern()};}
+
+return {makeActorSheet,ANIMS}})();
+// Exact pixel crops from approved Kyubi review 02. Aura directional rows (side mirrored), arm, white-swirl purple orb.
+const KYUBI_ASSETS={"aura":"data:image/png;base64,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","arm":"data:image/png;base64,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","orb":"data:image/png;base64,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"};
+
+// Shared field VFX; exact approved Kyubi atlas, with procedural fallbacks.
+
+function createFieldVFX(){
+ const images={};for(const [key,src] of Object.entries(KYUBI_ASSETS)){try{const i=new Image();i.onload=()=>{images[key]=i};i.src=src}catch{}}
+ let tails=null;try{const tailCanvas=document.createElement('canvas');tailCanvas.width=512;tailCanvas.height=512;const tc=tailCanvas.getContext('2d');tc.imageSmoothingEnabled=false;
+ for(let count=1;count<=2;count++)for(let row=0;row<4;row++)for(let f=0;f<8;f++)for(let j=0;j<count;j++){const ox=f*64,oy=((count-1)*4+row)*64,side=row===1?1:row===2?-1:(j%2?1:-1),wave=Math.sin(f*Math.PI/4+j*1.9),spread=count===2?(j?1:-1):side;for(let k=0;k<=24;k++){const u=k/24,x=Math.round(32+side*9*u+spread*(12+j*3)*Math.sin(u*1.6)+wave*4*u),y=Math.round(43-26*u+4*Math.sin(u*4+j)),w=Math.max(1,Math.round(5*(1-u)));tc.fillStyle='#781d33';tc.fillRect(ox+x-w,oy+y-w,w*2+1,w*2+1);tc.fillStyle='#d73e43';tc.fillRect(ox+x-w+1,oy+y-w+1,Math.max(1,w*2-1),Math.max(1,w*2-1));tc.fillStyle='#ff864a';tc.fillRect(ox+x,oy+y,Math.max(1,w),Math.max(1,w));}}tails=tailCanvas;}catch{}
+ function aura(c,q,dir,t,burst=0){const size=q[2]*4.8,f=Math.floor(t*13)%8,i=images.aura;c.save();c.imageSmoothingEnabled=false;c.globalAlpha=.93;
+ // Original 64px directional aura cells; tails are separate in classic renderer.
+ if(tails)c.drawImage(tails,f*64,(4+dir)*64,64,64,q[0]-size/2,q[1]-size*51/64,size,size);if(i)c.drawImage(i,f*64,dir*64,64,64,q[0]-size/2,q[1]-size*51/64,size,size);
+ else{c.strokeStyle='#e34b39';c.lineWidth=3;c.beginPath();c.ellipse(q[0],q[1]-size*.25,size*.22,size*.34,0,0,Math.PI*2);c.stroke();}
+ if(!tails){ for(let n=0;n<2;n++){c.strokeStyle=n?'#ff8656':'#a92d3e';c.lineWidth=Math.max(2,size*(n?.025:.055));for(let k=0;k<2;k++){const sign=k?1:-1,wave=Math.sin(t*9+k);c.beginPath();c.moveTo(q[0],q[1]-size*.14);c.quadraticCurveTo(q[0]+sign*size*.24,q[1]-size*.19,q[0]+sign*size*.34+wave*size*.035,q[1]-size*.52);c.stroke();}}
+}
+ if(burst>0){c.globalAlpha=burst/.85;c.strokeStyle='#ff9750';c.lineWidth=3;c.beginPath();c.ellipse(q[0],q[1],size*(1-burst/.85),size*.4*(1-burst/.85),0,0,Math.PI*2);c.stroke();}c.restore();}
+ function claw(c,a,b,extend){const i=images.arm;if(!i||extend<.12)return false;const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);if(len<3)return false;c.save();c.translate(a[0],a[1]);c.rotate(Math.atan2(dy,dx));c.imageSmoothingEnabled=false;const f=extend>.8?3:extend>.45?4:5;c.drawImage(i,f*64,0,64,24,0,-a[2]*.9,len,a[2]*1.8);c.restore();return true;}
+ function orb(c,q,t,size){const i=images.orb;if(!i)return false;c.save();c.imageSmoothingEnabled=false;c.drawImage(i,(Math.floor(t*28)%12)*48,0,48,48,q[0]-size/2,q[1]-size/2,size,size);c.restore();return true;}
+ function smoke(c,q,progress){c.save();c.globalAlpha=Math.min(1,(1-progress)*2.2);for(let n=0;n<9;n++){const a=n*2.39996,r=q[2]*(.18+progress*.8)*(n%3+1)/3,x=q[0]+Math.cos(a)*r,y=q[1]+Math.sin(a)*r*.65-progress*q[2]*.45,sz=q[2]*(.27+progress*.25);c.fillStyle=n%3?'#fffdf5':'#c9d2da';c.beginPath();c.arc(x,y,sz,0,Math.PI*2);c.fill();}c.restore();}
+ function charge(c,q,t){c.save();for(let i=0;i<12;i++){const a=i*2.39996+t*5,u=(t*1.8+i/12)%1,r=q[2]*(.7+.22*Math.sin(a*2));c.globalAlpha=(1-u)*.8;c.fillStyle=i%2?'#e0f9ff':'#56c9ff';const x=q[0]+Math.cos(a)*r*(1-u*.4),y=q[1]-u*q[2]*2;c.fillRect(x,y,3,5);}c.globalAlpha=.7;c.strokeStyle='#69dcff';c.lineWidth=2;c.beginPath();c.ellipse(q[0],q[1],q[2]*(.8+.12*Math.sin(t*12)),q[2]*.30,0,0,Math.PI*2);c.stroke();c.restore();}
+ return {aura,claw,orb,smoke,charge,loaded:()=>Object.keys(images)};
+}
+
+
+const $=id=>document.getElementById(id);
+const effects=createFieldVFX(), oldSheet=baseline.makeActorSheet('player',null,true), newSheet=candidate.makeActorSheet('player',null,true);
+const tinted=new Map();
+function frame(sheet,d,f,tint){const key=(sheet===oldSheet?'old':'new')+':'+d+':'+f+':'+tint;if(tinted.has(key))return tinted.get(key);const c=document.createElement('canvas');c.width=24;c.height=32;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(sheet,f*24,d*32,24,32,0,0,24,32);if(tint){const i=g.getImageData(0,0,24,32);for(let j=0;j<i.data.length;j+=4){i.data[j+1]=Math.round(i.data[j+1]*184/255);i.data[j+2]=Math.round(i.data[j+2]*160/255)}g.putImageData(i,0,0)}tinted.set(key,c);return c}
+const actions={idle:[0,1],walk:[2,3,4,5],run:[6,7,8,9],combo:[10,11,12,16,17,18,19,20,21],rasengan:[38,39,40,41,42,43],guard:[44,45,46,47],charge:[48,49,50,51],dash:[52,53,54,55]};
+const fps={idle:3,walk:9,run:13,combo:12,rasengan:12,guard:8,charge:8,dash:24};
+let start=performance.now(),pausedAt=null,last=0;
+$('play').onclick=()=>{if(pausedAt===null){pausedAt=last;$('play').textContent='Resume'}else{start=performance.now()-pausedAt*1000;pausedAt=null;$('play').textContent='Pause'}};
+$('action').onchange=()=>{start=performance.now();if(pausedAt!==null)pausedAt=0};
+$('size').oninput=()=>{document.documentElement.style.setProperty('--zoom',$('size').value);$('zoomLabel').textContent=$('size').value+'×'};
+function paint(canvas,sheet,d,f,t,newLayer){const g=canvas.getContext('2d');g.clearRect(0,0,96,80);g.imageSmoothingEnabled=false;g.fillStyle='#212b30';g.fillRect(0,0,96,80);g.fillStyle='#35413e';g.fillRect(0,62,96,18);g.fillStyle='#151d20';g.beginPath();g.ellipse(48,61,10,3,0,0,Math.PI*2);g.fill();const q=[48,61,16],drawBody=()=>g.drawImage(frame(sheet,d,f,$('tint').checked),36,29);if($('aura').checked&&newLayer)effects.aura(g,q,d,t,0);drawBody();if($('aura').checked&&!newLayer)effects.aura(g,q,d,t,0)}
+function tick(now){const t=pausedAt===null?(now-start)/1000:pausedAt;last=t;const action=$('action').value,seq=actions[action],f=seq[Math.floor(t*fps[action])%seq.length],d=Number($('direction').value);paint($('before'),oldSheet,d,f,t,false);paint($('after'),newSheet,d,f,t,true);$('frame').textContent='Atlas column '+f+' / 63 · row '+d+' / 3';$('status').textContent=effects.loaded().includes('aura')?'Original aura atlas loaded':'Loading aura (fallback active)';requestAnimationFrame(tick)}
+function exportPng(sheet,name){const a=document.createElement('a');a.download=name;a.href=sheet.toDataURL('image/png');a.click()}
+$('download').onclick=()=>exportPng(newSheet,'kyubi-face-review-3c614.png');$('downloadOld').onclick=()=>exportPng(oldSheet,'kyubi-original-3c613.png');
+const contact=$('contact'),ctx=contact.getContext('2d');ctx.imageSmoothingEnabled=false;const cols=[0,6,11,17,20,38,41,45,50,53];for(let d=0;d<4;d++)for(let i=0;i<cols.length;i++){ctx.drawImage(newSheet,cols[i]*24,d*32,24,32,i*28+2,d*36+2,24,32)}
+requestAnimationFrame(tick);
+</script></body></html>

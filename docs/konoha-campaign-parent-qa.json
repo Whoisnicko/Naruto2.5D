@@ -1,0 +1,15 @@
+{
+  "checks": [
+    "entry too far blocked",
+    "boss entry blocked",
+    "pause opens iframe and bridge",
+    "unrelated caller rejected",
+    "legitimate session acquired",
+    "discard no state or save mutation",
+    "reopen after discard",
+    "apply and Kakashi handoff",
+    "return sync original engine and save after interaction"
+  ],
+  "passed": 9,
+  "method": "actual parent entry code with simulated DOM and engine; no browser"
+}

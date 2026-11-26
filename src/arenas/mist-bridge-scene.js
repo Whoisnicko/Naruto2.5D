@@ -1,6 +1,7 @@
 // Art-review scene. The combat contract and approved geometry stay in mist-bridge-data.
 import {MIST_BRIDGE,mirrorPoints} from './mist-bridge-data.js';
 import {BRIDGE_ART,deckArt,waterArt,mistArt} from './mist-bridge-art.js?v=6a2';
+import {createBridgeNostalgia} from './mist-bridge-nostalgia.js?v=6a3';
 export async function createMistBridge({THREE,scene,assetURL}){
  const A=MIST_BRIDGE,loader=new THREE.TextureLoader(),failures=[],maps={};
  // Full-length non-repeating generated art; original textures or solid materials as fallbacks.
@@ -25,11 +26,12 @@ export async function createMistBridge({THREE,scene,assetURL}){
  for(const z of [-27,-9,9,27])for(const x of [-11.5,11.5]){box(x,-2.30,z,2.25,2.7,2.5,'#455e63','support');box(x,-.94,z,3.1,.40,3.2,'#748988','support-cap');}
  // Decorative stone entrance posts far beyond combat radius.
  for(const z of [-29,29])for(const x of [-12.8,12.8]){box(x,.12,z,1.65,.24,1.65,'#6c8179','gate-base');box(x,1.6,z,1.1,3.2,1.1,'#7f938a','gate-post');box(x,3.24,z,1.45,.22,1.45,'#b3bfad','gate-cap');box(x,3.40,z,1.15,.10,1.15,'#d3d7c2','gate-highlight');}
- // Low-cost mist wisps over the water only, kept out of the fight area.
+ const nostalgia=createBridgeNostalgia({THREE,group,mistTexture:maps.mist});
+ // Retain the approved mist wisps over the water.
  const mist=[];if(maps.mist)for(let i=0;i<14;i++){const sign=i%2?1:-1,x=sign*(23+(i%4)*8),z=-43+(i*17)%86;const g=new THREE.PlaneGeometry(15+(i%3)*4,11);g.rotateX(-Math.PI/2);const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({map:maps.mist,transparent:true,depthWrite:false,opacity:.42,fog:false}));m.position.set(x,A.water.level+.05,z);m.renderOrder=1;group.add(m);mist.push({m,x,z,sign,i});}
- function updateAtmosphere(t){for(const a of mist){a.m.position.x=a.x+Math.sin(t*.16+a.i)*1.4;a.m.position.z=a.z+Math.sin(t*.11+a.i*2)*2;}}
+ function updateAtmosphere(t){for(const a of mist){a.m.position.x=a.x+Math.sin(t*.16+a.i)*1.4;a.m.position.z=a.z+Math.sin(t*.11+a.i*2)*2;}nostalgia.update(t);}
  const guides=new THREE.Group();guides.name='optional collision overlay';scene.add(guides);
- const ring=(x,z,r,color)=>{const geom=new THREE.RingGeometry(r-.06,r+.06,80);geom.rotateX(-Math.PI/2);const m=new THREE.Mesh(geom,new THREE.MeshBasicMaterial({color,transparent:true,opacity:.75,depthWrite:false,side:THREE.DoubleSide}));m.position.set(x,.08,z);guides.add(m);};
+ const ring=(x,z,r,color)=>{const geom=new THREE.RingGeometry(r-.06,r+.06,80);geom.rotateX(-Math.PI/2);const m=new THREE.Mesh(geom,new THREE.MeshBasicMaterial({color,transparent:true,opacity:.75,depthWrite:false,side:THREE.DoubleSide}));m.position.set(x,.08,z);m.renderOrder=3;guides.add(m);};
  ring(0,0,A.radius,'#ead49d');for(const p of mirrorPoints())ring(p.x,p.z,.47,'#95e6f3');guides.visible=false;
- return {group,guides,failures,updateAtmosphere};
+ return {group,guides,failures,updateAtmosphere,setDeckMist:nostalgia.setVisible,deckMistCount:nostalgia.count};
 }

@@ -1,7 +1,7 @@
 import * as THREE from '../../vendor/three.module.min.js';
 import {makeActorSheet,ACTOR_W,ACTOR_H,ANIMS} from '../pixel-art.js';
 import {MIST_BRIDGE,arenaStep,arenaFrustum} from './mist-bridge-data.js';
-import {createMistBridge} from './mist-bridge-scene.js?v=6a2';
+import {createMistBridge} from './mist-bridge-scene.js?v=6a3';
 const $=id=>document.getElementById(id),stage=$('stage'),keys=new Set();
 let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;stage.append(renderer.domElement);}catch(e){$('loading').textContent='WebGL unavailable. Return to Sandbox and enable hardware acceleration.';throw e;}
 const scene=new THREE.Scene();scene.background=new THREE.Color('#8faeb8');scene.fog=new THREE.FogExp2('#a1bbc3',.0017);
@@ -13,15 +13,15 @@ let p={...A.spawn},dir=2,phase=0,overview=false,last=performance.now(),clock=0,a
 const sheets=new Map(),up=new THREE.Vector3();
 function makeSprite(kind,x,z,d=0,kyubi=false){const key=kind+':'+kyubi;let sheet=sheets.get(key);if(!sheets.has(key)){try{sheet=makeActorSheet(kind,null,kyubi);}catch{sheet=null;}sheets.set(key,sheet);}
  const c=document.createElement('canvas');c.width=ACTOR_W;c.height=ACTOR_H;const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.magFilter=tex.minFilter=THREE.NearestFilter;tex.generateMipmaps=false;
- const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1.5,2),new THREE.MeshBasicMaterial({map:tex,transparent:true,alphaTest:.1,depthWrite:false,depthTest:true,fog:false}));scene.add(mesh);
- const shadow=new THREE.Mesh(new THREE.CircleGeometry(.63,24),new THREE.MeshBasicMaterial({color:'#253b43',transparent:true,opacity:.34,depthWrite:false,fog:false}));shadow.rotation.x=-Math.PI/2;shadow.scale.set(1,.55,1);scene.add(shadow);
+ const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1.5,2),new THREE.MeshBasicMaterial({map:tex,transparent:true,alphaTest:.1,depthWrite:false,depthTest:true,fog:false}));mesh.renderOrder=4;scene.add(mesh);
+ const shadow=new THREE.Mesh(new THREE.CircleGeometry(.63,24),new THREE.MeshBasicMaterial({color:'#253b43',transparent:true,opacity:.34,depthWrite:false,fog:false}));shadow.rotation.x=-Math.PI/2;shadow.scale.set(1,.55,1);shadow.renderOrder=2;scene.add(shadow);
  return {kind,x,z,dir:d,mesh,shadow,ctx,tex,sheet,last:''};
 }
 function dispose(a){scene.remove(a.mesh,a.shadow);a.mesh.geometry.dispose();a.mesh.material.dispose();a.shadow.geometry.dispose();a.shadow.material.dispose();a.tex.dispose();}
 let hero;function setPhase(i){if(!A.stages[i])return;for(const a of actors)dispose(a);if(hero)dispose(hero);phase=i;hero=makeSprite('player',p.x,p.z,dir,!!A.stages[i].kyubi);actors=A.stages[i].actors.map(a=>makeSprite(a.kind,a.x,a.z,1));$('phase').value=String(i);$('phaseName').textContent=A.stages[i].name; }
 for(const [i,s] of A.stages.entries()){const o=document.createElement('option');o.value=String(i);o.textContent=(i+1)+' · '+s.name;$('phase').append(o);}
 setPhase(0);$('phase').onchange=()=>setPhase(Number($('phase').value));$('overview').onclick=()=>{overview=!overview;$('overview').textContent=overview?'Follow character':'Overview';$('overview').setAttribute('aria-pressed',String(overview));};
-$('guides').onchange=e=>world.guides.visible=e.target.checked;$('reset').onclick=()=>{p={...A.spawn};dir=2;};$('exit').onclick=()=>location.assign('./konoha-three-lab.html?sandbox=1&v=3c77');
+$('guides').onchange=e=>world.guides.visible=e.target.checked;const mistToggle=$('deckMist');mistToggle.disabled=world.deckMistCount===0;mistToggle.checked=world.deckMistCount>0;mistToggle.onchange=e=>world.setDeckMist(e.target.checked);$('reset').onclick=()=>{p={...A.spawn};dir=2;};$('exit').onclick=()=>location.assign('./konoha-three-lab.html?sandbox=1&v=3c77');
 function resize(){width=Math.max(1,stage.clientWidth);height=Math.max(1,stage.clientHeight);renderer.setSize(width,height,false);}new ResizeObserver(resize).observe(stage);resize();
 const movement=['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','shift'];addEventListener('keydown',e=>{if(['SELECT','INPUT','BUTTON'].includes(e.target?.tagName))return;const k=e.key.toLowerCase();if(movement.includes(k)){e.preventDefault();keys.add(k);}});addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>keys.clear());
 for(const b of document.querySelectorAll('[data-key]')){const k=b.dataset.key;b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);keys.add(k);};b.onpointerup=b.onpointercancel=b.onlostpointercapture=()=>keys.delete(k);}

@@ -82,3 +82,6 @@ body[data-mode=campaign] #fieldQuest{top:12px}
 
 /* Original Chronicles and branching tree; no changes to world scene or combat. */
 #releaseModal{box-sizing:border-box;max-width:calc(100vw - 20px);max-height:calc(100dvh - 20px);padding:8px;border:0;background:transparent;color:#f5e6c9;overflow:auto}#releaseModal::backdrop{background:#08101bd9}#releaseModal #journalWindow{overflow:auto;scrollbar-width:thin}#journalWindow[data-page=bingo] #fieldSideQuests{display:none}#fieldSideQuests{border-top:1px solid #a57e4c;padding-top:6px;font-size:12px;color:#ead6b4}#fieldSideQuests p{margin:6px 0}#rpgWindow #skillTree.ninja-tree .tree-node:disabled{opacity:1}#fieldPerfBreakdown{font:10px/1.5 ui-monospace,monospace;overflow-wrap:anywhere}
+
+/* Clickable diagnostics without a permanent toolbar. */
+#fieldFPS{pointer-events:auto;cursor:pointer;border:1px solid #7f9670;font-weight:700}#fieldFPS:hover,#fieldFPS:focus-visible{background:#314538;outline:1px solid #c6e9b2}#fieldPerfCopyText{width:100%;font:10px ui-monospace,monospace;background:#172b39;color:#e5e9df;border:1px solid #9d825b}#fieldPacingStats{overflow-wrap:anywhere}

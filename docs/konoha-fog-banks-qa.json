@@ -1,0 +1,24 @@
+{
+  "checks": [
+    "two 128x128 textures",
+    "irregular opacity range",
+    "different masks",
+    "deterministic texture",
+    "lazy allocation",
+    "bake once",
+    "20Hz composite at 60FPS",
+    "moving clouds",
+    "adaptive quality on slow frames",
+    "quality recovers",
+    "reduced motion static",
+    "fallback if canvas unavailable",
+    "old fog retained and other weather unchanged"
+  ],
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "mean": 25.41680908203125,
+    "sd": 35.71727069571323
+  },
+  "method": "texture data and simulated Canvas commands; not real FPS"
+}

@@ -53,6 +53,10 @@ export function createAudio(){
   }catch{}}
   if((!on||!enabled)&&ambience){try{ambience.src.stop();ambience.src.disconnect();ambience.filter.disconnect();ambience.gain.disconnect();}catch{}ambience=null;}
  }
+ // Dedicated, audible original defeat cue, independent of ambient music scheduling.
+ let defeatBus=null,defeatNodes=[];
+ function stopDefeat(){const bus=defeatBus;defeatBus=null;for(const o of defeatNodes){try{o.stop();o.disconnect()}catch{}}defeatNodes=[];try{bus?.disconnect()}catch{}}
+ function playDefeat(){if(!enabled)return false;unlock();if(!ctx||!master||ctx.state!=='running')return false;if(defeatBus)return true;try{const bus=ctx.createGain();bus.gain.value=.64;bus.connect(master);defeatBus=bus;const now=ctx.currentTime+.025;const notes=[[69,0,.72],[65,.76,.68],[64,1.49,.69],[62,2.26,1.2],[60,3.62,.7],[57,4.39,.65],[62,5.13,1.15]],bass=[[50,0,2.1],[46,2.1,2.1],[45,4.2,2.05]];function note(n,at,dur,amp,type){const o=ctx.createOscillator(),env=ctx.createGain(),t=now+at;o.type=type;o.frequency.value=440*2**((n-69)/12);env.gain.setValueAtTime(.0001,t);env.gain.exponentialRampToValueAtTime(amp,t+.06);env.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(env);env.connect(bus);defeatNodes.push(o);o.onended=()=>{o.disconnect();env.disconnect();};o.start(t);o.stop(t+dur+.01);}for(const [n,t,len] of notes){note(n,t,len,.25,'triangle');note(n+12,t,len*.75,.035,'sine');}for(const [n,t,len] of bass){note(n,t,len,.15,'sine');note(n+7,t,len,.065,'sine');}return true;}catch(e){stopDefeat();return false;}}
  function music(dt,mood='explore'){
  if(!musicEnabled||!enabled||!ctx||ctx.state!=='running')return;
  if(mood!==lastMood){lastMood=mood;musicClock=0;musicStep=0;}
@@ -60,9 +64,9 @@ export function createAudio(){
  try{const o=ctx.createOscillator(),g=ctx.createGain(),now=ctx.currentTime;voices++;o.type=mood==='boss'||mood==='defeat'?'triangle':'sine';o.frequency.value=440*2**((n-69)/12);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(mood==='defeat'?.075:.045,now+(mood==='defeat'?.055:.018));g.gain.exponentialRampToValueAtTime(.0001,now+interval*.9);o.connect(g);g.connect(master);o.onended=()=>{voices--;o.disconnect();g.disconnect();};o.start(now);o.stop(now+interval);}catch{voices=Math.max(0,voices-1);}
  }
  function setMusic(v){musicEnabled=Boolean(v);try{localStorage.setItem('shinobi-music',musicEnabled?'on':'off');}catch{}}
- function setEnabled(v){enabled=Boolean(v);try{localStorage.setItem('shinobi-sound',enabled?'on':'off');}catch{}if(enabled)unlock();else wind(false);}
+ function setEnabled(v){enabled=Boolean(v);if(!enabled)stopDefeat();try{localStorage.setItem('shinobi-sound',enabled?'on':'off');}catch{}if(enabled)unlock();else wind(false);}
  function setVolume(v){volume=Math.max(0,Math.min(1,Number(v)||0));if(master)master.gain.value=volume;try{localStorage.setItem('shinobi-volume',String(volume));}catch{}}
- return {unlock,play,wind,music,restartMusic(){lastMood='';musicClock=0;musicStep=0;},setMusic,get musicEnabled(){return musicEnabled},setEnabled,setVolume,get enabled(){return enabled},get volume(){return volume}};
+ return {unlock,play,wind,music,playDefeat,stopDefeat,restartMusic(){lastMood='';musicClock=0;musicStep=0;},setMusic,get musicEnabled(){return musicEnabled},setEnabled,setVolume,get enabled(){return enabled},get volume(){return volume}};
 }
 export function createFeedback(view,layer){
  let freeze=0,shake=0,clock=0,enabled=true,intensity=1,kickX=0,kickZ=0,zoom=0,lastDodge=-99;const numbers=[],pool=[],bursts=Array.from({length:8},()=>({life:0}));

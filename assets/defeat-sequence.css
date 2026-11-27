@@ -10,3 +10,14 @@
 .defeat-title{display:block;font:italic 950 clamp(48px,11vw,124px)/1 Impact,'Arial Black',sans-serif;letter-spacing:.035em;color:#f0d7c8;-webkit-text-stroke:2px #39232a;paint-order:stroke fill;text-shadow:3px 4px #9e3c42,7px 7px #211923;transform:rotate(-3deg);padding:12px 30px 18px;background:linear-gradient(100deg,transparent,#271c28 12%,#4c2730 50%,#221927 89%,transparent);clip-path:polygon(0 14%,10% 17%,7% 0,91% 3%,88% 15%,100% 22%,96% 83%,100% 94%,79% 100%,4% 92%,8% 75%,0 80%)}
 .defeat-sub{display:block;margin-top:9px;color:#dfc8b9;font:600 clamp(12px,2vw,18px)/1.4 system-ui,sans-serif;letter-spacing:.07em;text-shadow:0 2px 4px #000}
 @media(max-width:600px),(max-height:480px){.defeat-title{font-size:clamp(42px,12vw,78px);padding:8px 12px 13px;-webkit-text-stroke:1px #39232a;text-shadow:2px 3px #9e3c42,4px 4px #211923}.defeat-dialogue{padding:9px 12px;bottom:12vh}.defeat-speaker{font-size:12px}.defeat-line{font-size:14px}.defeat-banner{top:37%}}
+
+/* Oversized brush-stroke typography and drifting autumn leaves. */
+.defeat-banner{top:43%;width:min(94vw,1040px);max-width:96vw}
+.defeat-title{font-size:clamp(68px,14vw,178px);letter-spacing:-.015em;color:#fff0df;-webkit-text-stroke:3px #23131c;text-shadow:4px 5px #b4473c,9px 10px #24151b,0 0 25px #c14c3e66;padding:17px 22px 27px;background:linear-gradient(105deg,transparent 0%,#24151c 9%,#782e33 43%,#411b25 70%,#17121c 91%,transparent 100%);clip-path:polygon(0 27%,7% 18%,3% 8%,24% 10%,32% 0,92% 3%,87% 14%,100% 24%,95% 70%,99% 86%,79% 89%,69% 100%,6% 96%,10% 79%,0 73%);}
+.defeat-sub{font:italic 700 clamp(14px,2.2vw,22px)/1.4 Georgia,serif;letter-spacing:.10em}
+.defeat-leaves{position:absolute;inset:0;pointer-events:none;opacity:calc(1 - var(--defeat-fade,0));overflow:hidden}
+.defeat-leaves i{position:absolute;left:var(--x);top:-10%;width:var(--size);height:calc(var(--size)*.65);background:linear-gradient(130deg,#dca168,#864330 70%);border-radius:0 75% 0 75%;box-shadow:0 1px 2px #0005;animation:defeat-leaf var(--duration) linear var(--delay) infinite;transform-origin:center}
+.defeat-leaves i::after{content:'';position:absolute;left:12%;top:48%;width:80%;height:1px;background:#e8b98677;transform:rotate(20deg)}
+@keyframes defeat-leaf{0%{transform:translate(0,-4vh) rotate(20deg);opacity:0}12%{opacity:.8}45%{transform:translate(-5vw,48vh) rotate(170deg)}100%{transform:translate(7vw,115vh) rotate(410deg);opacity:.2}}
+@media(max-width:600px),(max-height:480px){.defeat-title{font-size:clamp(43px,13vw,85px);padding:10px 8px 16px;-webkit-text-stroke:1px #23131c;text-shadow:2px 3px #b4473c,5px 5px #24151b}.defeat-banner{top:37%}}
+@media(prefers-reduced-motion:reduce){.defeat-leaves{display:none}}

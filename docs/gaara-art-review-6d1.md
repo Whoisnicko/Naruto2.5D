@@ -1,0 +1,3 @@
+# 6D.1 — Gaara Desert Ruins, art review
+
+6C.4D approved 5/5. Art-only isolated Gaara practice; main untouched. Radius 13, boss phases, rewards and mechanics unchanged. Procedural sand, ruined masonry, gateway, pillars, banners, dunes, rubble and warm light, 100 dust motes. Solid color fallback and original arena if presentation fails. Four syntax smoke checks plus radius, pillar clearance and practice gate checks. No browser visual or performance verification. Keep 17 historical 6C.3 checks. Await artistic approval before campaign integration.

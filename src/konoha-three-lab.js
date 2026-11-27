@@ -24,7 +24,7 @@ import {createAudio,CONTACT_FEEL} from './feedback.js';
 import {createPerformanceController,PERFORMANCE_PRESETS} from './performance-core.js';
 import {CHESTS} from './world-data.js';
 import {createForestCombat} from './konoha-combat.js?v=6c3';
-import {campaignTestAllowed,readCampaignGod,writeCampaignGod,syncGodButton} from './campaign-test-tools.js?v=6c21';
+import {campaignTestAllowed,readCampaignGod,writeCampaignGod,syncGodButton} from './campaign-test-tools.js?v=6c4';
 import {canUseAdvancedTechnique} from './kyubi-technique-rules.js?v=6c3';
 import {readGod,writeGod,sandboxStorage,syncFieldGod} from './sandbox-preferences.js?v=6b2';
 import {REGIONS,PORTALS,FIELD_CHESTS,regionBlocked,regionStep,createRegionRouter} from './konoha-regions.js?v=3c64';

@@ -21,7 +21,7 @@ import {MOBILITY,createMobility,updateMobility,TRAVEL} from './konoha-mobility.j
 import {createVillage} from './konoha-village.js?v=3c77';
 import {COMBAT,actionResource} from './combat-data.js';
 import {createAudio,CONTACT_FEEL} from './feedback.js?v=6c4b';
-import {createLevelUp,updateRankHUD} from './level-up-feedback.js?v=6c4c';
+import {createLevelUp,updateRankHUD} from './level-up-feedback.js?v=6c4d';
 import {createPerformanceController,PERFORMANCE_PRESETS} from './performance-core.js';
 import {CHESTS} from './world-data.js';
 import {createForestCombat} from './konoha-combat.js?v=6c3';

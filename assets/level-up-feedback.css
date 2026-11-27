@@ -13,7 +13,19 @@
 @media(max-width:900px),(max-height:480px){.shinobi-rank-wallet{gap:3px;padding:1px 5px 1px 3px}.shinobi-ryo-pouch{width:20px;height:20px}.shinobi-ryo-amount{font-size:14px}.shinobi-ryo-unit{font-size:8px}}
 @media(max-width:600px){.shinobi-ryo-pouch{width:18px;height:18px}.shinobi-ryo-amount{font-size:13px}.shinobi-rank-wallet{gap:3px}}
 
-#livingHudArt .portrait-rank-plate{position:absolute;z-index:5;left:24.8%;top:83%;transform:translate(-50%,-50%);width:max-content;max-width:35%;pointer-events:none;box-shadow:0 2px 5px #000d,0 0 0 1px #261c18,inset 0 0 0 1px #63452b}
+/* Preserve the approved rank anchor; place the wallet directly below it. */
+#livingHudArt .portrait-identity-stack{position:absolute;z-index:5;left:24.8%;top:83%;transform:translate(-50%,-50%);display:flex;justify-content:center;width:max-content;max-width:49%;pointer-events:none}
+#livingHudArt .portrait-identity-stack .portrait-rank-plate{position:relative;max-width:100%;box-shadow:0 2px 5px #000d,0 0 0 1px #261c18,inset 0 0 0 1px #63452b}
+#livingHudArt .portrait-identity-stack .shinobi-rank-wallet{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);width:max-content;max-width:none}
+#livingHudArt .portrait-identity-stack .shinobi-ryo-amount{overflow:visible}
+#livingHudArt .portrait-hero-name{position:absolute;z-index:5;left:57.3%;top:85%;transform:translateX(-50%);max-width:42%;text-align:center;white-space:nowrap;font:900 clamp(12px,1.15vw,17px)/1.15 system-ui,sans-serif;color:#ffc969;text-shadow:0 1px 2px #000,0 0 4px #000;pointer-events:none}
+#top #heroName.shinobi-hero-name{margin:3px 0 0;text-align:center;color:#ffc969;font-weight:850;line-height:1.15}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top[data-rank-art=ready] #livingHudArt{margin-bottom:clamp(20px,3.3vw,32px)}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top[data-rank-art=ready] #heroName{display:none}
+#hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top[data-rank-art=ready] #stats .shinobi-rank-wallet{display:none}
+@media(max-width:900px),(max-height:480px){#livingHudArt .portrait-hero-name{font-size:11px}#livingHudArt .portrait-identity-stack .shinobi-rank-wallet{gap:3px;padding:1px 5px 1px 3px}}
+@media(max-width:600px){#livingHudArt .portrait-hero-name{font-size:10px}#livingHudArt .portrait-identity-stack .shinobi-ryo-amount{font-size:12px}}
+
 #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top[data-rank-art=ready] #stats .shinobi-rank-plate{display:none}
 #hud[data-living-art=ready][data-character=naruto]:not([data-living-fallback=true]) #top .hero-heading #stats{justify-content:center}
 .shinobi-level-fx{position:fixed;inset:0;z-index:70;pointer-events:none;overflow:hidden;isolation:isolate}
@@ -29,6 +41,6 @@
 @keyframes shinobi-level-banner{0%{opacity:0;transform:translateX(-50%) scale(.55,.32) rotate(7deg)}8%{opacity:1;transform:translateX(-50%) scale(1.15,1.22) rotate(-3deg)}15%{opacity:1;transform:translateX(-50%) scale(.96,1.04)}24%,64%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-45px) scale(1.05,.92)}}
 @keyframes shinobi-level-title{0%{transform:rotate(-9deg) skewX(-10deg)}15%{transform:rotate(-4deg) skewX(2deg)}30%,70%{transform:rotate(-5deg)}100%{transform:rotate(-7deg)}}
 @keyframes shinobi-level-canvas{0%,72%{opacity:1}100%{opacity:0}}
-@media(max-width:900px){#livingHudArt .portrait-rank-plate{max-width:43%}.shinobi-rank-crest{font-size:9px;padding:2px 4px}.shinobi-rank-level{font-size:13px;padding:2px 4px}.shinobi-rank-wallet{font-size:10px}}
+@media(max-width:900px){#livingHudArt .portrait-identity-stack{max-width:49%}.shinobi-rank-crest{font-size:9px;padding:2px 4px}.shinobi-rank-level{font-size:13px;padding:2px 4px}.shinobi-rank-wallet{font-size:10px}}
 @media(max-width:600px),(max-height:480px){.shinobi-level-banner{top:31%}.shinobi-level-title{font-size:clamp(39px,11vw,72px);padding:4px 12px 11px;-webkit-text-stroke:1px #351a11;text-shadow:2px 3px #b64b17,4px 5px #211315}.shinobi-level-sub{padding:4px 8px}.portrait-rank-plate .shinobi-rank-crest{font-size:8px;padding:2px 3px}.portrait-rank-plate .shinobi-rank-level{font-size:11px;padding:2px 3px}}
 @media(prefers-reduced-motion:reduce){.level-celebrating .shinobi-level-banner{animation:shinobi-level-still 2.8s both}.level-celebrating .shinobi-level-title{animation:none}.shinobi-level-canvas{display:none!important}@keyframes shinobi-level-still{0%,80%{opacity:1}100%{opacity:0}}}

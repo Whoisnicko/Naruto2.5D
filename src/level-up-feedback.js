@@ -28,10 +28,17 @@ export function updateRankHUD(node,xp,coins,examPassed=false){
  if(!node)return;
  const level=levelFor(xp),rank=rankFor(xp),key=rank+':'+level+':'+coins+':'+examPassed;
  const art=document.getElementById('livingHudArt');
- let plate=art?.querySelector('.portrait-rank-plate');
- if(art&&(!plate||plate.dataset.rankKey!==rank+':'+level)){
-  const next=rankPlate(rank,level,true);next.dataset.rankKey=rank+':'+level;
-  if(plate)plate.replaceWith(next);else art.append(next);
+ if(art){
+  let stack=art.querySelector('.portrait-identity-stack');
+  if(!stack){stack=document.createElement('div');stack.className='portrait-identity-stack';art.append(stack);}
+  const artKey=rank+':'+level+':'+coins;
+  if(stack.dataset.rankKey!==artKey){
+   stack.replaceChildren(rankPlate(rank,level,true),walletPlate(coins));stack.dataset.rankKey=artKey;
+  }
+  let name=art.querySelector('.portrait-hero-name');
+  if(!name){name=document.createElement('span');name.className='portrait-hero-name';art.append(name);}
+  const label=document.getElementById('heroName')?.textContent||'Naruto';
+  if(name.textContent!==label)name.textContent=label;
   node.closest('#top')?.setAttribute('data-rank-art','ready');
  }
  if(node.dataset.rankKey===key)return;

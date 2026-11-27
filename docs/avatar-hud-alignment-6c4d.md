@@ -1,0 +1,3 @@
+# 6C.4D — Avatar HUD alignment
+
+6C.4C production playtest 6/6 approved. User requests wallet directly underneath rank/LVL and hero name beneath EXP bar. Keep the approved rank anchor and coin pouch, stack wallet under it in illustrated HUD, position live hero name beneath the illustrated EXP bar; fallback original hero name now follows EXP. Preserve Kyūbi name updates, changing balance, exam status, and all level-up presentation. Both campaign engines share module. 10 simulated checks and 3 syntax checks passed. Production workflow per user; live visual/mobile validation pending. Historical 17 pending 6C.3 checks retained. Gaara 6D.1 next after confirmation.

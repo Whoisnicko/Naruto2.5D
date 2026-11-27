@@ -100,9 +100,11 @@ export function createRenderer(canvas){
 
   }
   function frame(x,z,shot={}){
-    const zoom=shot.zoom||1,yaw=shot.yaw||0,lookY=shot.lookY||0;
-    if(Math.abs(camera.zoom-zoom)>.0005){camera.zoom=zoom;camera.updateProjectionMatrix();}
-    camera.position.set(x+Math.sin(yaw)*30,25,z+Math.cos(yaw)*30);camera.lookAt(x,lookY,z);
+    const zoom=shot.zoom||1,yaw=shot.yaw||0,lookY=shot.lookY||0,bridge=!!shot.bridge,aspect=innerWidth/Math.max(1,innerHeight);
+    const half=bridge?Math.max(12,9/Math.max(.1,aspect)):12,far=bridge?500:180;
+    if(Math.abs(camera.zoom-zoom)>.0005||camera.top!==half||camera.right!==half*aspect||camera.far!==far){camera.zoom=zoom;camera.top=half;camera.bottom=-half;camera.left=-half*aspect;camera.right=half*aspect;camera.far=far;camera.updateProjectionMatrix();}
+    if(solid.fog===bridge){solid.fog=!bridge;fxmat.fog=!bridge;solid.needsUpdate=true;fxmat.needsUpdate=true;}
+    const distance=bridge?120:30,height=bridge?100:25;camera.position.set(x+Math.sin(yaw)*distance,height,z+Math.cos(yaw)*distance);camera.lookAt(x,lookY,z);camera.updateMatrixWorld();
     renderer.render(scene,camera);
   }
   const projection=new THREE.Vector3();function project(x,y,z){projection.set(x,y,z).project(camera);if(Math.abs(projection.x)>1.15||Math.abs(projection.y)>1.15||Math.abs(projection.z)>1)return null;return {x:(projection.x+1)*innerWidth/2,y:(1-projection.y)*innerHeight/2};}

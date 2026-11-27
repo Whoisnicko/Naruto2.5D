@@ -14,7 +14,7 @@ function atlasMap(base,cols,rows){
  const map=base.clone();map.repeat.set(1/cols,1/rows);map.needsUpdate=true;return map;
 }
 function frame(map,c,r,cols,rows){map.offset.set(c/cols,1-(r+1)/rows);}
-function sprite(base,cols,rows,scaleX,scaleY,bottom=false,opacity=1){
+function makeSprite(base,cols,rows,scaleX,scaleY,bottom=false,opacity=1){
  const map=atlasMap(base,cols,rows),material=new THREE.SpriteMaterial({map,transparent:true,alphaTest:.08,depthTest:true,depthWrite:true,opacity});
  const obj=new THREE.Sprite(material);obj.scale.set(scaleX,scaleY,1);if(bottom)obj.center.set(.5,0);
  return {obj,map,material,col:-1,row:-1,cols,rows};
@@ -38,7 +38,8 @@ function makeShadowTexture(){
  return texture(c);
 }
 function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material);o.rotation.x=-Math.PI/2;o.position.y=.024;return o;}
-export function createPixelSystem(scene){
+export function createPixelSystem(scene,{clearFog=false}={}){
+ const sprite=(...args)=>{const s=makeSprite(...args);if(clearFog)s.material.fog=false;return s;};
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
  const active=new Map(),free={jiraiya:[],jiraiyaSage:[],player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],kabuto:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[],shukaku:[],orochimaru:[],whiteSerpent:[],kimimaro:[],kimiMarked:[],kimiCursed:[],sasukeSharingan:[],sasukeMarked:[],sasukeCursed:[],sasukeInjured:[]},trails=[],fxPool=[];

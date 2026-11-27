@@ -21,3 +21,11 @@
 @keyframes defeat-leaf{0%{transform:translate(0,-4vh) rotate(20deg);opacity:0}12%{opacity:.8}45%{transform:translate(-5vw,48vh) rotate(170deg)}100%{transform:translate(7vw,115vh) rotate(410deg);opacity:.2}}
 @media(max-width:600px),(max-height:480px){.defeat-title{font-size:clamp(43px,13vw,85px);padding:10px 8px 16px;-webkit-text-stroke:1px #23131c;text-shadow:2px 3px #b4473c,5px 5px #24151b}.defeat-banner{top:37%}}
 @media(prefers-reduced-motion:reduce){.defeat-leaves{display:none}}
+
+/* Art option B: original illustrated lettering instead of a generic CSS panel. */
+.defeat-banner{width:min(92vw,1040px);max-width:94vw;top:42%}
+.defeat-title-art{display:block;width:100%;height:auto;aspect-ratio:700/230;object-fit:contain;filter:drop-shadow(0 4px 4px #03070bb0)}
+.defeat-title-art[hidden],.defeat-title[hidden]{display:none!important}
+.defeat-title{color:#ffc46f;background:linear-gradient(105deg,transparent,#19283f 12%,#17273d 48%,#0c182a 88%,transparent);-webkit-text-stroke:3px #10192b;text-shadow:3px 4px #c15d2d,7px 7px #101727}
+.defeat-sub{color:#f0d6a7;letter-spacing:.09em;margin-top:-2px}
+@media(max-width:600px),(max-height:480px){.defeat-banner{width:min(94vw,720px);top:38%}.defeat-title-art{width:100%;max-height:34vh}}

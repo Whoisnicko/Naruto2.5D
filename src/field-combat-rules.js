@@ -15,9 +15,17 @@ export function rasenganContact(actor,targets,dir,spec,scale,visible){
 export function rasenganSplash(actor,targets,primary,center,spec,scale,visible){
  return [...new Set(targets)].filter(e=>e.hp>0&&(e===primary||distance(e,center)<spec.splash*scale)&&visible(actor,e)).sort((a,b)=>distance(a,center)-distance(b,center)).slice(0,5);
 }
-export function cloneSpawnPoints(actor,current,count,blocked){
- const points=[];for(let i=current;i<count;i++){const angle=i/count*Math.PI*2+Math.PI/4,x=actor.x+Math.cos(angle)*1.45,z=actor.z+Math.sin(angle)*1.45;points.push(blocked(x,z)?{x:actor.x,z:actor.z}:{x,z});}return points;
+export function cloneSpawnPoints(actor,current,count,blocked,existing=[]){
+ const points=[];for(let i=current;i<count;i++){const angle=i/count*Math.PI*2+Math.PI/4;let spot=null;
+ for(const radius of [1.45,1.05,.72]){for(const offset of [0,.45,-.45,.9,-.9,Math.PI]){const a=angle+offset,p={x:actor.x+Math.cos(a)*radius,z:actor.z+Math.sin(a)*radius};if(!blocked(p.x,p.z)&&[...existing,...points].every(q=>distance(q,p)>.48)){spot=p;break;}}if(spot)break;}
+ if(spot)points.push(spot);else if(!blocked(actor.x,actor.z))points.push({x:actor.x,z:actor.z});}return points;
 }
+// Stable object identity avoids merging targets with absent or reused IDs.
+export function projectileContacts(shot,targets,radius,visible=()=>true){return targets.filter(e=>e.hp>0&&!shot.hits?.has(e)&&distance(shot,e)<=radius&&visible(shot,e)).sort((a,b)=>distance(shot,a)-distance(shot,b));}
+export function cloneTarget(clone,targets,visible,range=14){return targets.filter(e=>e.hp>0&&distance(clone,e)<=range&&visible(clone,e)).sort((a,b)=>distance(clone,a)-distance(clone,b))[0]||null;}
+// A deliberate technique request may wait for the current short recovery, not a full cooldown.
+export function techniqueBuffer(k,base,recovery=0){return k==='f'||k==='l'?Math.max(base,Math.min(.85,Math.max(0,recovery)+.08)):base;}
+
 export function techniqueTargets(actor,targets,skill,visible){
  return targets.filter(e=>e.hp>0&&distance(actor,e)<skill.range&&visible(actor,e)).sort((a,b)=>distance(actor,a)-distance(actor,b)).slice(0,skill.targets||1);
 }

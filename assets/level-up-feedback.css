@@ -1,0 +1,21 @@
+#stats.shinobi-rank-display{display:flex!important;flex-wrap:wrap;align-items:center;gap:3px 6px!important;white-space:normal!important;line-height:1.15!important;font-size:12px!important;min-width:0}
+#stats .shinobi-rank-crest{font-weight:850;letter-spacing:.055em;color:#ffe0a1;text-shadow:0 1px 2px #0b0908}
+#stats .shinobi-rank-level{font-size:clamp(14px,1.25vw,20px);font-weight:950;letter-spacing:.035em;color:#fff0cd;background:linear-gradient(155deg,#8c361b,#402416);padding:2px 7px;border:1px solid #eab66c;border-radius:3px;box-shadow:inset 0 0 0 1px #4c2416,0 1px 3px #0009;white-space:nowrap}
+#stats .shinobi-rank-wallet{font-size:11px;color:#d8c5a4;white-space:nowrap}
+.shinobi-level-fx{position:fixed;inset:0;z-index:70;pointer-events:none;overflow:hidden;isolation:isolate}
+.shinobi-level-fx[hidden],.shinobi-level-burst[hidden]{display:none!important}
+.shinobi-level-banner{position:absolute;left:50%;top:clamp(92px,19vh,180px);width:max-content;max-width:88vw;transform:translateX(-50%);text-align:center;opacity:0;filter:drop-shadow(0 4px 4px #0009)}
+.shinobi-level-title{display:block;position:relative;font-family:Impact,'Arial Black',sans-serif;font-size:clamp(36px,7.2vw,84px);font-weight:950;line-height:.95;letter-spacing:.025em;font-style:italic;color:#ffcc53;-webkit-text-stroke:1.5px #301b12;paint-order:stroke fill;text-shadow:2px 3px 0 #a94117,4px 5px 0 #241510,0 0 20px #ffae4e80;transform:rotate(-5deg);padding:4px 20px 12px;background:linear-gradient(105deg,transparent 2%,#211715 12%,#44251b 53%,#231915 87%,transparent 98%);clip-path:polygon(2% 22%,10% 15%,6% 5%,94% 0,91% 12%,100% 19%,94% 87%,82% 91%,88% 100%,4% 97%,9% 78%,0 74%)}
+.shinobi-level-sub{display:inline-block;margin-top:2px;padding:5px 14px;border:1px solid #eac477;background:#201a17ee;color:#fff2d3;font:800 clamp(11px,2.5vw,16px)/1.25 system-ui,sans-serif;letter-spacing:.045em;box-shadow:0 2px 6px #0008}
+.shinobi-level-burst{position:absolute;width:0;height:0;pointer-events:none}
+.shinobi-level-ring{position:absolute;left:-62px;top:-22px;width:124px;height:44px;border:3px solid #9df6ff;border-radius:50%;box-shadow:0 0 14px #66dcff,inset 0 0 12px #4db9ff;opacity:0}
+.shinobi-level-ring.second{border-color:#ffdf82;box-shadow:0 0 12px #ffbf52;animation-delay:.13s!important}
+.shinobi-level-spark{position:absolute;left:-2px;top:-12px;width:4px;height:24px;border-radius:80%;background:linear-gradient(transparent,#fff9cf 45%,#69dfff 75%,transparent);box-shadow:0 0 7px #79eaff;opacity:0;transform-origin:center bottom}
+.level-celebrating .shinobi-level-banner{animation:shinobi-level-banner 2.2s both}
+.level-celebrating .shinobi-level-ring{animation:shinobi-level-ring .9s ease-out both}
+.level-celebrating .shinobi-level-spark{animation:shinobi-level-spark .85s var(--delay) ease-out both}
+@keyframes shinobi-level-banner{0%{opacity:0;transform:translateX(-50%) scale(.65) rotate(4deg)}12%{opacity:1;transform:translateX(-50%) scale(1.08) rotate(-2deg)}23%,72%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-14px) scale(.96)}}
+@keyframes shinobi-level-ring{0%{opacity:.95;transform:scale(.35)}100%{opacity:0;transform:scale(2.4)}}
+@keyframes shinobi-level-spark{0%{opacity:0;transform:rotate(var(--angle)) translateY(-5px) scale(.4)}20%{opacity:1}100%{opacity:0;transform:rotate(var(--angle)) translateY(calc(-1 * var(--reach))) scale(.7)}}
+@media(max-width:600px){.shinobi-level-banner{top:32%}.shinobi-level-title{padding:4px 14px 10px}#stats.shinobi-rank-display{font-size:10px!important;gap:2px 4px!important}#stats .shinobi-rank-level{font-size:14px;padding:1px 5px}#stats .shinobi-rank-wallet{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.level-celebrating .shinobi-level-banner{animation:shinobi-level-still 2.2s both}.level-celebrating .shinobi-level-ring,.level-celebrating .shinobi-level-spark{animation:none;opacity:0}@keyframes shinobi-level-still{0%,80%{opacity:1}100%{opacity:0}}}

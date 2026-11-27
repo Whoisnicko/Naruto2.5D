@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {createLevelTracker} from '../src/level-up-feedback.js';
+import {campaignTestAllowed,readCampaignGod,writeCampaignGod} from '../src/campaign-test-tools.js';
+const t=createLevelTracker(95);
+assert.equal(t.observe(99),null);assert.deepEqual(t.observe(100),{from:1,to:2});
+assert.equal(t.observe(120),null);assert.deepEqual(t.observe(350),{from:2,to:4});
+t.reset(700);assert.equal(t.observe(700),null);assert.equal(t.observe(0),null);
+assert.deepEqual(t.observe(100),{from:1,to:2});
+const store=new Map(),storage={getItem:k=>store.get(k),setItem:(k,v)=>store.set(k,v)};
+const host='naruto2-5d.pages.dev';assert.equal(campaignTestAllowed(host),true);assert.equal(readCampaignGod(host,storage),false);
+assert.equal(writeCampaignGod(host,storage,true),true);assert.equal(readCampaignGod(host,storage),true);
+assert.equal(writeCampaignGod(host,storage,false),true);assert.equal(readCampaignGod(host,storage),false);
+assert.equal(campaignTestAllowed('evil.naruto2-5d.pages.dev.evil'),false);console.log('Level tracker and production God Mode: OK');

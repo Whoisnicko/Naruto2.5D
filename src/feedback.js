@@ -28,6 +28,7 @@ const CUES={
  thunder:[['sawtooth',62,24,.8,.11],['triangle',48,22,1.1,.13]],
  charge:[['sine',160,550,.25,.08],['triangle',330,680,.22,.04]],
  rasengan:[['sawtooth',490,65,.23,.09],['sine',850,120,.22,.12]],
+ levelUp:[['triangle',440,440,.22,.11,0],['triangle',659.25,659.25,.22,.09,.12],['sine',880,880,.32,.11,.24],['triangle',1318.5,1318.5,.38,.075,.36],['sine',110,42,.22,.055,0]],
  hurt:[['square',200,75,.1,.075]],reward:[['sine',440,660,.15,.09],['triangle',660,880,.23,.05]]
 };
 export function createAudio(){
@@ -41,8 +42,8 @@ export function createAudio(){
   }catch(e){console.warn('Audio unavailable',e);}
  }
  function play(name,pan=0){if(!enabled||!ctx||ctx.state!=='running')return;pan=Number.isFinite(pan)?Math.max(-.8,Math.min(.8,pan)):0;
-  for(const [type,f0,f1,dur,amp] of CUES[name]||[]){if(voices>=14)break;try{
-   const o=ctx.createOscillator(),g=ctx.createGain(),now=ctx.currentTime;let stereo=null;voices++;o.type=type;o.frequency.setValueAtTime(f0,now);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),now+dur);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(amp,now+.009);g.gain.exponentialRampToValueAtTime(.0001,now+dur);o.connect(g);if(pan&&typeof ctx.createStereoPanner==='function'){try{stereo=ctx.createStereoPanner();stereo.pan.value=pan;g.connect(stereo);stereo.connect(master);}catch{stereo?.disconnect();stereo=null;g.disconnect();g.connect(master);}}else g.connect(master);o.onended=()=>{voices=Math.max(0,voices-1);o.disconnect();g.disconnect();stereo?.disconnect();};o.start(now);o.stop(now+dur+.01);
+  for(const [type,f0,f1,dur,amp,delay=0] of CUES[name]||[]){if(voices>=14)break;try{
+   const o=ctx.createOscillator(),g=ctx.createGain(),now=ctx.currentTime+delay;let stereo=null;voices++;o.type=type;o.frequency.setValueAtTime(f0,now);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),now+dur);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(amp,now+.009);g.gain.exponentialRampToValueAtTime(.0001,now+dur);o.connect(g);if(pan&&typeof ctx.createStereoPanner==='function'){try{stereo=ctx.createStereoPanner();stereo.pan.value=pan;g.connect(stereo);stereo.connect(master);}catch{stereo?.disconnect();stereo=null;g.disconnect();g.connect(master);}}else g.connect(master);o.onended=()=>{voices=Math.max(0,voices-1);o.disconnect();g.disconnect();stereo?.disconnect();};o.start(now);o.stop(now+dur+.01);
   }catch(e){voices=Math.max(0,voices-1);}}
  }
  function wind(on){if(!ctx||!master)return;

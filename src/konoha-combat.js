@@ -2,7 +2,7 @@ import {COMBAT,stepMotion,directionToward,chooseAttackTarget,canPayAction,payAct
 import {characterFor,characterSkill,skillLabel} from './character-data.js';
 import {prepareEnemy,tickEnemy,damageModifier,roleFor} from './enemy-ai.js';
 import {statsFor,advancedUnlocked,skillModifiers,shadowCloneLimit} from './rpg-data.js';
-import {canUseAdvancedTechnique,isKyubiRasengan,KYUBI_RAS_BUFFER,allowKyubiImpulse} from './kyubi-technique-rules.js?v=6c21';
+import {canUseAdvancedTechnique,isKyubiRasengan,KYUBI_RAS_BUFFER,allowKyubiImpulse} from './kyubi-technique-rules.js?v=6c3';
 import {REGIONAL_ENEMIES} from './world-data.js';
 import {ENEMY_ROSTER,ROSTER_RULES,rosterPositions,reinforcementPosition,REGIONAL_ROSTER,regionalRosterMembers} from './field-enemy-roster.js';
 import {attackCone,rasenganCharge,rasenganContact,rasenganSplash,cloneSpawnPoints,techniqueTargets,responsiveMeleeTarget,steerRasengan,stressPositions} from './field-combat-rules.js';

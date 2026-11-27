@@ -1,0 +1,5 @@
+# 6C.4B — Progression Polish Final
+
+Approved by user: production promotion of 6C.4A and expanded visual polish, option A synthesized heroic chakra audio. Prior playtest 6/10 OK; God Mode, combat continuity, no replay on load, responsive and artistic integration approved; four visual/audio quality checks pending. Preserve 17 historical 6C.3 pending checks.
+
+Rank plate mounted over illustrated portrait, with fallback badge in hero header; wallet remains secondary. Shared screen-space chakra canvas follows projected actor: white-blue glow, 4 rings, 11 tongues, 24 rays, 72 particles (48 compact), bounded DPR and single canvas, reduced-motion support. Larger manga banner (up to 112 CSS px), 2.8s animation, Naruto-only text. Original eight-tone chakra sting, no official audio. No progression/XP, combat, saving, boss or God Mode rules changed. Production authorized by user. Browser and audio perception pending. Next: verify before Gaara.

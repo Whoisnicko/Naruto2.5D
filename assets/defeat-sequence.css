@@ -1,0 +1,12 @@
+/* Defeat UI, shared between arena and illustrated field. */
+.shinobi-defeat{position:fixed;inset:0;z-index:9999;pointer-events:auto;touch-action:none;isolation:isolate;color:#eee3d4;overflow:hidden;background:transparent}
+.shinobi-defeat[hidden]{display:none!important}
+.defeat-shade{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,rgba(15,13,22,.06) 0%,rgba(15,12,21,.48) 75%,#0e0c14 100%);pointer-events:none}
+.defeat-shade::after{content:'';position:absolute;inset:0;background:#08070b;opacity:var(--defeat-fade,0)}
+.defeat-dialogue{position:absolute;left:50%;bottom:clamp(70px,16vh,145px);transform:translateX(-50%);width:min(550px,86vw);box-sizing:border-box;padding:14px 20px;background:linear-gradient(120deg,#1e1926ee,#29202cec);border:1px solid #938073;border-left:4px solid #b99c7d;border-radius:3px;box-shadow:0 8px 24px #0008;opacity:0}
+.defeat-speaker{display:block;color:#d4b28e;font:900 14px/1.25 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.defeat-line{display:block;color:#f2e9da;font:500 clamp(14px,2.2vw,19px)/1.4 system-ui,sans-serif}
+.defeat-banner{position:absolute;left:50%;top:43%;transform:translate(-50%,-50%);text-align:center;width:max-content;max-width:94vw;opacity:0;filter:drop-shadow(0 5px 8px #000a)}
+.defeat-title{display:block;font:italic 950 clamp(48px,11vw,124px)/1 Impact,'Arial Black',sans-serif;letter-spacing:.035em;color:#f0d7c8;-webkit-text-stroke:2px #39232a;paint-order:stroke fill;text-shadow:3px 4px #9e3c42,7px 7px #211923;transform:rotate(-3deg);padding:12px 30px 18px;background:linear-gradient(100deg,transparent,#271c28 12%,#4c2730 50%,#221927 89%,transparent);clip-path:polygon(0 14%,10% 17%,7% 0,91% 3%,88% 15%,100% 22%,96% 83%,100% 94%,79% 100%,4% 92%,8% 75%,0 80%)}
+.defeat-sub{display:block;margin-top:9px;color:#dfc8b9;font:600 clamp(12px,2vw,18px)/1.4 system-ui,sans-serif;letter-spacing:.07em;text-shadow:0 2px 4px #000}
+@media(max-width:600px),(max-height:480px){.defeat-title{font-size:clamp(42px,12vw,78px);padding:8px 12px 13px;-webkit-text-stroke:1px #39232a;text-shadow:2px 3px #9e3c42,4px 4px #211923}.defeat-dialogue{padding:9px 12px;bottom:12vh}.defeat-speaker{font-size:12px}.defeat-line{font-size:14px}.defeat-banner{top:37%}}

@@ -32,7 +32,7 @@ const CUES={
  hurt:[['square',200,75,.1,.075]],reward:[['sine',440,660,.15,.09],['triangle',660,880,.23,.05]]
 };
 export function createAudio(){
- let ctx=null,master=null,ambience=null,enabled=true,volume=.32,voices=0,musicEnabled=true,musicClock=0,musicStep=0,lastMood='';const melodies={explore:[62,0,65,69,67,0,65,0,60,0,62,65,69,0,67,0],boss:[50,50,57,53,50,0,58,57,48,48,55,53,48,0,57,55]};
+ let ctx=null,master=null,ambience=null,enabled=true,volume=.32,voices=0,musicEnabled=true,musicClock=0,musicStep=0,lastMood='';const melodies={explore:[62,0,65,69,67,0,65,0,60,0,62,65,69,0,67,0],boss:[50,50,57,53,50,0,58,57,48,48,55,53,48,0,57,55],defeat:[69,65,64,62,0,60,57,62,0,0]};
  try{musicEnabled=localStorage.getItem('shinobi-music')!=='off';enabled=localStorage.getItem('shinobi-sound')!=='off';const v=localStorage.getItem('shinobi-volume');if(v!==null&&Number.isFinite(Number(v)))volume=Math.max(0,Math.min(1,Number(v)));}catch{}
  function unlock(){
   if(!enabled)return;
@@ -56,13 +56,13 @@ export function createAudio(){
  function music(dt,mood='explore'){
  if(!musicEnabled||!enabled||!ctx||ctx.state!=='running')return;
  if(mood!==lastMood){lastMood=mood;musicClock=0;musicStep=0;}
- musicClock-=dt;if(musicClock>0)return;const interval=mood==='boss'?.22:.46;musicClock+=interval;const melody=melodies[mood]||melodies.explore,n=melody[musicStep++%melody.length];if(!n||voices>=12)return;
- try{const o=ctx.createOscillator(),g=ctx.createGain(),now=ctx.currentTime;voices++;o.type=mood==='boss'?'triangle':'sine';o.frequency.value=440*2**((n-69)/12);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.045,now+.018);g.gain.exponentialRampToValueAtTime(.0001,now+interval*.9);o.connect(g);g.connect(master);o.onended=()=>{voices--;o.disconnect();g.disconnect();};o.start(now);o.stop(now+interval);}catch{voices=Math.max(0,voices-1);}
+ musicClock-=dt;if(musicClock>0)return;const interval=mood==='defeat'?.66:mood==='boss'?.22:.46;musicClock+=interval;const melody=melodies[mood]||melodies.explore,n=melody[musicStep++%melody.length];if(!n||voices>=12)return;
+ try{const o=ctx.createOscillator(),g=ctx.createGain(),now=ctx.currentTime;voices++;o.type=mood==='boss'||mood==='defeat'?'triangle':'sine';o.frequency.value=440*2**((n-69)/12);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(mood==='defeat'?.075:.045,now+(mood==='defeat'?.055:.018));g.gain.exponentialRampToValueAtTime(.0001,now+interval*.9);o.connect(g);g.connect(master);o.onended=()=>{voices--;o.disconnect();g.disconnect();};o.start(now);o.stop(now+interval);}catch{voices=Math.max(0,voices-1);}
  }
  function setMusic(v){musicEnabled=Boolean(v);try{localStorage.setItem('shinobi-music',musicEnabled?'on':'off');}catch{}}
  function setEnabled(v){enabled=Boolean(v);try{localStorage.setItem('shinobi-sound',enabled?'on':'off');}catch{}if(enabled)unlock();else wind(false);}
  function setVolume(v){volume=Math.max(0,Math.min(1,Number(v)||0));if(master)master.gain.value=volume;try{localStorage.setItem('shinobi-volume',String(volume));}catch{}}
- return {unlock,play,wind,music,setMusic,get musicEnabled(){return musicEnabled},setEnabled,setVolume,get enabled(){return enabled},get volume(){return volume}};
+ return {unlock,play,wind,music,restartMusic(){lastMood='';musicClock=0;musicStep=0;},setMusic,get musicEnabled(){return musicEnabled},setEnabled,setVolume,get enabled(){return enabled},get volume(){return volume}};
 }
 export function createFeedback(view,layer){
  let freeze=0,shake=0,clock=0,enabled=true,intensity=1,kickX=0,kickZ=0,zoom=0,lastDodge=-99;const numbers=[],pool=[],bursts=Array.from({length:8},()=>({life:0}));

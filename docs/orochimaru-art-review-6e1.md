@@ -1,0 +1,3 @@
+# 6E.1 — Orochimaru Underground Laboratory
+
+6D.2 production playtest 15/15 approved. Art-only isolated candidate for the three existing phases. Main unchanged. Radius 13 and Hades shared combat unchanged. Dark slate tiled floor, subtle seal, stone masonry, sealed gate, six pillars, four containment tubes, alchemy shelves and worktables, warm lamp pools, 64 perimeter motes. Props outside movement circle. Procedural art, solid floor and no-glow fallbacks; legacy arena if presentation construction fails. Four syntax smoke checks, data clearance and integration checks, scene construction/update with Three/Canvas stand-ins and missing-canvas fallback. No actual WebGL render or performance test. Preview pending user review. 17 historical 6C.3 pending checks preserved.

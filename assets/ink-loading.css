@@ -18,3 +18,6 @@
 #webBoot[data-state="loading"] .web-boot-kicker,#webBoot[data-state="loading"] #webBootCount{color:#766c62!important}
 #webBoot[data-state="error"] .ink-runner{display:none}#loading{z-index:10020!important}
 @media(prefers-reduced-motion:reduce){.ink-run-body,.ink-leg,.ink-dots,.ink-indeterminate .ink-track i{animation:none!important}.ink-loading{transition:none}}
+
+/* Let the child render under the cover so frame readiness cannot depend on visibility. */
+#campaignWorldDialog .ink-loading{position:absolute;inset:0}

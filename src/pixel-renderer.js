@@ -39,7 +39,9 @@ function makeShadowTexture(){
 }
 function shadowMesh(geometry,material){const o=new THREE.Mesh(geometry,material);o.rotation.x=-Math.PI/2;o.position.y=.024;return o;}
 export function createPixelSystem(scene,{clearFog=false}={}){
- const sprite=(...args)=>{const s=makeSprite(...args);if(clearFog)s.material.fog=false;return s;};
+ const spriteMaterials=new Set();let noFog=!!clearFog;
+ const sprite=(...args)=>{const s=makeSprite(...args);s.material.fog=!noFog;spriteMaterials.add(s.material);return s;};
+ function setClearFog(value){value=!!value;if(noFog===value)return;noFog=value;for(const mat of spriteMaterials){mat.fog=!noFog;mat.needsUpdate=true;}}
  const sheets=makeSheets(),maps=Object.fromEntries(Object.entries(sheets).map(([key,c])=>[key,texture(c)]));
  const shadowGeo=new THREE.PlaneGeometry(1.1,.86),shadowMat=new THREE.MeshBasicMaterial({map:makeShadowTexture(),transparent:true,depthWrite:false,alphaTest:.03,polygonOffset:true,polygonOffsetFactor:-1});
  const active=new Map(),free={jiraiya:[],jiraiyaSage:[],player:[],npc:[],enemy:[],thrower:[],guard:[],clone:[],sakura:[],teuchi:[],tenten:[],iruka:[],kabuto:[],zabuza:[],haku:[],shikamaru:[],sasuke:[],lee:[],neji:[],gaara:[],shukaku:[],orochimaru:[],whiteSerpent:[],kimimaro:[],kimiMarked:[],kimiCursed:[],sasukeSharingan:[],sasukeMarked:[],sasukeCursed:[],sasukeInjured:[]},trails=[],fxPool=[];
@@ -189,5 +191,5 @@ export function createPixelSystem(scene,{clearFog=false}={}){
 }
 function setWorldVisible(visible){for(const o of worldMeshes)o.visible=visible;}
 function warmNext(renderer){if(warmIndex>=warmKinds.length)return false;const kind=warmKinds[warmIndex++];try{const item=makeActor(kind);item.obj.visible=item.shadow.visible=false;free[kind].push(item);renderer?.initTexture?.(item.map);}catch(e){console.warn('Optional encounter warmup',e);}return true;}
-return {begin,show,end,effects,addTrees,addBuildingShadows,previewEquipment,portrait,maps,sheets,setWorldVisible,warmNext};
+return {begin,show,end,effects,addTrees,addBuildingShadows,previewEquipment,portrait,maps,sheets,setWorldVisible,warmNext,setClearFog};
 }

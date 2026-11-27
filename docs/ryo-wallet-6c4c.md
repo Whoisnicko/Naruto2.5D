@@ -1,0 +1,3 @@
+# 6C.4C — Ryō wallet HUD polish
+
+6C.4B production playtest: 13/13 OK, user approved. Only feedback: ryō too small and low-priority; requested money pouch and framed counter close to avatar. Original inline SVG leather pouch with coins, gold-framed live amount, readable currency label, grouped digits, independent exam status, compact layout for small screens. Existing rank plate and all level-up presentation, progression, save and combat unchanged. Both engines use shared HUD function. 10 simulated checks passed (format, SVG, live balance, exam status, rank, unchanged particles). Real visual/responsive playtest pending. Work from production per prior user direction. Preserve all 17 historical 6C.3 pending tests; next major phase Gaara 6D.1 after wallet review.

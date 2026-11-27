@@ -12,6 +12,18 @@ function rankPlate(rank,level,art=false){
  const lv=document.createElement('strong');lv.className='shinobi-rank-level';lv.textContent='LVL '+level;
  plate.append(crest,lv);plate.setAttribute('aria-label',rank+' level '+level);return plate;
 }
+// Original vector coin pouch: no external assets or requests; the amount stays readable if artwork fails.
+const RYO_POUCH='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M12 4l6 2 4-2 6 1-4 9H16z" fill="#d6a56b" stroke="#39251c" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 13C12 19 5 24 6 30c1 7 8 8 15 8s14-3 14-9c0-6-7-12-11-16z" fill="#986039" stroke="#2c1b16" stroke-width="2" stroke-linejoin="round"/><path d="M16 16C10 22 8 28 11 32c3 4 10 3 13 0-2-7-3-13-4-16z" fill="#d4a16a"/><path d="M13 13q7 4 14 0M15 16l-4 5m11-5 5 5" fill="none" stroke="#523222" stroke-width="2.4" stroke-linecap="round"/><path d="M16 13q4 2 8 0" fill="none" stroke="#f1d09a" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="29" cy="30" rx="6" ry="3" fill="#a75b18" stroke="#4e2a14" stroke-width="1.4"/><ellipse cx="29" cy="28" rx="6" ry="3" fill="#f5c35e" stroke="#75501e" stroke-width="1.2"/><ellipse cx="33" cy="34" rx="5" ry="2.6" fill="#f9d775" stroke="#75501e" stroke-width="1.2"/><path d="M27 28h4m0 6h4" stroke="#a96b23" stroke-width="1.1" stroke-linecap="round"/></svg>';
+const ryoFormat=new Intl.NumberFormat('en-US');
+export function formatRyo(coins){return ryoFormat.format(coins);}
+function walletPlate(coins){
+ const wallet=document.createElement('span');wallet.className='shinobi-rank-wallet';
+ wallet.setAttribute('aria-label',formatRyo(coins)+' ryō');
+ const icon=document.createElement('span');icon.className='shinobi-ryo-pouch';icon.setAttribute('aria-hidden','true');icon.innerHTML=RYO_POUCH;
+ const value=document.createElement('strong');value.className='shinobi-ryo-amount';value.textContent=formatRyo(coins);
+ const unit=document.createElement('span');unit.className='shinobi-ryo-unit';unit.textContent='RYŌ';
+ wallet.append(icon,value,unit);return wallet;
+}
 export function updateRankHUD(node,xp,coins,examPassed=false){
  if(!node)return;
  const level=levelFor(xp),rank=rankFor(xp),key=rank+':'+level+':'+coins+':'+examPassed;
@@ -24,8 +36,10 @@ export function updateRankHUD(node,xp,coins,examPassed=false){
  }
  if(node.dataset.rankKey===key)return;
  node.dataset.rankKey=key;node.classList.add('shinobi-rank-display');
- const wallet=document.createElement('span');wallet.className='shinobi-rank-wallet';wallet.textContent=(examPassed?'Exam ✓ · ':'')+coins+' ryō';
- node.replaceChildren(rankPlate(rank,level),wallet);
+ const wallet=walletPlate(coins);
+ const children=[rankPlate(rank,level),wallet];
+ if(examPassed){const exam=document.createElement('span');exam.className='shinobi-exam-status';exam.textContent='Exam ✓';children.push(exam);}
+ node.replaceChildren(...children);
 }
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const TAU=Math.PI*2;

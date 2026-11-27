@@ -1,0 +1,5 @@
+# 6B.2 — Boss Sandbox Tools
+
+6B.1 user playtest 16/16, combat 8/10, approves integration, requests sandbox access during boss fights and persistence of God Mode. This review phase precedes campaign integration.
+
+Dedicated responsive native dialog and always-visible boss practice dock, C / Esc / mouse, God Mode quick toggle, refill, level, rage, validated phase restart and return to illustrated Sandbox. Dialog pauses simulation and restores previous running state; cannot open over inventory/settings or other game modals. C intercepts before prison/valley/mist dialogue input. Temporary sessionStorage preference (same origin and tab, no campaign save, default OFF for fresh sessions or unavailable storage); field and boss use same preference. Existing ordinary damage immunity reused. Scripted victory/defeat requirements (e.g. Sasuke timed clash) still apply; no bypass of narrative outcomes. Existing sandbox panel hidden only in isolated practice, rest unchanged. No new art or balance, no stable preview or production integration. Actual playtest and viewport validation pending; all historical approvals and pending issues retained.

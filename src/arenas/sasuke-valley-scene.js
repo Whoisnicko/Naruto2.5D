@@ -70,7 +70,13 @@ export async function createEndValley({THREE,scene}){
    B(shadow,0,7.71,-.42,2.9,.81,1.22);E(shadow,0,6.42,1.38,.35,.43,.07);B(shadow,0,5.99,1.38,.10,.38,.08);
   }
  }
+ // Batch identical static geometry/material pairs inside each statue; preserve local transforms.
+ function batchStatue(root){
+  const buckets=new Map();for(const o of [...root.children]){if(!o.isMesh||Array.isArray(o.material))continue;const key=o.geometry.uuid+':'+o.material.uuid;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(o);}
+  let count=0;for(const list of buckets.values()){if(list.length<2)continue;const batch=new THREE.InstancedMesh(list[0].geometry,list[0].material,list.length);for(let i=0;i<list.length;i++){const o=list[i];o.updateMatrix();batch.setMatrixAt(i,o.matrix);}batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();root.remove(...list);root.add(batch);count+=list.length-1;}return count;
+ }
  A.statues.forEach(statue);
+ const statueRoots=group.children.filter(o=>o.isGroup);for(const root of statueRoots)batchStatue(root);
  // Central waterfall, white curtains and darker water channels.
  const w=A.waterfall,falls=new THREE.Group();falls.position.set(w.x,0,w.z);group.add(falls);
  const curtain=new THREE.PlaneGeometry(w.width,w.height,1,1);

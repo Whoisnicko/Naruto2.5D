@@ -31,5 +31,18 @@ export function responsiveMeleeTarget(actor,targets,dir,range,visible){
 
 // Bounded homing: only visible living targets inside the remaining travel budget.
 // Rotate progressively; collision checks remain with the caller.
-export function steerRasengan(actor,action,targets,visible,dt){const limit=action.remaining+1.2,valid=e=>e.hp>0&&distance(actor,e)<=limit&&visible(actor,e);let target=targets.find(e=>e.id===action.targetId&&valid(e));if(!target){target=targets.filter(e=>valid(e)&&((e.x-actor.x)*action.dir.x+(e.z-actor.z)*action.dir.z>=distance(actor,e)*-.15)).sort((a,b)=>distance(actor,a)-distance(actor,b))[0];}if(!target)return action.dir;action.targetId=target.id;const from=Math.atan2(action.dir.z,action.dir.x),to=Math.atan2(target.z-actor.z,target.x-actor.x),delta=Math.atan2(Math.sin(to-from),Math.cos(to-from)),angle=from+Math.max(-dt*12,Math.min(dt*12,delta));return {x:Math.cos(angle),z:Math.sin(angle)};}
+export function steerRasengan(actor,action,targets,visible,dt){const limit=action.remaining+1.2,valid=e=>e.hp>0&&distance(actor,e)<=limit&&visible(actor,e);let target=targets.includes(action.targetRef)&&valid(action.targetRef)?action.targetRef:null;if(!target){target=targets.filter(e=>valid(e)&&((e.x-actor.x)*action.dir.x+(e.z-actor.z)*action.dir.z>=distance(actor,e)*-.15)).sort((a,b)=>distance(actor,a)-distance(actor,b))[0];}if(!target)return action.dir;action.targetRef=target;const from=Math.atan2(action.dir.z,action.dir.x),to=Math.atan2(target.z-actor.z,target.x-actor.x),delta=Math.atan2(Math.sin(to-from),Math.cos(to-from)),angle=from+Math.max(-dt*12,Math.min(dt*12,delta));return {x:Math.cos(angle),z:Math.sin(angle)};}
 export function stressPositions(at,count,blocked){const out=[];for(let ring=0;ring<12&&out.length<count;ring++){const radius=3+ring*1.4,n=Math.max(12,Math.floor(radius*5));for(let i=0;i<n&&out.length<count;i++){const a=i/n*Math.PI*2+ring*.37,x=at.x+Math.cos(a)*radius,z=at.y+Math.sin(a)*radius;if(!blocked(x,z,.48)&&out.every(p=>Math.hypot(p.x-x,p.z-z)>1.0))out.push({x,z});}}return out;}
+
+// Shared indicator: match the cone radius and Kyūbi lateral limit.
+export function meleeAreaOutline(actor,skill,dir,segments=20){
+ const range=Math.max(0,skill.range||0),half=Math.acos(COMBAT.hades.meleeDot),angle=Math.atan2(dir.z,dir.x),points=[{x:actor.x,z:actor.z}];
+ for(let i=0;i<=segments;i++){const d=-half+2*half*i/segments,s=Math.abs(Math.sin(d)),limit=skill.kyubi&&s>.0001?Math.min(range,(skill.clawWidth||.8)/s):range;points.push({x:actor.x+Math.cos(angle+d)*limit,z:actor.z+Math.sin(angle+d)*limit});}
+ points.push({x:actor.x,z:actor.z});return points;
+}
+export function meleeAimDuringWindup(actor,action,targets,visible){
+ const range=action.s.range+COMBAT.hades.assistReach,prior=action.aimTarget;
+ const target=prior&&targets.includes(prior)&&prior.hp>0&&distance(actor,prior)<=range&&visible(actor,prior)?prior:responsiveMeleeTarget(actor,targets,action.dir,range,visible);
+ if(target){action.aimTarget=target;action.dir=directionToward(target.x-actor.x,target.z-actor.z,action.dir.x,action.dir.z);}
+ return target;
+}

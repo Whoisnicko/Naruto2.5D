@@ -4,6 +4,7 @@ import {CHARACTERS,characterFor,characterSkill,canSelectCharacter,skillLabel} fr
 import { createRenderer } from './renderer.js';
 import { createPixelSystem } from './pixel-renderer.js';
 import { COMBAT,stepMotion,directionToward,chooseAttackTarget,actionResource,canPayAction,payAction } from './combat-data.js';
+import {attackCone as sharedAttackCone,rasenganContact,rasenganSplash,responsiveMeleeTarget,steerRasengan,meleeAimDuringWindup,meleeAreaOutline} from './field-combat-rules.js?v=6d2';
 import {PERFORMANCE_PRESETS,normalizePerformance,createPerformanceController} from './performance-core.js';
 import {prepareEnemy,roleFor,targetFor,damageModifier,tickEnemy,safeSubstitution,PATROL_SPAWNS,RESPAWN_SECONDS,isRanged,isDefensive} from './enemy-ai.js';
 import { createAudio,createFeedback } from './feedback.js?v=6c4b';
@@ -234,7 +235,7 @@ function openIllustrated(onStart=false,restore=true,forcedPosition=null){
    const newRound=valid.rpg.round>rpg.round;Object.assign(p,{hp:valid.p.hp,chakra:valid.p.chakra,xp:valid.p.xp,coins:valid.p.coins});levelUp.reset(p.xp);rpg=valid.rpg;world=valid.world;quest=valid.quest;for(const e of regionalEnemies)if(world.defeated.includes(e.id)){e.hp=0;e.intent=null;e.pendingAttack=0;}if(newRound)enemies=DATA.enemies.map((a,i)=>prepareEnemy({...a,id:i,hp:valid.enemies.find(n=>n.id===i)?.hp??70,hit:0,attack:0}));for(const e of enemies){const next=valid.enemies.find(n=>n.id===e.id);if(next&&next.hp===0){e.hp=0;e.intent=null;e.pendingAttack=0;}}syncRPG();if(special?.available||action==='kakashi'){const pos=returnPosition(patch.position,validIllustratedPosition);tx=makeTx(valid);tx.acquire();if(!save(true,{illustratedCheckpoint:true}))return {ok:false,error:recoveryPending?'Save recovered backup explicitly before starting an encounter.':'Save failed; encounter not started.'};try{localStorage.setItem(ILLUSTRATED_POSITION,JSON.stringify({signature:positionSignature(valid),position:pos}));}catch{}returnIllustrated=pos;close();closeModal();running=true;audio.wind(true);$('pause').textContent='II';const place=a=>{p.x=a.x;p.z=a.z;camX=p.x;camZ=p.z;};if(action==='kakashi'){place({x:DATA.npc.x-1,z:DATA.npc.z});interact();save(true);}else if(action==='boss:mist'){place(ARENA);beginMist();}else if(action.startsWith('boss:')){const id=action.slice(5);place(WORLD_BOSSES[id].arena);beginWorldBoss(id);}else if(action==='exam'){place(EXAM_DESK);openExam();}else if(action==='characters'){place({x:DATA.npc.x-1,z:DATA.npc.z});showModal('characters');}else if(action==='epilogue'){place({x:DATA.npc.x-1,z:DATA.npc.z});finishStory();}return {ok:true};}if(action==='save'||action==='title'||action==='export'){tx=makeTx(valid);tx.acquire();const saved=save(true,{illustratedCheckpoint:true,confirmRecovery:action==='save'||action==='title'||action==='export'});if(!saved)return {ok:false,error:'Could not save. Keep playing or retry.'};if(validIllustratedPosition(patch.position)){try{localStorage.setItem(ILLUSTRATED_POSITION,JSON.stringify({signature:positionSignature(valid),position:patch.position}));}catch{}}if(action==='export')exportSave(valid);if(action==='title'){returnIllustrated=null;close();closeModal();running=false;clearInput();audio.wind(false);$('menu').style.display='';refreshRecovery();$('error').textContent='Game saved.';}return {ok:true};}returnIllustrated=returnPosition(patch.position,validIllustratedPosition);close();closeModal();const saved=save(true);if(action!=='kakashi'||!saved)msg(saved?'Konoha progress saved.':'Konoha progress applied; save or export a backup.',5);return {ok:true};
   }
  };
- try{dialog.showModal();frame.src='./konoha-three-lab.html?campaign=1&v=6c4d';frame.focus()}catch(e){cancel();$('pauseStatus').textContent='Unable to open illustrated Konoha.';return false}return true;
+ try{dialog.showModal();frame.src='./konoha-three-lab.html?campaign=1&v=6d2';frame.focus()}catch(e){cancel();$('pauseStatus').textContent='Unable to open illustrated Konoha.';return false}return true;
 }
 $('campaignWorldOpen').onclick=()=>openIllustrated();
 
@@ -480,16 +481,15 @@ function interact(){if(mistScene){advanceMistScene();return;}if(!running)return;
 function inputDirection(){return directionToward(Number(keys.has('d'))-Number(keys.has('a')),Number(keys.has('s'))-Number(keys.has('w')),p.dirX,p.dirZ);}
 function ordinaryChain(k){return !p.pending&&p.anim&&!p.anim.rasRecovery&&['j','k','f','l'].includes(p.anim.k)&&p.anim.left<=COMBAT.hades.chainTail+1e-8&&['j','k','f','l'].includes(k)&&!(cd[k]>0);}
 function dashStrikeReady(k){return k==='j'&&p.dashTime>0&&!p.dashStrikeUsed&&!p.pending&&!p.anim&&!(cd.j>0);}
-function attackCone(s,dir){return combatTargets().filter(e=>e.hp>0&&dist(p,e)<s.range&&((e.x-p.x)*dir.x+(e.z-p.z)*dir.z>=dist(p,e)*COMBAT.hades.meleeDot||dist(p,e)<.001)&&clearRasPath(p,e)).sort((a,b)=>dist(p,a)-dist(p,b));}
+function attackCone(s,dir){return sharedAttackCone(p,combatTargets(),s,dir,clearRasPath);}
 function manualAim(s,k,dashing){
  const dir=dashing?directionToward(p.dashDX,p.dashDZ,p.dirX,p.dirZ):inputDirection();
  const melee=k==='j',projectile=(k==='k'||k==='f')&&(!s.mode||s.mode==='projectile');
  if(!melee&&!projectile)return null;
- const target=chooseAttackTarget(p,combatTargets(),dir,s.range+(melee&&!dashing?COMBAT.hades.assistReach:0),COMBAT.hades.assistDot,clearRasPath);
- const v=target?directionToward(target.x-p.x,target.z-p.z,dir.x,dir.z):dir;
+ const target=melee&&!dashing?responsiveMeleeTarget(p,combatTargets(),dir,s.range+COMBAT.hades.assistReach,clearRasPath):chooseAttackTarget(p,combatTargets(),dir,s.range,COMBAT.hades.assistDot,clearRasPath);
+ const v=target&&!dashing?directionToward(target.x-p.x,target.z-p.z,dir.x,dir.z):dir;
  p.dirX=v.x;p.dirZ=v.z;
- if(target&&melee&&!dashing&&!s.kyubi){const step=Math.min(COMBAT.hades.meleeStep,Math.max(0,dist(p,target)-1.05));move(p,v.x*step,v.z*step);}
- return v;
+ return {dir:v,aimTarget:target,step:target&&melee&&!dashing&&!s.kyubi?Math.min(COMBAT.hades.meleeStep,Math.max(0,dist(p,target)-1.05)):0};
 }
 function clearInput(){keys.clear();if(p){p.guarding=false;p.charging=false;p.chargeHeld=0;p.bufferedAction=null;p.moveBlend=0;p.queued=false;if(p.pending?.s?.dashStrike){p.pending=null;p.anim=null;}}}
 function requestAction(k){
@@ -500,19 +500,20 @@ function requestAction(k){
   if(!Object.hasOwn(DATA.skills,k))return false;
   if(valleyFinal()||mentorLesson()){p.bufferedAction=null;return attack(k);}
   if(p.character==='naruto'&&Object.hasOwn(COMBAT.rasengan,k)){
-   if(!isKyubiRasengan(p.character,k,kyubiActive())){p.bufferedAction=null;return attack(k);}
+   const window=isKyubiRasengan(p.character,k,kyubiActive())?KYUBI_RAS_BUFFER:COMBAT.fluid.buffer;
    if(k==='g'&&!canUseAdvanced()){msg('Learn Giant Rasengan in P · Skills.');return false;}
    if(p.pending?.ras)return false;
    if(!p.pending&&!p.anim&&!p.dashTime&&!(cd[k]>0)){p.bufferedAction=null;return attack(k,true);}
-   if(!running||interior||waterPrison||mistScene||p.hp<=0||p.guardBreak>0||(cd[k]||0)>KYUBI_RAS_BUFFER)return false;
+   if(!running||interior||waterPrison||mistScene||p.hp<=0||p.guardBreak>0||(cd[k]||0)>window)return false;
    if(p.bufferedAction?.k==='q'&&p.bufferedAction.until>=t)return false;
-   p.bufferedAction={k,until:t+KYUBI_RAS_BUFFER,character:p.character};p.queued=false;return true;
+   p.bufferedAction={k,until:t+window,character:p.character};p.queued=false;return true;
   }
   if(dashStrikeReady(k)||!p.dashTime&&ordinaryChain(k)||!p.pending&&!p.anim&&!p.dashTime&&!(cd[k]>0)){p.bufferedAction=null;return attack(k,true);}
  }
  if(!running||interior||waterPrison||mistScene||valleyFinal()||mentorLesson()||p.hp<=0)return false;
  if(k==='g'&&!canUseAdvanced())return false;
- const window=k==='q'?COMBAT.fluid.dashBuffer:COMBAT.fluid.buffer;
+ const meleeChain=k==='j'&&p.anim?.k==='j'&&!p.pending?.ras&&!p.dashTime;
+ const window=meleeChain?Math.max(COMBAT.fluid.buffer,p.anim.left,cd.j||0)+.04:k==='q'?COMBAT.fluid.dashBuffer:COMBAT.fluid.buffer;
  if((cd[k]||0)>window)return false;
  if(p.bufferedAction?.k==='q'&&p.bufferedAction.until>=t&&k!=='q')return false;
  p.bufferedAction={k,until:t+window,character:p.character};p.queued=false;return false;
@@ -543,10 +544,10 @@ function attack(k,manual=false){
  if(p.character==='naruto'&&COMBAT.rasengan[k])return beginRasengan(k,s);
  const cooldown=Math.max(base.cd,s.duration);
  if(dashing){const spec=COMBAT.hades;p.dashStrikeUsed=true;s={...s,damage:Math.round(s.damage*spec.dashDamage),windup:spec.dashWindup,duration:spec.dashWindup+spec.dashRecovery,dashStrike:true};}
- const dir=manual?manualAim(s,k,dashing):null;
+ const aim=manual?manualAim(s,k,dashing):null,dir=aim?.dir||null;
  if(dir&&s.kyubi&&k==='j')s.clawRange=clawReach(dir.x,dir.z,s.range);
  payAction(p,base);cd[k]=cooldown;
- p.pending={k,s,remaining:s.windup,combo,dir};p.anim={k,left:s.duration,total:s.duration,combo,windup:s.windup,kyubi:s.kyubi,clawRange:s.clawRange,dashStrike:dashing};
+ p.pending={k,s,remaining:s.windup,combo,dir,aimTarget:aim?.aimTarget,step:aim?.step||0};p.anim={k,left:s.duration,total:s.duration,combo,windup:s.windup,kyubi:s.kyubi,clawRange:s.clawRange,dashStrike:dashing};
  if(dashing){p.dashStrikeAt=t;effects.push({x:p.x,z:p.z,dx:p.dirX,dz:p.dirZ,life:.16,max:.16,r:1.5,col:C.orange,type:'slash',kyubi:s.kyubi});}
  p.motion=false;p.sprinting=false;
  audio.play(k===' '||k==='f'||k==='g'?'charge':k==='l'?'clone':'swing');
@@ -554,8 +555,8 @@ function attack(k,manual=false){
 }
 // Charge/carry is kept in pending, so damage, interruption, reset and sandbox share the existing lifecycle.
 function beginRasengan(k,s){
- const spec=COMBAT.rasengan[k],v=directionToward(p.dirX,p.dirZ);
- const target=combatTargets().filter(e=>e.hp>0&&dist(p,e)<=spec.minDistance+spec.contact&&(dist(p,e)<1.5||(e.x-p.x)*v.x+(e.z-p.z)*v.z>dist(p,e)*.65)).sort((a,b)=>dist(p,a)-dist(p,b))[0];
+ const spec=COMBAT.rasengan[k],v=inputDirection();p.dirX=v.x;p.dirZ=v.z;
+ const target=combatTargets().filter(e=>e.hp>0&&dist(p,e)<=spec.minDistance+spec.contact&&(dist(p,e)<1.5||(e.x-p.x)*v.x+(e.z-p.z)*v.z>dist(p,e)*.65)&&clearRasPath(p,e)).sort((a,b)=>dist(p,a)-dist(p,b))[0];
  if(target){const d=directionToward(target.x-p.x,target.z-p.z,v.x,v.z);p.dirX=d.x;p.dirZ=d.z;}
  p.chakra-=s.cost;cd[k]=s.cd;
  p.pending={k,s,remaining:s.windup,combo:0,ras:true,phase:'charge',held:0,q:0,scale:1};
@@ -572,7 +573,7 @@ function finishRasengan(a,target=null){
  // A missed attack does not damage behind walls. Each valid target is hit at most once.
  if(!target)return;
  if(a.s.kyubi&&kyubiActive()&&a.q>=COMBAT.kyubiRasenganBlast.fullCharge){finishKyubiBlast(a,target,center,spec,giant);return;}
- const near=combatTargets().filter(e=>e.hp>0&&(e===target||dist(e,center)<spec.splash*a.scale)&&clearRasPath(p,e)).sort((x,y)=>dist(x,center)-dist(y,center)).slice(0,5);
+ const near=rasenganSplash(p,combatTargets(),target,center,spec,a.scale,clearRasPath);
  const skill={...a.s,damage:Math.round(a.s.damage*(1+spec.bonusDamage*a.q)),shake:a.s.shake*(1+a.q*.3),freeze:a.s.freeze*(1+a.q*.2)};
  for(const e of near){hurt(e,skill.damage,p,skill,true);if(!p.anim)break;}
 }
@@ -603,11 +604,12 @@ function tickRasengan(dt,dx,dz){
   p.anim.rasPose=a.held<a.s.windup*.5?0:a.held<a.s.windup?1:2;
   if(a.held+1e-6<a.s.windup||(keys.has(a.k)&&a.held+1e-6<spec.maxCharge))return;
   p.chakra=Math.max(0,p.chakra-spec.extraCost*a.q);cd[a.k]=a.s.cd;
-  const v=directionToward(p.dirX,p.dirZ);a.dx=v.x;a.dz=v.z;a.phase='carry';a.remainingDistance=spec.minDistance+(spec.maxDistance-spec.minDistance)*a.q;a.elapsed=0;p.anim.rasPose=3;audio.play('dash');
+  const v=directionToward(p.dirX,p.dirZ);a.dir=v;a.dx=v.x;a.dz=v.z;a.phase='carry';a.remainingDistance=spec.minDistance+(spec.maxDistance-spec.minDistance)*a.q;a.elapsed=0;p.anim.rasPose=3;audio.play('dash');
  }
  if(a.phase==='carry'){
   a.elapsed+=dt;p.anim.rasPose=3;p.motion=false;p.sprinting=false;
-  const contact=()=>combatTargets().filter(e=>e.hp>0&&dist(p,e)<=spec.contact*(.85+.15*a.scale)&&((e.x-p.x)*a.dx+(e.z-p.z)*a.dz>=-.3||dist(p,e)<.6)&&clearRasPath(p,e)).sort((x,y)=>dist(p,x)-dist(p,y))[0];
+  a.remaining=a.remainingDistance;a.dir=steerRasengan(p,a,combatTargets(),clearRasPath,dt);a.dx=a.dir.x;a.dz=a.dir.z;p.dirX=a.dx;p.dirZ=a.dz;
+  const contact=()=>rasenganContact(p,combatTargets(),a.dir,spec,a.scale,clearRasPath);
   let target=contact();if(target){finishRasengan(a,target);return;}
   let travel=Math.min(a.remainingDistance,spec.speed*dt);
   while(travel>1e-6){const step=Math.min(.12,travel),x=p.x+a.dx*step,z=p.z+a.dz*step;
@@ -773,13 +775,13 @@ function update(dt){
  }
 
  p.chakraDisrupt=Math.max(0,(p.chakraDisrupt||0)-dt);p.chakra=Math.min(100,p.chakra+dt*(8+bonus.chakra+characterFor(p.character).regen+(p.charging&&p.chargeHeld>=COMBAT.defense.chargeWindup?COMBAT.defense.chargeBonus:0))*(p.chakraDisrupt>0?KABUTO_RULES.regenMultiplier:1));
- if(p.pending?.ras)tickRasengan(dt,dx,dz);else if(p.pending){const a=p.pending;a.remaining-=dt;if(a.remaining<=0&&(!a.s.dashStrike||!p.dashTime||attackCone(a.s,a.dir).length)){p.pending=null;resolveAttack(a);}}
+ if(p.pending?.ras)tickRasengan(dt,dx,dz);else if(p.pending){const a=p.pending;if(a.k==='j'&&a.dir&&!a.s.dashStrike&&a.remaining>.035){meleeAimDuringWindup(p,a,combatTargets(),clearRasPath);p.dirX=a.dir.x;p.dirZ=a.dir.z;if(a.s.kyubi&&p.anim)p.anim.clawRange=clawReach(a.dir.x,a.dir.z,a.s.range);}if(a.step>0){const n=Math.min(a.step,6*dt);move(p,a.dir.x*n,a.dir.z*n);a.step-=n;}a.remaining-=dt;if(a.remaining<=0&&(!a.s.dashStrike||!p.dashTime||attackCone(a.s,a.dir).length)){p.pending=null;resolveAttack(a);}}
  if(mistScene||valleyFinal()||mentorLesson())return;
  if(boss?.id==='sasuke'&&boss.independent&&tickValleyElectric(boss,p,dt)&&!(p.dashGuard>0||p.dashTime>0||p.invuln>0)){const b=boss;if(!immortalActive())p.hp=Math.max(0,p.hp-VALLEY_RULES.trailDamage);feedback.number(p.x,p.z,immortalActive()?'IMMUNE':VALLEY_RULES.trailDamage,'player');p.flash=Math.max(p.flash||0,.10);if(!p.hp){startValleyUltimate(b);b.finalDuel.stage='failed';failValley(b);return;}}
  if(boss?.id==='sasuke'&&boss.independent&&tickValleyBurn(boss,p,dt)&&!(p.dashGuard>0||p.dashTime>0||p.invuln>0)){const b=boss;if(!immortalActive())p.hp=Math.max(0,p.hp-VALLEY_RULES.burnDamage);feedback.number(p.x,p.z,immortalActive()?'IMMUNE':VALLEY_RULES.burnDamage,'player');p.flash=Math.max(p.flash||0,.10);if(!p.hp){startValleyUltimate(b);b.finalDuel.stage='failed';failValley(b);return;}}
  if(wasEast!==inEast(p)){projectiles=[];clones=[];effects=effects.filter(e=>e.reference);msg(inEast(p)?'Wind Frontier · Explore the trail and shrine.':'Return to Konoha Forest',4);}
  if(p.anim&&!p.pending?.ras){if(Number.isFinite(p.anim.dashImpactAge))p.anim.dashImpactAge+=dt;p.anim.left-=dt;if(p.anim.rasRecovery)p.anim.rasPose=p.anim.left>p.anim.total*.5?4:5;if(p.anim.left<=0)p.anim=null;}
- if(p.queued&&!p.anim&&!p.pending&&!(cd.j>0)){p.queued=false;attack('j');}
+ if(p.queued&&!p.anim&&!p.pending&&!(cd.j>0)){p.queued=false;attack('j',true);}
   drainAction();
  if(arenaIsolationAt===null){if(!boss&&!examRun)tickRespawn();reinforcements=reinforcements.filter(e=>e.hp>0&&e.expires>t);}const actors=activeEnemies(),team=enemyTeam(actors);
  for(const e of actors){
@@ -933,6 +935,7 @@ function render(dt,animDt=dt){
  if(boss?.id==='sasuke'&&boss.independent)for(const q of boss.fireZones||[]){const fade=Math.min(1,q.life/.8);disc(q.x,.058,q.z,q.r,rgb('57382b'),24);ring(q.x,.067,q.z,q.r,.07*fade,rgb('ee8439'),32);for(let k=0;k<5;k++){const ang=k*2.399963,rr=q.r*(.25+.12*(k%4)),x=q.x+Math.cos(ang)*rr,z=q.z+Math.sin(ang)*rr;ring(x,.075,z,.27,.045,rgb('b85730'),10);if(!pixels)cone(x,.075,z,.19,.4+.18*Math.sin(t*10+k),rgb(k%2?'ffb444':'ef622b'),5);}}
  if(waterPrison?.kind==='electric'){ring(p.x,.07,p.z,1.2,.09,rgb('ba92fa'),24);for(let i=0;i<7;i++){const a=i*2.399963+t*4;curseBolt([p.x+Math.cos(a)*.9,.12,p.z+Math.sin(a)*.9],[p.x+Math.cos(a+.8)*.55,2.1,p.z+Math.sin(a+.8)*.55],t,i,.04);}}pixels?.end();if(boss&&!mistScene&&!lesson&&!vd)drawBossPolish(boss,t);view.drawActors(mesh);effectMesh.length=0;mesh=effectMesh;
   if(running&&!mistScene&&!lesson&&!vd){if(p.guarding){const v=directionToward(p.dirX,p.dirZ);for(let i=0;i<12;i++){const a=Math.atan2(v.z,v.x)-1.05+i*2.1/12,b=a+2.1/12;limb([p.x+Math.cos(a)*.92,.85,p.z+Math.sin(a)*.92],[p.x+Math.cos(b)*.92,.85,p.z+Math.sin(b)*.92],.065,rgb('f5d48b'),4);}}if(p.charging){const q=Math.min(1,(p.chargeHeld||0)/COMBAT.defense.chargeWindup);ring(p.x,.07,p.z,.85+.15*Math.sin(t*12),.075,rgb('72caff'),20);for(let i=0;i<8;i++){const a=i*2.399+t*5,h=.2+((t*2.2+i*.17)%1)*2;limb([p.x+Math.cos(a)*.7,h,p.z+Math.sin(a)*.7],[p.x+Math.cos(a+.15)*.5,h+.4*q,p.z+Math.sin(a+.15)*.5],.045,rgb('a4eaff'),4);}}}
+  if(running&&!scene&&!lesson&&!vd&&p.pending?.k==='j'&&p.pending.dir){const a=p.pending,points=meleeAreaOutline(p,a.s,a.dir);for(let i=1;i<points.length;i++){const u=points[i-1],v=points[i];limb([u.x,.065,u.z],[v.x,.065,v.z],.023,rgb(a.s.kyubi?'eeae8c':'dfd5b8'),4);}}
   if(running&&!scene&&!lesson&&!vd)drawContactFeel();drawKyubiBlasts();drawBossImpacts();if(isolated)for(const a of projectiles)if(a.dragonWake&&a.life>0){const pts=a.wake;for(let i=0;i<pts.length;i+=quality===1?2:3){const q=pts[i],r=.12+.45*(i+1)/pts.length;ring(q.x,.085,q.z,r,.045,rgb('7cc5e1'),12);limb([q.x,.12,q.z],[q.x,.28+r*.65,q.z],.065,rgb('9ddcec'),4);}if(pts.length){const q=pts[pts.length-1];limb([q.x,.62,q.z],[a.x,.85,a.z],.23,rgb('64b6d7'),5);}}
   if(pixels){pixels.effects(effects,clones,projectiles,t,running?animDt:0,quality,p,boss);}else{
   for(let a of projectiles){let ang=t*25;for(let i=0;i<4;i++){let q=ang+i*Math.PI/2;tri([a.x,.83,a.z],[a.x+Math.cos(q)*.33,.83,a.z+Math.sin(q)*.33],[a.x+Math.cos(q+.55)*.13,.83,a.z+Math.sin(q+.55)*.13],C.dark)}limb([a.x-a.dx*.65,.8,a.z-a.dz*.65],[a.x,.8,a.z],.018,rgb('c5dce1'),4)}for(let e of effects)visualEffect(e);}
@@ -978,11 +981,11 @@ bossSandboxTools=createBossSandboxTools({doc:document,bosses:PRACTICE_BOSSES,act
  refill:()=>{if(sandbox&&p.hp>0){p.hp=p.chakra=100;p.stamina=100;cd={};}},
  level:()=>{if(sandbox&&p.hp>0){sandboxBoost(p,rpg,'five',addItem);syncRPG();}},
  rage:()=>{if(sandbox&&p.character==='naruto'&&p.hp>0)p.kyubiRage=100;},
- launch:(id,phase)=>{const args=new URLSearchParams(location.search),url=practiceURL(id,phase,'6d1',args.get('returnEncounter')||'');if(sandbox&&url)location.assign(url+(['zabuza','haku','mistSaga'].includes(id)?'&bridgePractice=1&review=6c3':''));},
+ launch:(id,phase)=>{const args=new URLSearchParams(location.search),url=practiceURL(id,phase,'6d2',args.get('returnEncounter')||'');if(sandbox&&url)location.assign(url+(['zabuza','haku','mistSaga'].includes(id)?'&bridgePractice=1&review=6c3':''));},
  exit:returnToFieldSandbox}});bossSandboxTools.refresh();
 // Direct, isolated classic encounter practice requested by illustrated sandbox.
 // Preload the approved scene once before the title becomes interactive. Non-Mist direct practices skip it.
 if(!classicSandboxRequested||bridgePracticeRequested){try{const module=await import('./arenas/mist-bridge-combat-presentation.js?v=6b3');bridgePresentation=await module.createBridgeCombatPresentation({scene:view.scene,arena:ARENA});if(bridgePresentation.failures.length)console.warn('Bridge texture fallbacks',bridgePresentation.failures);}catch(e){bridgeLoadError=String(e?.message||e);console.error('Bridge presentation unavailable',bridgeLoadError);}}
 if(!classicSandboxRequested||kabutoPracticeRequested){try{const module=await import('./arenas/kabuto-combat-presentation.js?v=6c2');kabutoPresentation=await module.createKabutoCombatPresentation({scene:view.scene,arena:ka});if(kabutoPresentation.failures.length)console.warn('Kabuto texture fallbacks',kabutoPresentation.failures);}catch(e){console.error('Kabuto presentation unavailable',e);}}
-if(gaaraPracticeRequested){try{const module=await import('./arenas/gaara-combat-presentation.js?v=6d1');gaaraPresentation=await module.createGaaraCombatPresentation({scene:view.scene,arena:ga});if(gaaraPresentation.failures.length)console.warn('Gaara texture fallbacks',gaaraPresentation.failures);}catch(e){console.error('Gaara presentation unavailable; using legacy arena',e);}}
+if(!classicSandboxRequested||gaaraPracticeRequested){try{const module=await import('./arenas/gaara-combat-presentation.js?v=6d1');gaaraPresentation=await module.createGaaraCombatPresentation({scene:view.scene,arena:ga});if(gaaraPresentation.failures.length)console.warn('Gaara texture fallbacks',gaaraPresentation.failures);}catch(e){console.error('Gaara presentation unavailable; using legacy arena',e);}}
 if(classicSandboxRequested){const args=new URLSearchParams(location.search),id=args.get('boss'),phase=Number(args.get('phase'));if((bridgePracticeRequested&&!bridgePresentation)||(kabutoPracticeRequested&&!kabutoPresentation)){returnToFieldSandbox();}else if(id&&practiceStage(id,phase)&&enterSandbox()){if(!practiceBoss(id,phase))returnToFieldSandbox();else if(bridgePresentation?.active&&id==='mistSaga'&&phase===1)playMistScene('opening',()=>{boss.introLeft=1.5;});}else returnToFieldSandbox();}

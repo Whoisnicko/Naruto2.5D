@@ -20,9 +20,9 @@ import {createKonohaScene} from './konoha-scene.js?v=3c68';
 import {MOBILITY,createMobility,updateMobility,TRAVEL} from './konoha-mobility.js';
 import {createVillage} from './konoha-village.js?v=3c77';
 import {COMBAT,actionResource} from './combat-data.js';
-import {createAudio,CONTACT_FEEL} from './feedback.js?v=6e4';
+import {createAudio,CONTACT_FEEL} from './feedback.js?v=6e5';
 import {createLevelUp,updateRankHUD} from './level-up-feedback.js?v=6c4d';
-import {createDefeatSequence} from './defeat-sequence.js?v=6e4';
+import {createDefeatSequence} from './defeat-sequence.js?v=6e5';
 import {createPerformanceController,PERFORMANCE_PRESETS} from './performance-core.js';
 import {CHESTS} from './world-data.js';
 import {createForestCombat} from './konoha-combat.js?v=6e2';
@@ -51,7 +51,7 @@ function startTravel(dest){if(defeat.active||ink?.active||!ready||travel||(villa
 function currentStoryDestinations(){try{const fresh=window.parent.KONOHA_CAMPAIGN_BRIDGE?.destinations(window);if(Array.isArray(fresh))return fresh;}catch{}return campaignSession?.destinations||[];}
 function encounterButtons(root,entries,choose,heading){if(heading){const title=document.createElement('strong');title.className='travel-group';title.textContent=heading;root.append(title);}for(const d of entries){const b=document.createElement('button');b.type='button';b.textContent=encounterLabel(d);b.disabled=!d.available;b.onclick=()=>choose(d);root.append(b);}}
 function selectStoryDestination(d,menu){$(menu).close();if(!returnCampaign(d.id)){$(menu).showModal();}}
-function launchSandboxBoss(id,phase){if(campaignSession||!ready||travel)return false;const encounter=regionalTour?'regional':combat.rosterSelection()||new URLSearchParams(location.search).get('encounter')||'';const url=practiceURL(id,phase,'6e4',encounter);if(!url)return false;const bridge=['zabuza','haku','mistSaga'].includes(id);location.assign(bridge?url+'&bridgePractice=1&review=6c3':url);return true;}
+function launchSandboxBoss(id,phase){if(campaignSession||!ready||travel)return false;const encounter=regionalTour?'regional':combat.rosterSelection()||new URLSearchParams(location.search).get('encounter')||'';const url=practiceURL(id,phase,'6e5',encounter);if(!url)return false;const bridge=['zabuza','haku','mistSaga'].includes(id);location.assign(bridge?url+'&bridgePractice=1&review=6c3':url);return true;}
 function renderDestinations(){const list=router.destinations(),root=$('destinations');root.replaceChildren();
  if(campaignSession){const entries=currentStoryDestinations();encounterButtons(root,entries.filter(d=>d.boss),d=>selectStoryDestination(d,'travelMenu'),'Boss Fast Travel · Campaign');encounterButtons(root,entries.filter(d=>!d.boss),d=>selectStoryDestination(d,'travelMenu'),'Story & training');}
  else encounterButtons(root,practiceDestinations(),d=>launchSandboxBoss(d.id,1),'Boss Fast Travel · Free practice');

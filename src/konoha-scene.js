@@ -1,6 +1,7 @@
 // Static illustrated world only. Source of truth: approved 144x84 blockout.
 import {zones,buildings,river,roads,walls,trees,blocked} from './konoha-layout.js';
 import {ART,DECOR} from './konoha-three-data.js';
+import {PLAZA_CHERRIES,PLAZA_PROPS,PLAZA_GARDENS,gardenClear,referenceName} from './konoha-reference-art.js?v=7a1';
 import {REGIONS,PORTALS} from './konoha-regions.js?v=3c64';
 
 export function createKonohaScene({THREE,scene,groundGroup,billboards,textures}){
@@ -23,10 +24,15 @@ function shadow(x,z,w,d){let g=new THREE.CircleGeometry(1,32);g.rotateX(-Math.PI
 // Real Three.js meshes with camera-facing planes; depth uses the ground anchor, not the center of the image.
 function sprite(name,x,z,w,{depth=z,aspect=.85,kind='prop',offset=0}={}){const a=textures[name];const h=w*(a?.aspect||aspect),material=a?new THREE.MeshBasicMaterial({map:a.tex,transparent:true,alphaTest:.08,depthTest:false,depthWrite:false}):new THREE.MeshBasicMaterial({color:kind==='tree'?'#48744b':'#b69a74',transparent:true,depthTest:false,depthWrite:false});const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);scene.add(m);const o={name,x,z,w,h,m,depth,offset,kind};billboards.push(o);return o;}
 function ground(){flat('grass-natural',72,42,240,125,0,'#b6c4a4',9);flat('grass-wildflowers',72,-9,144,22,.005,'#849772',10);for(const r of roads)road(r);for(const z of zones){if(z.kind==='combat')flat('dirt-compact',z.bounds[0]+z.bounds[2]/2,z.bounds[1]+z.bounds[3]/2,z.bounds[2],z.bounds[3],.016,'#e2caa5',7);}
- circle('plaza-tiles',72,43,13.1,9.2,.045,'#f1e5ce',6);addPlazaMedallion();flat('plaza-tiles',72,28,15,8,.042,'#efdfbd',6);
+ const paving=referenceName(textures,'plaza-reference'),pavingTint=paving==='plaza-reference'?'#ffffff':'#f1e5ce';
+ circle(paving,72,43,13.1,9.2,.045,pavingTint,6);addPlazaMedallion();flat(paving,72,28,15,8,.042,paving==='plaza-reference'?'#ffffff':'#efdfbd',6);
+ for(const [x,z,rx,rz] of PLAZA_GARDENS){if(gardenClear(x,z,Math.min(rx,rz)*.65,blocked,roads))circle('grass-wildflowers',x,z,rx,rz,.012,'#b3c49d',5);}
  flat('water-clear',36,42,4,78,.075,'#b9d9ce',5);for(const x of [33.7,38.3])flat('dirt-compact',x,42,.6,78,.076,'#b3a382',4);for(const b of river.bridges)flat('plaza-tiles',36,b.y,5.4,b.w,.085,'#dfcdb5',5);}
 function assemble(){ground();sprite('mountain',72,6,124,{depth:-100,kind:'mountain'});for(const [i,b] of buildings.entries()){const n=ART[b.kind]|| (b.kind==='house'?ART.houses[Number(b.id.slice(5))%6]:ART.shops[i%3]);shadow(b.x+b.w/2,b.y+b.d,b.w*1.08,3.2);sprite(n,b.x+b.w/2,b.y+b.d,b.w*1.14,{kind:'building'});}
- for(const [i,t] of trees.entries()){if(!blocked(t.x,t.y)) {shadow(t.x,t.y,t.r*2.4,1.7);sprite(ART.trees[i%3],t.x,t.y,t.r*3.6,{kind:'tree'});}}for(const [n,x,z,w] of DECOR){if(!blocked(x,z)){shadow(x,z,w*.8,Math.min(1.5,w*.25));sprite(n,x,z,w,{kind:n.includes('tree')||n.includes('cherry')?'tree':'prop'});}}
+ for(const [i,t] of trees.entries()){if(!blocked(t.x,t.y)) {shadow(t.x,t.y,t.r*2.4,1.7);sprite(ART.trees[i%3],t.x,t.y,t.r*3.6,{kind:'tree'});}}for(const [n,x,z,w] of DECOR){if(!blocked(x,z)){const cherry=PLAZA_CHERRIES.find(a=>a.x===x&&a.z===z&&a.original===n);const art=cherry&&textures['cherry-reference']&&n==='cherry-wide'?'cherry-reference':n,size=cherry?cherry.w:w;shadow(x,z,size*.8,Math.min(1.9,size*.28));sprite(art,x,z,size,{kind:n.includes('tree')||n.includes('cherry')?'tree':'prop'});}}
+ // New reference assets and a few layered garden accents; anchors never alter collision.
+ for(const [n,x,z,w] of PLAZA_PROPS){if(blocked(x,z)||!textures[n])continue;shadow(x,z,w*.87,Math.min(1.1,w*.34));sprite(n,x,z,w,{kind:'prop'});}
+ for(const [x,z,rx,rz] of PLAZA_GARDENS){for(let i=0;i<3;i++){const dx=(i-1)*rx*.59,dz=(i%2?-.45:.25)*rz,px=x+dx,pz=z+dz;if(gardenClear(px,pz,.35,blocked,roads)){const n=i===1?'flowers-pink':'bush-medium';sprite(n,px,pz,i===1?1.55:1.25,{kind:'prop'});}}}
  for(let i=0;i<65;i++){const x=8+(i*37)%128,z=9+(i*23)%68;if(blocked(x,z)||Math.abs(x-36)<5||Math.hypot(x-72,(z-43)*1.4)<15||roads.some(r=>r.points.slice(1).some((b,j)=>{const a=r.points[j],dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dy)/(dx*dx+dy*dy)));return Math.hypot(x-a[0]-dx*t,z-a[1]-dy*t)<r.w/2+1.6}))||buildings.some(b=>x>b.x-2&&x<b.x+b.w+2&&z>b.y-2&&z<b.y+b.d+2))continue;const n=i%3===0?'flowers-pink':'bush-medium';sprite(n,x,z,1.1+(i%4)*.3,{kind:'prop'});}for(const [i,b] of river.bridges.entries())sprite(ART.bridges[i],36,b.y+1.65,7.6,{depth:b.y-b.w/2-.1,kind:'bridge'});
  // Wall silhouettes on fixed blockout footprints. Vertical sides use basic geometry rather than rotating front-facing artwork.
  for(const w of walls){if(w.w>w.d){const count=Math.ceil(w.w/10);for(let i=0;i<count;i++)sprite('wall-long',w.x+(i+.5)*w.w/count,w.y+w.d,w.w/count,{kind:'wall'});}else{let m=new THREE.Mesh(new THREE.BoxGeometry(w.w,2.4,w.d),solidMat('#ac9171'));m.position.set(w.x+w.w/2,1.2,w.y+w.d/2);scene.add(m);}}

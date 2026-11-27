@@ -24,3 +24,8 @@ html[data-ink-brush=ready] .ink-canonical .ink-track{mask-mode:alpha;mask-image:
 #campaignWorldDialog .ink-loading{position:absolute!important;inset:0!important}
 @media(max-height:480px){.ink-canonical .ink-run-sprite{width:min(170px,36vh)}.ink-canonical .ink-loading-card{padding:5px 12px!important}.ink-canonical .ink-loading-title{margin:3px 0 9px!important;font-size:29px!important}.ink-canonical .ink-track{height:clamp(22px,8vh,36px)}}
 @media(prefers-reduced-motion:reduce){html[data-ink-runner=ready] .ink-run-sprite,.ink-dots,.ink-indeterminate .ink-track i{animation:none!important;background-position:0 0}.ink-loading{transition:none}}
+
+/* Static initial markup is identical to runtime markup. Legacy nodes remain for error handling only. */
+#webBoot.ink-canonical[data-state=loading] .ink-track i{min-width:0}
+#webBoot.ink-canonical[data-state=loading] .ink-track i:not([style]){width:33.3333%}
+#loading.ink-canonical.ink-indeterminate .ink-track i:not([style]){width:34%}

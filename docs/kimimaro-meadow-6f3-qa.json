@@ -1,0 +1,87 @@
+{
+  "base": "b9141b4b1f4e1b37f57251b9c9ac775d9e5df122",
+  "checks": [
+    {
+      "name": "radius floor and dust unchanged",
+      "pass": true
+    },
+    {
+      "name": "90 deterministic planned bone forms",
+      "pass": true
+    },
+    {
+      "name": "actual conservative bone footprint outside radius",
+      "pass": true
+    },
+    {
+      "name": "root and chip extents outside radius",
+      "pass": true
+    },
+    {
+      "name": "trees outside radius",
+      "pass": true
+    },
+    {
+      "name": "foreground bone height bounded",
+      "pass": true
+    },
+    {
+      "name": "phases one and two are meadow",
+      "pass": true
+    },
+    {
+      "name": "third phase reveals forest",
+      "pass": true
+    },
+    {
+      "name": "deactivation resets forest",
+      "pass": true
+    },
+    {
+      "name": "active getter delegates to real presentation",
+      "pass": true
+    },
+    {
+      "name": "phase sync only Kimimaro",
+      "pass": true
+    },
+    {
+      "name": "Konoha and Jiraiya references preserved",
+      "pass": true
+    },
+    {
+      "name": "only art and practice references touched in game",
+      "pass": true
+    },
+    {
+      "name": "fallback floor color exists",
+      "pass": true
+    },
+    {
+      "name": "no new frame loop",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/kimimaro-valley-data.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/kimimaro-valley-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/kimimaro-combat-presentation.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/game.js",
+      "pass": true
+    }
+  ],
+  "bones": 90,
+  "trees": 44,
+  "limits": [
+    "No browser or FPS test",
+    "No Cloudflare verification"
+  ]
+}

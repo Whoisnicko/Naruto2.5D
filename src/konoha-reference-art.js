@@ -31,3 +31,14 @@ export function roadDistance(x,z,roads){let closest=Infinity;for(const r of road
 export function gardenClear(x,z,r,blocked,roads){return !blocked(x,z,r)&&roadDistance(x,z,roads)>r+.15;}
 // Preserve the original artwork as a per-resource fallback, not a broken rectangle.
 export function referenceName(textures,name){return textures[name]?name:REFERENCE_ART[name]||name;}
+
+// 7A.3 — Reference-derived entrance accents; no new walkable surfaces or collision rectangles.
+export const ARCHITECTURE_ART=Object.freeze({'notice-board-reference':'notice-board','fence-reference':null});
+export const ENTRANCE_PAVING=Object.freeze([
+ {id:'tower',x:72,z:25.65,w:8,d:4.2},
+ {id:'academy',x:49,z:27.85,w:5.8,d:6.3},
+ {id:'hospital',x:97,z:27.35,w:5.8,d:5.3}
+]);
+export const ENTRANCE_FENCES=Object.freeze([[61.4,27.3,4.0],[82.6,27.3,4.0],[63.2,36,3.4],[80.8,36,3.4]]);
+export function fenceClear(x,z,w,blocked,roads){return [x-w/2,x,x+w/2].every(px=>!blocked(px,z,.3)&&roadDistance(px,z,roads)>.8);}
+export function entranceArt(textures,name){return textures[name]?name:ARCHITECTURE_ART[name]||null;}

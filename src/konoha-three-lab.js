@@ -17,8 +17,8 @@ import {characterFor,skillLabel,characterSkill} from './character-data.js';
 import {addItem,moveSlot,sortInventory,discardSlot,equipSlot,unequipSlot,assignHotbar,useItem,unlockSkill,collectOverflow,advancedUnlocked,equipmentVisuals,levelFor,rankFor,skillModifiers,statsFor} from './rpg-data.js';
 import {ART,DECOR} from './konoha-three-data.js';
 import {cameraProfile,fieldCameraTarget,applyFieldCamera} from './konoha-depth-camera.js?v=7a2';
-import {createKonohaScene} from './konoha-scene.js?v=7a3';
-import {REFERENCE_ART,ARCHITECTURE_ART} from './konoha-reference-art.js?v=7a3';
+import {createKonohaScene} from './konoha-scene.js?v=7a4';
+import {REFERENCE_ART,ARCHITECTURE_ART} from './konoha-reference-art.js?v=7a4';
 import {MOBILITY,createMobility,updateMobility,TRAVEL} from './konoha-mobility.js';
 import {createVillage} from './konoha-village.js?v=3c77';
 import {COMBAT,actionResource} from './combat-data.js';
@@ -44,7 +44,7 @@ const campaignRequested=new URLSearchParams(location.search).get('campaign')==='
 if(campaignRequested){try{campaignSession=window.parent!==window?window.parent.KONOHA_CAMPAIGN_BRIDGE?.acquire(window):null}catch{}if(!campaignSession){$('progress').textContent='Campaign session unavailable. Return to the pause menu.';throw Error('Campaign session unavailable');}}
 const regionalTour=!campaignSession&&new URLSearchParams(location.search).get('sandbox')==='1'&&new URLSearchParams(location.search).get('encounter')==='regional';
 let sandboxControl=null;
-const BUILD='7A.3',router=createRegionRouter({preview:!campaignSession,discovered:campaignSession?.state.world.visited||[]});let portalCooldown=0;
+const BUILD='7A.4',router=createRegionRouter({preview:!campaignSession,discovered:campaignSession?.state.world.visited||[]});let portalCooldown=0;
 const mobility=createMobility(),dust=[],fx=$('dust'),fxctx=fx.getContext('2d');let dustBudget=0,animTime=0,touchRun=false,travel=null,viewCurrent=null;
 function clearMotion(){keys.clear();moveBlend=0;pace=MOBILITY.walk;resetFieldPose(actorPose);touchRun=false;mobility.held=0;mobility.speed=MOBILITY.walk;mobility.sprint=false;moving=false;$('touchrun').setAttribute('aria-pressed','false');}
 function closeTravel(){if($('travelMenu').open)$('travelMenu').close();}

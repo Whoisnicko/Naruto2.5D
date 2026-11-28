@@ -1,0 +1,135 @@
+{
+  "base": "fd314ed05b770aff97079d093161cc26dec44b1a",
+  "checks": [
+    {
+      "name": "both pond perimeters clear of roads and collision footprints",
+      "pass": true
+    },
+    {
+      "name": "at least six valid plant anchors",
+      "pass": true
+    },
+    {
+      "name": "central shadow removed",
+      "pass": true
+    },
+    {
+      "name": "off-plaza static shadow preserved",
+      "pass": true
+    },
+    {
+      "name": "tower shadow preserved",
+      "pass": true
+    },
+    {
+      "name": "actor and exterior shadows preserved",
+      "pass": true
+    },
+    {
+      "name": "original medallion preserved",
+      "pass": true
+    },
+    {
+      "name": "original paving restored",
+      "pass": true
+    },
+    {
+      "name": "build and cache keys updated",
+      "pass": true
+    },
+    {
+      "name": "HUD 20% and bounds 1920x1080",
+      "pass": true
+    },
+    {
+      "name": "HUD 20% and bounds 1600x900",
+      "pass": true
+    },
+    {
+      "name": "HUD 20% and bounds 1366x768",
+      "pass": true
+    },
+    {
+      "name": "HUD 20% and bounds 1280x720",
+      "pass": true
+    },
+    {
+      "name": "HUD 20% and bounds 1100x600",
+      "pass": true
+    },
+    {
+      "name": "HUD 20% and bounds 1920x540",
+      "pass": true
+    },
+    {
+      "name": "JS syntax (module body) src/konoha-reference-art.js",
+      "pass": true
+    },
+    {
+      "name": "JS syntax (module body) src/konoha-scene.js",
+      "pass": true
+    },
+    {
+      "name": "JS syntax (module body) src/konoha-three-lab.js",
+      "pass": true
+    },
+    {
+      "name": "JS syntax (module body) src/konoha-hud-fit.js",
+      "pass": true
+    }
+  ],
+  "eligiblePlants": [
+    [
+      "bush-medium",
+      60.55,
+      49.15,
+      1.15
+    ],
+    [
+      "flowers-pink",
+      61.35,
+      51.25,
+      1.15
+    ],
+    [
+      "flowers-pink",
+      65.65,
+      48.45,
+      1.05
+    ],
+    [
+      "bush-medium",
+      65.8,
+      50.15,
+      1.05
+    ],
+    [
+      "bush-medium",
+      83.45,
+      49.15,
+      1.15
+    ],
+    [
+      "flowers-pink",
+      82.65,
+      51.25,
+      1.15
+    ],
+    [
+      "flowers-pink",
+      78.35,
+      48.45,
+      1.05
+    ],
+    [
+      "bush-medium",
+      78.2,
+      50.15,
+      1.05
+    ]
+  ],
+  "limits": [
+    "No real browser/render/FPS",
+    "No deployment check"
+  ]
+}

@@ -1,0 +1,8 @@
+# 7A.4 — Vegetation & Water / plaza shadow fix
+Base fd314ed05b770aff97079d093161cc26dec44b1a. Player approved 7A.3 access, decoration, proportional HUD, navigation/combat and performance, and authorized vegetation/ponds. Requested HUD +20% and reported central shadow remained.
+- Inspected actual plaza-reference.webp: baked tree shadows are visible. Restored existing plaza-tiles.webp for plaza and civic entrances, preserving medallion. Suppress Konoha static shadow footprints intersecting plaza ellipse; actor/NPC/exterior shadows untouched. Camera unchanged.
+- Two shallow ornamental ponds, stone edging, existing water-clear texture, three static lily pads each, 8 eligible existing bush/flower accents. Visual-only water is walkable, no collision/mechanics changed. No new external images. Terrain solid-color fallback; missing plants skipped. No animation or dynamic reflections added.
+- Illustrated desktop HUD +20% over prior viewport-fit rule, uniform scale with available-space caps; compact/touch and arena HUD unchanged.
+- 19/19 checks passed in connector-side JS (placement/numeric, assertions, module-body syntax after stripping imports). No real browser/render, gameplay, FPS or Cloudflare verification. Player visual approval pending.
+- Main stays 6G.3. Preserve independent Jiraiya 6H.2, 17 historical pending checks, Kimimaro/Sasuke art refinements, broader architecture work.
+- Preview expected https://art-review-konoha-7a1.naruto2-5d.pages.dev/konoha-three-lab.html ; source https://github.com/Whoisnicko/Naruto2.5D/tree/art-review/konoha-7a1 ; production https://naruto2-5d.pages.dev/ .

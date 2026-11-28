@@ -1,0 +1,152 @@
+{
+  "base": "c05d6b3ff890051cb01d8033d6de4086cce7eede",
+  "checks": [
+    {
+      "name": "module body syntax src/arenas/sasuke-valley-data.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-valley-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-water-chakra.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-combat-presentation.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/game.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-water-impact.js",
+      "pass": true
+    },
+    {
+      "name": "statue data unchanged",
+      "pass": true
+    },
+    {
+      "name": "atlas render/fallback unchanged",
+      "pass": true
+    },
+    {
+      "name": "camera identical",
+      "pass": true
+    },
+    {
+      "name": "radius and original spray unchanged",
+      "pass": true
+    },
+    {
+      "name": "river reaches source",
+      "pass": true
+    },
+    {
+      "name": "river flows to basin",
+      "pass": true
+    },
+    {
+      "name": "continuous monotonic profile",
+      "pass": true
+    },
+    {
+      "name": "finite geometry",
+      "pass": true
+    },
+    {
+      "name": "indices valid",
+      "pass": true
+    },
+    {
+      "name": "attributes valid",
+      "pass": true
+    },
+    {
+      "name": "central old cliff blocks removed",
+      "pass": true
+    },
+    {
+      "name": "grounded",
+      "pass": true
+    },
+    {
+      "name": "jump excluded",
+      "pass": true
+    },
+    {
+      "name": "dead excluded",
+      "pass": true
+    },
+    {
+      "name": "outside excluded",
+      "pass": true
+    },
+    {
+      "name": "first contact no emission",
+      "pass": true
+    },
+    {
+      "name": "stationary no emission",
+      "pass": true
+    },
+    {
+      "name": "accumulate short step",
+      "pass": true
+    },
+    {
+      "name": "alternating contacts",
+      "pass": true
+    },
+    {
+      "name": "teleport ignored",
+      "pass": true
+    },
+    {
+      "name": "fixed pool",
+      "pass": true
+    },
+    {
+      "name": "white core and brighter render order",
+      "pass": true
+    },
+    {
+      "name": "both actors supported",
+      "pass": true
+    },
+    {
+      "name": "game cache only",
+      "pass": true
+    },
+    {
+      "name": "Mega Clash starts once",
+      "pass": true
+    },
+    {
+      "name": "transformation cleared",
+      "pass": true
+    },
+    {
+      "name": "cooldowns and pending skills cleared",
+      "pass": true
+    },
+    {
+      "name": "HP preserved chakra restored",
+      "pass": true
+    },
+    {
+      "name": "air/effects cleared",
+      "pass": true
+    }
+  ],
+  "vertices": 462,
+  "triangles": 832,
+  "limitations": [
+    "No WebGL render or FPS",
+    "No deployment validation",
+    "Mocked Mega Clash dependencies"
+  ]
+}

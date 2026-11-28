@@ -1,4 +1,4 @@
-import {END_VALLEY as A,rng,outsideArena,waveAt} from './sasuke-valley-data.js?v=6g2';
+import {END_VALLEY as A,rng,outsideArena,waveAt} from './sasuke-valley-data.js?v=6g4';
 export function waterArt(){
  const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');if(!g)throw Error('Canvas unavailable');const r=rng(79);
  g.fillStyle='#527f89';g.fillRect(0,0,512,512);
@@ -39,36 +39,90 @@ export async function createEndValley({THREE,scene}){
  for(let i=0;i<30;i++){const side=i%2?1:-1,x=side*(20+r()*15),z=-20+r()*37,w=1.5+r()*3.6;if(!outsideArena(x,z,w))continue;piece(group,rockGeo,i%4?cliff:moss,x,w*.13,z,w,.5+w*.48,w*.7,0,r()*6.283);}
  // Original stylized stone sculptures: distinct hair, layered armor, faces, hand seals.
  function statue(s){
-  if(!outsideArena(s.x,s.z,5.5))return;
+  if(!outsideArena(s.x,s.z,A.statueExtent))return;
   const root=new THREE.Group();root.position.set(s.x,0,s.z);root.rotation.y=s.yaw;group.add(root);
+  const isHash=s.id==='hashirama';
   const B=(m,x,y,z,w,h,d,rz=0)=>piece(root,boxGeo,m,x,y,z,w,h,d,0,0,rz);
   const E=(m,x,y,z,w,h,d,rz=0)=>piece(root,sphereGeo,m,x,y,z,w,h,d,0,0,rz);
   const R=(m,x,y,z,w,h,d,rx=0,ry=0,rz=0)=>piece(root,rockGeo,m,x,y,z,w,h,d,rx,ry,rz);
   const limb=(m,a,b,width,depth)=>{const v=new THREE.Vector3(...a),end=new THREE.Vector3(...b),delta=end.clone().sub(v);const o=new THREE.Mesh(cylinderGeo,m);o.position.copy(v.add(end).multiplyScalar(.5));o.scale.set(width,delta.length(),depth);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());root.add(o);};
+  // Dressed stone footing and broad rock-to-sculpture transition.
   B(shadow,0,.45,0,7.6,.9,6.1);B(stone,0,1.12,0,6.7,.45,5.3);B(light,0,1.46,0,6,.25,4.8);
-  for(const side of [-1,1]){B(stone,side*1.13,2.95,0,1.75,3.0,2.1);B(shadow,side*1.17,1.55,.7,2.0,.62,2.65);B(light,side*1.13,3.1,1.07,1.35,1.7,.22);}
-  // Rounded torso and folded lower armor avoid a stack-of-boxes silhouette.
-  E(stone,0,5.9,0,2.13,2.03,1.12);E(shadow,0,4.7,.1,2.28,.57,1.18);
-  for(const side of [-1,1]){E(stone,side*1.19,2.95,.01,.82,1.59,.95);B(shadow,side*1.16,2.13,1.03,1.38,.12,.14);B(light,side*1.12,3.88,1.04,1.35,.11,.16);}
-  // Lamellar armor and the founders' characteristic shoulder plates.
-  for(let i=0;i<5;i++){const y=5.05+i*.51;for(const side of [-1,1]){B(i%2?stone:light,side*.91,y,1.03,1.76+.10*i,.45,.30,side*.035);B(shadow,side*.91,y-.23,1.22,1.73,.065,.09);for(const dx of [-.48,.48])E(shadow,side*.91+dx,y+.06,1.22,.05,.08,.035);}}
-  for(const side of [-1,1]){R(shadow,side*2.12,7.1,.1,1.2,.65,1.0,0,0,side*.17);limb(stone,[side*2.22,6.9,0],[side*2.85,5.45,1.0],.62,.65);limb(light,[side*2.85,5.45,1],[side*.49,7.05,2.02],.53,.55);E(stone,side*.46,7.12,2.05,.39,.61,.37,side*.14);B(light,side*.35,7.65,2.05,.29,.67,.28);for(let j=0;j<3;j++)B(shadow,side*.46,6.89+j*.13,2.4,.25,.033,.045);E(stone,side*.74,7.09,2.18,.18,.34,.18,side*.45);}
-  E(stone,0,8.1,.04,.66,.65,.63);E(light,0,9.2,.16,1.02,1.35,.93);for(const side of [-1,1]){E(stone,side*1.02,9.05,.15,.21,.35,.21);E(light,side*.68,8.88,.59,.35,.46,.38,side*.15);}
-  // Face planes, nose, eyes and chin, kept sculptural rather than painted.
-  E(stone,-.5,9.44,.84,.54,.17,.17,-.1);E(stone,.5,9.44,.84,.54,.17,.17,.1);
-  B(shadow,-.47,9.28,.99,.69,.10,.10);B(shadow,.47,9.28,.99,.69,.10,.10);
-  R(light,0,9.02,1.03,.26,.39,.28);B(shadow,0,8.65,.95,.66,.08,.12);E(stone,0,8.47,.49,.69,.33,.54);E(light,0,8.73,.91,.32,.10,.10);
-  if(s.id==='hashirama'){
-   E(shadow,0,9.83,-.19,1.23,1.11,1.05);
-   for(const side of [-1,1]){R(shadow,side*.99,8.48,-.22,.48,1.7,.84,0,0,side*.09);R(stone,side*1.08,8.93,.36,.31,1.18,.55,0,0,side*.10);}
-   B(light,0,9.89,.84,1.87,.42,.23);B(shadow,0,9.89,.98,.72,.20,.04);for(const side of [-1,1])for(let j=0;j<3;j++)E(stone,side*(.98+j*.09),9.0-j*.42,.39,.14,.64,.26,side*.08);
-  }else{
-   E(shadow,0,9.92,-.19,1.39,1.25,1.04);
-   for(let i=0;i<9;i++){const side=i<4?-1:1,n=i<4?i:i-4;R(i%2?shadow:stone,side*(.63+n*.22),10.13+n*.12,-.29,.34,.77,.45,.07,.12,side*(.38+n*.09));}
-   for(const side of [-1,1]){R(shadow,side*1.13,8.44,-.34,.56,1.82,.76,0,0,side*.17);R(stone,side*.76,9.46,.57,.36,1.06,.39,0,0,side*.36);}
-   // Asymmetric armored collar and fan emblem carved into breastplate.
-   B(shadow,0,7.71,-.42,2.9,.81,1.22);E(shadow,0,6.42,1.38,.35,.43,.07);B(shadow,0,5.99,1.38,.10,.38,.08);
+  for(const side of [-1,1]){
+   E(stone,side*1.08,3.15,-.06,.87,1.72,.88);
+   B(shadow,side*1.12,1.83,.45,1.73,.51,2.13);
+   E(stone,side*1.12,1.91,.78,.87,.30,1.09);
+   for(let j=0;j<3;j++)B(light,side*1.12,2.13,.52+j*.25,1.53,.075,.16);
+   // Fabric folds and shin guards, not cylindrical bare legs.
+   for(let j=0;j<3;j++)R(j===1?shadow:stone,side*(.68+j*.31),3.00,.68,.15,.98,.21,0,0,side*(j-1)*.11);
+   B(light,side*1.07,2.65,.84,1.32,.67,.27);
   }
+  E(stone,0,5.9,-.07,2.06,2.05,1.06);E(shadow,0,4.68,.05,2.10,.46,1.04);
+  B(light,0,4.77,.90,3.85,.32,.20);
+  // Five overlapping skirt plates; separate torso lamellae and carved fastening.
+  for(const side of [-1,1]){
+   for(let i=0;i<3;i++){B(i%2?stone:light,side*(.64+.66*i),4.13,.76-.13*i,.62,1.22-.10*i,.30,side*(.035+i*.055));B(shadow,side*(.64+.66*i),3.58,.91-.13*i,.54,.08,.07);}
+   for(let i=0;i<5;i++){
+    const y=5.11+i*.48;B(i%2?stone:light,side*.91,y,1.00,1.70+.08*i,.43,.27,side*.025);
+    B(shadow,side*.91,y-.22,1.16,1.70,.055,.07);
+    for(const dx of [-.50,.50]){E(shadow,side*.91+dx,y+.08,1.16,.047,.065,.032);B(shadow,side*.91+dx,y-.05,1.17,.045,.18,.04);}
+   }
+   for(let i=0;i<3;i++){B(i%2?stone:light,side*(2.02+.10*i),7.17-.35*i,.08,1.05,.36,1.58,side*(.14+.02*i));B(shadow,side*(2.02+.10*i),7.00-.35*i,.80,1.0,.06,.07,side*.14);}
+  }
+  // Canon-inspired single raised hand: two extended fingers; opposite hand lowered.
+  // Mirror the arm choice to make the inward silhouette legible from downstream.
+  const raised=isHash?1:-1,low=-raised;
+  limb(stone,[raised*2.06,6.84,.05],[raised*2.72,5.82,1.00],.66,.69);
+  limb(light,[raised*2.72,5.82,1.00],[raised*1.70,7.82,1.94],.54,.55);
+  E(stone,raised*1.70,7.94,1.96,.40,.48,.29);
+  for(const dx of [-.115,.115]){
+   const x=raised*1.70+dx;
+   B(light,x,8.55,1.98,.19,.73,.22);E(light,x,8.92,1.98,.10,.13,.11);
+   B(shadow,x,8.40,2.11,.15,.033,.028);
+  }
+  for(let j=0;j<3;j++)E(stone,raised*1.70+(j-1)*.15,7.88,2.20,.11,.22,.13);
+  E(light,raised*1.40,8.01,2.12,.16,.24,.13,raised*.35);
+  limb(stone,[low*2.10,6.78,0],[low*2.52,5.34,.35],.68,.68);
+  limb(light,[low*2.52,5.34,.35],[low*1.95,4.38,.99],.53,.52);
+  E(stone,low*1.95,4.26,1.02,.39,.51,.28,low*.16);
+  for(let j=0;j<4;j++)B(shadow,low*1.95+(j-1.5)*.14,4.16,1.28,.045,.30,.04,low*.13);
+  // Face planes, brows, lids, sculpted nose and jaw. Eyes intentionally stone.
+  E(stone,0,8.04,.03,.65,.65,.60);
+  E(light,0,9.20,.16,.99,1.24,.87);
+  R(light,0,8.68,.54,.67,.51,.50,0,0,0);
+  for(const side of [-1,1]){
+   E(stone,side*.97,9.10,.03,.18,.32,.18);
+   E(shadow,side*.99,9.10,.16,.075,.18,.06);
+   E(stone,side*.45,9.37,.83,.48,.17,.14,-side*.14);
+   B(shadow,side*.43,9.21,.94,.57,.068,.09,side*.055);
+   E(light,side*.61,8.91,.73,.30,.26,.20,side*.24);
+  }
+  R(light,0,9.00,1.01,.22,.37,.24);
+  E(shadow,0,8.63,.88,.31,.055,.095);
+  E(light,0,8.53,.83,.33,.07,.10);
+  if(isHash){
+   // Hashirama: smooth long hair, forehead protector, vertically carved strands.
+   E(shadow,0,9.82,-.28,1.19,1.07,1.01);
+   E(stone,0,8.55,-.77,1.11,1.72,.57);
+   B(light,0,9.86,.79,1.75,.39,.18);B(shadow,0,9.86,.90,.78,.22,.045);
+   for(const side of [-1,1])for(let j=0;j<4;j++){
+    E(j%2?stone:shadow,side*(.84+j*.13),8.76-j*.25,.04-j*.10,.19,1.08,.29,side*.08);
+    B(light,side*(.84+j*.13),8.80-j*.25,.29-j*.10,.035,.78,.04,side*.08);
+   }
+   for(let i=0;i<3;i++)B(shadow,-.23+i*.23,9.86,1.0,.05,.14,.028);
+  }else{
+   // Madara: long swept jagged hair, one partially obscured eye, tall collar.
+   E(shadow,0,9.88,-.31,1.39,1.13,1.04);
+   for(let i=0;i<10;i++){
+    const side=i<5?-1:1,n=i%5;
+    limb(i%2?stone:shadow,[side*(.31+n*.18),10.12-n*.13,-.18],[side*(.98+n*.16),9.55-n*.48,-.78-n*.14],.25+.045*n,.26+.04*n);
+    R(i%2?shadow:stone,side*(.96+n*.18),9.40-n*.33,-.65-n*.09,.31,.68,.38,.25,side*.18,side*.33);
+   }
+   R(stone,.48,9.52,.61,.43,.92,.30,0,0,.36);
+   B(shadow,0,7.77,-.38,2.7,.78,1.26);
+   B(light,-1.14,7.77,.33,.26,.63,.35,-.12);B(light,1.14,7.77,.33,.26,.63,.35,.12);
+  }
+
  }
  // Batch identical static geometry/material pairs inside each statue; preserve local transforms.
  function batchStatue(root){

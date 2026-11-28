@@ -2,7 +2,9 @@
 export const END_VALLEY=Object.freeze({
  id:'sasuke-valley-of-the-end',radius:16,floor:94,
  palette:{water:'#497c89',deep:'#244954',foam:'#d8eeea',stone:'#89928b',shadow:'#536362',light:'#adb4a8',cliff:'#526467',moss:'#586c58'},
- statues:[{id:'hashirama',x:-14.8,z:-16.8,yaw:.34},{id:'madara',x:14.8,z:-16.8,yaw:-.34}],
+ // From the downstream camera: Madara left, Hashirama right; both face inward.
+ statues:[{id:'madara',x:-14.8,z:-16.8,yaw:1.02},{id:'hashirama',x:14.8,z:-16.8,yaw:-1.02}],
+ statueExtent:5.9,
  waterfall:{x:0,z:-18.0,width:15,height:12},
  cliffs:[[-27,-19,7,13],[-20,-27,8,15],[-7,-27,7,14],[7,-27,7,14],[20,-27,8,15],[27,-19,7,13],[-30,-4,7,9],[30,-4,7,9]],
  spray:144

@@ -1,0 +1,69 @@
+{
+  "base": "811c06f0c3e0d6a8ba6e200766f2a20d1416d96f",
+  "checks": [
+    {
+      "name": "original radius, floor, spray",
+      "pass": true
+    },
+    {
+      "name": "statues outside combat",
+      "pass": true
+    },
+    {
+      "name": "downstream orientation",
+      "pass": true
+    },
+    {
+      "name": "both face center",
+      "pass": true
+    },
+    {
+      "name": "waterfall and cliff data identical",
+      "pass": true
+    },
+    {
+      "name": "camera function source identical",
+      "pass": true
+    },
+    {
+      "name": "batching and waterfall/animation unchanged",
+      "pass": true
+    },
+    {
+      "name": "only cache keys changed in presentation",
+      "pass": true
+    },
+    {
+      "name": "only cache keys changed in game",
+      "pass": true
+    },
+    {
+      "name": "one hand raised and another lowered",
+      "pass": true
+    },
+    {
+      "name": "Konoha and Kimimaro/Jiraiya cache keys retained",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-valley-data.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-valley-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-combat-presentation.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/game.js",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "No browser/WebGL render",
+    "No FPS or Cloudflare check"
+  ]
+}

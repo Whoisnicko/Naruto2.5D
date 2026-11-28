@@ -2,11 +2,17 @@
 export const TOAD_GROUNDS=Object.freeze({
  id:'jiraiya-toad-sage-grounds',radius:15,floor:82,
  palette:{grass:'#788966',earth:'#9c9e79',stone:'#859082',dark:'#506558',moss:'#647b52',water:'#497b76',wood:'#87534b',trim:'#c7ac78',leaves:'#75994e',flower:'#e6b2ac'},
- ponds:[[-21,3,5.1,4.6],[21,2,5.2,4.5],[-14,-19,4.2,3.5],[14,-19,4.2,3.5]],
+ ponds:[[-21,3,5.1,4.6],[21,2,5.2,4.5],[-22,-20,4.2,3.5],[22,-20,4.2,3.5]],
  guardians:[[-12,-16,.35],[12,-16,-.35]],
  lanterns:[[-17,-8],[17,-8],[-17,8],[17,8],[-6,-19],[6,-19]],
- gate:[0,-20],trees:[[-24,-15],[-28,-5],[-24,13],[-15,-26],[-5,-27],[5,-27],[15,-26],[24,-15],[28,-5],[24,13]],
+ gate:[0,-20],trees:[[-30,-15],[-28,-5],[-24,13],[-14,-31],[-8,-33],[8,-33],[14,-31],[30,-15],[28,-5],[24,13]],
+ shrine:{x:0,z:-28,w:11,d:5.4,roofW:14.2,roofD:7.5,roofH:2.1},
+ approach:{x:0,z:-17.5,w:4.6,d:3.3},
+ guardianExtent:3.9,pondRim:.65,
  motes:64
 });
 export function rng(seed=682){return()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};}
 export function clearDecor(x,z,extent){return Math.hypot(x,z)-extent>TOAD_GROUNDS.radius;}
+
+export function shrineClear(s=TOAD_GROUNDS.shrine){return Math.hypot(s.x,s.z)-Math.hypot(s.roofW/2,s.roofD/2)>TOAD_GROUNDS.radius;}
+export function approachClear(q=TOAD_GROUNDS.approach){return q.z+q.d/2 < -TOAD_GROUNDS.radius;}

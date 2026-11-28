@@ -1,4 +1,5 @@
-import {TOAD_GROUNDS as A,rng,clearDecor} from './jiraiya-grounds-data.js?v=6h1';
+import {TOAD_GROUNDS as A,rng,clearDecor,shrineClear,approachClear} from './jiraiya-grounds-data.js?v=6h2';
+import {stoneArt,buildGuardian,buildSanctuaryArchitecture,batchStatic} from './jiraiya-sanctuary-art.js?v=6h2';
 export function groundArt(){
  const c=document.createElement('canvas');c.width=c.height=1024;const g=c.getContext('2d');if(!g)throw Error('Canvas unavailable');const r=rng(611),w=1024;
  g.fillStyle='#7d8d69';g.fillRect(0,0,w,w);const center=w/2,rad=15/82*w;
@@ -11,6 +12,8 @@ export async function createToadGrounds({THREE,scene}){
  const group=new THREE.Group(),guides=new THREE.Group(),P=A.palette,r=rng(),failures=[];group.name=A.id;guides.visible=false;scene.add(group,guides);
  const mat=(color,extra={})=>new THREE.MeshStandardMaterial({color,roughness:.92,...extra});
  const mats={stone:mat(P.stone),dark:mat(P.dark),moss:mat(P.moss),wood:mat(P.wood),trim:mat(P.trim),leaf:mat(P.leaves),flower:mat(P.flower),water:mat(P.water,{roughness:.35}),bark:mat('#685f46'),canopy:mat('#648653')};
+ let stoneMap=null;try{stoneMap=new THREE.CanvasTexture(stoneArt(rng));stoneMap.colorSpace=THREE.SRGBColorSpace;stoneMap.anisotropy=4;}catch{failures.push('guardian stone texture');}
+ Object.assign(mats,{sculpt:mat('#959c8b',{map:stoneMap}),sculptLight:mat('#a8ab97',{map:stoneMap}),plaster:mat('#e3d9b6'),timber:mat('#554839'),window:mat('#68847e'),roof:mat('#476963',{side:THREE.DoubleSide}),roofTrim:mat('#75958b')});
  const box=new THREE.BoxGeometry(1,1,1),sphere=new THREE.SphereGeometry(1,14,10),rock=new THREE.DodecahedronGeometry(1,0),cyl=new THREE.CylinderGeometry(.78,1,1,9);
  function piece(parent,geo,m,x,y,z,sx,sy,sz,rx=0,ry=0,rz=0){const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.rotation.set(rx,ry,rz);parent.add(o);return o;}
  let map=null;try{map=new THREE.CanvasTexture(groundArt());map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=4;}catch{failures.push('ground texture');}
@@ -19,19 +22,16 @@ export async function createToadGrounds({THREE,scene}){
  // Quiet ponds, each outside the movement circle. Lily pads have a recognizable notched outline.
  const padShape=new THREE.Shape();padShape.moveTo(0,0);for(let i=0;i<=22;i++){const a=.23+i*(Math.PI*2-.46)/22;padShape.lineTo(Math.cos(a),Math.sin(a));}padShape.closePath();
  const padGeo=new THREE.ShapeGeometry(padShape);padGeo.rotateX(-Math.PI/2);const disc=new THREE.CircleGeometry(1,48);disc.rotateX(-Math.PI/2);
- const rippleGeo=new THREE.RingGeometry(.94,1,40);rippleGeo.rotateX(-Math.PI/2);const rippleMat=new THREE.MeshBasicMaterial({color:'#b9ded3',transparent:true,opacity:.27,depthWrite:false,side:THREE.DoubleSide});const ripples=[],pads=[];
- for(const [x,z,rx,rz] of A.ponds){if(!clearDecor(x,z,Math.max(rx,rz)+.15))continue;
-  piece(group,disc,mats.dark,x,.008,z,rx+.12,1,rz+.12);piece(group,disc,mats.water,x,.016,z,rx,1,rz);
+ const rippleGeo=new THREE.RingGeometry(.94,1,40);rippleGeo.rotateX(-Math.PI/2);const rippleMat=new THREE.MeshBasicMaterial({color:'#b9ded3',transparent:true,opacity:.27,depthWrite:false,side:THREE.DoubleSide});const ripples=[],pads=[],rimRoot=new THREE.Group();group.add(rimRoot);
+ for(const [x,z,rx,rz] of A.ponds){if(!clearDecor(x,z,Math.max(rx,rz)+A.pondRim))continue;
+  piece(group,disc,mats.dark,x,.008,z,rx+.24,1,rz+.24);piece(group,disc,mats.water,x,.016,z,rx,1,rz);
+  for(let j=0;j<22;j++){const a=j*Math.PI*2/22,px=x+Math.cos(a)*(rx+.22),pz=z+Math.sin(a)*(rz+.22),sz=.31+r()*.16;piece(rimRoot,rock,j%5===0?mats.moss:mats.stone,px,.16,pz,sz,.18+r()*.10,sz*.78,0,r()*6.28);}
   for(let i=0;i<13;i++){const a=r()*Math.PI*2,d=.74*Math.sqrt(r()),px=x+Math.cos(a)*rx*d,pz=z+Math.sin(a)*rz*d,size=.24+r()*.34;const pad=piece(group,padGeo,mats.leaf,px,.035,pz,size,1,size,0,r()*6.28);pads.push({o:pad,y:.035,phase:r()*6.28});if(i%4===0){piece(group,sphere,mats.flower,px,.10,pz,.13,.08,.13);for(let j=0;j<5;j++){const v=j*1.256;piece(group,sphere,mats.flower,px+Math.cos(v)*.12,.10,pz+Math.sin(v)*.12,.10,.045,.10);}}}
   for(let i=0;i<3;i++){const o=piece(group,rippleGeo,rippleMat,x+(r()-.5)*rx,.028,z+(r()-.5)*rz,1,1,.85);ripples.push({o,phase:r()*6.28,size:.5+r()*.7});}
  }
- // Stone toad guardians: seated silhouette with broad head, raised eyes, wide mouth, curled legs.
- for(const [x,z,yaw] of A.guardians){if(!clearDecor(x,z,3.9))continue;const root=new THREE.Group();root.position.set(x,0,z);root.rotation.y=yaw;group.add(root);
-  const E=(m,x,y,z,sx,sy,sz)=>piece(root,sphere,m,x,y,z,sx,sy,sz);
-  piece(root,rock,mats.dark,0,.38,0,3.15,.52,2.55);E(mats.stone,0,1.55,0,1.98,1.34,1.54);E(mats.stone,0,2.75,.38,2.10,1.0,1.38);E(mats.moss,0,2.44,1.2,1.70,.46,.69);
-  for(const side of [-1,1]){E(mats.stone,side*1.12,3.48,.48,.65,.64,.62);E(mats.dark,side*1.12,3.47,1.0,.39,.27,.13);E(mats.stone,side*1.95,1.25,-.1,1.02,.78,1.35);E(mats.dark,side*1.8,.68,.93,.88,.28,1.04);E(mats.stone,side*.85,1.12,1.27,.44,.89,.46);for(let j=0;j<3;j++)E(mats.stone,side*.85+(j-1)*.26,.48,1.68,.20,.15,.43);}
-  piece(root,box,mats.dark,0,2.35,1.76,2.5,.09,.10);for(const side of [-1,1])E(mats.dark,side*.3,2.84,1.62,.12,.09,.09);
- }
+ batchStatic(THREE,group,rimRoot);
+ for(const at of A.guardians)if(clearDecor(at[0],at[1],A.guardianExtent))buildGuardian({THREE,group,at,mats,piece,box,sphere,cyl});
+ if(shrineClear()&&approachClear())buildSanctuaryArchitecture({THREE,group,A,mats,piece,box,cyl,rock,rng});
  // Vermilion torii gate, stone lanterns, quiet forest framing.
  {const [x,z]=A.gate;const root=new THREE.Group();root.position.set(x,0,z);group.add(root);for(const side of [-1,1]){piece(root,cyl,mats.dark,side*2.85,.35,0,.62,.70,.62);piece(root,cyl,mats.wood,side*2.85,2.75,0,.43,4.8,.43);piece(root,box,mats.trim,side*2.85,4.7,0,.98,.17,.96);}piece(root,box,mats.wood,0,4.35,0,7.4,.37,.48);piece(root,box,mats.wood,0,5.18,0,8.5,.50,.74);piece(root,box,mats.dark,0,5.51,0,9,.22,.96);for(const side of [-1,1])piece(root,box,mats.dark,side*4.13,5.64,0,1.15,.26,.99,0,0,side*.18);piece(root,box,mats.trim,0,4.76,.28,.85,1.05,.15);}
  for(const [x,z] of A.lanterns){if(!clearDecor(x,z,1.1))continue;piece(group,rock,mats.dark,x,.2,z,.87,.32,.87);piece(group,cyl,mats.stone,x,.94,z,.40,1.28,.40);piece(group,box,mats.stone,x,1.62,z,.86,.18,.86);piece(group,box,mats.trim,x,1.92,z,.55,.45,.55);for(const dx of [-.35,.35])for(const dz of [-.35,.35])piece(group,box,mats.dark,x+dx,1.91,z+dz,.11,.55,.11);piece(group,rock,mats.moss,x,2.32,z,.89,.38,.89);}

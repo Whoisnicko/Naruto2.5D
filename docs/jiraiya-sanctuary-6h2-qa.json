@@ -1,0 +1,81 @@
+{
+  "base": "b3913b93d66cca19aa07f0f00b160d187ecb7b86",
+  "checks": [
+    {
+      "name": "radius and floor unchanged",
+      "pass": true
+    },
+    {
+      "name": "two guardian extents outside combat",
+      "pass": true
+    },
+    {
+      "name": "four ponds and rims outside combat",
+      "pass": true
+    },
+    {
+      "name": "shrine footprint outside combat",
+      "pass": true
+    },
+    {
+      "name": "approach slabs outside combat",
+      "pass": true
+    },
+    {
+      "name": "pond guardian separation",
+      "pass": true
+    },
+    {
+      "name": "tree clearances",
+      "pass": true
+    },
+    {
+      "name": "lantern clearances",
+      "pass": true
+    },
+    {
+      "name": "mote count unchanged",
+      "pass": true
+    },
+    {
+      "name": "animation update identical",
+      "pass": true
+    },
+    {
+      "name": "original gate and lantern code retained",
+      "pass": true
+    },
+    {
+      "name": "only game cache strings changed",
+      "pass": true
+    },
+    {
+      "name": "palette combat presentation unchanged",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/arenas/jiraiya-grounds-data.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/arenas/jiraiya-grounds-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/arenas/jiraiya-combat-presentation.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/game.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/arenas/jiraiya-sanctuary-art.js",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "No live browser or render",
+    "No FPS or Cloudflare verification"
+  ]
+}

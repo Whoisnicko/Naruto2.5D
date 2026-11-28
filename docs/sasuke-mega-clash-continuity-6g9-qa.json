@@ -1,0 +1,114 @@
+{
+  "base": "15a3eff26514ca28d5eed7907028d27e40012953",
+  "checks": [
+    {
+      "name": "all approved environment config exact",
+      "pass": true
+    },
+    {
+      "name": "approved flow exact",
+      "pass": true
+    },
+    {
+      "name": "approved camera function exact",
+      "pass": true
+    },
+    {
+      "name": "all four phase configs exact",
+      "pass": true
+    },
+    {
+      "name": "Mega Clash maps to phase four",
+      "pass": true
+    },
+    {
+      "name": "phase 1 switches exactly",
+      "pass": true
+    },
+    {
+      "name": "phase 2 switches exactly",
+      "pass": true
+    },
+    {
+      "name": "phase 3 switches exactly",
+      "pass": true
+    },
+    {
+      "name": "phase 4 switches exactly",
+      "pass": true
+    },
+    {
+      "name": "natural clash does not move or replace phase four",
+      "pass": true
+    },
+    {
+      "name": "retry resets base",
+      "pass": true
+    },
+    {
+      "name": "direct Mega Clash from fresh base uses phase four",
+      "pass": true
+    },
+    {
+      "name": "clash ending returns to phase four without replacement",
+      "pass": true
+    },
+    {
+      "name": "35 camera cases across seven aspect ratios exactly match ordinary combat",
+      "pass": true
+    },
+    {
+      "name": "clash camera follows same rules at departure",
+      "pass": true
+    },
+    {
+      "name": "dialogue cinematic shot remains separate",
+      "pass": true
+    },
+    {
+      "name": "legacy fallback still uses original camera",
+      "pass": true
+    },
+    {
+      "name": "only camera guard and cache keys changed in game",
+      "pass": true
+    },
+    {
+      "name": "src/arenas/sasuke-valley-scene.js only cache keys",
+      "pass": true
+    },
+    {
+      "name": "src/arenas/sasuke-water-impact.js only cache keys",
+      "pass": true
+    },
+    {
+      "name": "src/arenas/sasuke-combat-presentation.js only cache keys",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/sasuke-valley-data.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/sasuke-valley-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/sasuke-water-impact.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/sasuke-combat-presentation.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/game.js",
+      "pass": true
+    }
+  ],
+  "cameraCases": 35,
+  "limits": [
+    "Numerical camera block evaluation, no WebGL",
+    "No FPS or Cloudflare deployment verification"
+  ]
+}

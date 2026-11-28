@@ -1,6 +1,6 @@
-import {END_VALLEY as A,rng,outsideArena,waveAt,VALLEY_PHASE_ART,phaseArtController} from './sasuke-valley-data.js?v=6g8';
+import {END_VALLEY as A,rng,outsideArena,waveAt,VALLEY_PHASE_ART,phaseArtController} from './sasuke-valley-data.js?v=6g9';
 import {createWaterChakra} from './sasuke-water-chakra.js?v=6g7';
-import {createConnectedWaterfall} from './sasuke-water-impact.js?v=6g8';
+import {createConnectedWaterfall} from './sasuke-water-impact.js?v=6g9';
 import {stratifiedRock,rockSurfaceArt} from './sasuke-rock-detail.js?v=6g7';
 export function waterArt(){
  const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');if(!g)throw Error('Canvas unavailable');const r=rng(79);

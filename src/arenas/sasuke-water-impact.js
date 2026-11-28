@@ -1,4 +1,4 @@
-import {END_VALLEY as A,rng,flowMeshData} from './sasuke-valley-data.js?v=6g8';
+import {END_VALLEY as A,rng,flowMeshData} from './sasuke-valley-data.js?v=6g9';
 import {impactTexture} from './sasuke-impact-art.js?v=6g7';
 export function createConnectedWaterfall({THREE,group,falls,w,fallMap,mistMap,piece,boxGeo,rockGeo,cliff,shadow,moss,cliffGeo,rockDetail,rockShade,failures}){
  const r=rng(6606),flow=flowMeshData();let strength=1;

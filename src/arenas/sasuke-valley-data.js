@@ -47,16 +47,16 @@ export function flowMeshData(A=END_VALLEY){
  return {positions,uvs,colors,indices,cols};
 }
 
-// Shared landmarks never move. Phase-specific shore silhouettes are cosmetic.
+// Shared landmarks never move. Mega Clash reuses phase IV exactly.
+// Phase-specific shore silhouettes are cosmetic.
 // Each entry [x,z,width,height,depth,yaw] is outside the combat radius.
 export const VALLEY_PHASE_ART=Object.freeze({
  1:{label:'Base',rocks:[],waterTint:'#ffffff',mist:1},
  2:{label:'Sharingan',rocks:[[-20.5,-3,2.4,1.15,2.2,.4],[-20.5,3,2.3,.85,2,-.3],[20.5,-4,2.5,1.25,1.7,-.4],[20.5,2,2.1,.85,2.2,.6]],waterTint:'#eaf6ff',mist:1.04},
  3:{label:'Curse Mark I',rocks:[[-20.5,-5,2.4,1.65,2,.5],[-18.8,7.7,1.7,.62,1.45,-.4],[-21,5,2.4,1.1,2.1,.7],[20.5,-5,2.4,1.6,2,-.5],[18.8,7.7,1.7,.65,1.45,.4],[21,5,2.4,1.1,2.1,-.7]],waterTint:'#dae6f5',mist:1.08},
  4:{label:'Curse Mark II',rocks:[[-21,-7,2.9,2.1,2.6,.6],[-20.5,4,2.2,1.5,2.2,-.55],[-17.7,10.2,1.8,.72,1.4,.3],[-10,18,1.9,.5,1.6,-.3],[21,-7,2.9,2.1,2.6,-.6],[20.5,4,2.2,1.5,2.2,.55],[17.7,10.2,1.8,.72,1.4,-.3],[10,18,1.9,.5,1.6,.3]],waterTint:'#cbd9ee',mist:1.12},
- 5:{label:'Mega Clash',rocks:[[-21,-6,2.8,2,2.3,.5],[-21,3,2.1,1.2,2,.35],[-19.4,8,1.8,.65,1.6,-.4],[21,-6,2.8,2,2.3,-.5],[21,3,2.1,1.2,2,-.35],[19.4,8,1.8,.65,1.6,.4]],waterTint:'#dce8fb',mist:1.16}
 });
-export function valleyArtStage(phase,finalDuel=false){return finalDuel?5:Math.max(1,Math.min(4,Math.floor(Number(phase)||1)));}
+export function valleyArtStage(phase,finalDuel=false){return finalDuel?4:Math.max(1,Math.min(4,Math.floor(Number(phase)||1)));}
 export function phaseArtController(groups,onChange=()=>{}){
  let stage=0;return {get stage(){return stage;},set(phase,finalDuel=false){const n=valleyArtStage(phase,finalDuel);if(n===stage)return false;stage=n;for(const [key,group] of Object.entries(groups))group.visible=Number(key)===stage;onChange(VALLEY_PHASE_ART[stage]);return true;}};
 }

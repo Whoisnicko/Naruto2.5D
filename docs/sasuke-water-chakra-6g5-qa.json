@@ -1,0 +1,130 @@
+{
+  "base": "3dae6bc6c6b7d19de8dcaf5284ce0479fbe6fcfd",
+  "asset": "6ecc7a226d069fb81bc0c17e165e7ae3f2c4c58e",
+  "checks": [
+    {
+      "name": "asset blob uploaded",
+      "pass": true
+    },
+    {
+      "name": "image atlas geometry aspect correct",
+      "pass": true
+    },
+    {
+      "name": "statue plane footprints outside combat",
+      "pass": true
+    },
+    {
+      "name": "texture failure fallback retained",
+      "pass": true
+    },
+    {
+      "name": "ground contact",
+      "pass": true
+    },
+    {
+      "name": "airborne suppressed",
+      "pass": true
+    },
+    {
+      "name": "fallen suppressed",
+      "pass": true
+    },
+    {
+      "name": "defeated suppressed",
+      "pass": true
+    },
+    {
+      "name": "outside arena suppressed",
+      "pass": true
+    },
+    {
+      "name": "first contact no teleport splash",
+      "pass": true
+    },
+    {
+      "name": "stationary no splash",
+      "pass": true
+    },
+    {
+      "name": "short stride accumulated",
+      "pass": true
+    },
+    {
+      "name": "stride generates foot contact",
+      "pass": true
+    },
+    {
+      "name": "alternate foot",
+      "pass": true
+    },
+    {
+      "name": "teleport no splash",
+      "pass": true
+    },
+    {
+      "name": "disabled no contact",
+      "pass": true
+    },
+    {
+      "name": "reentry starts clean",
+      "pass": true
+    },
+    {
+      "name": "pool fixed 24",
+      "pass": true
+    },
+    {
+      "name": "function startValleyUltimate( unchanged",
+      "pass": true
+    },
+    {
+      "name": "function resetKyubi( unchanged",
+      "pass": true
+    },
+    {
+      "name": "function cleanMistAction( unchanged",
+      "pass": true
+    },
+    {
+      "name": "function failValley( unchanged",
+      "pass": true
+    },
+    {
+      "name": "Mega Clash clears cooldowns and transformation",
+      "pass": true
+    },
+    {
+      "name": "only visual hook and cache keys changed in game",
+      "pass": true
+    },
+    {
+      "name": "other approved arena refs retained",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-valley-data.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-valley-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-combat-presentation.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/game.js",
+      "pass": true
+    },
+    {
+      "name": "module body syntax src/arenas/sasuke-water-chakra.js",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "No browser render or FPS",
+    "No Cloudflare verification"
+  ]
+}

@@ -1,7 +1,11 @@
-import {END_VALLEY as A,rng,outsideArena,waveAt} from './sasuke-valley-data.js?v=6g4';
+import {END_VALLEY as A,rng,outsideArena,waveAt} from './sasuke-valley-data.js?v=6g5';
+import {createWaterChakra} from './sasuke-water-chakra.js?v=6g5';
 export function waterArt(){
  const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');if(!g)throw Error('Canvas unavailable');const r=rng(79);
- g.fillStyle='#527f89';g.fillRect(0,0,512,512);
+ g.fillStyle='#477782';g.fillRect(0,0,512,512);
+ // Seamless layered water glints, deep teal channels and broken caustics.
+ for(let i=0;i<190;i++){const x=r()*512,y=r()*512,w=12+r()*75,h=4+r()*15;g.fillStyle=i%3?'rgba(139,203,201,.07)':'rgba(14,54,70,.12)';for(const dx of [-512,0,512])for(const dy of [-512,0,512]){g.beginPath();g.ellipse(x+dx,y+dy,w,h,-.09,0,Math.PI*2);g.fill();}}
+ for(let i=0;i<440;i++){const x=r()*512,y=r()*512,w=2+r()*19;g.fillStyle=i%4?'rgba(207,244,236,.14)':'rgba(21,61,75,.18)';g.fillRect(x,y,w,.65+r()*1.35);}
  for(let i=0;i<1200;i++){const x=r()*512,y=r()*512,w=5+r()*35;g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+w*.5,y-2-r()*2,x+w,y+.5);g.strokeStyle=i%3?'rgba(210,236,230,.13)':'rgba(19,52,62,.14)';g.lineWidth=.5+r()*1.4;g.stroke();}
  return c;
 }
@@ -129,25 +133,54 @@ export async function createEndValley({THREE,scene}){
   const buckets=new Map();for(const o of [...root.children]){if(!o.isMesh||Array.isArray(o.material))continue;const key=o.geometry.uuid+':'+o.material.uuid;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(o);}
   let count=0;for(const list of buckets.values()){if(list.length<2)continue;const batch=new THREE.InstancedMesh(list[0].geometry,list[0].material,list.length);for(let i=0;i<list.length;i++){const o=list[i];o.updateMatrix();batch.setMatrixAt(i,o.matrix);}batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();root.remove(...list);root.add(batch);count+=list.length-1;}return count;
  }
- A.statues.forEach(statue);
- const statueRoots=group.children.filter(o=>o.isGroup);for(const root of statueRoots)batchStatue(root);
+ // Generated original pixel-art atlas. Fixed planes face the downstream camera;
+ // geometry from 6G.4 is retained only as a texture failure fallback.
+ let atlas=null;
+ try{
+  const loader=new THREE.TextureLoader();
+  let timer;try{atlas=await Promise.race([loader.loadAsync(new URL('../../assets/arena-art/sasuke-statues-6g5.webp?v=6g5',import.meta.url).href),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('statue texture timeout')),4500);})]);}finally{clearTimeout(timer);}
+  atlas.colorSpace=THREE.SRGBColorSpace;atlas.magFilter=THREE.NearestFilter;atlas.minFilter=THREE.LinearMipmapLinearFilter;atlas.generateMipmaps=true;
+ }catch{failures.push('illustrated statue atlas');}
+ if(atlas){
+  const art=A.statueArt;
+  for(const st of A.statues){
+   if(!outsideArena(st.x,st.z,A.statueExtent))continue;
+   const root=new THREE.Group();root.position.set(st.x,0,st.z);group.add(root);
+   piece(root,boxGeo,shadow,0,.45,0,7.6,.9,6.1,0,st.yaw*.35);
+   piece(root,boxGeo,stone,0,1.12,0,6.7,.45,5.3,0,st.yaw*.35);
+   piece(root,boxGeo,light,0,1.46,0,6,.25,4.8,0,st.yaw*.35);
+   const t=atlas.clone();t.repeat.set(.5,1);t.offset.set(st.id==='madara'?0:.5,0);t.needsUpdate=true;
+   const g=new THREE.PlaneGeometry(art.width,art.height);
+   const m=new THREE.MeshBasicMaterial({map:t,color:'#ffffff',alphaTest:.5,side:THREE.DoubleSide});
+   piece(root,g,m,0,art.baseY+art.height/2,.32,1,1,1);
+  }
+ }else{
+  A.statues.forEach(statue);
+  const statueRoots=group.children.filter(o=>o.isGroup);for(const root of statueRoots)batchStatue(root);
+ }
  // Central waterfall, white curtains and darker water channels.
  const w=A.waterfall,falls=new THREE.Group();falls.position.set(w.x,0,w.z);group.add(falls);
- const curtain=new THREE.PlaneGeometry(w.width,w.height,1,1);
+ // Layered waterfall surface: broad upper lip, bowing sheet and flared base.
+ const curtain=new THREE.PlaneGeometry(w.width,w.height,32,24);
+ const cp=curtain.attributes.position;for(let i=0;i<cp.count;i++){const x=cp.getX(i),y=cp.getY(i),u=(y+w.height/2)/w.height,k=Math.abs(x)/(w.width/2);cp.setXYZ(i,x*(1+.065*(1-u)**3),y,.22*Math.sin(x*1.72+u*.7)+.78*(1-u)**5+.10*k);}
+ cp.needsUpdate=true;curtain.computeVertexNormals();
  piece(falls,boxGeo,mat('#537784',{roughness:.55}),0,w.height/2,-.10,w.width,w.height,.4);
- piece(falls,curtain,new THREE.MeshBasicMaterial({color:fallMap?'#ffffff':'#b2d5df',map:fallMap,side:THREE.DoubleSide}),0,w.height/2,.24,1,1,1);
+ piece(falls,curtain,new THREE.MeshBasicMaterial({color:fallMap?'#ffffff':'#b2d5df',map:fallMap,side:THREE.DoubleSide}),0,w.height/2,.38,1,1,1);
+ // Soft translucent spray sheet at the impact point, well behind the active arena.
+ if(mistMap){const plunge=new THREE.PlaneGeometry(w.width*1.14,2.7);piece(falls,plunge,new THREE.MeshBasicMaterial({color:'#e3f6f3',map:mistMap,transparent:true,opacity:.68,depthWrite:false,side:THREE.DoubleSide}),0,.83,1.02,1,1,1,-.20);}
  // Broken side channels and shelf above the falling water.
  for(const side of [-1,1]){piece(falls,rockGeo,cliff,side*(w.width*.5+.5),w.height*.44,-.55,1.6,w.height*.61,1.7,0,side*.18);piece(falls,boxGeo,light,side*(w.width*.5+.25),w.height+.08,-.6,1.5,.35,2.4);}
  piece(falls,boxGeo,cliff,0,w.height+.13,-1.4,w.width+1,.44,2.9);
  const mist=[];if(mistMap){const m=new THREE.MeshBasicMaterial({color:'#d4e9e9',map:mistMap,transparent:true,opacity:.46,depthWrite:false,side:THREE.DoubleSide});const geo=new THREE.PlaneGeometry(1,1);for(let i=0;i<12;i++){const x=-w.width*.55+i*w.width*1.10/11;const o=piece(group,geo,m,x,.45+r()*.5,w.z+1.4+r()*1.6,3.6,1.7,1,-.25);mist.push({o,x,phase:r()*6.283});}}
 
  const streakMat=new THREE.MeshBasicMaterial({color:'#cce8ea',transparent:true,opacity:.52,depthWrite:false}),streaks=[];
- for(let i=0;i<42;i++){const x=-w.width/2+.25+i*(w.width-.5)/41,len=1.3+r()*4;const o=piece(falls,boxGeo,streakMat,x,r()*w.height,.29,.055+r()*.20,len,.045);streaks.push({o,len,phase:r()*w.height,speed:3.8+r()*3.2});}
- const foamMat=new THREE.MeshBasicMaterial({color:P.foam,transparent:true,opacity:.25,depthWrite:false,side:THREE.DoubleSide}),foam=[];
- for(let i=0;i<15;i++){const ring=new THREE.RingGeometry(.91,1,44);ring.rotateX(-Math.PI/2);const o=piece(group,ring,foamMat,(r()-.5)*w.width,.016,w.z+1.0+r()*2.5,1,1,.58);foam.push({o,phase:r()*6.283,size:.4+r()*1.9});}
+ for(let i=0;i<42;i++){const x=-w.width/2+.25+i*(w.width-.5)/41,len=1.3+r()*4;const o=piece(falls,boxGeo,streakMat,x,r()*w.height,.85,.045+r()*.13,len,.035);streaks.push({o,len,phase:r()*w.height,speed:3.8+r()*3.2});}
+ const foamMat=new THREE.MeshBasicMaterial({color:P.foam,transparent:true,opacity:.38,depthWrite:false,side:THREE.DoubleSide}),foam=[];
+ for(let i=0;i<22;i++){const ring=new THREE.RingGeometry(.91,1,44);ring.rotateX(-Math.PI/2);const o=piece(group,ring,foamMat,(r()-.5)*w.width,.016,w.z+1.0+r()*2.5,1,1,.58);foam.push({o,phase:r()*6.283,size:.4+r()*1.9});}
  const pos=new Float32Array(A.spray*3),seeds=[];for(let i=0;i<A.spray;i++)seeds.push([(r()-.5)*w.width, r(),r()*5,r()*6.283]);
  const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3).setUsage(THREE.DynamicDrawUsage));const spray=new THREE.Points(pg,new THREE.PointsMaterial({color:P.foam,size:.16,transparent:true,opacity:.45,depthWrite:false}));spray.frustumCulled=false;group.add(spray);
  const edge=new THREE.RingGeometry(A.radius-.035,A.radius+.04,96);edge.rotateX(-Math.PI/2);piece(group,edge,new THREE.MeshBasicMaterial({color:'#a8d0cf',transparent:true,opacity:.28,depthWrite:false,side:THREE.DoubleSide}),0,.006,0,1,1,1);
  function updateAtmosphere(t){if(fallMap)fallMap.offset.y=(t*.42)%1;for(const a of mist){a.o.position.x=a.x+Math.sin(t*.75+a.phase)*.35;a.o.position.y=.65+.22*Math.sin(t*.86+a.phase);a.o.scale.x=3.6+.3*Math.sin(t*.6+a.phase);}if(texture){texture.offset.x=(t*.014)%1;texture.offset.y=(t*.009)%1;}for(const a of streaks){a.o.position.y=w.height-((a.phase+t*a.speed)%w.height);a.o.scale.y=Math.min(a.len,Math.max(.05,a.o.position.y*2),Math.max(.05,(w.height-a.o.position.y)*2));}for(const a of foam){const s=a.size*(1+.2*Math.sin(t*2+a.phase));a.o.scale.set(s,1,s*.58);}for(let i=0;i<seeds.length;i++){const [x,phase,d,angle]=seeds[i],u=(phase+t*.22)%1,j=i*3;pos[j]=x+Math.sin(angle)*u*1.1;pos[j+1]=.1+Math.sin(u*Math.PI)*1.6;pos[j+2]=w.z+1.3+d*u+waveAt(x,d,t)*.14;}pg.attributes.position.needsUpdate=true;}
- updateAtmosphere(0);return {group,guides,failures,updateAtmosphere};
+ const chakra=createWaterChakra({THREE,group});
+ updateAtmosphere(0);return {group,guides,failures,updateAtmosphere,updateChakra:chakra.update,resetChakra:chakra.reset};
 }

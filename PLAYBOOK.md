@@ -376,3 +376,15 @@ References https://naruto.fandom.com/wiki/Valley_of_the_End and https://naruto.f
 Preview expected https://art-review-sasuke-6g4.naruto2-5d.pages.dev/?arenaPractice=1&boss=sasuke&phase=1&v=6g4 ; production https://naruto2-5d.pages.dev/ .
 
 Playtest statue profiles/hand seals, waterfall, four phases, Mega Clash reset and defeat/retry, HUD/FPS. Next isolated phase 7A.7 palace after Sasuke approval.
+
+
+# 6G.5 — Sasuke illustrated statue recovery and water chakra
+28/11/2026. 6G.4 playtest 5/12 OK, art 6/10; rejected for production. User requests recognizable statues via pixel art, realistic waterfall and chakra at feet while walking on water. Mega Clash reset unvalidated. Prior stable main 811c06f untouched.
+- Original AI-generated pixel-art atlas, 768x512 lossless WebP, transparent binary alpha after cleanup, 256950 bytes. Madara left/Hashirama right; 2 fixed downstream-facing textured planes at approved positions on existing pedestals. Two cells, each 384x512. Art inspired by Valley of the End and Seal of Confrontation, not extracted anime screenshot. Asset assets/arena-art/sasuke-statues-6g5.webp, blob 6ecc7a226d069fb81bc0c17e165e7ae3f2c4c58e. 4.5s texture load timeout, prior sculptural geometry fallback. Fixed planes are 2.5D and may look flat from cinematic angles; assess visually.
+- Water texture: added teal depth bands and glints; curved segmented waterfall curtain, flared base, spray sheet and stronger foam. Preserve prior mist, streaks, spray and camera, radius 16. No actual fluid simulation.
+- Pooled water chakra: fixed 24 contact slots, alternating cyan ripple and 6 droplets per footstep, subtle grounded aura for both fighters, suppress on airborne, fallen, out-of-arena, death, dialogue and Mega Clash. Cosmetic only, no resource use, damage, or new collision. Frame update uses existing render loop.
+- Mega Clash existing cleanMistAction, resetKyubi and cd={} verified in source, no modification; actual playtest still required. 6G.4 unvalidated artistic criteria retained until approval.
+- 30/30 static, pure foot-contact simulations and module-body syntax checks. No browser/Three render, FPS, Cloudflare deploy validation. No production merge.
+- Preserve all 17 historical pending items, 7A.7 palace relocation, Kimimaro future art polish, enemies, HD facades and optional X/Y compensation. Preview expected https://art-review-sasuke-6g4.naruto2-5d.pages.dev/?arenaPractice=1&boss=sasuke&phase=1&v=6g5 . Production https://naruto2-5d.pages.dev/ .
+
+Playtest art fidelity, water and foot chakra, four phases, Mega Clash reset, defeat/retry, HUD and performance; do not promote without approval.

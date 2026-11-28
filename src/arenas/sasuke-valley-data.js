@@ -5,6 +5,8 @@ export const END_VALLEY=Object.freeze({
  // From the downstream camera: Madara left, Hashirama right; both face inward.
  statues:[{id:'madara',x:-14.8,z:-16.8,yaw:1.02},{id:'hashirama',x:14.8,z:-16.8,yaw:-1.02}],
  statueExtent:5.9,
+ statueArt:{width:8.25,height:11,baseY:1.48,columns:2},
+ waterChakra:{step:.46,teleport:3.4,life:.56,slots:24,airLimit:.12},
  waterfall:{x:0,z:-18.0,width:15,height:12},
  cliffs:[[-27,-19,7,13],[-20,-27,8,15],[-7,-27,7,14],[7,-27,7,14],[20,-27,8,15],[27,-19,7,13],[-30,-4,7,9],[30,-4,7,9]],
  spray:144

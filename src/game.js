@@ -2,7 +2,7 @@ import {EXAM_DESK,EXAM_FOREST,EXAM_RING,EXAM_TIME,QUESTIONS,FOREST_RIVALS,EXAM_R
 import {CHARACTERS,characterFor,characterSkill,canSelectCharacter,skillLabel} from './character-data.js';
 'use strict';
 import { createRenderer } from './renderer.js?v=6g2';
-import {valleyCamera} from './arenas/sasuke-valley-data.js?v=6g5';
+import {valleyCamera} from './arenas/sasuke-valley-data.js?v=6g6';
 import { createPixelSystem } from './pixel-renderer.js?v=6e2';
 import { COMBAT,stepMotion,directionToward,chooseAttackTarget,actionResource,canPayAction,payAction } from './combat-data.js';
 import {attackCone as sharedAttackCone,rasenganContact,rasenganSplash,responsiveMeleeTarget,steerRasengan,meleeAimDuringWindup,meleeAreaOutline,cloneSpawnPoints,cloneTarget,projectileContacts,techniqueBuffer} from './field-combat-rules.js?v=6f2';
@@ -996,7 +996,7 @@ bossSandboxTools=createBossSandboxTools({doc:document,bosses:PRACTICE_BOSSES,act
  refill:()=>{if(sandbox&&p.hp>0){p.hp=p.chakra=100;p.stamina=100;cd={};}},
  level:()=>{if(sandbox&&p.hp>0){sandboxBoost(p,rpg,'five',addItem);syncRPG();}},
  rage:()=>{if(sandbox&&p.character==='naruto'&&p.hp>0)p.kyubiRage=100;},
- launch:(id,phase)=>{const args=new URLSearchParams(location.search),url=practiceURL(id,phase,'6g5',args.get('returnEncounter')||'');if(sandbox&&url){ink?.show('Preparing scene…');location.assign(url+(['zabuza','haku','mistSaga'].includes(id)?'&bridgePractice=1&review=6c3':''));}},
+ launch:(id,phase)=>{const args=new URLSearchParams(location.search),url=practiceURL(id,phase,'6g6',args.get('returnEncounter')||'');if(sandbox&&url){ink?.show('Preparing scene…');location.assign(url+(['zabuza','haku','mistSaga'].includes(id)?'&bridgePractice=1&review=6c3':''));}},
  exit:returnToFieldSandbox}});bossSandboxTools.refresh();
 // Direct, isolated classic encounter practice requested by illustrated sandbox.
 // Preload the approved scene once before the title becomes interactive. Non-Mist direct practices skip it.
@@ -1005,6 +1005,6 @@ if(!classicSandboxRequested||kabutoPracticeRequested){try{const module=await imp
 if(!classicSandboxRequested||gaaraPracticeRequested){try{const module=await import('./arenas/gaara-combat-presentation.js?v=6d1');gaaraPresentation=await module.createGaaraCombatPresentation({scene:view.scene,arena:ga});if(gaaraPresentation.failures.length)console.warn('Gaara texture fallbacks',gaaraPresentation.failures);}catch(e){console.error('Gaara presentation unavailable; using legacy arena',e);}}
 if(!classicSandboxRequested||oroPracticeRequested){try{const module=await import('./arenas/orochimaru-combat-presentation.js?v=6e1');oroPresentation=await module.createOrochimaruCombatPresentation({scene:view.scene,arena:or});if(oroPresentation.failures.length)console.warn('Orochimaru texture fallbacks',oroPresentation.failures);}catch(e){console.error('Orochimaru lab unavailable; using legacy arena',e);}}
 if(!classicSandboxRequested||kimiPracticeRequested){try{const module=await import('./arenas/kimimaro-combat-presentation.js?v=6f3');kimiPresentation=await module.createKimimaroCombatPresentation({scene:view.scene,arena:ki});if(kimiPresentation.failures.length)console.warn('Kimimaro art fallbacks',kimiPresentation.failures);}catch(e){console.error('Kimimaro valley unavailable; using legacy arena',e);}}
-if(!classicSandboxRequested||sasukePracticeRequested){try{const module=await import('./arenas/sasuke-combat-presentation.js?v=6g5');sasukePresentation=await module.createSasukeCombatPresentation({scene:view.scene,arena:va});if(sasukePresentation.failures.length)console.warn('Valley art fallbacks',sasukePresentation.failures);}catch(e){console.error('Valley art unavailable; using legacy arena',e);}}
+if(!classicSandboxRequested||sasukePracticeRequested){try{const module=await import('./arenas/sasuke-combat-presentation.js?v=6g6');sasukePresentation=await module.createSasukeCombatPresentation({scene:view.scene,arena:va});if(sasukePresentation.failures.length)console.warn('Valley art fallbacks',sasukePresentation.failures);}catch(e){console.error('Valley art unavailable; using legacy arena',e);}}
 if(!classicSandboxRequested||jiraiyaPracticeRequested){try{const module=await import('./arenas/jiraiya-combat-presentation.js?v=6h3');jiraiyaPresentation=await module.createJiraiyaCombatPresentation({scene:view.scene,arena:ja});if(jiraiyaPresentation.failures.length)console.warn('Jiraiya art fallbacks',jiraiyaPresentation.failures);}catch(e){console.error('Toad grounds unavailable; using legacy arena',e);}}
 if(classicSandboxRequested){const args=new URLSearchParams(location.search),id=args.get('boss'),phase=Number(args.get('phase'));if((bridgePracticeRequested&&!bridgePresentation)||(kabutoPracticeRequested&&!kabutoPresentation)){returnToFieldSandbox();}else if(id&&practiceStage(id,phase)&&enterSandbox()){if(!practiceBoss(id,phase))returnToFieldSandbox();else if(bridgePresentation?.active&&id==='mistSaga'&&phase===1)playMistScene('opening',()=>{boss.introLeft=1.5;});}else returnToFieldSandbox();}

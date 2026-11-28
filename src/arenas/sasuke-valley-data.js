@@ -6,9 +6,11 @@ export const END_VALLEY=Object.freeze({
  statues:[{id:'madara',x:-14.8,z:-16.8,yaw:1.02},{id:'hashirama',x:14.8,z:-16.8,yaw:-1.02}],
  statueExtent:5.9,
  statueArt:{width:8.25,height:11,baseY:1.48,columns:2},
- waterChakra:{step:.46,teleport:3.4,life:.56,slots:24,airLimit:.12},
- waterfall:{x:0,z:-18.0,width:15,height:12},
- cliffs:[[-27,-19,7,13],[-20,-27,8,15],[-7,-27,7,14],[7,-27,7,14],[20,-27,8,15],[27,-19,7,13],[-30,-4,7,9],[30,-4,7,9]],
+ waterChakra:{step:.46,teleport:3.4,life:.68,slots:24,airLimit:.12,particles:12,glowRadius:.54},
+ waterfall:{x:0,z:-18.0,width:15,height:12,sourceZ:-40,impactZ:-16.65},
+ flowProfile:[[12.38,-22,1.12,0],[12.28,-16,1.06,.32],[12.20,-10,1.04,.66],[12.16,-4,1.0,.98],[12.08,-.85,1.0,1.16],[11.92,-.12,1.0,1.20],[11.45,.27,1.0,1.24],[10.2,.38,1.0,1.32],[8.3,.46,1.015,1.45],[6.0,.48,1.025,1.60],[3.5,.60,1.04,1.77],[1.5,.85,1.06,1.91],[.48,1.12,1.09,1.99],[.07,1.35,1.12,2.04]],
+ impact:{foamCount:24,jetCount:144,plumeCount:10},
+ cliffs:[[-27,-19,7,13],[-20,-27,8,15],[-14.5,-29,5.2,13.6],[14.5,-29,5.2,13.6],[20,-27,8,15],[27,-19,7,13],[-30,-4,7,9],[30,-4,7,9]],
  spray:144
 });
 export function rng(seed=1701){return()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};}
@@ -29,4 +31,18 @@ export function valleyCamera(arena,hero,boss,aspect){
  const maxY=Math.max(...[pz,bz].flatMap(v=>[0,3].map(y=>Math.abs((y-lookY)*c-(v-z)*s))))+1.2;
  const zoom=Math.max(.28,Math.min(.80,half*a/maxX,half*.82/maxY));
  return {x:arena.x+x,z:arena.z+z,lookY,zoom,height:57};
+}
+
+// Continuous upstream-to-basin surface; UV v follows water downstream.
+export function flowMeshData(A=END_VALLEY){
+ const cols=32,positions=[],uvs=[],colors=[],indices=[],w=A.waterfall;
+ for(let i=0;i<A.flowProfile.length;i++){
+  const [y,z,width,v]=A.flowProfile[i],upper=z<-.85;
+  for(let j=0;j<=cols;j++){const u=j/cols,x=(u*2-1)*w.width*.5*width,edge=Math.abs(u*2-1),ripple=Math.sin(x*1.7+v*2.1)*.075;
+   positions.push(x,y+(upper?ripple:0),z+(upper?0:ripple));uvs.push(u,2.04-v);
+   const shade=upper ? .75+.15*(1-edge) : .92+.08*(1-edge);colors.push(shade,shade+(upper ? .025 : 0),Math.min(1,shade+(upper ? .06 : 0)));
+  }
+ }
+ for(let i=0;i<A.flowProfile.length-1;i++)for(let j=0;j<cols;j++){const a=i*(cols+1)+j,b=a+cols+1;indices.push(a,b,a+1,a+1,b,b+1);}
+ return {positions,uvs,colors,indices,cols};
 }

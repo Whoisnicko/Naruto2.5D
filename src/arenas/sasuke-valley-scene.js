@@ -1,5 +1,6 @@
-import {END_VALLEY as A,rng,outsideArena,waveAt} from './sasuke-valley-data.js?v=6g5';
-import {createWaterChakra} from './sasuke-water-chakra.js?v=6g5';
+import {END_VALLEY as A,rng,outsideArena,waveAt} from './sasuke-valley-data.js?v=6g6';
+import {createWaterChakra} from './sasuke-water-chakra.js?v=6g6';
+import {createConnectedWaterfall} from './sasuke-water-impact.js?v=6g6';
 export function waterArt(){
  const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');if(!g)throw Error('Canvas unavailable');const r=rng(79);
  g.fillStyle='#477782';g.fillRect(0,0,512,512);
@@ -12,7 +13,9 @@ export function waterArt(){
 // Original procedural painted surfaces. Every texture has a solid-color fallback.
 export function stoneArt(){
  const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');if(!g)throw Error('Canvas unavailable');const r=rng(162);
- g.fillStyle='#c7cbc0';g.fillRect(0,0,512,512);
+ g.fillStyle='#b2b9ad';g.fillRect(0,0,512,512);
+ for(let i=0;i<85;i++){const y=r()*512,x=r()*512,len=32+r()*118;g.beginPath();g.moveTo(x,y);for(let j=1;j<=5;j++)g.lineTo(x+len*j/5,y+(r()-.5)*15+j*2.7);g.lineWidth=2+r()*6;g.strokeStyle=i%3?'rgba(41,56,53,.22)':'rgba(225,222,188,.26)';g.stroke();}
+ for(let i=0;i<110;i++){const x=r()*512,y=r()*512;g.beginPath();g.moveTo(x,y);g.lineTo(x+4+r()*22,y+2+r()*9);g.lineTo(x+12+r()*28,y+12+r()*23);g.lineWidth=.8+r()*1.2;g.strokeStyle='rgba(38,48,47,.29)';g.stroke();}
  for(let i=0;i<100;i++){const x=r()*512,y=r()*512,rad=12+r()*62;const d=g.createRadialGradient(x,y,0,x,y,rad);d.addColorStop(0,i%2?'rgba(53,71,66,.18)':'rgba(255,253,224,.26)');d.addColorStop(1,'rgba(170,175,165,0)');g.fillStyle=d;g.fillRect(x-rad,y-rad,rad*2,rad*2);}
  for(let i=0;i<14000;i++){g.fillStyle=i%2?'rgba(50,64,59,.11)':'rgba(255,253,230,.14)';g.fillRect(r()*512,r()*512,.4+r()*1.6,.4+r()*2);}
  for(let i=0;i<22;i++){let x=r()*512,y=r()*512;g.beginPath();g.moveTo(x,y);for(let j=0;j<5;j++){x+=(r()-.5)*17;y+=4+r()*12;g.lineTo(x,y);}g.strokeStyle='rgba(45,56,53,.18)';g.lineWidth=.5+r()*.65;g.stroke();}
@@ -41,6 +44,8 @@ export async function createEndValley({THREE,scene}){
  // Rocky gorge: silhouetted cliff layers behind the two founders.
  for(const [x,z,w,h] of A.cliffs){if(!outsideArena(x,z,w))continue;piece(group,rockGeo,cliff,x,h*.3,z,w,h*.76,w*.72,0,r()*6.283);piece(group,rockGeo,shadow,x+2,h*.34,z-3,w*.72,h*.9,w*.55,.12,r()*6.283);}
  for(let i=0;i<30;i++){const side=i%2?1:-1,x=side*(20+r()*15),z=-20+r()*37,w=1.5+r()*3.6;if(!outsideArena(x,z,w))continue;piece(group,rockGeo,i%4?cliff:moss,x,w*.13,z,w,.5+w*.48,w*.7,0,r()*6.283);}
+ // Seeded ledges with moss and chipped strata outside combat.
+ const strata=rng(663);for(const [x,z,w,h] of A.cliffs)for(let j=0;j<4;j++){const px=x+(strata()-.5)*w,pz=z+w*.51+strata()*.7,sw=1.25+strata()*2.1;if(!outsideArena(px,pz,sw+1))continue;piece(group,rockGeo,j===3?moss:j%2?shadow:stone,px,h*(.14+j*.19),pz,sw,.32+strata()*.55,.56+strata()*.65,0,strata()*.6,(strata()-.5)*.19);}
  // Original stylized stone sculptures: distinct hair, layered armor, faces, hand seals.
  function statue(s){
   if(!outsideArena(s.x,s.z,A.statueExtent))return;
@@ -160,27 +165,13 @@ export async function createEndValley({THREE,scene}){
  }
  // Central waterfall, white curtains and darker water channels.
  const w=A.waterfall,falls=new THREE.Group();falls.position.set(w.x,0,w.z);group.add(falls);
- // Layered waterfall surface: broad upper lip, bowing sheet and flared base.
- const curtain=new THREE.PlaneGeometry(w.width,w.height,32,24);
- const cp=curtain.attributes.position;for(let i=0;i<cp.count;i++){const x=cp.getX(i),y=cp.getY(i),u=(y+w.height/2)/w.height,k=Math.abs(x)/(w.width/2);cp.setXYZ(i,x*(1+.065*(1-u)**3),y,.22*Math.sin(x*1.72+u*.7)+.78*(1-u)**5+.10*k);}
- cp.needsUpdate=true;curtain.computeVertexNormals();
- piece(falls,boxGeo,mat('#537784',{roughness:.55}),0,w.height/2,-.10,w.width,w.height,.4);
- piece(falls,curtain,new THREE.MeshBasicMaterial({color:fallMap?'#ffffff':'#b2d5df',map:fallMap,side:THREE.DoubleSide}),0,w.height/2,.38,1,1,1);
- // Soft translucent spray sheet at the impact point, well behind the active arena.
- if(mistMap){const plunge=new THREE.PlaneGeometry(w.width*1.14,2.7);piece(falls,plunge,new THREE.MeshBasicMaterial({color:'#e3f6f3',map:mistMap,transparent:true,opacity:.68,depthWrite:false,side:THREE.DoubleSide}),0,.83,1.02,1,1,1,-.20);}
- // Broken side channels and shelf above the falling water.
- for(const side of [-1,1]){piece(falls,rockGeo,cliff,side*(w.width*.5+.5),w.height*.44,-.55,1.6,w.height*.61,1.7,0,side*.18);piece(falls,boxGeo,light,side*(w.width*.5+.25),w.height+.08,-.6,1.5,.35,2.4);}
- piece(falls,boxGeo,cliff,0,w.height+.13,-1.4,w.width+1,.44,2.9);
+ const connected=createConnectedWaterfall({THREE,group,falls,w,fallMap,mistMap,piece,boxGeo,rockGeo,cliff,shadow,moss});
  const mist=[];if(mistMap){const m=new THREE.MeshBasicMaterial({color:'#d4e9e9',map:mistMap,transparent:true,opacity:.46,depthWrite:false,side:THREE.DoubleSide});const geo=new THREE.PlaneGeometry(1,1);for(let i=0;i<12;i++){const x=-w.width*.55+i*w.width*1.10/11;const o=piece(group,geo,m,x,.45+r()*.5,w.z+1.4+r()*1.6,3.6,1.7,1,-.25);mist.push({o,x,phase:r()*6.283});}}
 
- const streakMat=new THREE.MeshBasicMaterial({color:'#cce8ea',transparent:true,opacity:.52,depthWrite:false}),streaks=[];
- for(let i=0;i<42;i++){const x=-w.width/2+.25+i*(w.width-.5)/41,len=1.3+r()*4;const o=piece(falls,boxGeo,streakMat,x,r()*w.height,.85,.045+r()*.13,len,.035);streaks.push({o,len,phase:r()*w.height,speed:3.8+r()*3.2});}
- const foamMat=new THREE.MeshBasicMaterial({color:P.foam,transparent:true,opacity:.38,depthWrite:false,side:THREE.DoubleSide}),foam=[];
- for(let i=0;i<22;i++){const ring=new THREE.RingGeometry(.91,1,44);ring.rotateX(-Math.PI/2);const o=piece(group,ring,foamMat,(r()-.5)*w.width,.016,w.z+1.0+r()*2.5,1,1,.58);foam.push({o,phase:r()*6.283,size:.4+r()*1.9});}
  const pos=new Float32Array(A.spray*3),seeds=[];for(let i=0;i<A.spray;i++)seeds.push([(r()-.5)*w.width, r(),r()*5,r()*6.283]);
  const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3).setUsage(THREE.DynamicDrawUsage));const spray=new THREE.Points(pg,new THREE.PointsMaterial({color:P.foam,size:.16,transparent:true,opacity:.45,depthWrite:false}));spray.frustumCulled=false;group.add(spray);
  const edge=new THREE.RingGeometry(A.radius-.035,A.radius+.04,96);edge.rotateX(-Math.PI/2);piece(group,edge,new THREE.MeshBasicMaterial({color:'#a8d0cf',transparent:true,opacity:.28,depthWrite:false,side:THREE.DoubleSide}),0,.006,0,1,1,1);
- function updateAtmosphere(t){if(fallMap)fallMap.offset.y=(t*.42)%1;for(const a of mist){a.o.position.x=a.x+Math.sin(t*.75+a.phase)*.35;a.o.position.y=.65+.22*Math.sin(t*.86+a.phase);a.o.scale.x=3.6+.3*Math.sin(t*.6+a.phase);}if(texture){texture.offset.x=(t*.014)%1;texture.offset.y=(t*.009)%1;}for(const a of streaks){a.o.position.y=w.height-((a.phase+t*a.speed)%w.height);a.o.scale.y=Math.min(a.len,Math.max(.05,a.o.position.y*2),Math.max(.05,(w.height-a.o.position.y)*2));}for(const a of foam){const s=a.size*(1+.2*Math.sin(t*2+a.phase));a.o.scale.set(s,1,s*.58);}for(let i=0;i<seeds.length;i++){const [x,phase,d,angle]=seeds[i],u=(phase+t*.22)%1,j=i*3;pos[j]=x+Math.sin(angle)*u*1.1;pos[j+1]=.1+Math.sin(u*Math.PI)*1.6;pos[j+2]=w.z+1.3+d*u+waveAt(x,d,t)*.14;}pg.attributes.position.needsUpdate=true;}
+ function updateAtmosphere(t){connected.update(t);if(fallMap)fallMap.offset.y=(t*.42)%1;for(const a of mist){a.o.position.x=a.x+Math.sin(t*.75+a.phase)*.35;a.o.position.y=.65+.22*Math.sin(t*.86+a.phase);a.o.scale.x=3.6+.3*Math.sin(t*.6+a.phase);}if(texture){texture.offset.x=(t*.014)%1;texture.offset.y=(t*.009)%1;}for(let i=0;i<seeds.length;i++){const [x,phase,d,angle]=seeds[i],u=(phase+t*.22)%1,j=i*3;pos[j]=x+Math.sin(angle)*u*1.1;pos[j+1]=.1+Math.sin(u*Math.PI)*1.6;pos[j+2]=w.z+1.3+d*u+waveAt(x,d,t)*.14;}pg.attributes.position.needsUpdate=true;}
  const chakra=createWaterChakra({THREE,group});
  updateAtmosphere(0);return {group,guides,failures,updateAtmosphere,updateChakra:chakra.update,resetChakra:chakra.reset};
 }

@@ -17,7 +17,7 @@ import {characterFor,skillLabel,characterSkill} from './character-data.js';
 import {addItem,moveSlot,sortInventory,discardSlot,equipSlot,unequipSlot,assignHotbar,useItem,unlockSkill,collectOverflow,advancedUnlocked,equipmentVisuals,levelFor,rankFor,skillModifiers,statsFor} from './rpg-data.js';
 import {ART,DECOR} from './konoha-three-data.js';
 import {cameraProfile,fieldCameraTarget,applyFieldCamera} from './konoha-depth-camera.js?v=7a2';
-import {createKonohaScene} from './konoha-scene.js?v=7a5';
+import {createKonohaScene} from './konoha-scene.js?v=7a6';
 import {REFERENCE_ART,ARCHITECTURE_ART} from './konoha-reference-art.js?v=7a5';
 import {MOBILITY,createMobility,updateMobility,TRAVEL} from './konoha-mobility.js';
 import {createVillage} from './konoha-village.js?v=3c77';
@@ -44,7 +44,7 @@ const campaignRequested=new URLSearchParams(location.search).get('campaign')==='
 if(campaignRequested){try{campaignSession=window.parent!==window?window.parent.KONOHA_CAMPAIGN_BRIDGE?.acquire(window):null}catch{}if(!campaignSession){$('progress').textContent='Campaign session unavailable. Return to the pause menu.';throw Error('Campaign session unavailable');}}
 const regionalTour=!campaignSession&&new URLSearchParams(location.search).get('sandbox')==='1'&&new URLSearchParams(location.search).get('encounter')==='regional';
 let sandboxControl=null;
-const BUILD='7A.5',router=createRegionRouter({preview:!campaignSession,discovered:campaignSession?.state.world.visited||[]});let portalCooldown=0;
+const BUILD='7A.6',router=createRegionRouter({preview:!campaignSession,discovered:campaignSession?.state.world.visited||[]});let portalCooldown=0;
 const mobility=createMobility(),dust=[],fx=$('dust'),fxctx=fx.getContext('2d');let dustBudget=0,animTime=0,touchRun=false,travel=null,viewCurrent=null;
 function clearMotion(){keys.clear();moveBlend=0;pace=MOBILITY.walk;resetFieldPose(actorPose);touchRun=false;mobility.held=0;mobility.speed=MOBILITY.walk;mobility.sprint=false;moving=false;$('touchrun').setAttribute('aria-pressed','false');}
 function closeTravel(){if($('travelMenu').open)$('travelMenu').close();}
@@ -73,7 +73,7 @@ const terrain=groundGroup.children.filter(m=>m.visible).sort((a,b)=>a.position.y
 const list=[...billboards.filter(o=>o.m.visible).map(o=>({m:o.m,w:o.w,h:o.h,kind:o.kind})),{m:actor,w:1.5,h:2},...kyubiLayers.fallbackEntries()].sort((a,b)=>a.m.renderOrder-b.m.renderOrder);for(const o of list){let [x,y]=project(o.m.position),width=o.w*sx,height=o.h*sx;if(x+width/2<0||x-width/2>w||y+height/2<0||y-height/2>h)continue;const img=o.m.material.map?.image;if(img){ctx.imageSmoothingEnabled=o.m!==actor&&o.kind!=='villageActor'&&o.kind!=='kyubiAura';ctx.drawImage(img,x-width/2,y-height/2,width,height)}else{ctx.fillStyle=material(o.m.material);ctx.fillRect(x-width/2,y-height/2,width,height)}calls++;}api.info.render.calls=calls;}};return api;}
 const groundGroup=new THREE.Group();scene.add(groundGroup);
 
-const names=[...new Set([...Object.keys(REFERENCE_ART),...Object.keys(ARCHITECTURE_ART),'mountain','tower','academy','hospital','ramen',...ART.houses,...ART.shops,...ART.trees,...ART.cherries,'grass-natural','grass-wildflowers','dirt-compact','cobbles-irregular','plaza-tiles','plaza-medallion','water-clear','main-gate','wall-long','watchtower',...DECOR.map(x=>x[0])])];
+const names=[...new Set([...Object.keys(REFERENCE_ART).filter(n=>n!=='plaza-reference'),...Object.keys(ARCHITECTURE_ART),'mountain','tower','academy','hospital','ramen',...ART.houses,...ART.shops,...ART.trees,...ART.cherries,'grass-natural','grass-wildflowers','dirt-compact','cobbles-irregular','plaza-tiles','plaza-medallion','water-clear','main-gate','wall-long','watchtower',...DECOR.map(x=>x[0])])];
 const url=n=>globalThis.KONOHA_INLINE_ASSETS?.[n]||new URL('../assets/'+(Object.hasOwn(ARCHITECTURE_ART,n)?'konoha-art-7a3/':Object.hasOwn(REFERENCE_ART,n)?'konoha-art-7a1/':'konoha-world3c/')+n+'.webp',import.meta.url).href;
 async function load(n){try{const img=new Image();img.src=url(n);await img.decode();const c=document.createElement('canvas');c.width=img.width;c.height=img.height;const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(img,0,0);const d=g.getImageData(0,0,c.width,c.height).data;let x0=c.width,y0=c.height,x1=-1,y1=-1;for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++)if(d[(y*c.width+x)*4+3]>32){x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y)}if(x1<0)throw Error('empty');let crop=document.createElement('canvas');crop.width=x1-x0+1;crop.height=y1-y0+1;crop.getContext('2d').drawImage(c,x0,y0,crop.width,crop.height,0,0,crop.width,crop.height);const tex=new THREE.CanvasTexture(crop);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());textures[n]={tex,aspect:crop.height/crop.width};}catch(e){failures.push(n)}finally{const done=Object.keys(textures).length+failures.length,total=names.length+3;$('progress').textContent=done+' / '+names.length+' illustrations checked';$('fieldInkProgress').max=total;$('fieldInkProgress').value=done;window.ShinobiInk?.sync($('loading'),done,total);try{window.parent.KONOHA_CAMPAIGN_BRIDGE?.progress(window,done,total,'Checking illustrations…')}catch{}}}
 const worldScene=createKonohaScene({THREE,scene,groundGroup,billboards,textures});

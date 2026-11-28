@@ -1,0 +1,352 @@
+{
+  "base": "d38e5e281f94ded5ca137be8aaa877dcdaffc317",
+  "checks": [
+    {
+      "name": "At least 12 distinct frontage plans",
+      "pass": true
+    },
+    {
+      "name": "At least six curated fixtures",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold shop",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold shop2",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house0",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house1",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house4",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house5",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house6",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house7",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house9",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house11",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house12",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house13",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house14",
+      "pass": true
+    },
+    {
+      "name": "Clear threshold house15",
+      "pass": true
+    },
+    {
+      "name": "Fixture clear flowers-pink 16.8,28.4",
+      "pass": true
+    },
+    {
+      "name": "Fixture clear bush-medium 23.4,30.1",
+      "pass": true
+    },
+    {
+      "name": "Fixture clear barrel-large 28.8,29.7",
+      "pass": true
+    },
+    {
+      "name": "Fixture clear flowers-pink 15.5,48.2",
+      "pass": true
+    },
+    {
+      "name": "Fixture clear bush-medium 17,58",
+      "pass": true
+    },
+    {
+      "name": "Fixture clear barrel-large 28.7,59.5",
+      "pass": true
+    },
+    {
+      "name": "Fixture clear lamp-post 110.8,59.5",
+      "pass": true
+    },
+    {
+      "name": "Fixture clear lamp-post 131.5,60.5",
+      "pass": true
+    },
+    {
+      "name": "Fixture clear bush-medium 115.5,75.4",
+      "pass": true
+    },
+    {
+      "name": "No change to bridge renderer",
+      "pass": true
+    },
+    {
+      "name": "No changes in exterior assembly",
+      "pass": true
+    },
+    {
+      "name": "No pond recreation",
+      "pass": true
+    },
+    {
+      "name": "Original pavement and emblem retained",
+      "pass": true
+    },
+    {
+      "name": "No camera or simulation changes",
+      "pass": true
+    },
+    {
+      "name": "HUD cache keys unchanged",
+      "pass": true
+    },
+    {
+      "name": "No new art load dependency",
+      "pass": true
+    },
+    {
+      "name": "All three existing crossings traversable",
+      "pass": true
+    },
+    {
+      "name": "JS module body parses src/konoha-final-art.js",
+      "pass": true
+    },
+    {
+      "name": "JS module body parses src/konoha-scene.js",
+      "pass": true
+    },
+    {
+      "name": "JS module body parses src/konoha-three-lab.js",
+      "pass": true
+    }
+  ],
+  "frontages": [
+    {
+      "id": "shop",
+      "x": 86.5,
+      "z": 60.794999999999995,
+      "w": 6.58,
+      "d": 1.35,
+      "edge": "#b7a18a",
+      "fill": "#ebd6b7",
+      "repeat": 3
+    },
+    {
+      "id": "shop2",
+      "x": 99,
+      "z": 60.794999999999995,
+      "w": 7.52,
+      "d": 1.35,
+      "edge": "#b7a18a",
+      "fill": "#ebd6b7",
+      "repeat": 3
+    },
+    {
+      "id": "house0",
+      "x": 14,
+      "z": 27.795,
+      "w": 4.4,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house1",
+      "x": 26,
+      "z": 28.795,
+      "w": 4.4,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house4",
+      "x": 14,
+      "z": 56.794999999999995,
+      "w": 4.4,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house5",
+      "x": 26.5,
+      "z": 57.794999999999995,
+      "w": 3.8500000000000005,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house6",
+      "x": 14.5,
+      "z": 73.795,
+      "w": 4.95,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house7",
+      "x": 26.5,
+      "z": 75.795,
+      "w": 3.8500000000000005,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house9",
+      "x": 49,
+      "z": 76.795,
+      "w": 5.2,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house11",
+      "x": 59,
+      "z": 78.795,
+      "w": 4.4,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house12",
+      "x": 114,
+      "z": 58.794999999999995,
+      "w": 4.4,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house13",
+      "x": 128,
+      "z": 59.794999999999995,
+      "w": 4.4,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house14",
+      "x": 113,
+      "z": 73.795,
+      "w": 4.4,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    },
+    {
+      "id": "house15",
+      "x": 129.5,
+      "z": 76.795,
+      "w": 4.95,
+      "d": 1.35,
+      "edge": "#b7a68c",
+      "fill": "#eee0ca",
+      "repeat": 2.8
+    }
+  ],
+  "fixtures": [
+    [
+      "flowers-pink",
+      16.8,
+      28.4,
+      1.2
+    ],
+    [
+      "bush-medium",
+      23.4,
+      30.1,
+      1.25
+    ],
+    [
+      "barrel-large",
+      28.8,
+      29.7,
+      0.92
+    ],
+    [
+      "flowers-pink",
+      15.5,
+      48.2,
+      1.2
+    ],
+    [
+      "bush-medium",
+      17,
+      58,
+      1.25
+    ],
+    [
+      "barrel-large",
+      28.7,
+      59.5,
+      0.92
+    ],
+    [
+      "lamp-post",
+      110.8,
+      59.5,
+      1.15
+    ],
+    [
+      "lamp-post",
+      131.5,
+      60.5,
+      1.15
+    ],
+    [
+      "bush-medium",
+      115.5,
+      75.4,
+      1.2
+    ]
+  ],
+  "limits": [
+    "No browser render",
+    "No FPS measurement",
+    "No Cloudflare verification"
+  ]
+}

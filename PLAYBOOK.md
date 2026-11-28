@@ -321,3 +321,14 @@ Base d38e5e281f94ded5ca137be8aaa877dcdaffc317. Player playtest 7A.5: 8/8 approve
 - Preview expected https://art-review-konoha-7a1.naruto2-5d.pages.dev/konoha-three-lab.html?sandbox=1&v=7a6 ; production https://naruto2-5d.pages.dev/ ; repo https://github.com/Whoisnicko/Naruto2.5D/tree/art-review/konoha-7a1.
 
 Playtest: inspect residential east/west and market/Ichiraku thresholds, walk near shops, verify unobstructed NPCs and paths, plaza and bridges, HUD at different sizes, travel and combat/FPS. Explicit approval required before merging.
+
+
+## 7A.6 — Approved release candidate
+27/11/2026. Player playtest 7A.6: 9/9 approved, explicitly authorizes production integration. Approved residential/shop approaches, district detail, NPC/accessibility, plaza/bridges, responsive HUD, travel/combat, performance and close of art pass.
+- Approved art commit 01a92dccf6e0808ca080002bcf2fb44afca65a0a; previous production 6ed9cea15ee2c603ad40190b02c81ad765fccb06; rollback branch backup/production-before-7a6. Update only field entry cache query in campaign/sandbox and shell game.js cache key. No mechanics, camera, save format, arena or art changes beyond approved build.
+- Player asks why vertical movement appears slower. Actual collision-free world motion is isotropic (same speed on all axes, normalized diagonal). Ground-plane pixel projection at 33 degrees is sin(33)=0.544639 vertical/horizontal at equal world distance. Full compensation would increase world vertical speed by about 83.6%; do not change movement without separate balance playtest. Track optional partial compensation experiment as new pending, not a bug fix or approved mechanic.
+- 11/11 targeted checks (source diff and numerical movement/projection), plus prior 36/36 static checks and user playtest. No browser deployment or FPS verification by assistant. 
+- Preserve all 17 historical pending checks, Jiraiya 6H.2, Kimimaro/Sasuke art, enemy art and high-resolution facade improvements. 
+- Production URL https://naruto2-5d.pages.dev/ ; repository https://github.com/Whoisnicko/Naruto2.5D ; production publication pending Cloudflare confirmation after merge.
+
+Production smoke: launch via title/campaign and sandbox, verify field build 7A.6, cross bridges, check travel/return and HUD at multiple viewport sizes. If regression, restore previous production using backup branch; no save schema changes. Do not discard history.

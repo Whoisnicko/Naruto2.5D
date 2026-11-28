@@ -313,3 +313,12 @@ Base d38e5e281f94ded5ca137be8aaa877dcdaffc317. Player playtest 7A.5: 8/8 approve
 - 36/36 connector-side static/numerical/simulated checks, including existing three crossing traversal and three module-body syntax checks. No real browser render/FPS/deployment verification; player visual approval required.
 - Production main 6G.3 untouched. 17 historical pending checks, Jiraiya 6H.2, Kimimaro/Sasuke art refinements and future dedicated high-resolution facade work remain tracked; no claim those are resolved. No promotion until explicitly approved.
 - Preview expected https://art-review-konoha-7a1.naruto2-5d.pages.dev/konoha-three-lab.html?sandbox=1&v=7a6 ; production https://naruto2-5d.pages.dev/ ; repo https://github.com/Whoisnicko/Naruto2.5D/tree/art-review/konoha-7a1.
+
+
+## 7A.6 — Approved release candidate
+27/11/2026. Player playtest 7A.6: 9/9 approved, explicitly authorizes production integration. Approved residential/shop approaches, district detail, NPC/accessibility, plaza/bridges, responsive HUD, travel/combat, performance and close of art pass.
+- Approved art commit 01a92dccf6e0808ca080002bcf2fb44afca65a0a; previous production 6ed9cea15ee2c603ad40190b02c81ad765fccb06; rollback branch backup/production-before-7a6. Update only field entry cache query in campaign/sandbox and shell game.js cache key. No mechanics, camera, save format, arena or art changes beyond approved build.
+- Player asks why vertical movement appears slower. Actual collision-free world motion is isotropic (same speed on all axes, normalized diagonal). Ground-plane pixel projection at 33 degrees is sin(33)=0.544639 vertical/horizontal at equal world distance. Full compensation would increase world vertical speed by about 83.6%; do not change movement without separate balance playtest. Track optional partial compensation experiment as new pending, not a bug fix or approved mechanic.
+- 11/11 targeted checks (source diff and numerical movement/projection), plus prior 36/36 static checks and user playtest. No browser deployment or FPS verification by assistant. 
+- Preserve all 17 historical pending checks, Jiraiya 6H.2, Kimimaro/Sasuke art, enemy art and high-resolution facade improvements. 
+- Production URL https://naruto2-5d.pages.dev/ ; repository https://github.com/Whoisnicko/Naruto2.5D ; production publication pending Cloudflare confirmation after merge.

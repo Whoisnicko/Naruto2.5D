@@ -436,3 +436,7 @@ Base 39aef03ce814cdfb1b8929958f6a1285a0eabd64, isolated branch art-review/konoha
 Preview expected https://art-review-konoha-7a7.naruto2-5d.pages.dev/konoha-three-lab.html?sandbox=1&v=7a7 ; production https://naruto2-5d.pages.dev/ .
 
 Playtest plaza approach, palace visibility, minimap, M travel/lookout, NPC dialogue, all bridges, HUD/performance, campaign save recovery, then approve production. Keep Character Design Overhaul mandatory final beta.
+
+
+## 7A.7 — Production integration (28 November 2026)
+User explicitly authorized promotion. Main fast-forwarded from 39aef03ce814cdfb1b8929958f6a1285a0eabd64 to c9f23f3d8a3c9ad546a22b152a43f43b0b798c7a; GitHub compare confirmed identical to candidate. Backup backup/production-before-7a7 created at previous main. 51/51 previously recorded static checks; no new browser playtest, actual save restore, FPS or live Cloudflare confirmation; no combined CI statuses. Production https://naruto2-5d.pages.dev/?v=7a7 ; repo https://github.com/Whoisnicko/Naruto2.5D ; rollback https://github.com/Whoisnicko/Naruto2.5D/tree/backup/production-before-7a7 . Preserve 17 historical checks and all backlog, mandatory final-beta Character Design Overhaul. Next: production smoke test, then next isolated beta phase; do not mark visual criteria validated without player feedback.

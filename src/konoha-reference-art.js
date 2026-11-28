@@ -43,22 +43,13 @@ export const ENTRANCE_FENCES=Object.freeze([[61.4,27.3,4.0],[82.6,27.3,4.0],[63.
 export function fenceClear(x,z,w,blocked,roads){return [x-w/2,x,x+w/2].every(px=>!blocked(px,z,.3)&&roadDistance(px,z,roads)>.8);}
 export function entranceArt(textures,name){return textures[name]?name:ARCHITECTURE_ART[name]||null;}
 
-// 7A.4 — Shallow ornamental water; existing stone/water art, no new blockers.
-export const PLAZA_PONDS=Object.freeze([
- {id:'west',x:63.2,z:49.1,rx:2.25,rz:1.45},
- {id:'east',x:80.8,z:49.1,rx:2.25,rz:1.45}
-]);
-export const POND_PLANTS=Object.freeze([
+// 7A.5 — Preserve the approved foliage, without central ponds.
+export const PLAZA_FOLIAGE=Object.freeze([
  ['bush-medium',60.55,49.15,1.15],['flowers-pink',61.35,51.25,1.15],
  ['flowers-pink',65.65,48.45,1.05],['bush-medium',65.8,50.15,1.05],
  ['bush-medium',83.45,49.15,1.15],['flowers-pink',82.65,51.25,1.15],
  ['flowers-pink',78.35,48.45,1.05],['bush-medium',78.2,50.15,1.05]
 ]);
-export const POND_PADS=Object.freeze([[-.58,-.18,.20],[.26,.45,.23],[.63,-.36,.16]]);
-export function pondClear(q,blocked,roads){
- return [[0,0],...Array.from({length:24},(_,i)=>[Math.cos(i*Math.PI/12),Math.sin(i*Math.PI/12)])].every(([dx,dz])=>gardenClear(q.x+dx*q.rx,q.z+dz*q.rz,.15,blocked,roads));
-}
-export function outsidePonds(x,z,r=.25){return PLAZA_PONDS.every(q=>((x-q.x)/(q.rx+r))**2+((z-q.z)/(q.rz+r))**2>1);}
 export function plazaShadowOverlaps(x,z,w,d){
  const dx=Math.max(0,Math.abs(x+.2-72)-w/2),dz=Math.max(0,Math.abs(z+.3-43)-d/2);
  return (dx/13.1)**2+(dz/9.2)**2<=1;

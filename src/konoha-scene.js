@@ -1,7 +1,8 @@
 // Static illustrated world only. Source of truth: approved 144x84 blockout.
 import {zones,buildings,river,roads,walls,trees,blocked} from './konoha-layout.js';
 import {ART,DECOR} from './konoha-three-data.js';
-import {PLAZA_CHERRIES,PLAZA_PROPS,PLAZA_GARDENS,gardenClear,referenceName,ENTRANCE_PAVING,ENTRANCE_FENCES,fenceClear,entranceArt,PLAZA_PONDS,POND_PLANTS,POND_PADS,pondClear,outsidePonds,plazaShadowOverlaps} from './konoha-reference-art.js?v=7a4';
+import {PLAZA_CHERRIES,PLAZA_PROPS,PLAZA_GARDENS,gardenClear,referenceName,ENTRANCE_PAVING,ENTRANCE_FENCES,fenceClear,entranceArt,PLAZA_FOLIAGE,plazaShadowOverlaps} from './konoha-reference-art.js?v=7a5';
+import {bridgePlans,bridgeGeometry,RIVER_ACCENTS} from './konoha-bridge-art.js?v=7a5';
 import {REGIONS,PORTALS} from './konoha-regions.js?v=3c64';
 
 export function createKonohaScene({THREE,scene,groundGroup,billboards,textures}){
@@ -31,25 +32,28 @@ function ground(){flat('grass-natural',72,42,240,125,0,'#b6c4a4',9);flat('grass-
  // Connect the three civic entrances to the existing paths using the same stone artwork.
  for(const q of ENTRANCE_PAVING)flat(paving,q.x,q.z,q.w,q.d,.043,'#efdfbd',6);
  for(const [x,z,rx,rz] of PLAZA_GARDENS){if(gardenClear(x,z,Math.min(rx,rz)*.65,blocked,roads))circle('grass-wildflowers',x,z,rx,rz,.012,'#b3c49d',5);}
- // Static terrain geometry supported by both rendering backends.
- for(const q of PLAZA_PONDS){if(!pondClear(q,blocked,roads))continue;
-  circle('plaza-tiles',q.x,q.z,q.rx,q.rz,.052,'#cbbba1',2.5);
-  circle('water-clear',q.x,q.z,q.rx-.26,q.rz-.24,.056,'#81c4b7',2.8);
-  for(const [dx,dz,r] of POND_PADS){
-   circle('pond-pad-solid',q.x+dx*(q.rx-.35),q.z+dz*(q.rz-.35),r,r*.78,.060,'#547f46',1);
-  }
+ flat('water-clear',36,42,4,78,.075,'#b9d9ce',5);for(const x of [33.7,38.3])flat('dirt-compact',x,42,.6,78,.076,'#b3a382',4);buildRiverBridges();}
+function buildRiverBridges(){
+ const plans=bridgePlans(river);
+ const add=(parts,target,y,label)=>{for(const g of bridgeGeometry(parts,y)){const geom=new THREE.BufferGeometry();geom.setAttribute('position',new THREE.Float32BufferAttribute(g.positions,3));geom.setIndex(g.indices);geom.computeBoundingSphere();const m=new THREE.Mesh(geom,new THREE.MeshBasicMaterial({color:g.color,side:THREE.DoubleSide}));m.name=label;m.position.y=y;target.add(m);}};
+ for(const q of plans){
+  // Bridge deck and landings occupy the existing opening. No elevated walk surface.
+  flat('bridge-base-solid',q.x,q.z,q.span,q.outerWidth,.083,q.base,1);
+  if(q.kind==='stone')flat('plaza-tiles',q.x,q.z,q.span,q.width,.089,'#dfcdb5',3);
+  else add(q.boards,groundGroup,.092,'konoha-bridge-board-'+q.id);
+  add(q.pieces,scene,.09,'konoha-bridge-rail-'+q.id);
  }
- flat('water-clear',36,42,4,78,.075,'#b9d9ce',5);for(const x of [33.7,38.3])flat('dirt-compact',x,42,.6,78,.076,'#b3a382',4);for(const b of river.bridges)flat('plaza-tiles',36,b.y,5.4,b.w,.085,'#dfcdb5',5);}
+}
 function assemble(){ground();sprite('mountain',72,6,124,{depth:-100,kind:'mountain'});for(const [i,b] of buildings.entries()){const n=ART[b.kind]|| (b.kind==='house'?ART.houses[Number(b.id.slice(5))%6]:ART.shops[i%3]);plazaStaticShadow(b.x+b.w/2,b.y+b.d,b.w*1.08,3.2);sprite(n,b.x+b.w/2,b.y+b.d,b.w*1.14,{kind:'building'});}
  for(const [i,t] of trees.entries()){if(!blocked(t.x,t.y)) {plazaStaticShadow(t.x,t.y,t.r*2.4,1.7);sprite(ART.trees[i%3],t.x,t.y,t.r*3.6,{kind:'tree'});}}for(const [n,x,z,w] of DECOR){if(!blocked(x,z)){const cherry=PLAZA_CHERRIES.find(a=>a.x===x&&a.z===z&&a.original===n);const art=n==='notice-board'&&x===61&&z===31?entranceArt(textures,'notice-board-reference'):cherry&&textures['cherry-reference']&&n==='cherry-wide'?'cherry-reference':n,size=cherry?cherry.w:w;plazaStaticShadow(x,z,size*.8,Math.min(1.9,size*.28));sprite(art,x,z,size,{kind:n.includes('tree')||n.includes('cherry')?'tree':'prop'});}}
  // Decorative low fences frame the entrance garden edges; do not add collision or block a road.
  if(textures['fence-reference'])for(const [x,z,w] of ENTRANCE_FENCES)if(fenceClear(x,z,w,blocked,roads))sprite('fence-reference',x,z,w,{kind:'prop'});
  // New reference assets and a few layered garden accents; anchors never alter collision.
  for(const [n,x,z,w] of PLAZA_PROPS){if(blocked(x,z)||!textures[n])continue;plazaStaticShadow(x,z,w*.87,Math.min(1.1,w*.34));sprite(n,x,z,w,{kind:'prop'});}
- for(const [x,z,rx,rz] of PLAZA_GARDENS){for(let i=0;i<3;i++){const dx=(i-1)*rx*.59,dz=(i%2?-.45:.25)*rz,px=x+dx,pz=z+dz;if(outsidePonds(px,pz,.35)&&gardenClear(px,pz,.35,blocked,roads)){const n=i===1?'flowers-pink':'bush-medium';sprite(n,px,pz,i===1?1.55:1.25,{kind:'prop'});}}}
- // Existing illustrated flower/bush assets; skip missing art, roads and water.
- for(const [n,x,z,w] of POND_PLANTS){if(textures[n]&&outsidePonds(x,z,.25)&&gardenClear(x,z,.35,blocked,roads))sprite(n,x,z,w,{kind:'prop'});}
- for(let i=0;i<65;i++){const x=8+(i*37)%128,z=9+(i*23)%68;if(blocked(x,z)||Math.abs(x-36)<5||Math.hypot(x-72,(z-43)*1.4)<15||roads.some(r=>r.points.slice(1).some((b,j)=>{const a=r.points[j],dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dy)/(dx*dx+dy*dy)));return Math.hypot(x-a[0]-dx*t,z-a[1]-dy*t)<r.w/2+1.6}))||buildings.some(b=>x>b.x-2&&x<b.x+b.w+2&&z>b.y-2&&z<b.y+b.d+2))continue;const n=i%3===0?'flowers-pink':'bush-medium';sprite(n,x,z,1.1+(i%4)*.3,{kind:'prop'});}for(const [i,b] of river.bridges.entries())sprite(ART.bridges[i],36,b.y+1.65,7.6,{depth:b.y-b.w/2-.1,kind:'bridge'});
+ for(const [x,z,rx,rz] of PLAZA_GARDENS){for(let i=0;i<3;i++){const dx=(i-1)*rx*.59,dz=(i%2?-.45:.25)*rz,px=x+dx,pz=z+dz;if(gardenClear(px,pz,.35,blocked,roads)){const n=i===1?'flowers-pink':'bush-medium';sprite(n,px,pz,i===1?1.55:1.25,{kind:'prop'});}}}
+ // Preserve approved flowers/bushes; add a few bank accents off the paths.
+ for(const [n,x,z,w] of [...PLAZA_FOLIAGE,...RIVER_ACCENTS]){if(textures[n]&&gardenClear(x,z,.35,blocked,roads))sprite(n,x,z,w,{kind:'prop'});}
+ for(let i=0;i<65;i++){const x=8+(i*37)%128,z=9+(i*23)%68;if(blocked(x,z)||Math.abs(x-36)<5||Math.hypot(x-72,(z-43)*1.4)<15||roads.some(r=>r.points.slice(1).some((b,j)=>{const a=r.points[j],dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dy)/(dx*dx+dy*dy)));return Math.hypot(x-a[0]-dx*t,z-a[1]-dy*t)<r.w/2+1.6}))||buildings.some(b=>x>b.x-2&&x<b.x+b.w+2&&z>b.y-2&&z<b.y+b.d+2))continue;const n=i%3===0?'flowers-pink':'bush-medium';sprite(n,x,z,1.1+(i%4)*.3,{kind:'prop'});}// Bridges now use world geometry; old full bridge billboards intentionally not drawn.
  // Wall silhouettes on fixed blockout footprints. Vertical sides use basic geometry rather than rotating front-facing artwork.
  for(const w of walls){if(w.w>w.d){const count=Math.ceil(w.w/10);for(let i=0;i<count;i++)sprite('wall-long',w.x+(i+.5)*w.w/count,w.y+w.d,w.w/count,{kind:'wall'});}else{let m=new THREE.Mesh(new THREE.BoxGeometry(w.w,2.4,w.d),solidMat('#ac9171'));m.position.set(w.x+w.w/2,1.2,w.y+w.d/2);scene.add(m);}}
  sprite('main-gate',72,83,15.7,{kind:'gate',depth:83.2});sprite('watchtower',62,82,4.5,{kind:'wall',depth:82.1});sprite('watchtower',82,82,4.5,{kind:'wall',depth:82.1});

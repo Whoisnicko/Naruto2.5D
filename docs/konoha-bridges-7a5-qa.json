@@ -1,0 +1,159 @@
+{
+  "base": "94515d4ebf4db4ed9dac5aa1197f837f2c3bcdfb",
+  "checks": [
+    {
+      "name": "exactly 3 existing crossings",
+      "pass": true
+    },
+    {
+      "name": "approved eight foliage anchors remain",
+      "pass": true
+    },
+    {
+      "name": "no central pond geometry or data",
+      "pass": true
+    },
+    {
+      "name": "central shadow policy retained",
+      "pass": true
+    },
+    {
+      "name": "old bridge billboard not drawn",
+      "pass": true
+    },
+    {
+      "name": "HUD scaling sources unchanged",
+      "pass": true
+    },
+    {
+      "name": "north deck reaches both banks",
+      "pass": true
+    },
+    {
+      "name": "north crossing collision center open",
+      "pass": true
+    },
+    {
+      "name": "north crossing movement both directions",
+      "pass": true
+    },
+    {
+      "name": "north posts stay outside passable hero-center band",
+      "pass": true
+    },
+    {
+      "name": "north bounded mesh geometry",
+      "pass": true
+    },
+    {
+      "name": "north deck surface consistent",
+      "pass": true
+    },
+    {
+      "name": "central deck reaches both banks",
+      "pass": true
+    },
+    {
+      "name": "central crossing collision center open",
+      "pass": true
+    },
+    {
+      "name": "central crossing movement both directions",
+      "pass": true
+    },
+    {
+      "name": "central posts stay outside passable hero-center band",
+      "pass": true
+    },
+    {
+      "name": "central bounded mesh geometry",
+      "pass": true
+    },
+    {
+      "name": "central deck surface consistent",
+      "pass": true
+    },
+    {
+      "name": "south deck reaches both banks",
+      "pass": true
+    },
+    {
+      "name": "south crossing collision center open",
+      "pass": true
+    },
+    {
+      "name": "south crossing movement both directions",
+      "pass": true
+    },
+    {
+      "name": "south posts stay outside passable hero-center band",
+      "pass": true
+    },
+    {
+      "name": "south bounded mesh geometry",
+      "pass": true
+    },
+    {
+      "name": "south deck surface consistent",
+      "pass": true
+    },
+    {
+      "name": "bank accents valid",
+      "pass": true
+    },
+    {
+      "name": "river still blocked between crossings",
+      "pass": true
+    },
+    {
+      "name": "no altered collision or camera module",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/konoha-reference-art.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/konoha-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/konoha-three-lab.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/konoha-bridge-art.js",
+      "pass": true
+    }
+  ],
+  "eligibleBankAccents": [
+    [
+      "rocks-flat",
+      31.8,
+      30.4,
+      1.45
+    ],
+    [
+      "flowers-pink",
+      31.9,
+      53.4,
+      1.1
+    ],
+    [
+      "bush-medium",
+      32,
+      73.3,
+      1.25
+    ],
+    [
+      "flowers-pink",
+      39.7,
+      72.2,
+      1.05
+    ]
+  ],
+  "limits": [
+    "No browser render/GPU/FPS",
+    "No Cloudflare check"
+  ]
+}

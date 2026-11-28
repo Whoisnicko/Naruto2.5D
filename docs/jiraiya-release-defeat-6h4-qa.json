@@ -1,0 +1,146 @@
+{
+  "base": "d498189dc943e50249eb1041dbd81485cddbbb4b",
+  "art": "4ed8a808e7c8735a75847134fea8c57bd11a3176",
+  "checks": [
+    {
+      "name": "zabuza unique speaker and line",
+      "pass": true
+    },
+    {
+      "name": "haku unique speaker and line",
+      "pass": true
+    },
+    {
+      "name": "kabuto unique speaker and line",
+      "pass": true
+    },
+    {
+      "name": "gaara unique speaker and line",
+      "pass": true
+    },
+    {
+      "name": "orochimaru unique speaker and line",
+      "pass": true
+    },
+    {
+      "name": "kimimaro unique speaker and line",
+      "pass": true
+    },
+    {
+      "name": "sasuke unique speaker and line",
+      "pass": true
+    },
+    {
+      "name": "jiraiya unique speaker and line",
+      "pass": true
+    },
+    {
+      "name": "lee unique speaker and line",
+      "pass": true
+    },
+    {
+      "name": "neji unique speaker and line",
+      "pass": true
+    },
+    {
+      "name": "boss lines unique",
+      "pass": true
+    },
+    {
+      "name": "fallback speaker present",
+      "pass": true
+    },
+    {
+      "name": "dialogue visible before banner",
+      "pass": true
+    },
+    {
+      "name": "banner and dialogue overlap",
+      "pass": true
+    },
+    {
+      "name": "end after 6.4",
+      "pass": true
+    },
+    {
+      "name": "shared banner text and art fallback",
+      "pass": true
+    },
+    {
+      "name": "global normal defeat dispatch",
+      "pass": true
+    },
+    {
+      "name": "Jiraiya lethal branch dispatch",
+      "pass": true
+    },
+    {
+      "name": "Sasuke fail cinematic untouched",
+      "pass": true
+    },
+    {
+      "name": "Jiraiya successful training untouched",
+      "pass": true
+    },
+    {
+      "name": "Konoha 7A.6 entry retained",
+      "pass": true
+    },
+    {
+      "name": "normal campaign and Jiraiya preview preload",
+      "pass": true
+    },
+    {
+      "name": "Jiraiya legacy fallback",
+      "pass": true
+    },
+    {
+      "name": "retry modal gated",
+      "pass": true
+    },
+    {
+      "name": "Jiraiya phase 1 cinematic once, original next route",
+      "pass": true
+    },
+    {
+      "name": "Jiraiya phase 2 cinematic once, original next route",
+      "pass": true
+    },
+    {
+      "name": "Jiraiya phase 3 cinematic once, original next route",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/game.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/jiraiya-combat-presentation.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/jiraiya-grounds-data.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/jiraiya-grounds-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/jiraiya-myoboku-art.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/jiraiya-myoboku-data.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/jiraiya-sanctuary-art.js",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "No browser/audio/render/FPS",
+    "No deployment verification"
+  ]
+}

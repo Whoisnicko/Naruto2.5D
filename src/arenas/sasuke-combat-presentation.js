@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {createArenaCombatPresentation} from './arena-combat-presentation.js?v=6c2';
-import {END_VALLEY} from './sasuke-valley-data.js?v=6g6';
-import {createEndValley} from './sasuke-valley-scene.js?v=6g6';
+import {END_VALLEY} from './sasuke-valley-data.js?v=6g7';
+import {createEndValley} from './sasuke-valley-scene.js?v=6g7';
 export async function createSasukeCombatPresentation({scene,arena}){
  let world=null;const presentation=await createArenaCombatPresentation({THREE,scene,arena,spec:END_VALLEY,buildScene:async args=>(world=await createEndValley(args)),palette:{background:'#6b8994',fog:'#8aa8ae',sky:'#e1edf2',ground:'#66746e',sun:'#fff0d4',sunIntensity:1.32,skyIntensity:1.42,fogDensity:.0025}});
  const local=a=>a?{x:a.x-arena.x,z:a.z-arena.z,air:a.air||0,fallen:!!a.fallen,hp:a.hp}:null;

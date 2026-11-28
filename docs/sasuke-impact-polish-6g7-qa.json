@@ -1,0 +1,140 @@
+{
+  "base": "8615e83de523b532396ce2c4d911345d8ee027a3",
+  "checks": [
+    {
+      "name": "syntax src/arenas/sasuke-valley-data.js",
+      "pass": true
+    },
+    {
+      "name": "syntax src/arenas/sasuke-valley-scene.js",
+      "pass": true
+    },
+    {
+      "name": "syntax src/arenas/sasuke-water-chakra.js",
+      "pass": true
+    },
+    {
+      "name": "syntax src/arenas/sasuke-water-impact.js",
+      "pass": true
+    },
+    {
+      "name": "syntax src/arenas/sasuke-combat-presentation.js",
+      "pass": true
+    },
+    {
+      "name": "syntax src/game.js",
+      "pass": true
+    },
+    {
+      "name": "syntax src/arenas/sasuke-rock-detail.js",
+      "pass": true
+    },
+    {
+      "name": "syntax src/arenas/sasuke-impact-art.js",
+      "pass": true
+    },
+    {
+      "name": "approved river geometry exactly identical",
+      "pass": true
+    },
+    {
+      "name": "camera unchanged",
+      "pass": true
+    },
+    {
+      "name": "statue config unchanged",
+      "pass": true
+    },
+    {
+      "name": "approved statue atlas unchanged",
+      "pass": true
+    },
+    {
+      "name": "combat radius and original spray unchanged",
+      "pass": true
+    },
+    {
+      "name": "foot lifetime reduced to .26",
+      "pass": true
+    },
+    {
+      "name": "no ring geometry in chakra",
+      "pass": true
+    },
+    {
+      "name": "pool stays 24",
+      "pass": true
+    },
+    {
+      "name": "both actors preserved",
+      "pass": true
+    },
+    {
+      "name": "game only cache keys",
+      "pass": true
+    },
+    {
+      "name": "rock 671 bounded and finite",
+      "pass": true
+    },
+    {
+      "name": "rock 671 attributes/indices",
+      "pass": true
+    },
+    {
+      "name": "rock 672 bounded and finite",
+      "pass": true
+    },
+    {
+      "name": "rock 672 attributes/indices",
+      "pass": true
+    },
+    {
+      "name": "rock 673 bounded and finite",
+      "pass": true
+    },
+    {
+      "name": "rock 673 attributes/indices",
+      "pass": true
+    },
+    {
+      "name": "noise deterministic bounded",
+      "pass": true
+    },
+    {
+      "name": "no ring geometry at impact",
+      "pass": true
+    },
+    {
+      "name": "impact fog increased bounded",
+      "pass": true
+    },
+    {
+      "name": "flame geometry finite and indices valid",
+      "pass": true
+    },
+    {
+      "name": "grounded foot valid",
+      "pass": true
+    },
+    {
+      "name": "jump/death disabled",
+      "pass": true
+    },
+    {
+      "name": "alternating footsteps",
+      "pass": true
+    },
+    {
+      "name": "teleport skipped",
+      "pass": true
+    },
+    {
+      "name": "no new frame loop",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "No real rendering, FPS or deployment test"
+  ]
+}

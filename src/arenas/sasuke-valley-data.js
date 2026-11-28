@@ -6,10 +6,10 @@ export const END_VALLEY=Object.freeze({
  statues:[{id:'madara',x:-14.8,z:-16.8,yaw:1.02},{id:'hashirama',x:14.8,z:-16.8,yaw:-1.02}],
  statueExtent:5.9,
  statueArt:{width:8.25,height:11,baseY:1.48,columns:2},
- waterChakra:{step:.46,teleport:3.4,life:.68,slots:24,airLimit:.12,particles:12,glowRadius:.54},
+ waterChakra:{step:.46,teleport:3.4,life:.26,slots:24,airLimit:.12,particles:10,glowRadius:.38,flameHeight:.72},
  waterfall:{x:0,z:-18.0,width:15,height:12,sourceZ:-40,impactZ:-16.65},
  flowProfile:[[12.38,-22,1.12,0],[12.28,-16,1.06,.32],[12.20,-10,1.04,.66],[12.16,-4,1.0,.98],[12.08,-.85,1.0,1.16],[11.92,-.12,1.0,1.20],[11.45,.27,1.0,1.24],[10.2,.38,1.0,1.32],[8.3,.46,1.015,1.45],[6.0,.48,1.025,1.60],[3.5,.60,1.04,1.77],[1.5,.85,1.06,1.91],[.48,1.12,1.09,1.99],[.07,1.35,1.12,2.04]],
- impact:{foamCount:24,jetCount:144,plumeCount:10},
+ impact:{foamCount:24,jetCount:144,plumeCount:16},
  cliffs:[[-27,-19,7,13],[-20,-27,8,15],[-14.5,-29,5.2,13.6],[14.5,-29,5.2,13.6],[20,-27,8,15],[27,-19,7,13],[-30,-4,7,9],[30,-4,7,9]],
  spray:144
 });

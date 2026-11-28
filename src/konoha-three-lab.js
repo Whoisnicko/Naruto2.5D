@@ -1,5 +1,5 @@
 import * as THREE from '../vendor/three.module.min.js';
-import {MAP,zones,buildings,river,roads,walls,trees,blocked,step} from './konoha-layout.js';
+import {MAP,zones,buildings,river,roads,walls,trees,blocked,step} from './konoha-layout.js?v=7a7';
 import {makeActorSheet,ACTOR_W,ACTOR_H,ANIMS,makeFXSheet,makeRasenganSheet,rasenganHand,FX_ROWS,FX_SIZE,RAS_SIZE} from './pixel-art.js?v=3c77';
 import {rosterRole,ENEMY_ROSTER} from './field-enemy-roster.js?v=3c77';
 import {roleFor} from './enemy-ai.js';
@@ -15,12 +15,12 @@ import {createFieldJournal} from './konoha-journal.js?v=3c69';
 import {createFrameDiagnostics,createBillboardPlacer,estimateArtBytes,fieldPreset,createCadence,createGroundBatches} from './konoha-render-performance.js?v=3c69';
 import {characterFor,skillLabel,characterSkill} from './character-data.js';
 import {addItem,moveSlot,sortInventory,discardSlot,equipSlot,unequipSlot,assignHotbar,useItem,unlockSkill,collectOverflow,advancedUnlocked,equipmentVisuals,levelFor,rankFor,skillModifiers,statsFor} from './rpg-data.js';
-import {ART,DECOR} from './konoha-three-data.js';
+import {ART,DECOR} from './konoha-three-data.js?v=7a7';
 import {cameraProfile,fieldCameraTarget,applyFieldCamera} from './konoha-depth-camera.js?v=7a2';
-import {createKonohaScene} from './konoha-scene.js?v=7a6';
-import {REFERENCE_ART,ARCHITECTURE_ART} from './konoha-reference-art.js?v=7a5';
-import {MOBILITY,createMobility,updateMobility,TRAVEL} from './konoha-mobility.js';
-import {createVillage} from './konoha-village.js?v=3c77';
+import {createKonohaScene} from './konoha-scene.js?v=7a7';
+import {REFERENCE_ART,ARCHITECTURE_ART} from './konoha-reference-art.js?v=7a7';
+import {MOBILITY,createMobility,updateMobility,TRAVEL} from './konoha-mobility.js?v=7a7';
+import {createVillage} from './konoha-village.js?v=7a7';
 import {COMBAT,actionResource} from './combat-data.js';
 import {createAudio,CONTACT_FEEL} from './feedback.js?v=6e5';
 import {createLevelUp,updateRankHUD} from './level-up-feedback.js?v=6c4d';
@@ -32,7 +32,7 @@ import {meleeAreaOutline} from './field-combat-rules.js?v=6f2';
 import {campaignTestAllowed,readCampaignGod,writeCampaignGod,syncGodButton} from './campaign-test-tools.js?v=6c4';
 import {canUseAdvancedTechnique} from './kyubi-technique-rules.js?v=6c3';
 import {readGod,writeGod,sandboxStorage,syncFieldGod} from './sandbox-preferences.js?v=6b2';
-import {REGIONS,PORTALS,FIELD_CHESTS,regionBlocked,regionStep,createRegionRouter} from './konoha-regions.js?v=3c64';
+import {REGIONS,PORTALS,FIELD_CHESTS,regionBlocked,regionStep,createRegionRouter} from './konoha-regions.js?v=7a7';
 import {createAtmosphere,createAtmosphereView,WEATHER_LABELS} from './konoha-atmosphere.js?v=3c77';
 const $=id=>document.getElementById(id),stage=$('stage');const fieldNames={"País del Fuego":"Land of Fire","Bosque de entrenamiento":"Training Forest","Puesto fronterizo":"Border Outpost","Sendero occidental":"Western Trail","Claro de entrenamiento":"Training Clearing","Camino al puesto":"Outpost Road","Entrada occidental":"Western Entrance","Plaza del puesto":"Outpost Plaza","Mirador de frontera":"Border Lookout","Konoha · salida oriental":"Konoha · East Exit","Konoha · puerta sur":"Konoha · South Gate","Entrada del bosque":"Forest Entrance","Entrada del puesto":"Outpost Entrance","Puerta principal":"Main Gate","Puerta de Konoha":"Konoha Gate","Avenida central":"Central Avenue","Plaza central":"Central Plaza","Torre del Hokage":"Hokage Tower","Mirador Hokage":"Hokage Lookout","Academia Ninja":"Ninja Academy","Entrenamiento":"Training Grounds","Mercado":"Market","Barrio oeste":"West District","Barrio este":"East District","Salida al bosque":"Forest Exit","Monte Hokage":"Hokage Mountain"};const enName=s=>fieldNames[s]||s;
 let renderer,backend='WebGL';try{renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});}catch(e){backend='Canvas fallback';renderer=makeFallbackRenderer();}
@@ -44,7 +44,7 @@ const campaignRequested=new URLSearchParams(location.search).get('campaign')==='
 if(campaignRequested){try{campaignSession=window.parent!==window?window.parent.KONOHA_CAMPAIGN_BRIDGE?.acquire(window):null}catch{}if(!campaignSession){$('progress').textContent='Campaign session unavailable. Return to the pause menu.';throw Error('Campaign session unavailable');}}
 const regionalTour=!campaignSession&&new URLSearchParams(location.search).get('sandbox')==='1'&&new URLSearchParams(location.search).get('encounter')==='regional';
 let sandboxControl=null;
-const BUILD='7A.6',router=createRegionRouter({preview:!campaignSession,discovered:campaignSession?.state.world.visited||[]});let portalCooldown=0;
+const BUILD='7A.7',router=createRegionRouter({preview:!campaignSession,discovered:campaignSession?.state.world.visited||[]});let portalCooldown=0;
 const mobility=createMobility(),dust=[],fx=$('dust'),fxctx=fx.getContext('2d');let dustBudget=0,animTime=0,touchRun=false,travel=null,viewCurrent=null;
 function clearMotion(){keys.clear();moveBlend=0;pace=MOBILITY.walk;resetFieldPose(actorPose);touchRun=false;mobility.held=0;mobility.speed=MOBILITY.walk;mobility.sprint=false;moving=false;$('touchrun').setAttribute('aria-pressed','false');}
 function closeTravel(){if($('travelMenu').open)$('travelMenu').close();}

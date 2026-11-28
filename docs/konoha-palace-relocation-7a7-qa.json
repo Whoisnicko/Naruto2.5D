@@ -1,0 +1,236 @@
+{
+  "base": "39aef03ce814cdfb1b8929958f6a1285a0eabd64",
+  "checks": [
+    {
+      "name": "palace moved south exactly nine units with same size",
+      "pass": true
+    },
+    {
+      "name": "front at 32 and approach 35.5",
+      "pass": true
+    },
+    {
+      "name": "all other buildings unchanged",
+      "pass": true
+    },
+    {
+      "name": "bridges and walls unchanged",
+      "pass": true
+    },
+    {
+      "name": "plaza, spawn, radius unchanged",
+      "pass": true
+    },
+    {
+      "name": "all anchors synchronized",
+      "pass": true
+    },
+    {
+      "name": "palace solid and front accessible",
+      "pass": true
+    },
+    {
+      "name": "old blocked save safe fallback",
+      "pass": true
+    },
+    {
+      "name": "old northern footprint now accessible",
+      "pass": true
+    },
+    {
+      "name": "frontage clear of palace",
+      "pass": true
+    },
+    {
+      "name": "entrance paving follows footprint",
+      "pass": true
+    },
+    {
+      "name": "plaza emblem remains in original location",
+      "pass": true
+    },
+    {
+      "name": "notice board clear",
+      "pass": true
+    },
+    {
+      "name": "NPC route kakashi",
+      "pass": true
+    },
+    {
+      "name": "NPC route shikamaru",
+      "pass": true
+    },
+    {
+      "name": "NPC route sakura",
+      "pass": true
+    },
+    {
+      "name": "NPC route teuchi",
+      "pass": true
+    },
+    {
+      "name": "NPC route tenten",
+      "pass": true
+    },
+    {
+      "name": "NPC route iruka",
+      "pass": true
+    },
+    {
+      "name": "travel gate accessible",
+      "pass": true
+    },
+    {
+      "name": "travel plaza accessible",
+      "pass": true
+    },
+    {
+      "name": "travel tower accessible",
+      "pass": true
+    },
+    {
+      "name": "travel academy accessible",
+      "pass": true
+    },
+    {
+      "name": "travel training accessible",
+      "pass": true
+    },
+    {
+      "name": "travel market accessible",
+      "pass": true
+    },
+    {
+      "name": "travel west accessible",
+      "pass": true
+    },
+    {
+      "name": "travel forest accessible",
+      "pass": true
+    },
+    {
+      "name": "landmark garden accessible",
+      "pass": true
+    },
+    {
+      "name": "landmark market accessible",
+      "pass": true
+    },
+    {
+      "name": "landmark hokage accessible",
+      "pass": true
+    },
+    {
+      "name": "landmark ichiraku accessible",
+      "pass": true
+    },
+    {
+      "name": "landmark bridge accessible",
+      "pass": true
+    },
+    {
+      "name": "landmark plaza accessible",
+      "pass": true
+    },
+    {
+      "name": "landmark academy accessible",
+      "pass": true
+    },
+    {
+      "name": "bridge 24 traversable",
+      "pass": true
+    },
+    {
+      "name": "bridge 43 traversable",
+      "pass": true
+    },
+    {
+      "name": "bridge 64 traversable",
+      "pass": true
+    },
+    {
+      "name": "walk plaza to palace entrance",
+      "pass": true
+    },
+    {
+      "name": "player stops outside facade",
+      "pass": true
+    },
+    {
+      "name": "preserve all bosses in main game",
+      "pass": true
+    },
+    {
+      "name": "main game only entry/cache changes",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/konoha-layout.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/konoha-mobility.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/konoha-services.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/konoha-three-data.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/konoha-reference-art.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/konoha-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/konoha-regions.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/konoha-village.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/konoha-three-lab.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/game.js",
+      "pass": true
+    }
+  ],
+  "old": {
+    "id": "tower",
+    "kind": "tower",
+    "x": 61,
+    "y": 9,
+    "w": 22,
+    "d": 14,
+    "h": 7
+  },
+  "new": {
+    "id": "tower",
+    "kind": "tower",
+    "x": 61,
+    "y": 18,
+    "w": 22,
+    "d": 14,
+    "h": 7
+  },
+  "approach": [
+    72,
+    35.5
+  ],
+  "limitations": [
+    "No rendered browser/FPS",
+    "No real save restore",
+    "No Cloudflare verification"
+  ]
+}

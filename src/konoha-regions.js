@@ -1,5 +1,5 @@
-import {blocked as villageBlocked,step as villageStep} from './konoha-layout.js';
-import {TRAVEL} from './konoha-mobility.js';
+import {blocked as villageBlocked,step as villageStep} from './konoha-layout.js?v=7a7';
+import {TRAVEL} from './konoha-mobility.js?v=7a7';
 
 // Separate region coordinates. The two exterior areas are prototypes, using the approved art kit.
 const grove=Array.from({length:16},(_,i)=>({x:10+(i*13)%65,y:i%2?12+(i*7)%14:35+(i*3)%13,r:1.15,art:['tree-pine','tree-oak','tree-willow'][i%3],w:5.4+(i%3)*.7}));

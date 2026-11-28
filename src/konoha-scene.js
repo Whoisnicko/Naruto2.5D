@@ -1,7 +1,7 @@
 // Static illustrated world only. Source of truth: approved 144x84 blockout.
-import {zones,buildings,river,roads,walls,trees,blocked} from './konoha-layout.js';
-import {ART,DECOR} from './konoha-three-data.js';
-import {PLAZA_CHERRIES,PLAZA_PROPS,PLAZA_GARDENS,gardenClear,referenceName,ENTRANCE_PAVING,ENTRANCE_FENCES,fenceClear,entranceArt,PLAZA_FOLIAGE,plazaShadowOverlaps,roadDistance} from './konoha-reference-art.js?v=7a5';
+import {zones,buildings,river,roads,walls,trees,blocked,HOKAGE_PALACE,HOKAGE_APPROACH,HOKAGE_FORECOURT} from './konoha-layout.js?v=7a7';
+import {ART,DECOR} from './konoha-three-data.js?v=7a7';
+import {PLAZA_CHERRIES,PLAZA_PROPS,PLAZA_GARDENS,gardenClear,referenceName,ENTRANCE_PAVING,ENTRANCE_FENCES,fenceClear,entranceArt,PLAZA_FOLIAGE,plazaShadowOverlaps,roadDistance} from './konoha-reference-art.js?v=7a7';
 import {frontagePlans,districtFixtures} from './konoha-final-art.js?v=7a6';
 import {bridgePlans,bridgeGeometry,RIVER_ACCENTS} from './konoha-bridge-art.js?v=7a5';
 import {REGIONS,PORTALS} from './konoha-regions.js?v=3c64';
@@ -31,7 +31,7 @@ function sprite(name,x,z,w,{depth=z,aspect=.85,kind='prop',offset=0}={}){const a
 function ground(){flat('grass-natural',72,42,240,125,0,'#b6c4a4',9);flat('grass-wildflowers',72,-9,144,22,.005,'#849772',10);for(const r of roads)road(r);for(const z of zones){if(z.kind==='combat')flat('dirt-compact',z.bounds[0]+z.bounds[2]/2,z.bounds[1]+z.bounds[3]/2,z.bounds[2],z.bounds[3],.016,'#e2caa5',7);}
  // The 7A.1 reference crop contains baked tree shadows. Restore original stone.
  const paving='plaza-tiles',pavingTint='#f1e5ce';
- circle(paving,72,43,13.1,9.2,.045,pavingTint,6);addPlazaMedallion();flat(paving,72,28,15,8,.042,'#efdfbd',6);
+ circle(paving,72,43,13.1,9.2,.045,pavingTint,6);addPlazaMedallion();flat(paving,HOKAGE_FORECOURT.x,HOKAGE_FORECOURT.z,HOKAGE_FORECOURT.w,HOKAGE_FORECOURT.d,.042,'#efdfbd',6);
  // Connect the three civic entrances to the existing paths using the same stone artwork.
  for(const q of ENTRANCE_PAVING)flat(paving,q.x,q.z,q.w,q.d,.043,'#efdfbd',6);
  for(const [x,z,rx,rz] of PLAZA_GARDENS){if(gardenClear(x,z,Math.min(rx,rz)*.65,blocked,roads))circle('grass-wildflowers',x,z,rx,rz,.012,'#b3c49d',5);}
@@ -50,7 +50,7 @@ function buildRiverBridges(){
  }
 }
 function assemble(){ground();sprite('mountain',72,6,124,{depth:-100,kind:'mountain'});for(const [i,b] of buildings.entries()){const n=ART[b.kind]|| (b.kind==='house'?ART.houses[Number(b.id.slice(5))%6]:ART.shops[i%3]);plazaStaticShadow(b.x+b.w/2,b.y+b.d,b.w*1.08,3.2);sprite(n,b.x+b.w/2,b.y+b.d,b.w*1.14,{kind:'building'});}
- for(const [i,t] of trees.entries()){if(!blocked(t.x,t.y)) {plazaStaticShadow(t.x,t.y,t.r*2.4,1.7);sprite(ART.trees[i%3],t.x,t.y,t.r*3.6,{kind:'tree'});}}for(const [n,x,z,w] of DECOR){if(!blocked(x,z)){const cherry=PLAZA_CHERRIES.find(a=>a.x===x&&a.z===z&&a.original===n);const art=n==='notice-board'&&x===61&&z===31?entranceArt(textures,'notice-board-reference'):cherry&&textures['cherry-reference']&&n==='cherry-wide'?'cherry-reference':n,size=cherry?cherry.w:w;plazaStaticShadow(x,z,size*.8,Math.min(1.9,size*.28));sprite(art,x,z,size,{kind:n.includes('tree')||n.includes('cherry')?'tree':'prop'});}}
+ for(const [i,t] of trees.entries()){if(!blocked(t.x,t.y)) {plazaStaticShadow(t.x,t.y,t.r*2.4,1.7);sprite(ART.trees[i%3],t.x,t.y,t.r*3.6,{kind:'tree'});}}for(const [n,x,z,w] of DECOR){if(!blocked(x,z)){const cherry=PLAZA_CHERRIES.find(a=>a.x===x&&a.z===z&&a.original===n);const art=n==='notice-board'&&x===58.5&&z===29?entranceArt(textures,'notice-board-reference'):cherry&&textures['cherry-reference']&&n==='cherry-wide'?'cherry-reference':n,size=cherry?cherry.w:w;plazaStaticShadow(x,z,size*.8,Math.min(1.9,size*.28));sprite(art,x,z,size,{kind:n.includes('tree')||n.includes('cherry')?'tree':'prop'});}}
  // Decorative low fences frame the entrance garden edges; do not add collision or block a road.
  if(textures['fence-reference'])for(const [x,z,w] of ENTRANCE_FENCES)if(fenceClear(x,z,w,blocked,roads))sprite('fence-reference',x,z,w,{kind:'prop'});
  // New reference assets and a few layered garden accents; anchors never alter collision.
@@ -76,6 +76,6 @@ function assembleExterior(id){const m=REGIONS[id];flat(m.ground,m.width/2,m.heig
 }
 
 function show(id){for(const [key,objects] of regionVisuals)for(const o of objects)o.visible=key===id;scene.background.set(id==='forest'?'#506a46':id==='outpost'?'#79845d':'#607c57');}
-function status(){const mark=groundGroup.children.find(o=>o.name==='konoha-plaza-medallion');return {artPolish:{frontages:frontages.map(q=>q.id),fixtures:fixtures.filter(([n])=>!!textures[n]).length},regions:[...regionVisuals.keys()],objects:Object.fromEntries([...regionVisuals].map(([id,o])=>[id,o.length])),plaza:mark?{x:mark.position.x,z:mark.position.z,height:mark.position.y,visible:mark.visible,originalAsset:mark.userData.originalAsset}:null};}
+function status(){const mark=groundGroup.children.find(o=>o.name==='konoha-plaza-medallion');return {palace:{footprint:{...HOKAGE_PALACE},approach:[...HOKAGE_APPROACH],forecourt:{...HOKAGE_FORECOURT}},artPolish:{frontages:frontages.map(q=>q.id),fixtures:fixtures.filter(([n])=>!!textures[n]).length},regions:[...regionVisuals.keys()],objects:Object.fromEntries([...regionVisuals].map(([id,o])=>[id,o.length])),plaza:mark?{x:mark.position.x,z:mark.position.z,height:mark.position.y,visible:mark.visible,originalAsset:mark.userData.originalAsset}:null};}
 return {shadow,assemble,captureRegion,assembleExterior,show,status};
 }

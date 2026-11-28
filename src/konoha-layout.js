@@ -1,11 +1,15 @@
 // World 2 / blockout. Coordinates in logical tiles, north is negative Y.
 export const MAP={width:144,height:84,scenicNorth:24,tilePixels:16,spawn:[72,78],walkSpeed:4.8,runSpeed:8.4,radius:.48};
 export const boundary=[[0,16,3,48],[3,3,13,3],[16,0,112,3],[128,3,13,3],[141,6,3,34],[141,48,3,20],[128,81,13,3],[78,81,50,3],[16,81,50,3],[3,78,13,3],[0,64,3,14],[3,64,3,14],[138,68,3,13],[3,6,3,10]];
+// Single source of truth for the palace, its public entrance and adjoining plaza.
+export const HOKAGE_PALACE=Object.freeze({id:'tower',kind:'tower',x:61,y:18,w:22,d:14,h:7});
+export const HOKAGE_APPROACH=Object.freeze([HOKAGE_PALACE.x+HOKAGE_PALACE.w/2,HOKAGE_PALACE.y+HOKAGE_PALACE.d+3.5]);
+export const HOKAGE_FORECOURT=Object.freeze({x:HOKAGE_APPROACH[0],z:HOKAGE_PALACE.y+HOKAGE_PALACE.d+2.4,w:15,d:4.8});
 export const zones=[
  {id:'gate',name:'Puerta de Konoha',at:[72,78],kind:'entry',desc:'Entrada principal y conexión futura al exterior.',bounds:[60,70,24,11]},
  {id:'avenue',name:'Avenida central',at:[72,64],kind:'route',desc:'Eje principal, conecta la puerta con el corazón de la aldea.',bounds:[67,52,10,18]},
  {id:'plaza',name:'Plaza central',at:[72,43],kind:'hub',desc:'Centro de misiones y encuentro con Kakashi.',bounds:[57,34,30,19]},
- {id:'tower',name:'Torre del Hokage',at:[72,26],kind:'story',desc:'Escalinata y acceso al edificio administrativo.',bounds:[58,7,28,21]},
+ {id:'tower',name:'Torre del Hokage',at:HOKAGE_APPROACH,kind:'story',desc:'Escalinata y acceso al edificio administrativo.',bounds:[58,16,28,21]},
  {id:'academy',name:'Academia Ninja',at:[47,31],kind:'story',desc:'Tutoriales y exámenes. Patio propio.',bounds:[40,7,17,25]},
  {id:'hospital',name:'Hospital',at:[97,30],kind:'support',desc:'Recuperación y misiones médicas.',bounds:[88,8,19,23]},
  {id:'training',name:'Entrenamiento',at:[119,25],kind:'combat',desc:'Claro para desafíos y práctica, separado del comercio.',bounds:[109,8,25,25]},
@@ -18,7 +22,7 @@ export const zones=[
 ];
 // Rectangular solid footprints. Front doors face accessible approach points.
 export const buildings=[
- {id:'tower',kind:'tower',x:61,y:9,w:22,d:14,h:7},
+ HOKAGE_PALACE,
  {id:'academy',kind:'academy',x:42,y:11,w:14,d:13,h:4},
  {id:'hospital',kind:'hospital',x:89,y:11,w:16,d:13,h:5},
  {id:'ichiraku',kind:'ramen',x:80,y:68,w:10,d:5,h:3},
@@ -28,7 +32,7 @@ export const buildings=[
  ...[[10,21,8,6],[22,22,8,6],[9,35,8,7],[23,35,7,6],[10,49,8,7],[23,51,7,6],[10,66,9,7],[23,69,7,6],[43,55,9,7],[44,69,10,7],[54,56,8,6],[55,71,8,7],[110,52,8,6],[124,52,8,7],[109,66,8,7],[125,69,9,7]].map(([x,y,w,d],i)=>({id:'house'+i,kind:'house',x,y,w,d,h:3+i%3*.65}))
 ];
 export const river={x:34,w:4,from:3,to:81,bridges:[{y:24,w:6},{y:43,w:7},{y:64,w:6}]};
-export const roads=[{points:[[72,82],[72,43],[72,26]],w:8},{points:[[8,43],[57,43],[87,43],[143,43]],w:7},{points:[[20,24],[34,24],[41,24],[47,31],[57,34]],w:4},{points:[[97,30],[97,43],[119,43],[119,25]],w:4},{points:[[20,64],[34,64],[40,64],[64,64],[72,64],[92,64],[119,64]],w:4},{points:[[92,43],[92,74],[80,74]],w:4},{points:[[20,24],[20,64]],w:4},{points:[[119,43],[119,74]],w:4},{points:[[40,24],[40,64]],w:4}];
+export const roads=[{points:[[72,82],[72,43],HOKAGE_APPROACH],w:8},{points:[[8,43],[57,43],[87,43],[143,43]],w:7},{points:[[20,24],[34,24],[41,24],[47,31],[57,34]],w:4},{points:[[97,30],[97,43],[119,43],[119,25]],w:4},{points:[[20,64],[34,64],[40,64],[64,64],[72,64],[92,64],[119,64]],w:4},{points:[[92,43],[92,74],[80,74]],w:4},{points:[[20,24],[20,64]],w:4},{points:[[119,43],[119,74]],w:4},{points:[[40,24],[40,64]],w:4}];
 export const walls=[{x:3,y:3,w:138,d:2},{x:3,y:81,w:63,d:2},{x:78,y:81,w:63,d:2},{x:3,y:3,w:2,d:80},{x:139,y:3,w:2,d:36},{x:139,y:49,w:2,d:34}];
 export const trees=Array.from({length:25},(_,i)=>({x:7+(i*29)%130,y:i%2?7:78,r:1.4})).filter(t=>!buildings.some(b=>t.x>b.x-2&&t.x<b.x+b.w+2&&t.y>b.y-2&&t.y<b.y+b.d+2)&&Math.abs(t.x-72)>11);
 export function blocked(x,y,r=MAP.radius){

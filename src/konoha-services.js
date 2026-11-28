@@ -1,3 +1,4 @@
+import {HOKAGE_APPROACH} from './konoha-layout.js?v=7a7';
 import {newWorld,SIDEQUESTS,SHOPS,DIALOGUES,choicesFor,questProgress,acceptQuest,finishQuest,buyPrice,sellPrice,buyItem,sellItem,healPlayer,openChest,REGIONAL_ENEMIES} from './world-data.js';
 import {newRPG,itemFor,itemCount,addItem,rewardItems,useItem,collectOverflow,LOOT,TRAINING_LOOT} from './rpg-data.js';
 
@@ -5,7 +6,7 @@ import {newRPG,itemFor,itemCount,addItem,rewardItems,useItem,collectOverflow,LOO
 export const VILLAGE_LANDMARKS=[
  {id:'garden',name:'Nara Garden (West District)',at:[20,43],r:3},
  {id:'market',name:'Market',at:[92,59],r:3},
- {id:'hokage',name:'Hokage Lookout',at:[72,26],r:3},
+ {id:'hokage',name:'Hokage Lookout',at:HOKAGE_APPROACH,r:3},
  {id:'ichiraku',name:'Ichiraku Ramen',at:[85,74],r:2.8},
  {id:'bridge',name:'Central Bridge',at:[36,43],r:3},
  {id:'forest',name:'Training Clearing',region:'forest',at:[42,30],r:3}, {id:'plaza',name:'Central Plaza',at:[72,43],r:4},{id:'academy',name:'Academia',at:[47,31],r:4},{id:'eastroad',name:'Border Trail',region:'outpost',at:[8,30],r:5},{id:'shrine',name:'Outpost',region:'outpost',at:[32,30],r:5},{id:'ruins',name:'Ruins',region:'outpost',at:[54,30],r:5}

@@ -332,3 +332,7 @@ Playtest: inspect residential east/west and market/Ichiraku thresholds, walk nea
 - Production URL https://naruto2-5d.pages.dev/ ; repository https://github.com/Whoisnicko/Naruto2.5D ; production publication pending Cloudflare confirmation after merge.
 
 Production smoke: launch via title/campaign and sandbox, verify field build 7A.6, cross bridges, check travel/return and HUD at multiple viewport sizes. If regression, restore previous production using backup branch; no save schema changes. Do not discard history.
+
+
+## 7A.6 — Production smoke test approved
+Player confirms 4/4 production checks: Konoha 7A.6 loads from campaign; sandbox functionality retained; HUD/map improvements retained; combat and performance correct. No new feedback. This closes Konoha artistic review and player-side production validation. Production gameplay commit 9041e818591c05f938742d8786060761af6dc959 (PR #35). Cloudflare deployment metadata not independently verified; actual player access reported successful. Preserve backup/production-before-7a6, all 17 historical pending checks, Jiraiya 6H.2, Kimimaro/Sasuke artistic refinements, enemy art and future high-resolution facades. Optional X/Y movement compensation remains unapproved for implementation; current movement unchanged. Recommended next phase: resume Jiraiya 6H.2 in an isolated review branch, after user confirmation. Production URL https://naruto2-5d.pages.dev/ ; repository https://github.com/Whoisnicko/Naruto2.5D .

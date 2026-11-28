@@ -294,3 +294,13 @@ Base b3913b93d66cca19aa07f0f00b160d187ecb7b86, isolated art-review/jiraiya-6h1. 
 - 18/18 static/numerical/syntax-of-module-bodies checks before commit. No actual Three/browser render, GPU draw call measurement, FPS or Cloudflare publication check; visual/functional playtest required.
 - Preserve 17 historical pending checks, Kimimaro/Sasuke art, enemy art, facades, optional movement compensation, production Konoha. No production merge until explicit player approval. Reconcile stale branch with current main before promotion.
 - Expected preview https://art-review-jiraiya-6h1.naruto2-5d.pages.dev/?arenaPractice=1&boss=jiraiya&phase=1&v=6h2 ; production https://naruto2-5d.pages.dev/ ; repo https://github.com/Whoisnicko/Naruto2.5D/tree/art-review/jiraiya-6h1.
+
+
+# 6H.3 — Mount Myoboku reference-led art revision
+Base fa87a2afb326a0f1d794285f0cf286a6a882a902. 6H.2 playtest 8/12; all six functional checks approved; four artistic criteria unvalidated, player requested greater fidelity to the series despite authorization to prepare integration. No production promotion; resolve art first.
+Reference sources: official Naruto 20th anniversary column https://naruto-official.com/en/news/01_1321 ; Mount Myoboku and sacred oil/statues https://naruto.fandom.com/wiki/Mount_My%C5%8Dboku ; https://naruto.fandom.com/wiki/The_First_Challenge ; balance training https://naruto-official.com/en/anime/naruto2/list/01_600 . External reference images not copied into game.
+- Replace generic shrine/torii scene with stylized sandstone cliff backdrop, golden oil waterfall and pool, eight petrified meditating toads with closed eyes and joined hands, six groups of giant broad leaves, six mushrooms and four stone spires. Keep two side lily ponds (instead of four) and existing 64 motes; subdued lanterns; center sand warmer. Oil texture generated locally, solid fallback, animated scrolling and three pool ripples within existing update. Static geometry batched by material/geometry. No external art dependencies, no claim of anime-identical artwork.
+- Same radius, three phases, Mega Clash, cooldowns, HUD, combat and lighting; no new collisions. The north backdrop is scenic and non-interactive. Prior 6H.2 kept in Git history. Main Konoha 7A.6 untouched.
+- 43/43 static bounds/assertions/module-body syntax checks; no browser render, camera composition or FPS verification; visual quality unverified. No Cloudflare deployment check.
+- Retain 17 historical checks, Kimimaro/Sasuke, enemy art, facade and optional X/Y compensation. Do not merge old branch wholesale; reconcile with main after approval.
+- Preview expected https://art-review-jiraiya-6h1.naruto2-5d.pages.dev/?arenaPractice=1&boss=jiraiya&phase=1&v=6h3 ; production https://naruto2-5d.pages.dev/ .

@@ -1,9 +1,10 @@
-import {TOAD_GROUNDS as A,rng,clearDecor,shrineClear,approachClear} from './jiraiya-grounds-data.js?v=6h2';
-import {stoneArt,buildGuardian,buildSanctuaryArchitecture,batchStatic} from './jiraiya-sanctuary-art.js?v=6h2';
+import {TOAD_GROUNDS as A,rng,clearDecor} from './jiraiya-grounds-data.js?v=6h3';
+import {stoneArt,batchStatic} from './jiraiya-sanctuary-art.js?v=6h2';
+import {buildMyoboku} from './jiraiya-myoboku-art.js?v=6h3';
 export function groundArt(){
  const c=document.createElement('canvas');c.width=c.height=1024;const g=c.getContext('2d');if(!g)throw Error('Canvas unavailable');const r=rng(611),w=1024;
- g.fillStyle='#7d8d69';g.fillRect(0,0,w,w);const center=w/2,rad=15/82*w;
- const grad=g.createRadialGradient(center,center,rad*.65,center,center,rad*1.22);grad.addColorStop(0,'#b0ad86');grad.addColorStop(.69,'#a6a37e');grad.addColorStop(1,'rgba(163,161,126,0)');g.fillStyle=grad;g.fillRect(0,0,w,w);
+ g.fillStyle='#829b54';g.fillRect(0,0,w,w);const center=w/2,rad=15/82*w;
+ const grad=g.createRadialGradient(center,center,rad*.65,center,center,rad*1.22);grad.addColorStop(0,'#d4b984');grad.addColorStop(.69,'#c9af78');grad.addColorStop(1,'rgba(185,163,112,0)');g.fillStyle=grad;g.fillRect(0,0,w,w);
  for(let i=0;i<18000;i++){const x=r()*w,y=r()*w,inside=Math.hypot(x-center,y-center)<rad;g.fillStyle=i%2?'rgba(226,222,174,.12)':'rgba(41,68,47,.14)';g.fillRect(x,y,.6+r()*2,inside?1+r()*2:2+r()*4);}
  for(let i=0;i<110;i++){let x=r()*w,y=r()*w;if(Math.hypot(x-center,y-center)>rad*.95)continue;g.beginPath();g.moveTo(x,y);g.lineTo(x+4+r()*14,y+(r()-.5)*7);g.strokeStyle='rgba(72,70,53,.15)';g.lineWidth=.7;g.stroke();}
  return c;
@@ -30,10 +31,8 @@ export async function createToadGrounds({THREE,scene}){
   for(let i=0;i<3;i++){const o=piece(group,rippleGeo,rippleMat,x+(r()-.5)*rx,.028,z+(r()-.5)*rz,1,1,.85);ripples.push({o,phase:r()*6.28,size:.5+r()*.7});}
  }
  batchStatic(THREE,group,rimRoot);
- for(const at of A.guardians)if(clearDecor(at[0],at[1],A.guardianExtent))buildGuardian({THREE,group,at,mats,piece,box,sphere,cyl});
- if(shrineClear()&&approachClear())buildSanctuaryArchitecture({THREE,group,A,mats,piece,box,cyl,rock,rng});
- // Vermilion torii gate, stone lanterns, quiet forest framing.
- {const [x,z]=A.gate;const root=new THREE.Group();root.position.set(x,0,z);group.add(root);for(const side of [-1,1]){piece(root,cyl,mats.dark,side*2.85,.35,0,.62,.70,.62);piece(root,cyl,mats.wood,side*2.85,2.75,0,.43,4.8,.43);piece(root,box,mats.trim,side*2.85,4.7,0,.98,.17,.96);}piece(root,box,mats.wood,0,4.35,0,7.4,.37,.48);piece(root,box,mats.wood,0,5.18,0,8.5,.50,.74);piece(root,box,mats.dark,0,5.51,0,9,.22,.96);for(const side of [-1,1])piece(root,box,mats.dark,side*4.13,5.64,0,1.15,.26,.99,0,0,side*.18);piece(root,box,mats.trim,0,4.76,.28,.85,1.05,.15);}
+ // Canon-inspired landscape replaces generic torii, shrine and old guardians.
+ const myoboku=buildMyoboku({THREE,group,mats,piece,box,sphere,rock,cyl,rng,failures});
  for(const [x,z] of A.lanterns){if(!clearDecor(x,z,1.1))continue;piece(group,rock,mats.dark,x,.2,z,.87,.32,.87);piece(group,cyl,mats.stone,x,.94,z,.40,1.28,.40);piece(group,box,mats.stone,x,1.62,z,.86,.18,.86);piece(group,box,mats.trim,x,1.92,z,.55,.45,.55);for(const dx of [-.35,.35])for(const dz of [-.35,.35])piece(group,box,mats.dark,x+dx,1.91,z+dz,.11,.55,.11);piece(group,rock,mats.moss,x,2.32,z,.89,.38,.89);}
  for(const [x,z] of A.trees){if(!clearDecor(x,z,3.6))continue;const h=4+r()*3;piece(group,cyl,mats.bark,x,h*.42,z,.42,h*.84,.42);for(let i=0;i<3;i++)piece(group,rock,mats.canopy,x+(r()-.5)*1.9,h*.79+i*.73,z+(r()-.5)*1.4,2.5-i*.25,1.65,2.4-i*.24,0,r()*6.28);}
  // One batched mesh for peripheral stones.
@@ -41,6 +40,6 @@ export async function createToadGrounds({THREE,scene}){
  const batch=new THREE.InstancedMesh(rock,mats.stone,stones.length),matrix=new THREE.Matrix4(),v=new THREE.Vector3(),scale=new THREE.Vector3(),q=new THREE.Quaternion(),e=new THREE.Euler();stones.forEach(([x,y,z,sx,sy,sz,yaw],i)=>{v.set(x,y,z);scale.set(sx,sy,sz);e.set(0,yaw,0);q.setFromEuler(e);matrix.compose(v,q,scale);batch.setMatrixAt(i,matrix);});batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();group.add(batch);
  const pos=new Float32Array(A.motes*3),seeds=[];for(let i=0;i<A.motes;i++)seeds.push([r()*6.28,16.5+r()*11,.45+r()*3,r()*6.28]);
  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3).setUsage(THREE.DynamicDrawUsage));const dust=new THREE.Points(geo,new THREE.PointsMaterial({color:'#ece3ad',size:.09,transparent:true,opacity:.35,depthWrite:false}));dust.frustumCulled=false;group.add(dust);
- function updateAtmosphere(t){for(const a of ripples){const s=a.size*(1+.22*Math.sin(t*1.7+a.phase));a.o.scale.set(s,1,s*.85);}for(const a of pads)a.o.position.y=a.y+.008*Math.sin(t*1.3+a.phase);for(let i=0;i<seeds.length;i++){const [a,d,y,p]=seeds[i],j=i*3;pos[j]=Math.cos(a+t*.018)*d;pos[j+1]=y+.35*Math.sin(t*.7+p);pos[j+2]=Math.sin(a+t*.018)*d;}geo.attributes.position.needsUpdate=true;}
+ function updateAtmosphere(t){myoboku.update(t);for(const a of ripples){const s=a.size*(1+.22*Math.sin(t*1.7+a.phase));a.o.scale.set(s,1,s*.85);}for(const a of pads)a.o.position.y=a.y+.008*Math.sin(t*1.3+a.phase);for(let i=0;i<seeds.length;i++){const [a,d,y,p]=seeds[i],j=i*3;pos[j]=Math.cos(a+t*.018)*d;pos[j+1]=y+.35*Math.sin(t*.7+p);pos[j+2]=Math.sin(a+t*.018)*d;}geo.attributes.position.needsUpdate=true;}
  updateAtmosphere(0);return {group,guides,failures,updateAtmosphere};
 }

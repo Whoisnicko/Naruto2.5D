@@ -1,0 +1,369 @@
+{
+  "base": "fa87a2afb326a0f1d794285f0cf286a6a882a902",
+  "checks": [
+    {
+      "name": "radius unchanged",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: oil pool",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: oil waterfall",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: cliff 0",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: cliff 1",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: cliff 2",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: cliff 3",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: cliff 4",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: statue 0",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: statue 1",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: statue 2",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: statue 3",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: statue 4",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: statue 5",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: statue 6",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: statue 7",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: plant 0",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: plant 1",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: plant 2",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: plant 3",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: plant 4",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: plant 5",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: mushroom 0",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: mushroom 1",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: mushroom 2",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: mushroom 3",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: mushroom 4",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: mushroom 5",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: spire 0",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: spire 1",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: spire 2",
+      "pass": true
+    },
+    {
+      "name": "decor outside combat: spire 3",
+      "pass": true
+    },
+    {
+      "name": "two side ponds clear",
+      "pass": true
+    },
+    {
+      "name": "generic architecture not rendered",
+      "pass": true
+    },
+    {
+      "name": "ambient count unchanged",
+      "pass": true
+    },
+    {
+      "name": "only cache keys in game changed",
+      "pass": true
+    },
+    {
+      "name": "presentation mechanics and lighting untouched",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/arenas/jiraiya-grounds-data.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/arenas/jiraiya-grounds-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/arenas/jiraiya-combat-presentation.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/game.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/arenas/jiraiya-myoboku-data.js",
+      "pass": true
+    },
+    {
+      "name": "module body parses src/arenas/jiraiya-myoboku-art.js",
+      "pass": true
+    }
+  ],
+  "volumes": [
+    {
+      "id": "oil pool",
+      "x": 0,
+      "z": -21.7,
+      "r": 4.8999999999999995
+    },
+    {
+      "id": "oil waterfall",
+      "x": 0,
+      "z": -24.3,
+      "r": 2.25
+    },
+    {
+      "id": "cliff 0",
+      "x": -13,
+      "z": -28,
+      "r": 6.462811813689564
+    },
+    {
+      "id": "cliff 1",
+      "x": -7,
+      "z": -28.3,
+      "r": 5.866236541235796
+    },
+    {
+      "id": "cliff 2",
+      "x": 0,
+      "z": -29.5,
+      "r": 6.620304046246274
+    },
+    {
+      "id": "cliff 3",
+      "x": 7,
+      "z": -28.5,
+      "r": 6.00754180388624
+    },
+    {
+      "id": "cliff 4",
+      "x": 13,
+      "z": -28,
+      "r": 6.462811813689564
+    },
+    {
+      "id": "statue 0",
+      "x": -9.3,
+      "z": -17.9,
+      "r": 3.7520000000000007
+    },
+    {
+      "id": "statue 1",
+      "x": 9.3,
+      "z": -17.9,
+      "r": 3.7520000000000007
+    },
+    {
+      "id": "statue 2",
+      "x": -15.4,
+      "z": -18.7,
+      "r": 2.814
+    },
+    {
+      "id": "statue 3",
+      "x": 15.4,
+      "z": -18.7,
+      "r": 2.814
+    },
+    {
+      "id": "statue 4",
+      "x": -18,
+      "z": -13.7,
+      "r": 2.278
+    },
+    {
+      "id": "statue 5",
+      "x": 18,
+      "z": -13.7,
+      "r": 2.278
+    },
+    {
+      "id": "statue 6",
+      "x": -19.5,
+      "z": -8.8,
+      "r": 1.9429999999999998
+    },
+    {
+      "id": "statue 7",
+      "x": 19.5,
+      "z": -8.8,
+      "r": 1.9429999999999998
+    },
+    {
+      "id": "plant 0",
+      "x": -25,
+      "z": -13,
+      "r": 4.619999999999999
+    },
+    {
+      "id": "plant 1",
+      "x": 25,
+      "z": -13,
+      "r": 4.8999999999999995
+    },
+    {
+      "id": "plant 2",
+      "x": -28,
+      "z": 10,
+      "r": 3.9199999999999995
+    },
+    {
+      "id": "plant 3",
+      "x": 28,
+      "z": 10,
+      "r": 4.199999999999999
+    },
+    {
+      "id": "plant 4",
+      "x": -18,
+      "z": -29,
+      "r": 5.04
+    },
+    {
+      "id": "plant 5",
+      "x": 18,
+      "z": -29,
+      "r": 5.18
+    },
+    {
+      "id": "mushroom 0",
+      "x": -23,
+      "z": -7,
+      "r": 2.04
+    },
+    {
+      "id": "mushroom 1",
+      "x": -24.6,
+      "z": -9.4,
+      "r": 1.326
+    },
+    {
+      "id": "mushroom 2",
+      "x": 23,
+      "z": -7,
+      "r": 2.04
+    },
+    {
+      "id": "mushroom 3",
+      "x": 24.6,
+      "z": -9.4,
+      "r": 1.292
+    },
+    {
+      "id": "mushroom 4",
+      "x": -25,
+      "z": 15,
+      "r": 1.87
+    },
+    {
+      "id": "mushroom 5",
+      "x": 25,
+      "z": 15,
+      "r": 1.7
+    },
+    {
+      "id": "spire 0",
+      "x": -15,
+      "z": -34,
+      "r": 1.89
+    },
+    {
+      "id": "spire 1",
+      "x": 15,
+      "z": -34,
+      "r": 1.89
+    },
+    {
+      "id": "spire 2",
+      "x": -23,
+      "z": -32,
+      "r": 2.2399999999999998
+    },
+    {
+      "id": "spire 3",
+      "x": 23,
+      "z": -32,
+      "r": 2.2399999999999998
+    }
+  ],
+  "limits": [
+    "No browser render",
+    "No FPS or Cloudflare verification"
+  ]
+}

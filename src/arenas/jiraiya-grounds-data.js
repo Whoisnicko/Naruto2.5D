@@ -2,10 +2,10 @@
 export const TOAD_GROUNDS=Object.freeze({
  id:'jiraiya-toad-sage-grounds',radius:15,floor:82,
  palette:{grass:'#788966',earth:'#9c9e79',stone:'#859082',dark:'#506558',moss:'#647b52',water:'#497b76',wood:'#87534b',trim:'#c7ac78',leaves:'#75994e',flower:'#e6b2ac'},
- ponds:[[-21,3,5.1,4.6],[21,2,5.2,4.5],[-22,-20,4.2,3.5],[22,-20,4.2,3.5]],
+ ponds:[[-23,4,4.6,4.0],[23,4,4.6,4.0]],
  guardians:[[-12,-16,.35],[12,-16,-.35]],
- lanterns:[[-17,-8],[17,-8],[-17,8],[17,8],[-6,-19],[6,-19]],
- gate:[0,-20],trees:[[-30,-15],[-28,-5],[-24,13],[-14,-31],[-8,-33],[8,-33],[14,-31],[30,-15],[28,-5],[24,13]],
+ lanterns:[[-17,8],[17,8]],
+ gate:[0,-20],trees:[[-33,-9],[-33,19],[-30,24],[30,24],[33,19],[33,-9]],
  shrine:{x:0,z:-28,w:11,d:5.4,roofW:14.2,roofD:7.5,roofH:2.1},
  approach:{x:0,z:-17.5,w:4.6,d:3.3},
  guardianExtent:3.9,pondRim:.65,

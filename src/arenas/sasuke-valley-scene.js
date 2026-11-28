@@ -1,6 +1,6 @@
-import {END_VALLEY as A,rng,outsideArena,waveAt} from './sasuke-valley-data.js?v=6g7';
+import {END_VALLEY as A,rng,outsideArena,waveAt,VALLEY_PHASE_ART,phaseArtController} from './sasuke-valley-data.js?v=6g8';
 import {createWaterChakra} from './sasuke-water-chakra.js?v=6g7';
-import {createConnectedWaterfall} from './sasuke-water-impact.js?v=6g7';
+import {createConnectedWaterfall} from './sasuke-water-impact.js?v=6g8';
 import {stratifiedRock,rockSurfaceArt} from './sasuke-rock-detail.js?v=6g7';
 export function waterArt(){
  const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');if(!g)throw Error('Canvas unavailable');const r=rng(79);
@@ -44,12 +44,19 @@ export async function createEndValley({THREE,scene}){
  const boxGeo=new THREE.BoxGeometry(1,1,1),sphereGeo=new THREE.SphereGeometry(1,14,10),rockGeo=new THREE.DodecahedronGeometry(1,0),cylinderGeo=new THREE.CylinderGeometry(.76,1,1,10);
  function piece(parent,geo,material,x,y,z,sx,sy,sz,rx=0,ry=0,rz=0){const o=new THREE.Mesh(geo,material);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.rotation.set(rx,ry,rz);parent.add(o);return o;}
  let texture=null;try{texture=new THREE.CanvasTexture(waterArt());texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(3,3);}catch{failures.push('water texture');}
- const waterGeo=new THREE.PlaneGeometry(A.floor,A.floor);waterGeo.rotateX(-Math.PI/2);piece(group,waterGeo,mat(texture?'#ffffff':P.water,{map:texture,roughness:.48,metalness:.03}),0,-.024,0,1,1,1);
+ const waterGeo=new THREE.PlaneGeometry(A.floor,A.floor);waterGeo.rotateX(-Math.PI/2);const waterSurface=piece(group,waterGeo,mat(texture?'#ffffff':P.water,{map:texture,roughness:.48,metalness:.03}),0,-.024,0,1,1,1);
  // Rocky gorge: silhouetted cliff layers behind the two founders.
  for(const [i,[x,z,w,h]] of A.cliffs.entries()){if(!outsideArena(x,z,w))continue;piece(group,cliffGeo[i%3],rockDetail,x,h*.3,z,w,h*.76,w*.72,0,r()*6.283);piece(group,cliffGeo[(i+1)%3],rockShade,x+2,h*.34,z-3,w*.72,h*.9,w*.55,.12,r()*6.283);}
  for(let i=0;i<30;i++){const side=i%2?1:-1,x=side*(20+r()*15),z=-20+r()*37,w=1.5+r()*3.6;if(!outsideArena(x,z,w))continue;piece(group,i%4?cliffGeo[i%3]:rockGeo,i%4?rockDetail:moss,x,w*.13,z,w,.5+w*.48,w*.7,0,r()*6.283);}
  // Seeded ledges with moss and chipped strata outside combat.
  const strata=rng(663);for(const [x,z,w,h] of A.cliffs)for(let j=0;j<4;j++){const px=x+(strata()-.5)*w,pz=z+w*.51+strata()*.7,sw=1.25+strata()*2.1;if(!outsideArena(px,pz,sw+1))continue;piece(group,j===3?rockGeo:cliffGeo[j%3],j===3?moss:j%2?rockShade:rockDetail,px,h*(.14+j*.19),pz,sw,.32+strata()*.55,.56+strata()*.65,0,strata()*.6,(strata()-.5)*.19);}
+ // Local chipped rock strata, using approved meshes/materials.
+ const detailRng=rng(688);
+ for(const [i,[x,z,w,h]] of A.cliffs.entries())for(let j=0;j<3;j++){
+  const px=x+(detailRng()-.5)*w*.68,pz=z+w*.54,sw=.70+detailRng()*.65,sd=.65+detailRng()*.55;
+  if(!outsideArena(px,pz,Math.hypot(sw,sd)+.15))continue;
+  piece(group,cliffGeo[(i+j)%3],j%2?rockShade:rockDetail,px,h*(.22+j*.20),pz,sw,.24+detailRng()*.36,sd,0,(detailRng()-.5)*.75);
+ }
  // Original stylized stone sculptures: distinct hair, layered armor, faces, hand seals.
  function statue(s){
   if(!outsideArena(s.x,s.z,A.statueExtent))return;
@@ -175,5 +182,18 @@ export async function createEndValley({THREE,scene}){
  const edge=new THREE.RingGeometry(A.radius-.035,A.radius+.04,96);edge.rotateX(-Math.PI/2);piece(group,edge,new THREE.MeshBasicMaterial({color:'#a8d0cf',transparent:true,opacity:.28,depthWrite:false,side:THREE.DoubleSide}),0,.006,0,1,1,1);
  function updateAtmosphere(t){connected.update(t);if(fallMap)fallMap.offset.y=(t*.42)%1;if(texture){texture.offset.x=(t*.014)%1;texture.offset.y=(t*.009)%1;}for(let i=0;i<seeds.length;i++){const [x,phase,d,angle]=seeds[i],u=(phase+t*.22)%1,j=i*3;pos[j]=x+Math.sin(angle)*u*1.1;pos[j+1]=.1+Math.sin(u*Math.PI)*1.6;pos[j+2]=w.z+1.3+d*u+waveAt(x,d,t)*.14;}pg.attributes.position.needsUpdate=true;}
  const chakra=createWaterChakra({THREE,group});
- updateAtmosphere(0);return {group,guides,failures,updateAtmosphere,updateChakra:chakra.update,resetChakra:chakra.reset};
+ const phaseGroups={};for(const [id,profile] of Object.entries(VALLEY_PHASE_ART)){
+  const layer=new THREE.Group();layer.name='valley-phase-'+id;group.add(layer);phaseGroups[id]=layer;
+  for(const [i,[x,z,w,h,depth,yaw]] of profile.rocks.entries()){
+   if(!outsideArena(x,z,Math.hypot(w,depth)+.15))continue;
+   piece(layer,cliffGeo[i%3],i%2?rockShade:rockDetail,x,h*.25,z,w,h,depth,0,yaw);
+  }
+ }
+ const phaseArt=phaseArtController(phaseGroups,profile=>{
+  waterSurface.material.color.set(texture?profile.waterTint:P.water);
+  if(!texture)waterSurface.material.color.multiply(new THREE.Color(profile.waterTint));
+  connected.setStrength(profile.mist);
+ });
+ phaseArt.set(1);
+ updateAtmosphere(0);return {group,guides,failures,updateAtmosphere,updateChakra:chakra.update,resetChakra:chakra.reset,setPhase:(phase,finalDuel)=>phaseArt.set(phase,finalDuel)};
 }

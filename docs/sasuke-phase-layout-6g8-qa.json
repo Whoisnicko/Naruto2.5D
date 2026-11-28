@@ -1,0 +1,133 @@
+{
+  "base": "d88a3731972ced6b1df58d3e6be068150d0c6e80",
+  "checks": [
+    {
+      "name": "approved flow exact",
+      "pass": true
+    },
+    {
+      "name": "camera unchanged",
+      "pass": true
+    },
+    {
+      "name": "chakra exact configuration",
+      "pass": true
+    },
+    {
+      "name": "statue rendering and fallback untouched",
+      "pass": true
+    },
+    {
+      "name": "arena radius and floor unchanged",
+      "pass": true
+    },
+    {
+      "name": "stronger impact counts",
+      "pass": true
+    },
+    {
+      "name": "all phase layouts unique",
+      "pass": true
+    },
+    {
+      "name": "phase 1 safe decor bounds",
+      "pass": true
+    },
+    {
+      "name": "phase 2 safe decor bounds",
+      "pass": true
+    },
+    {
+      "name": "phase 3 safe decor bounds",
+      "pass": true
+    },
+    {
+      "name": "phase 4 safe decor bounds",
+      "pass": true
+    },
+    {
+      "name": "phase 5 safe decor bounds",
+      "pass": true
+    },
+    {
+      "name": "transition to 1",
+      "pass": true
+    },
+    {
+      "name": "transition to 2",
+      "pass": true
+    },
+    {
+      "name": "transition to 3",
+      "pass": true
+    },
+    {
+      "name": "transition to 4",
+      "pass": true
+    },
+    {
+      "name": "transition to 5",
+      "pass": true
+    },
+    {
+      "name": "transition to 3",
+      "pass": true
+    },
+    {
+      "name": "transition to 1",
+      "pass": true
+    },
+    {
+      "name": "idempotent update",
+      "pass": true
+    },
+    {
+      "name": "direct stage five",
+      "pass": true
+    },
+    {
+      "name": "phase clamp",
+      "pass": true
+    },
+    {
+      "name": "live stage sync",
+      "pass": true
+    },
+    {
+      "name": "reset stage on exit",
+      "pass": true
+    },
+    {
+      "name": "same combat code",
+      "pass": true
+    },
+    {
+      "name": "direct Mega Clash contract",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/sasuke-valley-data.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/sasuke-valley-scene.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/sasuke-water-impact.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/arenas/sasuke-combat-presentation.js",
+      "pass": true
+    },
+    {
+      "name": "module-body syntax src/game.js",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "No browser, FPS or deployment check",
+    "Phase switches simulated, actual playthrough pending"
+  ]
+}

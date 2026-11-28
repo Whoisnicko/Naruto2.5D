@@ -9,7 +9,7 @@ export const END_VALLEY=Object.freeze({
  waterChakra:{step:.46,teleport:3.4,life:.26,slots:24,airLimit:.12,particles:10,glowRadius:.38,flameHeight:.72},
  waterfall:{x:0,z:-18.0,width:15,height:12,sourceZ:-40,impactZ:-16.65},
  flowProfile:[[12.38,-22,1.12,0],[12.28,-16,1.06,.32],[12.20,-10,1.04,.66],[12.16,-4,1.0,.98],[12.08,-.85,1.0,1.16],[11.92,-.12,1.0,1.20],[11.45,.27,1.0,1.24],[10.2,.38,1.0,1.32],[8.3,.46,1.015,1.45],[6.0,.48,1.025,1.60],[3.5,.60,1.04,1.77],[1.5,.85,1.06,1.91],[.48,1.12,1.09,1.99],[.07,1.35,1.12,2.04]],
- impact:{foamCount:24,jetCount:144,plumeCount:16},
+ impact:{foamCount:40,jetCount:216,plumeCount:24},
  cliffs:[[-27,-19,7,13],[-20,-27,8,15],[-14.5,-29,5.2,13.6],[14.5,-29,5.2,13.6],[20,-27,8,15],[27,-19,7,13],[-30,-4,7,9],[30,-4,7,9]],
  spray:144
 });
@@ -45,4 +45,18 @@ export function flowMeshData(A=END_VALLEY){
  }
  for(let i=0;i<A.flowProfile.length-1;i++)for(let j=0;j<cols;j++){const a=i*(cols+1)+j,b=a+cols+1;indices.push(a,b,a+1,a+1,b,b+1);}
  return {positions,uvs,colors,indices,cols};
+}
+
+// Shared landmarks never move. Phase-specific shore silhouettes are cosmetic.
+// Each entry [x,z,width,height,depth,yaw] is outside the combat radius.
+export const VALLEY_PHASE_ART=Object.freeze({
+ 1:{label:'Base',rocks:[],waterTint:'#ffffff',mist:1},
+ 2:{label:'Sharingan',rocks:[[-20.5,-3,2.4,1.15,2.2,.4],[-20.5,3,2.3,.85,2,-.3],[20.5,-4,2.5,1.25,1.7,-.4],[20.5,2,2.1,.85,2.2,.6]],waterTint:'#eaf6ff',mist:1.04},
+ 3:{label:'Curse Mark I',rocks:[[-20.5,-5,2.4,1.65,2,.5],[-18.8,7.7,1.7,.62,1.45,-.4],[-21,5,2.4,1.1,2.1,.7],[20.5,-5,2.4,1.6,2,-.5],[18.8,7.7,1.7,.65,1.45,.4],[21,5,2.4,1.1,2.1,-.7]],waterTint:'#dae6f5',mist:1.08},
+ 4:{label:'Curse Mark II',rocks:[[-21,-7,2.9,2.1,2.6,.6],[-20.5,4,2.2,1.5,2.2,-.55],[-17.7,10.2,1.8,.72,1.4,.3],[-10,18,1.9,.5,1.6,-.3],[21,-7,2.9,2.1,2.6,-.6],[20.5,4,2.2,1.5,2.2,.55],[17.7,10.2,1.8,.72,1.4,-.3],[10,18,1.9,.5,1.6,.3]],waterTint:'#cbd9ee',mist:1.12},
+ 5:{label:'Mega Clash',rocks:[[-21,-6,2.8,2,2.3,.5],[-21,3,2.1,1.2,2,.35],[-19.4,8,1.8,.65,1.6,-.4],[21,-6,2.8,2,2.3,-.5],[21,3,2.1,1.2,2,-.35],[19.4,8,1.8,.65,1.6,.4]],waterTint:'#dce8fb',mist:1.16}
+});
+export function valleyArtStage(phase,finalDuel=false){return finalDuel?5:Math.max(1,Math.min(4,Math.floor(Number(phase)||1)));}
+export function phaseArtController(groups,onChange=()=>{}){
+ let stage=0;return {get stage(){return stage;},set(phase,finalDuel=false){const n=valleyArtStage(phase,finalDuel);if(n===stage)return false;stage=n;for(const [key,group] of Object.entries(groups))group.visible=Number(key)===stage;onChange(VALLEY_PHASE_ART[stage]);return true;}};
 }
